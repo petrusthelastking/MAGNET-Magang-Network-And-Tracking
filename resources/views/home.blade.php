@@ -1,13 +1,16 @@
 <x-layouts.home>
     <x-navbar></x-navbar>
 
-    <section class="h-screen mt-14 px-16 py-14 flex justify-around items-center text-burnt-orange">
+    <section class="h-screen mt-12 px-16 py-14 flex justify-around items-center text-black font-black">
         <div>
-            <h1 class="font-bold text-8xl">MAGNET</h1>
+            <p class="text-blue-900">Selamat datang di</p>
+            <h1 class="text-8xl">MAGNET</h1>
             <p>Magang Network and Tracking</p>
+            <p>Oleh Jurusan Teknologi Informasi Politeknik Negeri Malang</p>
 
             <div class="mt-10">
-                <flux:button variant="primary" href="{{ route('login') }}">Masuk ke sistem</flux:button>
+                <flux:button class="bg-[#276DA9]! text-white!" href="{{ route('login') }}">Masuk ke sistem</flux:button>
+                <flux:button class="bg-[#276DA9]! text-white!" href="{{ route('register') }}">Daftar</flux:button>
             </div>
         </div>
 
