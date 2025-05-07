@@ -32,6 +32,9 @@
     --color-golden-yellow: #F2BB05;
     --color-burnt-orange: #D74E09;
     --color-dark-maroon: #6E0E0A;
+
+    --color-magnet-medium-blue: #276DA9;
+    --color-magnet-dark-blue: #0F2B43;
 }
 
 @layer theme {
