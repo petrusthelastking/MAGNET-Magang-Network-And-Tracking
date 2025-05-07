@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::table('users', function (Blueprint $table) {
             // Periksa apakah kolom 'role' sudah ada
             if (!Schema::hasColumn('users', 'role')) {
-                $table->enum('role', ['admin', 'mahasiswa', 'dosen'])->after('password');
+                $table->enum('role', ['admin', 'mahasiswa', 'dosen'])->default('mahasiswa')->after('password');
             }
         });
     }
