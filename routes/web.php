@@ -7,18 +7,18 @@ use Livewire\Volt\Volt;
 Route::get('/', fn() => view('home'))
     ->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
+
+    Route::view('dashboard', 'admin.dashboard')
+        ->name('dashboard');
+    Route::view('students-data', 'admin.students-data')
+        ->name('students-data');
 });
- Route::get('/admin/dashboard', fn() => view('admin.dashboard'))->name('dashboard-admin');
 
 require __DIR__.'/auth.php';
 

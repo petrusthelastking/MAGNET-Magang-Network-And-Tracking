@@ -6,14 +6,14 @@
 </head>
 
 <body class="min-h-screen bg-white flex">
-
-    <x-sidebar> </x-sidebar>
+    <x-admin.sidebar />
 
     <div class="w-full">
-        <x-topbar> </x-topbar>
+        <x-topbar /> 
         <div class="p-8">
+            @yield('content')
+            
             {{ $slot }}
-
         </div>
     </div>
     @fluxScripts
