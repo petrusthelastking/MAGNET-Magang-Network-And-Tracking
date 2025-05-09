@@ -121,12 +121,12 @@
         <flux:spacer />
 
         <flux:navlist>
-            <flux:navlist.item icon="cog-6-tooth" href="#">Settings</flux:navlist.item>
-            <flux:navlist.item icon="information-circle" href="#">Help</flux:navlist.item>
+            <flux:navlist.item icon="cog-6-tooth" href="#" class="text-white!">Settings</flux:navlist.item>
+            <flux:navlist.item icon="information-circle" href="#" class="text-white!">Help</flux:navlist.item>
         </flux:navlist>
 
         <flux:dropdown position="top" align="start" class="max-lg:hidden">
-            <flux:profile avatar="https://fluxui.dev/img/demo/user.png" name="Olivia Martin" />
+            <flux:profile  avatar="https://fluxui.dev/img/demo/user.png" name="Olivia Martin" />
 
             <flux:menu>
                 <flux:menu.item href="/profile" class="flex justify-start">
