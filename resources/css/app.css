@@ -34,8 +34,12 @@
     --color-burnt-orange: #D74E09;
     --color-dark-maroon: #6E0E0A;
 
-    --color-magnet-medium-blue: #276DA9;
-    --color-magnet-dark-blue: #0F2B43;
+    --color-magnet-deep-ocean-blue: #023047;
+    --color-magnet-sky-teal: #219EBC;
+    --color-magnet-icy-blue: #8ECAE6;
+    --color-magnet-frost-mist: #E0F7FA;
+    --color-magnet-sunbeam-yellow: #FB8500;
+    --color-magnet-vibrant-orange: #FFB703;
 }
 
 @layer theme {
