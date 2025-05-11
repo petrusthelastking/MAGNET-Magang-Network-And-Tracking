@@ -15,7 +15,7 @@
         </flux:dropdown>
     </flux:navbar>
     <flux:navbar scrollable class="flex! justify-end! ">
-        <div class="pt-2 flex gap-5 text-[#219EBC]">
+        <div class="pt-2 flex gap-5 text-magnet-sky-teal">
             <a href="#">
                 <flux:icon.headset />
             </a>

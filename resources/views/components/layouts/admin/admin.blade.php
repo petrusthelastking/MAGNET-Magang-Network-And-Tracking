@@ -5,7 +5,7 @@
     @include('partials.head')
 </head>
 
-<body class="bg-[#E0F7FA]">
+<body class="bg-magnet-frost-mist">
     <div class="flex min-h-screen">
         <x-admin.sidebar />
 
