@@ -9,15 +9,15 @@
             Dashboard
         </flux:navlist.item>
        
-        <flux:navlist.item icon="flask-conical" href="{{ route('dashboard') }}">
+        <flux:navlist.item icon="flask-conical" href="{{ route('mahasiswa.pengajuan-magang') }}">
             Pengajuan Magang
         </flux:navlist.item>
 
-        <flux:navlist.item icon="battery-medium" href="{{ route('dashboard') }}">
+        <flux:navlist.item icon="battery-medium" href="{{ route('mahasiswa.pembaruan-status') }}">
             Pembaruan Status
         </flux:navlist.item>
 
-        <flux:navlist.item icon="file-chart-column-increasing" href="{{ route('dashboard') }}">
+        <flux:navlist.item icon="file-chart-column-increasing" href="{{ route('mahasiswa.log-mahasiswa') }}">
             Log Magang
         </flux:navlist.item>
         
