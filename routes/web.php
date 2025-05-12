@@ -30,3 +30,5 @@ require __DIR__.'/auth.php';
         ->name('mahasiswa.pembaruan-status');
     Route::view('mahasiswa/log-mahasiswa', 'mahasiswa.log_mahasiswa')
         ->name('mahasiswa.log-mahasiswa');
+    Route::view('mahasiswa/setting-profile', 'mahasiswa.setting_profile')
+        ->name('mahasiswa.setting-profile');
