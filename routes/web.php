@@ -22,11 +22,11 @@ Route::middleware(['auth'])->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::view('mahasiswa/dashboard', 'mahasiswa.dashboard')
-    ->name('mahasiswa.dashboard');
-Route::view('mahasiswa/pengajuan-magang', 'mahasiswa.pengajuan_magang')
-    ->name('mahasiswa.pengajuan-magang');
-Route::view('mahasiswa/pembaruan-status', 'mahasiswa.pembaruan_status')
-    ->name('mahasiswa.pembaruan-status');
-Route::view('mahasiswa/log-mahasiswa', 'mahasiswa.log_mahasiswa')
-    ->name('mahasiswa.log-mahasiswa');
+    Route::view('mahasiswa/dashboard', 'mahasiswa.dashboard')
+        ->name('mahasiswa.dashboard');
+    Route::view('mahasiswa/pengajuan-magang', 'mahasiswa.pengajuan_magang')
+        ->name('mahasiswa.pengajuan-magang');
+    Route::view('mahasiswa/pembaruan-status', 'mahasiswa.pembaruan_status')
+        ->name('mahasiswa.pembaruan-status');
+    Route::view('mahasiswa/log-mahasiswa', 'mahasiswa.log_mahasiswa')
+        ->name('mahasiswa.log-mahasiswa');
