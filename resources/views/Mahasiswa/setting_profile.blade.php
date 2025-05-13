@@ -36,7 +36,11 @@
             <!-- Jenis Kelamin -->
             <div>
                 <label class="block font-medium mb-1">Jenis Kelamin</label>
-                <input type="text" name="jenis_kelamin" class="w-full rounded-md border-gray-300 shadow-sm text-black focus:ring focus:ring-green-200 focus:border-green-400" />
+                <select name="jenis_kelamin" class="w-full rounded-md border-gray-300 shadow-sm text-black focus:ring focus:ring-green-200 focus:border-green-400">
+                    <option value="" disabled selected>Pilih jenis kelamin</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>1
+                </select>
             </div>
 
             <!-- Alamat -->
@@ -45,7 +49,6 @@
                 <textarea name="alamat"
                         class="w-full rounded-md border-gray-300 shadow-sm text-black focus:ring focus:ring-green-200 focus:border-green-400 resize-y min-h-[80px]"></textarea>
             </div>
-
 
             <!-- Prestasi -->
             <div>
