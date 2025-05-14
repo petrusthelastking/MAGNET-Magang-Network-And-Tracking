@@ -46,9 +46,6 @@
 
                 <!-- Tombol -->
                 <div class="flex justify-end gap-4 w-full">
-                    <button type="button" id="btnCancel" class="bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-md shadow">
-                        Batalkan
-                    </button>
                     <button type="submit" class="bg-cyan-700 hover:bg-cyan-800 text-white px-4 py-2 rounded-md shadow">
                         Ajukan Tanda Tangan
                     </button>
@@ -57,33 +54,5 @@
         </div>
     </div>
 
-    <script>
-        // Ambil elemen-elemen input dan tombol
-        const tanggal = document.getElementById('tanggal');
-        const jamMasuk = document.getElementById('jam_masuk');
-        const jamPulang = document.getElementById('jam_pulang');
-        const kegiatan = document.getElementById('kegiatan');
-        const btnCancel = document.getElementById('btnCancel');
-
-        // Fungsi untuk memeriksa apakah form sudah terisi
-        function isFormFilled() {
-            return (
-                tanggal.value.trim() !== '' || 
-                jamMasuk.value.trim() !== '' || 
-                jamPulang.value.trim() !== '' || 
-                kegiatan.value.trim() !== ''
-            );
-        }
-
-        // Event listener untuk tombol Batalkan
-        btnCancel.addEventListener('click', () => {
-            if (isFormFilled()) {
-                // Jika form terisi, reset form
-                tanggal.value = '';
-                jamMasuk.value = '';
-                jamPulang.value = '';
-                kegiatan.value = '';
-            }
-        });
-    </script>
+   
 </x-layouts.mahasiswa.mahasiswa>
