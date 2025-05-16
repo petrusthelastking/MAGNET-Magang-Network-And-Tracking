@@ -1,2 +1,9 @@
 @import "tailwindcss";
+@import '../../vendor/livewire/flux/dist/flux.css';
+
 @source "../views";
+
+
+@theme {    
+    --font-sans: Inter, sans-serif;
+}
