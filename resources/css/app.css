@@ -3,6 +3,8 @@
 
 @source "../views";
 
+@plugin "daisyui";
+
 
 @theme {    
     --font-sans: Inter, sans-serif;
