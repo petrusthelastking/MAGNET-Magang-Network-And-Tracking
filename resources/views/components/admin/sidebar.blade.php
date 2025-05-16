@@ -1,37 +1,38 @@
-<flux:sidebar stashable
+<flux:sidebar sticky stashable
     class="bg-zinc-50 dark:bg-zinc-900 border-r rtl:border-r-0 rtl:border-l border-zinc-200 dark:border-zinc-700">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
     <a href="#">
         <H1 class="text-3xl font-black ps-2 mx-4 text-center text-magnet-sky-teal">MAGNET</H1>
     </a>
     <flux:navlist variant="outline">
-        <flux:navlist.item icon="home" href="{{ route('dashboard') }}" current>
+        <flux:navlist.item icon="home" href="{{ route('dashboard') }}" :current="request()->is('/dashboard')">
             Dashboard
         </flux:navlist.item>
 
         <flux:navlist.group expandable heading="Kelola Data" :expanded="false">
-            <flux:navlist.item icon="user" href="{{ route('students-data') }}" class="text-magnet-deep-ocean-blue!">
+
+            <flux:navlist.item icon="user" :current="request()->is('students-data')" href="{{ route('students-data') }}" class="text-magnet-deep-ocean-blue!">
                 Data Mahasiswa
             </flux:navlist.item>
-            <flux:navlist.item icon="user" href="#" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="user" :current="request()->is('dosen-data')" href="#" class="text-magnet-deep-ocean-blue!">
                 Data Dosen
             </flux:navlist.item>
-            <flux:navlist.item icon="building-2" href="#" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="building-2" href="#" :current="request()->is('perusahaan-data')" class="text-magnet-deep-ocean-blue!">
                 Data Perusahaan
             </flux:navlist.item>
         </flux:navlist.group>
 
         <flux:navlist.group expandable heading="Magang" :expanded="false">
-            <flux:navlist.item icon="briefcase-business" href="#" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="briefcase-business" href="#" :current="request()->is('/lowongan-magang')" class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="flask-conical" href="#" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="flask-conical" href="#" :current="request()->is('/pengajuan-magang')" class="text-magnet-deep-ocean-blue!">
                 Pengajuan Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="chart-no-axes-combined" href="#" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="chart-no-axes-combined" href="#" :current="request()->is('/tren-magang')" class="text-magnet-deep-ocean-blue!">
                 Tren Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="crown" href="#" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="crown" href="#" :current="request()->is('/aturan-magang')" class="text-magnet-deep-ocean-blue!">
                 Aturan Magang
             </flux:navlist.item>
         </flux:navlist.group>
