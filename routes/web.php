@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Livewire\Volt\Volt;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,4 +17,19 @@ Route::get('/', function () {
     return view('landing_page');
 })->name('landing_page');
 
-require __DIR__.'/auth.php';
+Route::middleware(['auth'])->group(function () {
+    Route::redirect('settings', 'settings/profile');
+
+    Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
+    Volt::route('settings/password', 'settings.password')->name('settings.password');
+    Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
+
+    Route::view('dashboard', 'admin.dashboard')
+        ->name('dashboard');
+    Route::view('students-data', 'admin.students-data')
+        ->name('students-data');
+    Route::view('detail-students', 'admin.students-detail')
+        ->name('detail-students');
+});
+
+require __DIR__ . '/auth.php';
