@@ -18,6 +18,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('dashboard');
     Route::view('students-data', 'admin.students-data')
         ->name('students-data');
+    Route::view('detail-students', 'admin.students-detail')
+        ->name('detail-students');
 });
 
 require __DIR__.'/auth.php';
@@ -32,3 +34,5 @@ require __DIR__.'/auth.php';
         ->name('mahasiswa.log-mahasiswa');
     Route::view('mahasiswa/setting-profile', 'mahasiswa.setting_profile')
         ->name('mahasiswa.setting-profile');
+
+    
