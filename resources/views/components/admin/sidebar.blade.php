@@ -11,10 +11,10 @@
 
         <flux:navlist.group expandable heading="Kelola Data" :expanded="false">
 
-            <flux:navlist.item icon="user" :current="request()->is('students-data')" href="{{ route('students-data') }}" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="user" :current="request()->is('students-data')" href="{{ route('data-mahasiswa') }}" class="text-magnet-deep-ocean-blue!">
                 Data Mahasiswa
             </flux:navlist.item>
-            <flux:navlist.item icon="user" :current="request()->is('dosen-data')" href="#" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="user" :current="request()->is('dosen-data')" href="{{ route('data-dosen') }}" class="text-magnet-deep-ocean-blue!">
                 Data Dosen
             </flux:navlist.item>
             <flux:navlist.item icon="building-2" href="#" :current="request()->is('perusahaan-data')" class="text-magnet-deep-ocean-blue!">

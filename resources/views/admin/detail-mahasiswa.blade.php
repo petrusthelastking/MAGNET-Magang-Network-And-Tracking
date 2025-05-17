@@ -1,10 +1,9 @@
 <x-layouts.admin.admin>
-
     <flux:breadcrumbs class="mb-5">
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('students-data') }}" class="text-black">Kelola Data Mahasiswa
+        <flux:breadcrumbs.item href="{{ route('data-mahasiswa') }}" class="text-black">Kelola Data Mahasiswa
         </flux:breadcrumbs.item>
-        <flux:breadcrumbs.item href="{{ route('detail-students') }}" class="text-black">Detail Data Mahasiswa
+        <flux:breadcrumbs.item href="{{ route('detail-mahasiswa') }}" class="text-black">Detail Data Mahasiswa
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <h1 class="text-base font-bold leading-6 text-black">Detail Informasi Mahasiswa</h1>

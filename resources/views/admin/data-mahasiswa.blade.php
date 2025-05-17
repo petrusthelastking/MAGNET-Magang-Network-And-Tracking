@@ -1,7 +1,7 @@
 <x-layouts.admin.admin>
     <flux:breadcrumbs class="mb-5">
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('students-data') }}" class="text-black">Kelola Data Mahasiswa
+        <flux:breadcrumbs.item href="{{ route('data-mahasiswa') }}" class="text-black">Kelola Data Mahasiswa
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <h1 class="text-base font-bold leading-6 text-black">Kelola Data Mahasiswa</h1>
@@ -42,7 +42,7 @@
                             <flux:badge color="green" variant="solid">Sedang magang</flux:badge>
                         </td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-students') }}" variant="ghost" />
+                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-mahasiswa') }}" variant="ghost" />
                         </td>
                     </tr>
                 @endfor
