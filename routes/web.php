@@ -37,3 +37,15 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+
+    Route::view('mahasiswa/dashboard', 'mahasiswa.dashboard')
+        ->name('mahasiswa.dashboard');
+    Route::view('mahasiswa/pengajuan-magang', 'mahasiswa.pengajuan_magang')
+        ->name('mahasiswa.pengajuan-magang');
+    Volt::route('/mahasiswa/pembaruan-status', 'mahasiswa.pembaruan-status')
+        ->name('mahasiswa.pembaruan-status');
+    Route::view('mahasiswa/log-mahasiswa', 'mahasiswa.log_mahasiswa')
+        ->name('mahasiswa.log-mahasiswa');
+    Route::view('mahasiswa/setting-profile', 'mahasiswa.setting_profile')
+        ->name('mahasiswa.setting-profile');
