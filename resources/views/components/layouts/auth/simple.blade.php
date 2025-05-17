@@ -6,7 +6,7 @@
     <body class="min-h-screen bg-[linear-gradient(245deg,_#AEE1FC_8.6%,_#FFF_82.92%)] ">
         <div class="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
             <div class="flex w-full max-w-sm flex-col gap-2">
-                <a href="{{ route('landing_page') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
+                <a href="{{ route('landing-page') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
                     <span class="flex h-9 w-9 mb-1 items-center justify-center rounded-md">
                         <x-app-logo-icon class="size-9 fill-current text-black dark:text-white" />
                     </span>

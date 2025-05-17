@@ -10,7 +10,7 @@
         <x-admin.sidebar />
 
         <div class="w-full">
-            <x-topbar />
+            <x-user.topbar />
             <div class="p-8">
                 @yield('content')
 
