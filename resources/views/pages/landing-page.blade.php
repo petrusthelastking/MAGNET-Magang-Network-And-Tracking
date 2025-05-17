@@ -1,5 +1,5 @@
 <x-layouts.guest>
-    <x-navbar></x-navbar>
+    <x-guest.navbar />
 
     <section class="h-screen mt-12 px-16 py-14 flex justify-around items-center text-black font-black">
         <div>
@@ -25,7 +25,6 @@
             <div
                 class="grid md:grid-cols-2 items-center gap-10 max-w-6xl w-full bg-gradient-to-br from-indigo-100 via-sky-100 to-white  py-6 px-8 rounded-2xl">
 
-                <!-- Kartu Alur Pengajuan -->
                 <div class="backdrop-blur-lg bg-white/60 shadow-xl rounded-2xl p-8 space-y-4 border border-white/30">
                     <h2 class="text-3xl font-bold text-gray-800 mb-4">📋 Alur Pengajuan Magang</h2>
                     <ol class="list-decimal list-inside text-gray-700 space-y-2">
@@ -37,7 +36,6 @@
                     </ol>
                 </div>
 
-                <!-- Gambar Orang -->
                 <div class="flex justify-center">
                     <div class="hover:scale-105 transition-transform duration-300">
                         <svg width="681" height="387" viewBox="0 0 881 587" fill="none"
