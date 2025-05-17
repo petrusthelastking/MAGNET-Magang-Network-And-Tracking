@@ -26,32 +26,35 @@ Route::middleware(['auth'])->group(function () {
 
     Route::view('dashboard', 'admin.dashboard')
         ->name('dashboard');
-    Route::view('data-mahasiswa', 'admin.data-mahasiswa')
+    Route::view('data-mahasiswa', 'admin.kelola-data.data-mahasiswa')
         ->name('data-mahasiswa');
-    Route::view('detail-mahasiswa', 'admin.detail-mahasiswa')
+    Route::view('detail-mahasiswa', 'admin.kelola-data.detail-mahasiswa')
         ->name('detail-mahasiswa');
-    Route::view('data-dosen', 'admin.data-dosen')
+    Route::view('data-dosen', 'admin.kelola-data.data-dosen')
         ->name('data-dosen');
-    Route::view('detail-dosen', 'admin.detail-dosen')
+    Route::view('detail-dosen', 'admin.kelola-data.detail-dosen')
         ->name('detail-dosen');
-    Route::view('data-perusahaan', 'admin.data-perusahaan')
+    Route::view('data-perusahaan', 'admin.kelola-data.data-perusahaan')
         ->name('data-perusahaan');
-    Route::view('detail-perusahaan', 'admin.detail-perusahaan')
+    Route::view('detail-perusahaan', 'admin.kelola-data.detail-perusahaan')
         ->name('detail-perusahaan');
+
+    Route::view('data-lowongan', 'admin.magang.data-lowongan')
+        ->name('data-lowongan');
+    Route::view('detail-lowongan', 'admin.magang.detail-lowongan')
+        ->name('detail-lowongan');
 });
 
 require __DIR__ . '/auth.php';
 
 
-    Route::view('mahasiswa/dashboard', 'mahasiswa.dashboard')
-        ->name('mahasiswa.dashboard');
-    Route::view('mahasiswa/pengajuan-magang', 'mahasiswa.pengajuan_magang')
-        ->name('mahasiswa.pengajuan-magang');
-    Volt::route('/mahasiswa/pembaruan-status', 'mahasiswa.pembaruan-status')
-        ->name('mahasiswa.pembaruan-status');
-    Route::view('mahasiswa/log-mahasiswa', 'mahasiswa.log_mahasiswa')
-        ->name('mahasiswa.log-mahasiswa');
-    Route::view('mahasiswa/setting-profile', 'mahasiswa.setting_profile')
-        ->name('mahasiswa.setting-profile');
-
-    
+Route::view('mahasiswa/dashboard', 'mahasiswa.dashboard')
+    ->name('mahasiswa.dashboard');
+Route::view('mahasiswa/pengajuan-magang', 'mahasiswa.pengajuan_magang')
+    ->name('mahasiswa.pengajuan-magang');
+Volt::route('/mahasiswa/pembaruan-status', 'mahasiswa.pembaruan-status')
+    ->name('mahasiswa.pembaruan-status');
+Route::view('mahasiswa/log-mahasiswa', 'mahasiswa.log_mahasiswa')
+    ->name('mahasiswa.log-mahasiswa');
+Route::view('mahasiswa/setting-profile', 'mahasiswa.setting_profile')
+    ->name('mahasiswa.setting-profile');

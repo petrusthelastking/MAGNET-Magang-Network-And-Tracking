@@ -31,7 +31,7 @@
         </flux:navlist.group>
 
         <flux:navlist.group expandable heading="Magang" :expanded="false">
-            <flux:navlist.item icon="briefcase-business" href="#" :current="request()->is('/lowongan-magang')"
+            <flux:navlist.item icon="briefcase-business" href="{{ route('data-lowongan') }}" :current="request()->is('/data-lowongan')"
                 class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
             </flux:navlist.item>
