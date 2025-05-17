@@ -8,7 +8,7 @@
 
     <div class="flex justify-between mt-4">
         <div class="flex gap-3">
-            <flux:input class="rounded-3xl!" as="button" placeholder="Cari Data Dosen" icon="magnifying-glass" />
+            <flux:input class="rounded-3xl!" placeholder="Cari Data Dosen" icon="magnifying-glass" />
             <flux:button variant="primary" class="bg-white! text-black! w-17 rounded-full!"
                 icon="arrow-down-wide-narrow"></flux:button>
             <flux:button variant="primary" class="bg-white! text-black! w-17 rounded-full!" icon="funnel-plus">
