@@ -34,6 +34,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('data-dosen');
     Route::view('detail-dosen', 'admin.detail-dosen')
         ->name('detail-dosen');
+    Route::view('data-perusahaan', 'admin.data-perusahaan')
+        ->name('data-perusahaan');
+    Route::view('detail-perusahaan', 'admin.detail-perusahaan')
+        ->name('detail-perusahaan');
 });
 
 require __DIR__ . '/auth.php';

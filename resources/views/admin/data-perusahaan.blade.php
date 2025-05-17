@@ -1,21 +1,21 @@
 <x-layouts.admin.admin>
     <flux:breadcrumbs class="mb-5">
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('data-mahasiswa') }}" class="text-black">Kelola Data Mahasiswa
+        <flux:breadcrumbs.item href="{{ route('detail-perusahaan') }}" class="text-black">Kelola Data Perusahaan
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
-    <h1 class="text-base font-bold leading-6 text-black">Kelola Data Mahasiswa</h1>
+    <h1 class="text-base font-bold leading-6 text-black">Kelola Data Perusahaan</h1>
 
     <div class="flex justify-between mt-4">
         <div class="flex gap-3">
-            <flux:input class="rounded-3xl!" placeholder="Cari Data Mahasiswa" icon="magnifying-glass" />
+            <flux:input class="rounded-3xl!" placeholder="Cari Data Perusahaan" icon="magnifying-glass" />
             <flux:button variant="primary" class="bg-white! text-black! w-17 rounded-full!"
                 icon="arrow-down-wide-narrow"></flux:button>
             <flux:button variant="primary" class="bg-white! text-black! w-17 rounded-full!" icon="funnel-plus">
             </flux:button>
         </div>
         <div class="flex gap-3">
-            <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus">Tambah Mahasiswa</flux:button>
+            <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus">Tambah Perusahaan</flux:button>
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="download">Import</flux:button>
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="upload">Export</flux:button>
         </div>
@@ -27,8 +27,8 @@
                 <tr class="border-b">
                     <th class="text-center px-6 py-3">No</th>
                     <th class="text-left px-6 py-3">Nama</th>
-                    <th class="text-left px-6 py-3">NIM</th>
-                    <th class="text-left px-6 py-3">Status</th>
+                    <th class="text-left px-6 py-3">Bidang Usaha</th>
+                    <th class="text-left px-6 py-3">Jumlah Mahasiswa Magang</th>
                     <th class="text-center px-6 py-3">Aksi</th>
                 </tr>
             </thead>
@@ -36,13 +36,11 @@
                 @for ($i = 0; $i < 10; $i++)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">Budi Gunawan Herlambang Sejahtera Saputra Widodo</td>
-                        <td class="px-6 py-3">1291921281281</td>
-                        <td class="px-6 py-3">
-                            <flux:badge color="green" variant="solid">Sedang magang</flux:badge>
-                        </td>
+                        <td class="px-6 py-3">PT Mencari Cinta Sejati</td>
+                        <td class="px-6 py-3">Manufaktur</td>
+                        <td class="px-6 py-3">129</td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-mahasiswa') }}" variant="ghost" />
+                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-perusahaan') }}" variant="ghost" />
                         </td>
                     </tr>
                 @endfor

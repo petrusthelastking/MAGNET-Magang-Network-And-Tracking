@@ -9,15 +9,19 @@
             Dashboard
         </flux:navlist.item>
 
-        <flux:navlist.group expandable heading="Kelola Data" :expanded="false">
+        @php
+        $isRequestToKelolaData = request()->is('data-mahasiswa') || request()->is('data-perusahaan') || request()->is('data-dosen');
+        @endphp
 
-            <flux:navlist.item icon="user" :current="request()->is('students-data')" href="{{ route('data-mahasiswa') }}" class="text-magnet-deep-ocean-blue!">
+        <flux:navlist.group expandable heading="Kelola Data" :expanded="$isRequestToKelolaData">
+
+            <flux:navlist.item icon="user" :current="request()->is('data-mahasiswa')" href="{{ route('data-mahasiswa') }}" class="text-magnet-deep-ocean-blue!">
                 Data Mahasiswa
             </flux:navlist.item>
-            <flux:navlist.item icon="user" :current="request()->is('dosen-data')" href="{{ route('data-dosen') }}" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="user" :current="request()->is('data-dosen')" href="{{ route('data-dosen') }}" class="text-magnet-deep-ocean-blue!">
                 Data Dosen
             </flux:navlist.item>
-            <flux:navlist.item icon="building-2" href="#" :current="request()->is('perusahaan-data')" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="building-2" href="{{ route('data-perusahaan') }}" :current="request()->is('data-perusahaan')" class="text-magnet-deep-ocean-blue!">
                 Data Perusahaan
             </flux:navlist.item>
         </flux:navlist.group>
