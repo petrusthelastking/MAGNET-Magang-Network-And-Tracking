@@ -31,8 +31,8 @@
         </flux:navlist.group>
 
         <flux:navlist.group expandable heading="Magang" :expanded="false">
-            <flux:navlist.item icon="briefcase-business" href="{{ route('data-lowongan') }}" :current="request()->is('/data-lowongan')"
-                class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="briefcase-business" href="{{ route('data-lowongan') }}"
+                :current="request()->is('/data-lowongan')" class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
             </flux:navlist.item>
             <flux:navlist.item icon="flask-conical" href="#" :current="request()->is('/pengajuan-magang')"
@@ -61,4 +61,20 @@
             </flux:navlist.item>
         </flux:navlist.group>
     </flux:navlist>
+    <flux:spacer />
+    <flux:navlist variant="outline">
+        <flux:navlist.item icon="cog-6-tooth" href="#">Settings</flux:navlist.item>
+        <flux:navlist.item icon="information-circle" href="#">Help</flux:navlist.item>
+    </flux:navlist>
+    <flux:dropdown position="top" align="start" class="max-lg:hidden">
+        <flux:profile avatar="https://fluxui.dev/img/demo/user.png" name="Olivia Martin" />
+        <flux:menu>
+            <flux:menu.radio.group>
+                <flux:menu.radio checked>Olivia Martin</flux:menu.radio>
+                <flux:menu.radio>Truly Delta</flux:menu.radio>
+            </flux:menu.radio.group>
+            <flux:menu.separator />
+            <flux:menu.item icon="arrow-right-start-on-rectangle">Logout</flux:menu.item>
+        </flux:menu>
+    </flux:dropdown>
 </flux:sidebar>
