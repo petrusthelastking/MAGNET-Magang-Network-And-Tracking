@@ -7,42 +7,77 @@
         <flux:breadcrumbs.item href="{{ route('detail-students') }}" class="text-black">Detail Data Mahasiswa
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
-    <h1 class="text-base font-bold leading-6 text-black">Detail Mahasiswa</h1>
+    <h1 class="text-base font-bold leading-6 text-black">Detail Informasi Mahasiswa</h1>
 
     <div class=" min-h-screen p-6">
-        <div class="flex">
-            <div id="photoButtons" class="flex flex-col items-center gap-3">
-                <div id="profilePreview"
-                    class="w-[230px] h-[306px] flex-shrink-0 rounded-[10px] bg-[lightgray] bg-center bg-cover bg-no-repeat"
-                    style="aspect-ratio: 115 / 153; background-image: url('/path/to/default.jpg');"></div>
-
-                <input type="file" id="photoInput" accept="image/*" class="hidden" />
-
-                <!-- Tombol Upload (jika belum ada foto) -->
-                <button type="button" id="uploadButton" onclick="document.getElementById('photoInput').click()"
-                    class="rounded-[8px] bg-[var(--Default-green-400,#34D399)] text-white shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.10),0px_2px_4px_-1px_rgba(0,0,0,0.06)] flex h-[38px] px-[21px] py-[7px] justify-center items-center gap-[8px]">
-                    Upload Foto
-                </button>
-
-                <!-- Tombol Edit & Hapus -->
-                <div id="editDeleteBtns" class="flex gap-3">
-                    <!-- Edit Foto -->
-                    <flux:navlist.item icon="pencil" onclick="document.getElementById('photoInput').click()"
-                        class="!text-black rounded-[8px] bg-[var(--Default-green-400,#34D399)] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.10),0px_2px_4px_-1px_rgba(0,0,0,0.06)] flex h-[38px] px-[21px] py-[7px] justify-center items-center gap-[8px]">
-                        Edit Foto
-                    </flux:navlist.item>
-
-                    <!-- Hapus Foto -->
-                    <flux:navlist.item icon="trash-2" onclick="removePhoto()"
-                        class="!text-black rounded-[8px] bg-[var(--Default-red-400,#F87171)] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.10),0px_2px_4px_-1px_rgba(0,0,0,0.06)] flex h-[38px] px-[21px] py-[7px] justify-center items-center gap-[8px]">
-                        Hapus Foto
-                    </flux:navlist.item>
+        <div class="px-4 font-sans text-black">
+            <div class="flex gap-8 items-start">
+                <div class="flex flex-col items-center bg-white p-4 rounded-xl shadow-md">
+                    <img src="{{ asset('cewek.png') }}" alt="Foto Mahasiswa"
+                        class="w-40 h-52 object-cover rounded-md mb-4" />
+                    <div class="flex gap-4">
+                        <flux:button icon="pencil"
+                            class="bg-emerald-500! hover:bg-emerald-600! text-white! rounded-md items-center">
+                            Edit</flux:button>
+                        <flux:modal.trigger name="delete-profile">
+                            <flux:button icon="pencil"
+                                class="bg-red-500! hover:bg-red-600! text-white! rounded-md items-center">
+                                Hapus</flux:button>
+                        </flux:modal.trigger>
+                    </div>
                 </div>
-                <div class="">
-                    //form
+                <div class="bg-white p-6 rounded-xl shadow-md w-full max-w-3xl">
+                    <h2 class="text-lg font-semibold mb-4">Informasi Pribadi</h2>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium">Nama</label>
+                            <input type="text" placeholder="Placeholder" class="w-full border rounded-md px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">NIM</label>
+                            <input type="text" placeholder="Placeholder" class="w-full border rounded-md px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Jurusan</label>
+                            <input type="text" placeholder="Placeholder" class="w-full border rounded-md px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Program Studi</label>
+                            <input type="text" placeholder="Placeholder" class="w-full border rounded-md px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Jenis Kelamin</label>
+                            <input type="text" placeholder="Placeholder" class="w-full border rounded-md px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Umur</label>
+                            <input type="text" placeholder="Placeholder" class="w-full border rounded-md px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Status Magang</label>
+                            <input type="text" placeholder="Placeholder" class="w-full border rounded-md px-3 py-2" />
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-
+    </div>
+    <flux:modal name="delete-profile" class="min-w-[22rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Hapus Data?</flux:heading>
+                <flux:text class="mt-2">
+                    <p>Apakah anda yakin ingin menghapus data mahasiswa ?</p>
+                </flux:text>
+            </div>
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button variant="ghost">Batalkan</flux:button>
+                </flux:modal.close>
+                <flux:button type="submit" variant="danger">Hapus</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 
 </x-layouts.admin.admin>
