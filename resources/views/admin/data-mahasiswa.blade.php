@@ -42,11 +42,7 @@
                             <flux:badge color="green" variant="solid">Sedang magang</flux:badge>
                         </td>
                         <td class="px-6 py-3 text-center">
-<<<<<<< HEAD:resources/views/admin/students-data.blade.php
-                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-students') }}" variant="ghost" />
-=======
                             <flux:button icon="ellipsis-vertical" href="{{ route('detail-mahasiswa') }}" variant="ghost" />
->>>>>>> 253b04179945288bd056c57fe641a38d9baabd94:resources/views/admin/data-mahasiswa.blade.php
                         </td>
                     </tr>
                 @endfor
