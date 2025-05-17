@@ -1,5 +1,5 @@
 <flux:navbar class="px-6 fixed py-4 top-0 w-full z-50 flex justify-between bg-[#041D56]!">
-    <flux:navbar.item href="{{ route('landing_page') }}">
+    <flux:navbar.item href="{{ route('landing-page') }}">
         <flux:text class="font-black text-white text-2xl">{{ config('app.name') }}</flux:text>
     </flux:navbar.item>
     <div class="flex">
