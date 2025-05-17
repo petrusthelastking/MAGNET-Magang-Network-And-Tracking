@@ -26,18 +26,23 @@ Route::middleware(['auth'])->group(function () {
 
     Route::view('dashboard', 'pages.admin.dashboard')
         ->name('dashboard');
-    Route::view('data-mahasiswa', 'pages.admin.data-mahasiswa')
+    Route::view('data-mahasiswa', 'pages.admin.kelola-data.data-mahasiswa')
         ->name('data-mahasiswa');
-    Route::view('detail-mahasiswa', 'pages.admin.detail-mahasiswa')
+    Route::view('detail-mahasiswa', 'pages.admin.kelola-data.detail-mahasiswa')
         ->name('detail-mahasiswa');
-    Route::view('data-dosen', 'pages.admin.data-dosen')
+    Route::view('data-dosen', 'pages.admin.kelola-data.data-dosen')
         ->name('data-dosen');
-    Route::view('detail-dosen', 'pages.admin.detail-dosen')
+    Route::view('detail-dosen', 'pages.admin.kelola-data.detail-dosen')
         ->name('detail-dosen');
-    Route::view('data-perusahaan', 'admin.data-perusahaan')
+    Route::view('data-perusahaan', 'admin.kelola-data.data-perusahaan')
         ->name('data-perusahaan');
-    Route::view('detail-perusahaan', 'admin.detail-perusahaan')
+    Route::view('detail-perusahaan', 'admin.kelola-data.detail-perusahaan')
         ->name('detail-perusahaan');
+
+    Route::view('data-lowongan', 'admin.magang.data-lowongan')
+        ->name('data-lowongan');
+    Route::view('detail-lowongan', 'admin.magang.detail-lowongan')
+        ->name('detail-lowongan');
 });
 
 require __DIR__ . '/auth.php';
