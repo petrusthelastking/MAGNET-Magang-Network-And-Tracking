@@ -39,7 +39,7 @@ require __DIR__ . '/auth.php';
         ->name('mahasiswa.dashboard');
     Route::view('mahasiswa/pengajuan-magang', 'mahasiswa.pengajuan_magang')
         ->name('mahasiswa.pengajuan-magang');
-    Route::view('mahasiswa/pembaruan-status', 'mahasiswa.pembaruan_status')
+    Volt::route('/mahasiswa/pembaruan-status', 'mahasiswa.pembaruan-status')
         ->name('mahasiswa.pembaruan-status');
     Route::view('mahasiswa/log-mahasiswa', 'mahasiswa.log_mahasiswa')
         ->name('mahasiswa.log-mahasiswa');
