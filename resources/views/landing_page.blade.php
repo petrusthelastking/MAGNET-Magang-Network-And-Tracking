@@ -1,5 +1,5 @@
 <x-layouts.guest>
-    <x-navbar></x-navbar>
+    <x-guest.navbar />
 
     <section class="h-screen mt-12 px-16 py-14 flex justify-around items-center text-black font-black">
         <div>
