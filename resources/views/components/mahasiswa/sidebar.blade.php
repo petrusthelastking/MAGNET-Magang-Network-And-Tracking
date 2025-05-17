@@ -36,13 +36,14 @@
         <flux:menu>
             <flux:navlist variant="outline" class="w-full">
                 <flux:avatar src="https://unavatar.io/x/calebporzio" class="mx-auto mb-1.5 " />
-                <flux:navlist.item href="{{ route('mahasiswa.setting-profile') }} " class="bg-cyan-300  hover:bg-blue-200 text-black">
+                <flux:navlist.item href="{{ route('mahasiswa.setting-profile') }} "
+                    class="bg-cyan-300  hover:bg-blue-200 text-black! text-center! h-10!">
                     Olivia Martin
                 </flux:navlist.item>
             </flux:navlist>
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
-                <flux:button type="submit" variant="danger" class="w-full" icon="arrow-right-start-on-rectangle">
+                <flux:button type="submit" variant="danger" class="w-full h-10!" icon="arrow-right-start-on-rectangle">
                     {{ __('Log Out') }}
                 </flux:button>
             </form>

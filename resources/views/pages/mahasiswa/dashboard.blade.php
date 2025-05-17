@@ -46,7 +46,7 @@
                     Isi Rekomendasi tempat magang 3
                 </p>
             </div>
-                        <div
+            <div
                 class="w-full h-[162px] flex-shrink-0 rounded-[15px] bg-white shadow-[0pdx_4px_4px_0px_rgba(0,0,0,0.25)] p-4 flex flex-col justify-between">
                 <p class="text-black text-base font-medium">
                     Isi Rekomendasi tempat magang 4
@@ -62,9 +62,9 @@
                 class="w-full h-[162px] flex-shrink-0 rounded-[15px] bg-white shadow-[0pdx_4px_4px_0px_rgba(0,0,0,0.25)] p-4 flex flex-col justify-between">
                 <p class="text-black text-base font-medium">
                     Isi Rekomendasi tempat magang 6
-                </p> 
+                </p>
             </div>
-                        <div
+            <div
                 class="w-full h-[162px] flex-shrink-0 rounded-[15px] bg-white shadow-[0pdx_4px_4px_0px_rgba(0,0,0,0.25)] p-4 flex flex-col justify-between">
                 <p class="text-black text-base font-medium">
                     Isi Rekomendasi tempat magang 7
@@ -74,7 +74,7 @@
                 class="w-full h-[162px] flex-shrink-0 rounded-[15px] bg-white shadow-[0pdx_4px_4px_0px_rgba(0,0,0,0.25)] p-4 flex flex-col justify-between">
                 <p class="text-black text-base font-medium">
                     Isi Rekomendasi tempat magang 8
-                </p> 
+                </p>
             </div>
             <div
                 class="w-full h-[162px] flex-shrink-0 rounded-[15px] bg-white shadow-[0pdx_4px_4px_0px_rgba(0,0,0,0.25)] p-4 flex flex-col justify-between">
