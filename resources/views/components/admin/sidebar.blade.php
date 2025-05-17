@@ -6,6 +6,7 @@
     </a>
     <flux:navlist variant="outline">
         <flux:navlist.item icon="home" href="{{ route('dashboard') }}" :current="request()->is('/dashboard')">
+        <flux:navlist.item icon="home" href="{{ route('dashboard') }}" :current="request()->is('/dashboard')">
             Dashboard
         </flux:navlist.item>
 
@@ -18,20 +19,25 @@
                 Data Dosen
             </flux:navlist.item>
             <flux:navlist.item icon="building-2" href="#" :current="request()->is('perusahaan-data')" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="building-2" href="#" :current="request()->is('perusahaan-data')" class="text-magnet-deep-ocean-blue!">
                 Data Perusahaan
             </flux:navlist.item>
         </flux:navlist.group>
 
         <flux:navlist.group expandable heading="Magang" :expanded="false">
             <flux:navlist.item icon="briefcase-business" href="#" :current="request()->is('/lowongan-magang')" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="briefcase-business" href="#" :current="request()->is('/lowongan-magang')" class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
             </flux:navlist.item>
+            <flux:navlist.item icon="flask-conical" href="#" :current="request()->is('/pengajuan-magang')" class="text-magnet-deep-ocean-blue!">
             <flux:navlist.item icon="flask-conical" href="#" :current="request()->is('/pengajuan-magang')" class="text-magnet-deep-ocean-blue!">
                 Pengajuan Magang
             </flux:navlist.item>
             <flux:navlist.item icon="chart-no-axes-combined" href="#" :current="request()->is('/tren-magang')" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="chart-no-axes-combined" href="#" :current="request()->is('/tren-magang')" class="text-magnet-deep-ocean-blue!">
                 Tren Magang
             </flux:navlist.item>
+            <flux:navlist.item icon="crown" href="#" :current="request()->is('/aturan-magang')" class="text-magnet-deep-ocean-blue!">
             <flux:navlist.item icon="crown" href="#" :current="request()->is('/aturan-magang')" class="text-magnet-deep-ocean-blue!">
                 Aturan Magang
             </flux:navlist.item>

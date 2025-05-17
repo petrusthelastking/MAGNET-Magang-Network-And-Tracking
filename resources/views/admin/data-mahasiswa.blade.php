@@ -18,9 +18,14 @@
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus">Tambah Mahasiswa</flux:button>
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="download">Import</flux:button>
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="upload">Export</flux:button>
+            <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus">Tambah Mahasiswa</flux:button>
+            <flux:button variant="primary" class="bg-magnet-sky-teal" icon="download">Import</flux:button>
+            <flux:button variant="primary" class="bg-magnet-sky-teal" icon="upload">Export</flux:button>
         </div>
     </div>
 
+    <div class="overflow-y-auto flex flex-col items-center mt-4 rounded-lg shadow bg-white">
+        <table class="table-auto w-full ">
     <div class="overflow-y-auto flex flex-col items-center mt-4 rounded-lg shadow bg-white">
         <table class="table-auto w-full ">
             <thead class="bg-white text-black">
@@ -68,7 +73,28 @@
                     <flux:select.option>100</flux:select.option>
                 </flux:select>
             </div>
+        <div class="flex items-center justify-between w-full p-3">
+            <div class="text-black mt-6">
+                <p>Menampilkan 10 dari 1250 data</p>
+            </div>
+            <div class="flex mt-6">
+                <flux:button icon="chevron-left" variant="ghost" />
+                @for ($i = 0; $i < 5; $i++)
+                    <flux:button variant="ghost">{{ $i + 1 }}</flux:button>
+                @endfor
+                <flux:button icon="chevron-right" variant="ghost" />
+            </div>
+            <div class="flex gap-3 items-center text-black mt-6">
+                <p>Baris per halaman</p>
+                <flux:select placeholder="10" class="w-20!">
+                    <flux:select.option>10</flux:select.option>
+                    <flux:select.option>25</flux:select.option>
+                    <flux:select.option>50</flux:select.option>
+                    <flux:select.option>100</flux:select.option>
+                </flux:select>
+            </div>
         </div>
+
 
     </div>
     </div>

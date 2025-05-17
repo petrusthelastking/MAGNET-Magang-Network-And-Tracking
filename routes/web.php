@@ -49,3 +49,5 @@ require __DIR__ . '/auth.php';
         ->name('mahasiswa.log-mahasiswa');
     Route::view('mahasiswa/setting-profile', 'mahasiswa.setting_profile')
         ->name('mahasiswa.setting-profile');
+
+    
