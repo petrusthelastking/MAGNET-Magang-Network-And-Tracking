@@ -19,7 +19,7 @@
                             class="bg-emerald-500! hover:bg-emerald-600! text-white! rounded-md items-center">
                             Edit</flux:button>
                         <flux:modal.trigger name="delete-profile">
-                            <flux:button icon="pencil"
+                            <flux:button icon="trash-2"
                                 class="bg-red-500! hover:bg-red-600! text-white! rounded-md items-center">
                                 Hapus</flux:button>
                         </flux:modal.trigger>
