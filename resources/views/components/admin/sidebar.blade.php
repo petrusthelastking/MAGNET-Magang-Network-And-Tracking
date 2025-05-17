@@ -1,5 +1,5 @@
 <flux:sidebar sticky stashable
-    class="bg-zinc-50 dark:bg-zinc-900 border-r rtl:border-r-0 rtl:border-l border-zinc-200 dark:border-zinc-700">
+    class="bg-zinc-50 border-r rtl:border-r-0 rtl:border-l border-zinc-200 ">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
     <a href="#">
         <H1 class="text-3xl font-black ps-2 mx-4 text-center text-magnet-sky-teal">MAGNET</H1>
@@ -11,10 +11,10 @@
 
         <flux:navlist.group expandable heading="Kelola Data" :expanded="false">
 
-            <flux:navlist.item icon="user" :current="request()->is('students-data')" href="{{ route('students-data') }}" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="user" :current="request()->is('students-data')" href="{{ route('data-mahasiswa') }}" class="text-magnet-deep-ocean-blue!">
                 Data Mahasiswa
             </flux:navlist.item>
-            <flux:navlist.item icon="user" :current="request()->is('dosen-data')" href="#" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="user" :current="request()->is('dosen-data')" href="{{ route('data-dosen') }}" class="text-magnet-deep-ocean-blue!">
                 Data Dosen
             </flux:navlist.item>
             <flux:navlist.item icon="building-2" href="#" :current="request()->is('perusahaan-data')" class="text-magnet-deep-ocean-blue!">
