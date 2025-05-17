@@ -1,5 +1,4 @@
-<flux:sidebar
-    stashable
+<flux:sidebar stashable
     class="bg-zinc-50 dark:bg-zinc-900 border-r rtl:border-r-0 rtl:border-l border-zinc-200 dark:border-zinc-700">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
@@ -28,33 +27,18 @@
     <flux:spacer />
 
     <flux:dropdown position="top" align="start" class="max-lg:hidden">
-        <flux:profile
-            avatar="https://fluxui.dev/img/demo/user.png"
-            name="Olivia Martin"
-        />
+        <flux:profile avatar="https://fluxui.dev/img/demo/user.png" name="Olivia Martin" />
 
         <flux:menu>
-            <flux:menu.radio.group>
-                <flux:menu.radio    >Olivia Martin</flux:menu.radio>
-            </flux:menu.radio.group>
-
-            <flux:menu.separator />
-
             <flux:navlist variant="outline" class="w-full">
-                <flux:navlist.item icon="cog-6-tooth" href="{{ route('mahasiswa.setting-profile') }}">
-                    Settings
+                <flux:navlist.item href="{{ route('mahasiswa.setting-profile') }}">
+                    Olivia Martin
                 </flux:navlist.item>
             </flux:navlist>
 
-
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
-                <flux:menu.item
-                    as="button"
-                    type="submit"
-                    icon="arrow-right-start-on-rectangle"
-                    class="w-full"
-                >
+                <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
                     {{ __('Log Out') }}
                 </flux:menu.item>
             </form>
