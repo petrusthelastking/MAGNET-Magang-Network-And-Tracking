@@ -12,6 +12,7 @@
         "vite": "^6.0"
     },
     "dependencies": {
+        "@fontsource/inter": "^5.2.5",
         "@tailwindcss/vite": "^4.1.7",
         "tailwindcss": "^4.1.7"
     }
