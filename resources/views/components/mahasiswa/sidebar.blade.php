@@ -36,7 +36,7 @@
         <flux:menu>
             <flux:navlist variant="outline" class="w-full">
                 <flux:avatar src="https://unavatar.io/x/calebporzio" class="mx-auto mb-1.5 " />
-                <flux:navlist.item href="{{ route('mahasiswa.setting-profile') }}">
+                <flux:navlist.item href="{{ route('mahasiswa.setting-profile') }} " class="bg-cyan-300  hover:bg-blue-200 text-black">
                     Olivia Martin
                 </flux:navlist.item>
             </flux:navlist>
