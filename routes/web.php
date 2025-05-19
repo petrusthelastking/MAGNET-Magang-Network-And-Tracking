@@ -30,10 +30,11 @@ Route::prefix('mahasiswa')
     ->name('mahasiswa.')
     ->group(function () {
     Route::view('dashboard', 'pages.mahasiswa.dashboard')->name('dashboard');
-    Route::view('pengajuan-magang', 'pages.mahasiswa.pengajuan_magang')->name('pengajuan-magang');
+    Route::view('pengajuan-magang', 'pages.mahasiswa.pengajuan-magang')->name('pengajuan-magang');
     Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
-    Route::view('log-mahasiswa', 'pages.mahasiswa.log_mahasiswa')->name('log-mahasiswa');
+    Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
     Route::view('setting-profile', 'pages.mahasiswa.setting_profile')->name('setting-profile');
+    Route::view('formulir-pengajuan', 'pages.mahasiswa.form-pengajuan-magang')->name('form-pengajuan-magang');
 });
 
 require __DIR__ . '/auth.php';
