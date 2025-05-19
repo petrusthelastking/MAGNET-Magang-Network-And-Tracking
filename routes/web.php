@@ -15,7 +15,7 @@ Route::middleware(['auth'])
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 
     Route::view('dashboard', 'pages.admin.dashboard')->name('dashboard');
-    Route::view('data-mahasiswa', 'pages.admin.kelola-data.data-mahasiswa')->name('data-mahasiswa');
+    Volt::route('data-mahasiswa', 'pages.admin.kelola-data.data-mahasiswa')->name('data-mahasiswa');
     Route::view('detail-mahasiswa', 'pages.admin.kelola-data.detail-mahasiswa')->name('detail-mahasiswa');
     Route::view('data-dosen', 'pages.admin.kelola-data.data-dosen')->name('data-dosen');
     Route::view('detail-dosen', 'pages.admin.kelola-data.detail-dosen')->name('detail-dosen');
