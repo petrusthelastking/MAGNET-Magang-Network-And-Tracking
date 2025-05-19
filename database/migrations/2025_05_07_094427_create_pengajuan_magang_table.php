@@ -12,12 +12,10 @@ return new class extends Migration {
     {
         Schema::create('log_aktivitas_magang', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pengajuan_id')->constrained('pengajuan_magang')->onDelete('cascade');
-            $table->date('tanggal');
-            $table->text('aktivitas');
-            $table->string('bukti_path', 255)->nullable();
-            $table->enum('status', ['diajukan', 'disetujui', 'revisi']);
-            $table->text('catatan_dosen')->nullable();
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswa_profiles');
+            $table->foreignId('lowongan_id')->constrained('lowongan_magang');
+            $table->foreignId('dosen_id')->constrained('dosen_profiles');
+            $table->string('cv')->nullable();
             $table->timestamps();
         });
     }

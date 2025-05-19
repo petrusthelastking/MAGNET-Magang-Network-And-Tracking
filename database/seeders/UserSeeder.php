@@ -11,11 +11,11 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Admin Users
         DB::table('users')->insert([
+            // Admin Users
             [
-                'name' => 'Budi Santoso',
-                'email' => 'budi.admin@universitasprimagraha.ac.id',
+                'name' => 'Dr. Siti Nurhalimah',
+                'email' => 'admin1@university.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'admin',
                 'email_verified_at' => now(),
@@ -23,21 +23,18 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Indah Permata',
-                'email' => 'indah.admin@universitasprimagraha.ac.id',
+                'name' => 'Ahmad Fauzi, M.Kom',
+                'email' => 'admin2@university.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'admin',
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-        ]);
-
-        // Dosen Users
-        DB::table('users')->insert([
+            // Dosen Users
             [
-                'name' => 'Dr. Agus Wijaya',
-                'email' => 'agus.wijaya@universitasprimagraha.ac.id',
+                'name' => 'Dr. Ir. Budi Santoso, M.T.',
+                'email' => 'budi.santoso@university.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'dosen',
                 'email_verified_at' => now(),
@@ -45,8 +42,8 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Prof. Siti Rahayu',
-                'email' => 'siti.rahayu@universitasprimagraha.ac.id',
+                'name' => 'Prof. Dr. Ani Widiastuti, M.Kom.',
+                'email' => 'ani.widiastuti@university.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'dosen',
                 'email_verified_at' => now(),
@@ -54,8 +51,8 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Dr. Bambang Hermawan',
-                'email' => 'bambang.h@universitasprimagraha.ac.id',
+                'name' => 'Dr. Eng. Cahyo Prianto, S.T., M.T.',
+                'email' => 'cahyo.prianto@university.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'dosen',
                 'email_verified_at' => now(),
@@ -63,21 +60,36 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Dr. Dewi Sulistyowati',
-                'email' => 'dewi.s@universitasprimagraha.ac.id',
+                'name' => 'Dra. Dewi Sartika, M.Si.',
+                'email' => 'dewi.sartika@university.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'dosen',
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-        ]);
-
-        // Mahasiswa Users
-        DB::table('users')->insert([
             [
-                'name' => 'Ahmad Fadli',
-                'email' => 'ahmad.fadli@mhs.universitasprimagraha.ac.id',
+                'name' => 'Ir. Eko Prasetyo, M.Kom.',
+                'email' => 'eko.prasetyo@university.edu',
+                'password' => Hash::make('password123'),
+                'role' => 'dosen',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Dr. Fitri Handayani, S.Kom., M.T.',
+                'email' => 'fitri.handayani@university.edu',
+                'password' => Hash::make('password123'),
+                'role' => 'dosen',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            // Mahasiswa Users
+            [
+                'name' => 'Andi Kurniawan',
+                'email' => 'andi.kurniawan@student.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'mahasiswa',
                 'email_verified_at' => now(),
@@ -85,8 +97,8 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Rina Fitriani',
-                'email' => 'rina.fitriani@mhs.universitasprimagraha.ac.id',
+                'name' => 'Bella Safitri',
+                'email' => 'bella.safitri@student.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'mahasiswa',
                 'email_verified_at' => now(),
@@ -94,8 +106,8 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Dimas Pratama',
-                'email' => 'dimas.p@mhs.universitasprimagraha.ac.id',
+                'name' => 'Candra Wijaya',
+                'email' => 'candra.wijaya@student.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'mahasiswa',
                 'email_verified_at' => now(),
@@ -103,8 +115,8 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Anisa Rahma',
-                'email' => 'anisa.r@mhs.universitasprimagraha.ac.id',
+                'name' => 'Diana Puspitasari',
+                'email' => 'diana.puspita@student.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'mahasiswa',
                 'email_verified_at' => now(),
@@ -112,8 +124,8 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Fajar Nugroho',
-                'email' => 'fajar.n@mhs.universitasprimagraha.ac.id',
+                'name' => 'Eko Setiawan',
+                'email' => 'eko.setiawan@student.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'mahasiswa',
                 'email_verified_at' => now(),
@@ -121,8 +133,44 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Ratna Dewi',
-                'email' => 'ratna.d@mhs.universitasprimagraha.ac.id',
+                'name' => 'Fira Ramadhani',
+                'email' => 'fira.ramadhan@student.edu',
+                'password' => Hash::make('password123'),
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Gilang Pratama',
+                'email' => 'gilang.pratama@student.edu',
+                'password' => Hash::make('password123'),
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Hana Permata',
+                'email' => 'hana.permata@student.edu',
+                'password' => Hash::make('password123'),
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Indra Saputra',
+                'email' => 'indra.saputra@student.edu',
+                'password' => Hash::make('password123'),
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Jihan Aulia',
+                'email' => 'jihan.aulia@student.edu',
                 'password' => Hash::make('password123'),
                 'role' => 'mahasiswa',
                 'email_verified_at' => now(),
