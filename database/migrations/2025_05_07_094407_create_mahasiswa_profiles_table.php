@@ -16,10 +16,9 @@ return new class extends Migration {
             $table->string('nim', 20)->unique();
             $table->foreignId('program_studi_id')->constrained('program_studi');
             $table->integer('semester');
-            $table->string('no_hp', 15)->nullable();
             $table->text('alamat')->nullable();
-            $table->string('cv_path', 255)->nullable();
-            $table->string('foto_path', 255)->nullable();
+            $table->enum('status_magang', ['Tidak magang', 'Sedang magang', 'Selesai magang']);
+            $table->string('foto_path')->nullable();
             $table->timestamps();
         });
     }

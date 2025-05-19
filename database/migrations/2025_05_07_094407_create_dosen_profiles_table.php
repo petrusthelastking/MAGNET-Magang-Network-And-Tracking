@@ -12,11 +12,11 @@ return new class extends Migration {
     {
         Schema::create('dosen_profiles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users');
             $table->string('nip', 20)->unique();
             $table->foreignId('program_studi_id')->constrained('program_studi');
             $table->string('no_hp', 15)->nullable();
-            $table->string('foto_path', 255)->nullable();
+            $table->string('foto_path')->nullable();
             $table->timestamps();
         });
     }

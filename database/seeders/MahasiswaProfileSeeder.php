@@ -12,74 +12,112 @@ class MahasiswaProfileSeeder extends Seeder
     {
         DB::table('mahasiswa_profiles')->insert([
             [
-                'user_id' => 7, // Ahmad Fadli
-                'nim' => '20210001',
-                'program_studi_id' => 1, // Teknik Informatika
+                'user_id' => 9, // Andi Kurniawan
+                'nim' => '210103001',
+                'program_studi_id' => 1,
                 'semester' => 6,
-                'no_hp' => '081234567890',
-                'alamat' => 'Jl. Merdeka No. 123, Jakarta Selatan',
-                'cv_path' => 'cv/ahmad_fadli.pdf',
-                'foto_path' => 'foto/ahmad_fadli.jpg',
+                'alamat' => 'Jl. Soekarno Hatta No. 15, Malang',
+                'status_magang' => 'Tidak magang',
+                'foto_path' => 'foto/andi_kurniawan.jpg',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'user_id' => 8, // Rina Fitriani
-                'nim' => '20210002',
-                'program_studi_id' => 2, // Sistem Informasi Bisnis
+                'user_id' => 10, // Bella Safitri
+                'nim' => '210103002',
+                'program_studi_id' => 1,
                 'semester' => 6,
-                'no_hp' => '081234567891',
-                'alamat' => 'Jl. Mawar No. 45, Jakarta Timur',
-                'cv_path' => 'cv/rina_fitriani.pdf',
-                'foto_path' => 'foto/rina_fitriani.jpg',
+                'alamat' => 'Jl. Veteran No. 8, Malang',
+                'status_magang' => 'Sedang magang',
+                'foto_path' => 'foto/bella_safitri.jpg',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'user_id' => 9, // Dimas Pratama
-                'nim' => '20210003',
-                'program_studi_id' => 3, // PPLS
+                'user_id' => 11, // Candra Wijaya
+                'nim' => '210203001',
+                'program_studi_id' => 2,
+                'semester' => 6,
+                'alamat' => 'Jl. Ahmad Yani No. 22, Malang',
+                'status_magang' => 'Selesai magang',
+                'foto_path' => 'foto/candra_wijaya.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => 12, // Diana Puspitasari
+                'nim' => '210203002',
+                'program_studi_id' => 2,
                 'semester' => 4,
-                'no_hp' => '081234567892',
-                'alamat' => 'Jl. Cendana No. 78, Jakarta Utara',
-                'cv_path' => 'cv/dimas_pratama.pdf',
-                'foto_path' => 'foto/dimas_pratama.jpg',
+                'alamat' => 'Jl. Kertanegara No. 5, Malang',
+                'status_magang' => 'Tidak magang',
+                'foto_path' => 'foto/diana_puspitasari.jpg',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'user_id' => 10, // Anisa Rahma
-                'nim' => '20210004',
-                'program_studi_id' => 1, // Teknik Informatika
+                'user_id' => 13, // Eko Setiawan
+                'nim' => '210303001',
+                'program_studi_id' => 3,
                 'semester' => 6,
-                'no_hp' => '081234567893',
-                'alamat' => 'Jl. Kenanga No. 12, Jakarta Barat',
-                'cv_path' => 'cv/anisa_rahma.pdf',
-                'foto_path' => 'foto/anisa_rahma.jpg',
+                'alamat' => 'Jl. Brawijaya No. 12, Malang',
+                'status_magang' => 'Sedang magang',
+                'foto_path' => 'foto/eko_setiawan.jpg',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'user_id' => 11, // Fajar Nugroho
-                'nim' => '20210005',
-                'program_studi_id' => 2, // Sistem Informasi Bisnis
-                'semester' => 7,
-                'no_hp' => '081234567894',
-                'alamat' => 'Jl. Melati No. 34, Depok',
-                'cv_path' => 'cv/fajar_nugroho.pdf',
-                'foto_path' => 'foto/fajar_nugroho.jpg',
+                'user_id' => 14, // Fira Ramadhani
+                'nim' => '210303002',
+                'program_studi_id' => 3,
+                'semester' => 4,
+                'alamat' => 'Jl. Candi Badut No. 18, Malang',
+                'status_magang' => 'Tidak magang',
+                'foto_path' => 'foto/fira_ramadhani.jpg',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'user_id' => 12, // Ratna Dewi
-                'nim' => '20210006',
-                'program_studi_id' => 3, // PPLS
-                'semester' => 7,
-                'no_hp' => '081234567895',
-                'alamat' => 'Jl. Anggrek No. 56, Tangerang',
-                'cv_path' => 'cv/ratna_dewi.pdf',
-                'foto_path' => 'foto/ratna_dewi.jpg',
+                'user_id' => 15, // Gilang Pratama
+                'nim' => '210403001',
+                'program_studi_id' => 4,
+                'semester' => 6,
+                'alamat' => 'Jl. Mayjen Panjaitan No. 25, Malang',
+                'status_magang' => 'Selesai magang',
+                'foto_path' => 'foto/gilang_pratama.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => 16, // Hana Permata
+                'nim' => '210403002',
+                'program_studi_id' => 4,
+                'semester' => 4,
+                'alamat' => 'Jl. Diponegoro No. 30, Malang',
+                'status_magang' => 'Tidak magang',
+                'foto_path' => 'foto/hana_permata.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => 17, // Indra Saputra
+                'nim' => '210503001',
+                'program_studi_id' => 5,
+                'semester' => 6,
+                'alamat' => 'Jl. Tugu No. 7, Malang',
+                'status_magang' => 'Sedang magang',
+                'foto_path' => 'foto/indra_saputra.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => 18, // Jihan Aulia
+                'nim' => '210503002',
+                'program_studi_id' => 5,
+                'semester' => 4,
+                'alamat' => 'Jl. Sunandar Priyo Sudarmo No. 14, Malang',
+                'status_magang' => 'Tidak magang',
+                'foto_path' => 'foto/jihan_aulia.jpg',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

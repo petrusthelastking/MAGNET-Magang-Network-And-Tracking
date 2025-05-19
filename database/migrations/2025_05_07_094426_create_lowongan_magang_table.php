@@ -12,13 +12,13 @@ return new class extends Migration {
     {
         Schema::create('lowongan_magang', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('perusahaan_id')->constrained('perusahaan')->onDelete('cascade');
-            $table->string('judul', 255);
+            $table->foreignId('perusahaan_id')->constrained('perusahaan');
+            $table->string('judul');
             $table->text('deskripsi');
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->integer('kuota');
-            $table->string('keahlian_utama', 255)->nullable();
+            $table->string('keahlian_utama')->nullable();
             $table->text('persyaratan')->nullable();
             $table->enum('status', ['tersedia', 'tidak_tersedia']);
             $table->timestamps();

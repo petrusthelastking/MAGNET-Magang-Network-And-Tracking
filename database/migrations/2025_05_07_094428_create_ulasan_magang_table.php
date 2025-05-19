@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('ulasan_magang', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pengajuan_id')->constrained('pengajuan_magang')->onDelete('cascade');
+            $table->foreignId('pengajuan_id')->constrained('pengajuan_magang');
             $table->integer('rating');
             $table->text('ulasan');
             $table->boolean('is_published');
