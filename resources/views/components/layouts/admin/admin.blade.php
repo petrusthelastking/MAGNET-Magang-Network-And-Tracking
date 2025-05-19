@@ -11,8 +11,7 @@
 
         <div class="w-full">
             <x-user.topbar />
-            <div class="p-8">
-                @yield('content')
+            <div class="p-8 flex flex-col gap-5">
 
                 {{ $slot }}
             </div>
