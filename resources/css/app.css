@@ -44,6 +44,8 @@
     --color-magnet-frost-mist: #E0F7FA;
     --color-magnet-sunbeam-yellow: #FB8500;
     --color-magnet-vibrant-orange: #FFB703;
+    --color-magnet-def-grey-400: #9CA3AF;
+    --color-magnet-def-grey-500: #6B7280;
 }
 @layer theme {
     .dark {

@@ -74,39 +74,32 @@ new #[Layout('components.layouts.auth')] class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-6 ">
-    <div class="bg-[#041D56] flex flex-col rounded-xl p-7">
-        <h1 class="text-white font-black text-center text-3xl">LOGIN</h1>
-        <form wire:submit="login" class="flex flex-col pt-16">
+    <div class="bg-white shadow-lg flex flex-col rounded-md p-6">
+        <h1 class="text-black font-black text-center text-xl">Masuk</h1>
+        <form wire:submit="login" class="flex flex-col pt-9">
             <flux:field>
-                <flux:label class="text-white!">Email</flux:label>
-                <flux:input wire:model="email" class="bg-[#D6F0FE] rounded-xl text-black!" class:input="text-black!" type="email" required />
+                <flux:label class="text-black!">NIM/NIP/NIDN</flux:label>
+                <flux:input wire:model="email" class="border-2 border-magnet-def-grey-400! rounded-xl text-black!"
+                    class:input="text-black!" type="email" placeholder="Masukkan NIM/NIP/NIDN anda" required />
                 <flux:error name="username" />
+                <p class="text-xs text-magnet-def-grey-500">
+                    Masukkan NIM, NIP, atau NIDN sesuai dengan jenis pengguna anda
+                    </p>
             </flux:field>
-            <flux:field class="pt-3">
-                <flux:label class="text-white!">Password</flux:label>
-                <flux:input wire:model="password" class="bg-[#D6F0FE] rounded-xl" class:input="text-black!" type="password" required />
+            <flux:field class="pt-4">
+                <flux:label class="text-black!">Password</flux:label>
+                <flux:input wire:model="password" class="border-2 border-magnet-def-grey-400 rounded-xl"
+                    class:input="text-black!" type="password" placeholder="Masukkan password anda" required />
                 <flux:error name="password" />
             </flux:field>
-
-            <div class="flex justify-between py-8">
-                <flux:field variant="inline">
-                    <flux:checkbox wire:model="terms" />
-    
-                    <flux:label>Ingat Saya</flux:label>
-    
-                    <flux:error name="terms" />
-                </flux:field>
-
-                <flux:link class="text-sm" href="#">Lupa Password</flux:link>
-            </div>
-
-            <flux:button  type="submit" class="w-full bg-[#276DA9]! mb-4">Login</flux:button>
+            <flux:link class="text-sm text-end my-3 text-magnet-sky-teal" href="#">Lupa Password?</flux:link>
+            <flux:button type="submit" class="w-full bg-magnet-sky-teal! mb-4 border-0 text-white!">Masuk</flux:button>
 
         </form>
         @if (Route::has('register'))
-            <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
-                {{ __('Tidak punya akun?') }}
-                <flux:link :href="route('register')" wire:navigate>{{ __('Daftar') }}</flux:link>
+            <div class="space-x-1 rtl:space-x-reverse text-center text-sm ">
+                <span class="text-black">{{ __('Belum punya akun ?') }}</span>
+                <flux:link class="text-magnet-sky-teal hover:underline" :href="route('register')" wire:navigate>{{ __('Daftar di sini sekarang') }}</flux:link>
             </div>
         @endif
     </div>
