@@ -1,9 +1,4 @@
 <x-layouts.mahasiswa.mahasiswa>
-    <flux:breadcrumbs class="mb-5">
-        <flux:breadcrumbs.item href="{{ route('mahasiswa.dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('mahasiswa.pengajuan-magang') }}" class="text-black">Pengajuan Magang
-        </flux:breadcrumbs.item>
-    </flux:breadcrumbs>
 
     <div class="card bg-white shadow-md">
         <div class="card-body">

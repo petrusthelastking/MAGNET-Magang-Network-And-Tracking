@@ -1,14 +1,10 @@
 <x-layouts.mahasiswa.mahasiswa>
-    <flux:breadcrumbs class="mb-5">
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}" class="text-black">Dashboard</flux:breadcrumbs.item>
-    </flux:breadcrumbs>
 
     <!-- Wrapper dengan jarak 9px antar card -->
     <div class="flex flex-col gap-[30px]">
         <!-- Mid content card -->
         <h2
-            class="text-[18px] font-extrabold leading-6 text-black w-[570.126px] h-[27px] flex-shrink-0 font-['Inter'] mt-6">
+            class="text-[18px] font-extrabold leading-6 text-black w-[570.126px] flex-shrink-0 font-['Inter']">
             Pemberitahuan Terbaru
         </h2>
         <div
