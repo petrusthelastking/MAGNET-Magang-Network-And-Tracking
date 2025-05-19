@@ -11,8 +11,7 @@ $changeStatus = fn($newStatus) => $this->status = $newStatus;
     <!-- Breadcrumb -->
     <flux:breadcrumbs class="mb-5">
         <flux:breadcrumbs.item href="{{ route('mahasiswa.dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('mahasiswa.pembaruan-status') }}" class="text-black">Pembaruan status
-            magang</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item href="{{ route('mahasiswa.pembaruan-status') }}" class="text-black">Pembaruan status magang</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
     <!-- Konten -->

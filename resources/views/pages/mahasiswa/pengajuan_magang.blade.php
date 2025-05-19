@@ -9,7 +9,7 @@
         <div class="card-body">
             <flux:input value="Yanto" type="text" label="Nama Lengkap" />
             <flux:input readonly value="Teknologi Informasi" type="text" label="Jurusan" />
-            <flux:input value="D4 Teknik Informatika" type="text" label="Program Studi" />
+            <flux:input readonly value="D4 Teknik Informatika" type="text" label="Program Studi" />
             <flux:input type="file" wire:model="attachments" label="Transkrip Nilai" />
             <flux:input type="file" wire:model="attachments" label="CV" />
             <flux:input type="file" wire:model="attachments" label="Portofolio" />
