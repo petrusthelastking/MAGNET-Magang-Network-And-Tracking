@@ -1,10 +1,4 @@
 <x-layouts.mahasiswa.mahasiswa>
-    <flux:breadcrumbs class="mb-5">
-        <flux:breadcrumbs.item href="{{ route('mahasiswa.dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('mahasiswa.log-mahasiswa') }}" class="text-black">Log Mahasiswa
-        </flux:breadcrumbs.item>
-    </flux:breadcrumbs>
-
     <div class="w-full overflow-x-hidden px-4">
         <div
             class="flex flex-col w-full max-w-4xl mx-auto p-[30px] gap-[30px] rounded-[15px] bg-white shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.10),0px_2px_4px_-1px_rgba(0,0,0,0.06)]">

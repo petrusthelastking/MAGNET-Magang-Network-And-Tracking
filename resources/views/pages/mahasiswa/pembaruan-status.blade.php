@@ -8,15 +8,8 @@ $changeStatus = fn($newStatus) => $this->status = $newStatus;
 ?>
 
 <div>
-    <!-- Breadcrumb -->
-    <flux:breadcrumbs class="mb-5">
-        <flux:breadcrumbs.item href="{{ route('mahasiswa.dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('mahasiswa.pembaruan-status') }}" class="text-black">Pembaruan status
-            magang</flux:breadcrumbs.item>
-    </flux:breadcrumbs>
-
     <!-- Konten -->
-    <div class="bg-[#DFF6F9] min-h-screen p-6">
+    <div class="bg-[#DFF6F9] min-h-screen">
         <!-- Judul -->
         <h2 class="text-lg font-semibold text-black mb-1">Pembaruan status magang</h2>
         <p class="text-black mb-6">Anda perlu memperbarui status magang anda secara manual jika telah diterima atau
