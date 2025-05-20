@@ -46,56 +46,62 @@
    
 ---
 # Our Team
+
 <table>
-    <tr>
-        <td width="110px" align="center" style="text-align: left;">
-            <a href="https://github.com/saalsabl">
-                <img src="https://avatars.githubusercontent.com/u/144090093?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/><br />
-                <sub>
-                    <b>Aaisyah Nursalsabil Ni Patriarti</b>
-                </sub>
-            </a>
-        </td>
-        <td width="110px" align="center" style="text-align: left;">
-            <a href="https://github.com/AstorBoy11">
-                <img src="https://avatars.githubusercontent.com/u/144084394?v=4?s=100" width="100px" alt="Aril Ibbet Ardana Putra"/><br />
-                <sub>
-                    <b>Aril Ibbet Ardana Putra</b>
-                </sub>
-            </a>
-        </td>
-        <td width="110px" align="center" style="text-align: left;">
-            <a href="https://github.com/FarrelAD">
-                <img src="https://avatars.githubusercontent.com/u/140877757?v=4?s=100" width="100px" alt="Farrel Augusta Dinata"/><br />
-                <sub>
-                    <b>Farrel Augusta Dinata</b>
-                </sub>
-            </a>
-        </td>
-        <td width="110px" align="center" style="text-align: left;">
-            <a href="https://github.com/Dimas0824">
-                <img src="https://avatars.githubusercontent.com/u/143877889?v=4?s=100" width="100px" alt="Muhammad Irsyad Dimas Abdillah"/><br />
-                <sub>
-                    <b>Muhammad Irsyad Dimas Abdillah</b>
-                </sub>
-            </a>
-        </td>
-        <td width="110px" align="center" style="text-align: left;">
-            <a href="https://github.com/vanstevanzaky">
-                <img src="https://avatars.githubusercontent.com/u/143470195?v=4?s=100" width="100px" alt="Stevan Zaky Setyanto"/><br />
-                <sub>
-                    <b>Stevan Zaky Setyanto</b>
-                </sub>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td>UI/UX designer & Frontend developer</td>
-        <td>Frontend developer</td>
-        <td>Project Manager, UI/UX designer, & Backend developer</td>
-        <td>Backend developer</td>
-        <td>Frontend developer</td>
-    </tr>
+    <thead>
+        <tr>
+            <td>GitHub Profile</td>
+            <td>Name</td>
+            <td>Role</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <a href="https://github.com/FarrelAD">
+                    <img src="https://avatars.githubusercontent.com/u/140877757?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
+                </a>
+            </td>
+            <td>Farrel Augusta Dinata</td>
+            <td>Project Manager, UI/UX Designer, Backend Developer</td>
+        </tr>
+        <tr>
+            <td>
+                <a href="https://github.com/saalsabl">
+                    <img src="https://avatars.githubusercontent.com/u/144090093?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
+                </a>
+            </td>
+            <td>Aaisyah Nursalsabil Ni Patriarti</td>
+            <td>UI/UX Designer, Frontend Developer</td>
+        </tr>
+        <tr>
+            <td>
+                <a href="https://github.com/AstorBoy11">
+                    <img src="https://avatars.githubusercontent.com/u/144084394?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
+                </a>
+            </td>
+            <td>Aril Ibbet Ardana Putra</td>
+            <td>Frontend Developer</td>
+        </tr>
+        <tr>
+            <td>
+                <a href="https://github.com/Dimas0824">
+                    <img src="https://avatars.githubusercontent.com/u/143877889?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
+                </a>
+            </td>
+            <td>Muhammad Irsyad Dimas Abdillah</td>
+            <td>Database Designer, Backend Developer</td>
+        </tr>
+        <tr>
+            <td>
+                <a href="https://github.com/vanstevanzaky">
+                    <img src="https://avatars.githubusercontent.com/u/143470195?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
+                </a>
+            </td>
+            <td>Stevan Zaky Setyanto</td>
+            <td>Frontend Developer</td>
+        </tr>
+    </tbody>
 </table>
 
 ---
