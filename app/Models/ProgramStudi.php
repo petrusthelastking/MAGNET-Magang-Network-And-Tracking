@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProgramStudi extends Model
 {
     use HasFactory;
+    protected $table = 'program_studi'; // ganti dengan nama tabel sebenarnya
 
     protected $fillable = ['nama_program', 'jenjang'];
 
