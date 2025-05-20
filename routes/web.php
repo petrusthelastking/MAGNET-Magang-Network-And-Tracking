@@ -40,3 +40,4 @@ Route::prefix('mahasiswa')
 require __DIR__ . '/auth.php';
 
 Route::view('dosen/dashboard', 'pages.dosen.dashboard')->name('dosen.dashboard');
+Route::view('dosen/mahasiswa-bimbingan', 'pages.dosen.mahasiswa-bimbingan')->name('dosen.mahasiswa-bimbingan');
