@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->foreignId('lowongan_id')->constrained('lowongan_magang');
             $table->foreignId('dosen_id')->constrained('dosen_profiles');
             $table->string('cv')->nullable();
+            $table->string('transkrip_nilai')->nullable();
+            $table->string('portofolio')->nullable();
             $table->timestamps();
         });
     }
