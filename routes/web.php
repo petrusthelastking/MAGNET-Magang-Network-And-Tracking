@@ -33,7 +33,7 @@ Route::prefix('mahasiswa')
     Route::view('pengajuan-magang', 'pages.mahasiswa.pengajuan-magang')->name('pengajuan-magang');
     Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
     Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
-    Route::view('setting-profile', 'pages.mahasiswa.setting_profile')->name('setting-profile');
+    Route::view('setting-profile', 'pages.mahasiswa.setting-profile')->name('setting-profile');
     Route::view('formulir-pengajuan', 'pages.mahasiswa.form-pengajuan-magang')->name('form-pengajuan-magang');
 });
 
