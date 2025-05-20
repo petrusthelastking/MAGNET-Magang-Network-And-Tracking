@@ -115,5 +115,5 @@
         </div>
     </section>
 
-    <x-footer></x-footer>
+    <x-guest.footer />
 </x-layouts.guest>
