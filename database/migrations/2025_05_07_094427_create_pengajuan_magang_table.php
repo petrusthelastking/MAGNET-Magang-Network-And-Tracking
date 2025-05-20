@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('log_aktivitas_magang', function (Blueprint $table) {
+        Schema::create('pengajuan_magang', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa_profiles');
             $table->foreignId('lowongan_id')->constrained('lowongan_magang');
@@ -25,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('log_aktivitas_magang');
+        Schema::dropIfExists('pengajuan_magang');
     }
 };

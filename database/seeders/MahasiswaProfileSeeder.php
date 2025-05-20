@@ -80,7 +80,7 @@ class MahasiswaProfileSeeder extends Seeder
             [
                 'user_id' => 15, // Gilang Pratama
                 'nim' => '210403001',
-                'program_studi_id' => 4,
+                'program_studi_id' => 1,
                 'semester' => 6,
                 'alamat' => 'Jl. Mayjen Panjaitan No. 25, Malang',
                 'status_magang' => 'Selesai magang',
@@ -91,7 +91,7 @@ class MahasiswaProfileSeeder extends Seeder
             [
                 'user_id' => 16, // Hana Permata
                 'nim' => '210403002',
-                'program_studi_id' => 4,
+                'program_studi_id' => 2,
                 'semester' => 4,
                 'alamat' => 'Jl. Diponegoro No. 30, Malang',
                 'status_magang' => 'Tidak magang',
@@ -102,7 +102,7 @@ class MahasiswaProfileSeeder extends Seeder
             [
                 'user_id' => 17, // Indra Saputra
                 'nim' => '210503001',
-                'program_studi_id' => 5,
+                'program_studi_id' => 3,
                 'semester' => 6,
                 'alamat' => 'Jl. Tugu No. 7, Malang',
                 'status_magang' => 'Sedang magang',
@@ -113,7 +113,7 @@ class MahasiswaProfileSeeder extends Seeder
             [
                 'user_id' => 18, // Jihan Aulia
                 'nim' => '210503002',
-                'program_studi_id' => 5,
+                'program_studi_id' => 1,
                 'semester' => 4,
                 'alamat' => 'Jl. Sunandar Priyo Sudarmo No. 14, Malang',
                 'status_magang' => 'Tidak magang',

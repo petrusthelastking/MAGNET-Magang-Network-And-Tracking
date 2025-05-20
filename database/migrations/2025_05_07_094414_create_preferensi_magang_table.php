@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('preferensi_keahlian', function (Blueprint $table) {
+        Schema::create('preferensi_magang', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa_profiles');
             $table->enum('keahlian', ['Frontend', 'Backend', 'Software', 'DevOps', 'Data Scientist', 'Data Engineer', 'UI/UX Designer', 'Cyber Security', 'Mobile']);
