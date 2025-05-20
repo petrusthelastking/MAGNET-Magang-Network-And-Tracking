@@ -5,7 +5,6 @@ use Livewire\Volt\Volt;
 use App\Http\Controllers\MahasiswaController;
 
 
-
 Route::view('/', 'pages.landing-page')->name('landing-page');
 
 Route::middleware(['auth'])

@@ -48,7 +48,7 @@ class MahasiswaController extends Controller
             ->with('programStudi')
             ->first();
 
-        return view('mahasiswa.profile', compact('user', 'mahasiswa'));
+        return view('pages.mahasiswa.setting-profile', compact('user', 'mahasiswa'));
     }
 
     /**

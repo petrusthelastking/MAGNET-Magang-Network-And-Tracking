@@ -1,6 +1,6 @@
 <x-layouts.mahasiswa.mahasiswa>
     <div class="gap-3 flex flex-col">
-        <div class="card bg-white shadow-md">       
+        <div class="card bg-white shadow-md">
             <div class="card-body p-5">
                 <img src="{{ $mahasiswa->foto_path ? asset('storage/' . $mahasiswa->foto_path) : 'https://unavatar.io/x/' . $user->name }}" class="w-24 h-24 rounded-full" alt="Avatar" />
                 <div class="grid grid-cols-2 gap-3 mt-4">
