@@ -44,8 +44,9 @@ class MahasiswaController extends Controller
     public function profile()
     {
         $user = auth()->user();
-        $mahasiswa = MahasiswaProfiles::where('user_id', $user->id)
-            ->with('programStudi')
+
+        $mahasiswa = MahasiswaProfiles::with('programStudi')
+            ->where('user_id', $user->id)
             ->first();
 
         return view('pages.mahasiswa.setting-profile', compact('user', 'mahasiswa'));
