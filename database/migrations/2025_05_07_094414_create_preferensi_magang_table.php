@@ -44,6 +44,24 @@ return new class extends Migration {
                 'Medan',
                 'Remote'
             ]);
+            $table->enum('bidang_industri', [
+                'Teknologi Informasi dan Komunikasi',
+                'E-Commerce',
+                'Pendidikan dan Pelatihan IT',
+                'Konsultan IT',
+                'Fintech',
+                'Pemerintahan',
+                'Startup Teknologi',
+                'Telekomunikasi',
+                'Manufaktur berbasis Teknologi',
+                'Perbankan dan Keuangan Digital',
+                'Media dan Kreatif Digital',
+                'Game dan Hiburan Digital',
+                'Kesehatan Berbasis Teknologi (Healthtech)',
+                'Transportasi dan Logistik Digital',
+                'Pertahanan dan Keamanan Siber',
+            ]);
+            $table->integer('upah_minimum');
             $table->timestamps();
         });
     }

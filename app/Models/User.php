@@ -11,11 +11,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -23,43 +18,21 @@ class User extends Authenticatable
         'role',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
-    /**
-     * Check if user has the specified role.
-     *
-     * @param string $role
-     * @return bool
-     */
     public function hasRole($role)
     {
         return $this->role === $role;
     }
 
-    /**
-     * Check if user has any of the specified roles.
-     *
-     * @param array|string $roles
-     * @return bool
-     */
     public function hasAnyRole($roles)
     {
         if (is_array($roles)) {
@@ -69,33 +42,42 @@ class User extends Authenticatable
         return $this->role === $roles;
     }
 
-    /**
-     * Check if user is an administrator.
-     *
-     * @return bool
-     */
     public function isAdmin()
     {
         return $this->role === 'admin';
     }
 
-    /**
-     * Check if user is a mahasiswa.
-     *
-     * @return bool
-     */
     public function isMahasiswa()
     {
         return $this->role === 'mahasiswa';
     }
 
-    /**
-     * Check if user is a dosen.
-     *
-     * @return bool
-     */
     public function isDosen()
     {
         return $this->role === 'dosen';
+    }
+
+    /**
+     * Relasi ke profil mahasiswa.
+     */
+    public function mahasiswaProfile()
+    {
+        return $this->hasOne(MahasiswaProfiles::class, 'user_id');
+    }
+
+    /**
+     * Relasi ke profil dosen.
+     */
+    public function dosenProfile()
+    {
+        return $this->hasOne(DosenProfiles::class, 'user_id');
+    }
+
+    /**
+     * Relasi ke profil admin.
+     */
+    public function adminProfile()
+    {
+        return $this->hasOne(AdminProfiles::class, 'user_id');
     }
 }
