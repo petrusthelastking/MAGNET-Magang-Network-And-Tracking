@@ -9,6 +9,8 @@ class PreferensiMagang extends Model
 {
     use HasFactory;
 
+    protected $table = 'preferensi_magang';
+
     protected $fillable = ['mahasiswa_id', 'keahlian', 'pekerjaan_impian', 'lokasi_magang', 'bidang_inustri'];
 
     public function mahasiswa()

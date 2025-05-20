@@ -9,6 +9,8 @@ class logAktivitasMagang extends Model
 {
     use HasFactory;
 
+    protected $table = 'log_aktivitas_magang';
+
     protected $fillable = ['dosen_id', 'pengajuan_id', 'tanggal', 'kegiatan', 'catatan_dosen'];
 
     public function pengajuan()
