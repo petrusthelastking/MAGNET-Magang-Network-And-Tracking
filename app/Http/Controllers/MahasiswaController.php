@@ -49,7 +49,9 @@ class MahasiswaController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        return view('pages.mahasiswa.setting-profile', compact('user', 'mahasiswa'));
+        $preferensi = PreferensiMagang::where('mahasiswa_id', $mahasiswa->id)->first();
+
+        return view('pages.mahasiswa.setting-profile', compact('user', 'mahasiswa', 'preferensi'));
     }
 
     /**
@@ -246,20 +248,6 @@ class MahasiswaController extends Controller
 
         return redirect()->route('mahasiswa.preference')
             ->with('success', 'Preferensi magang berhasil diperbarui.');
-    }
-
-    /**
-     * Display preferensi magang.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function showPreferensiMagang()
-    {
-        $user = auth()->user();
-        $mahasiswa = MahasiswaProfiles::where('user_id', $user->id)->first();
-        $preferensi = PreferensiMagang::where('mahasiswa_id', $mahasiswa->id)->first();
-
-        return view('mahasiswa.preferensi-magang', compact('user', 'mahasiswa', 'preferensi'));
     }
 
     /**
