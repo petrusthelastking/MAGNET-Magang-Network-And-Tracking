@@ -4,12 +4,15 @@
             <div class="card-body p-5">
                 <flux:avatar circle src="https://unavatar.io/x/{{ $mahasiswa->name }}" class="w-24 h-24" />
                 <div class="grid grid-cols-2 gap-3 ">
-                    <flux:input readonly value="{{ $mahasiswa->name }}" type="text" label="Nama Lengkap" />
+                    <flux:input readonly value="{{ $user->name }}" type="text" label="Nama Lengkap" />
                     <flux:input readonly value="{{ $mahasiswa->nim }}" type="text" label="NIM" />
-                    <flux:input readonly value="{{ $mahasiswa->jurusan }}" type="text" label="Jurusan" />
-                    <flux:input readonly value="{{ $mahasiswa->prodi }}" type="text" label="Program Studi" />
-                    <flux:input readonly value="{{ $mahasiswa->jenis_kelamin }}" type="text" label="Jenis Kelamin" />
-                    <flux:input readonly value="{{ $mahasiswa->alamat }}" type="text" label="Alamat" />
+                    <flux:input readonly value="Teknologi Informasi" type="text" label="Jurusan" />
+                    <flux:input readonly value="{{ $mahasiswa->programStudi->nama_program ?? '-' }}" type="text"
+                        label="Program Studi" />
+                    <flux:input readonly value="{{ $mahasiswa->jenis_kelamin ?? '-' }}" type="text"
+                        label="Jenis Kelamin" />
+                    <flux:input readonly value="{{ $mahasiswa->alamat ?? '-' }}" type="text" label="Alamat" />
+
                 </div>
             </div>
 

@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->foreignId('program_studi_id')->constrained('program_studi');
             $table->integer('semester');
             $table->text('alamat')->nullable();
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
             $table->enum('status_magang', ['Tidak magang', 'Sedang magang', 'Selesai magang']);
             $table->string('foto_path')->nullable();
             $table->timestamps();
