@@ -1,21 +1,35 @@
 <x-layouts.guest>
-    <x-guest.navbar />
 
-    <section class="h-screen mt-12 px-16 py-14 flex justify-around items-center text-black font-black">
-        <div>
-            <p class="text-blue-900">Selamat datang di</p>
-            <h1 class="text-8xl">MAGNET</h1>
-            <p>Magang Network and Tracking</p>
-            <p>Oleh Jurusan Teknologi Informasi Politeknik Negeri Malang</p>
 
-            <div class="mt-10">
-                <flux:button class="bg-[#276DA9]! text-white!" href="{{ route('login') }}">Masuk ke sistem</flux:button>
-                <flux:button class="bg-[#276DA9]! text-white!" href="{{ route('register') }}">Daftar</flux:button>
+    <section class="h-screen px-6 pt-6 flex justify-around items-start">
+        <div class="container mx-auto">
+            <div class="bg-magnet-deep-ocean-blue text-white rounded-2xl pb-72">
+                <x-guest.navbar-new />
+                <div class="text-center pt-8">
+                    <h1 class="text-3xl font-medium mb-6 italic">Langkah Awal Kariermu<br>Dimulai Di Sini!</h1>
+
+                    <p class="max-w-md mx-auto text-center text-sm text-white mb-6">
+                        Magang nggak harus ribet. Cukup sesuaikan minatmu, dan kami bantu carikan yang paling cocok buat
+                        kamu!
+                    </p>
+                    <flux:button class="text-black! bg-white! rounded-full! hover:bg-gray-200 border-0" href="#">Cari
+                        tempat magang impianmu Sekarang</flux:button>
+                </div>
             </div>
-        </div>
 
-        <div>
-            <img src="{{ asset('assets/img/magnet-logo.png') }}" alt="Magnet logo" class="w-96">
+            <div class="bg-white rounded-lg p-8 shadow-lg -mt-64 relative z-10 mx-20 md:mx-72">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="rounded-lg h-72 flex justify-center items-center overflow-hidden">
+                        <img src="{{asset('Mobdev.png')}}" alt="Mobile Development" class="object-cover w-full h-full">
+                    </div>
+                    <div class="rounded-lg h-72 flex justify-center items-center overflow-hidden">
+                        <img src="{{asset('UI UX.png')}}" alt="UI UX" class="object-cover w-full h-full">
+                    </div>
+                    <div class="rounded-lg h-72 flex justify-center items-center overflow-hidden">
+                        <img src="{{asset('sectr.png')}}" alt="Security Engineer" class="object-cover w-full h-full">
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
