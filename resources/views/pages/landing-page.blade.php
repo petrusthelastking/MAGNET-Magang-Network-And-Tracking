@@ -12,7 +12,7 @@
                         Magang nggak harus ribet. Cukup sesuaikan minatmu, dan kami bantu carikan yang paling cocok buat
                         kamu!
                     </p>
-                    <flux:button class="text-black! bg-white! rounded-full! hover:bg-gray-200 border-0" href="#">Cari
+                    <flux:button class="text-black! bg-white! rounded-full! hover:bg-gray-200 border-0" href="{{route('login')}}">Cari
                         tempat magang impianmu Sekarang</flux:button>
                 </div>
             </div>
