@@ -35,40 +35,86 @@ new #[Layout('components.layouts.auth')] class extends Component {
     }
 }; ?>
 
-<div class="flex flex-col gap-6">
-    <div class="bg-[#041D56] flex flex-col rounded-xl p-7">
-        <h1 class="text-white font-black text-center text-3xl pt-2">DAFTAR</h1>
+<div class="flex flex-col gap-6 pt-11">
+    <div class="bg-white shadow-lg flex flex-col rounded-md p-7">
+        <h1 class="text-black font-black text-center text-3xl">DAFTAR</h1>
 
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form wire:submit="register" class="flex flex-col gap-6 pt-10">
-            <!-- Name -->
-            <flux:input wire:model="name" :label="__('Nama')" type="text" required autofocus autocomplete="name"
-                :placeholder="__('Nama Lengkap')" class="bg-[#D6F0FE] rounded-xl" class:input="text-black!"/>
+        <form wire:submit="register" class="flex flex-col gap-4 pt-8">
+            <!-- NIM -->
+            <flux:field>
+                <flux:label class="text-black!">NIM</flux:label>
+                <flux:input wire:model="nim" type="text" required autofocus autocomplete="nim"
+                    placeholder="Masukkan NIM anda" class:input="text-black! rounded-xl border-magnet-def-grey-400!" />
+                <flux:error name="nim" />
+            </flux:field>
 
-            <!-- Email Address -->
-            <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email"
-                placeholder="email@example.com" class="bg-[#D6F0FE] rounded-xl" class:input="text-black!" />
+            <!-- Nama -->
+            <flux:field>
+                <flux:label class="text-black!">Nama Lengkap</flux:label>
+                <flux:input wire:model="name" type="text" required autofocus autocomplete="name"
+                    placeholder="Nama Lengkap" class:input="text-black! rounded-xl border-magnet-def-grey-400!" />
+                <flux:error name="name" />
+            </flux:field>
+            <flux:field>
+                <flux:label class="text-black!">Jurusan</flux:label>
+                <flux:input wire:model="jurusan" type="text" readonly value="Teknologi Informasi"
+                    class:input="text-black! rounded-xl border-magnet-def-grey-400!" />
+                <flux:error name="jurusan" />
+            </flux:field>
+
+            <flux:field>
+                <flux:label class="text-black!">Program Studi</flux:label>
+                <flux:input.group class="rounded-xl border-magnet-def-grey-400!">
+                    <flux:select wire:model="prodi" class:select="text-black!">
+                        <flux:select.option value="Teknik Informatika">D4 Teknik Informatika</flux:select.option>
+                        <flux:select.option value="Sistem Informasi">D4 Sistem Informasi Bisnis</flux:select.option>
+                        <flux:select.option value="Pengembangan Perangkat Lunak Situs">D2 Pengembangan Perangkat Lunak
+                            Situs</flux:select.option>
+                    </flux:select>
+                </flux:input.group>
+                <flux:error name="prodi" />
+            </flux:field>
+
+
+            <flux:field>
+                <flux:label class="text-black!">Jenis Kelamin</flux:label>
+                <flux:input.group>
+                    <flux:select wire:model="jenis_kelamin"
+                        class:input="text-black! rounded-xl border-magnet-def-grey-400!">
+                        <flux:select.option value="Laki-laki">Laki-laki</flux:select.option>
+                        <flux:select.option value="Perempuan">Perempuan</flux:select.option>
+                    </flux:select>
+                </flux:input.group>
+                <flux:error name="jenis_kelamin" />
+            </flux:field>
 
             <!-- Password -->
-            <flux:input wire:model="password" :label="__('Password')" type="password" required
-                autocomplete="new-password" :placeholder="__('Password')" class="bg-[#D6F0FE] rounded-xl" class:input="text-black!" viewable />
+            <flux:field>
+                <flux:label class="text-black!">Password</flux:label>
+                <flux:input wire:model="password" type="password" required autocomplete="new-password"
+                    placeholder="Password" class:input="text-black! rounded-xl border-magnet-def-grey-400!" viewable />
+                <flux:description class="text-xs text-magnet-def-grey-500! mt-0!">Kata sandi minimal 8 karakter,
+                    kombinasikan huruf besar, kecil, angka, dan simbol demi keamanan terbaik.</flux:description>
+                <flux:error name="password" />
+            </flux:field>
 
-            <!-- Confirm Password -->
-            <flux:input wire:model="password_confirmation" :label="__('Konfirmasi password')" type="password" required
-                autocomplete="new-password" :placeholder="__('Konfirmasi password')" class="bg-[#D6F0FE] rounded-xl" class:input="text-black!" viewable />
-
-            <div class="flex items-center justify-end my-3">
-                <flux:button type="submit" variant="primary" class="w-full bg-[#276DA9]! text-white">
-                    {{ __('Buat Akun') }}
+            <!-- Konfirmasi Password -->
+            <flux:field>
+                <flux:label class="text-black!">Konfirmasi Password</flux:label>
+                <flux:input wire:model="password_confirmation" type="password" required autocomplete="new-password"
+                    placeholder="Konfirmasi password" class:input="text-black! rounded-xl border-magnet-def-grey-400!"
+                    viewable />
+                <flux:error name="password_confirmation" />
+            </flux:field>
+            <div class="flex items-center justify-end my-1">
+                <flux:button type="submit" variant="primary" class="w-full bg-magnet-sky-teal text-white">
+                    {{ __('Daftar') }}
                 </flux:button>
             </div>
         </form>
 
-        <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
-            {{ __('Sudah mempunyai akun?') }}
-            <flux:link :href="route('login')" wire:navigate>{{ __('Masuk') }}</flux:link>
-        </div>
     </div>
 
     <!-- Session Status -->
