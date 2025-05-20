@@ -61,6 +61,7 @@ return new class extends Migration {
                 'Transportasi dan Logistik Digital',
                 'Pertahanan dan Keamanan Siber',
             ]);
+            $table->integer('upah_minimum');
             $table->timestamps();
         });
     }
