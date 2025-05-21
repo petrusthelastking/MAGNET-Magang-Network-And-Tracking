@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('pengajuan_magang', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa_profiles');
-            $table->foreignId('lowongan_id')->constrained('lowongan_magang');
-            $table->foreignId('dosen_id')->constrained('dosen_profiles');
+            $table->foreignId('lowongan_id')->nullable()->constrained('lowongan_magang');
+            $table->foreignId('dosen_id')->nullable()->constrained('dosen_profiles');
             $table->string('cv')->nullable();
             $table->string('transkrip_nilai')->nullable();
             $table->string('portofolio')->nullable();
