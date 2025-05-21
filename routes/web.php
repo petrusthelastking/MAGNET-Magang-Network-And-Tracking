@@ -42,3 +42,4 @@ require __DIR__ . '/auth.php';
 
 Route::view('dosen/dashboard', 'pages.dosen.dashboard')->name('dosen.dashboard');
 Route::view('dosen/mahasiswa-bimbingan', 'pages.dosen.mahasiswa-bimbingan')->name('dosen.mahasiswa-bimbingan');
+Route::view('dosen/detail-mahasiswa-bimbingan', 'pages.dosen.detail-mahasiswa-bimbingan')->name('dosen.detail-mahasiswa-bimbingan');
