@@ -19,7 +19,7 @@ Route::middleware(['auth'])
         Route::view('detail-mahasiswa', 'pages.admin.kelola-data.detail-mahasiswa')->name('detail-mahasiswa');
         Volt::route('data-dosen', 'pages.admin.kelola-data.data-dosen')->name('data-dosen');
         Route::view('detail-dosen', 'pages.admin.kelola-data.detail-dosen')->name('detail-dosen');
-        Route::view('data-perusahaan', 'pages.admin.kelola-data.data-perusahaan')->name('data-perusahaan');
+        Volt::route('data-perusahaan', 'pages.admin.kelola-data.data-perusahaan')->name('data-perusahaan');
         Route::view('detail-perusahaan', 'pages.admin.kelola-data.detail-perusahaan')->name('detail-perusahaan');
 
         Route::view('data-lowongan', 'pages.admin.magang.data-lowongan')->name('data-lowongan');
