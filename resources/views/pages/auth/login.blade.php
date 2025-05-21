@@ -78,9 +78,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
         <h1 class="text-black font-black text-center text-xl">Masuk</h1>
         <form wire:submit="login" class="flex flex-col pt-9">
             <flux:field>
-                <flux:label class="text-black!">NIM/NIP/NIDN</flux:label>
+                <flux:label class="text-black!">Email</flux:label>
                 <flux:input wire:model="email" class="border-2 border-magnet-def-grey-400! rounded-xl text-black!"
-                    class:input="text-black!" type="email" placeholder="Masukkan NIM/NIP/NIDN anda" required />
+                    class:input="text-black!" type="email" placeholder="Masukkan email anda" required />
                 <flux:error name="username" />
                 <p class="text-xs text-magnet-def-grey-500">
                     Masukkan NIM, NIP, atau NIDN sesuai dengan jenis pengguna anda
