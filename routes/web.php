@@ -17,12 +17,12 @@ Route::middleware(['auth'])
         Route::view('dashboard', 'pages.admin.dashboard')->name('dashboard');
         Volt::route('data-mahasiswa', 'pages.admin.kelola-data.data-mahasiswa')->name('data-mahasiswa');
         Route::view('detail-mahasiswa', 'pages.admin.kelola-data.detail-mahasiswa')->name('detail-mahasiswa');
-        Route::view('data-dosen', 'pages.admin.kelola-data.data-dosen')->name('data-dosen');
+        Volt::route('data-dosen', 'pages.admin.kelola-data.data-dosen')->name('data-dosen');
         Route::view('detail-dosen', 'pages.admin.kelola-data.detail-dosen')->name('detail-dosen');
-        Route::view('data-perusahaan', 'pages.admin.kelola-data.data-perusahaan')->name('data-perusahaan');
+        Volt::route('data-perusahaan', 'pages.admin.kelola-data.data-perusahaan')->name('data-perusahaan');
         Route::view('detail-perusahaan', 'pages.admin.kelola-data.detail-perusahaan')->name('detail-perusahaan');
 
-        Route::view('data-lowongan', 'pages.admin.magang.data-lowongan')->name('data-lowongan');
+        Volt::route('data-lowongan', 'pages.admin.magang.data-lowongan')->name('data-lowongan');
         Route::view('detail-lowongan', 'pages.admin.magang.detail-lowongan')->name('detail-lowongan');
     });
 
