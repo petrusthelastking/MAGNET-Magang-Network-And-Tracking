@@ -6,11 +6,11 @@
     </a>
 
     <flux:navlist variant="outline">
-        <flux:navlist.item icon="home" href="{{ route('dashboard') }}" :current="request()->is('/dashboard')">
+        <flux:navlist.item icon="home" href="{{ route('dosen.dashboard') }}" :current="request()->is('/dashboard')">
             Dashboard
         </flux:navlist.item>
 
-    <flux:navlist.item icon="user-round">
+    <flux:navlist.item icon="user-round" href="{{ route('dosen.mahasiswa-bimbingan') }}">
             Mahasiswa Bimbingan
         </flux:navlist.item>
 
