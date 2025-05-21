@@ -74,7 +74,7 @@ mount(function () {
             </tbody>
         </table>
         <div class="flex justify-between w-full px-8 py-4">
-            <p class="text-black">Menampilkan 10 dari <input wire:model.live="totalRowsPerPage"></input> data</p>
+            <p class="text-black">Menampilkan 10 dari {{ $totalRowsPerPage }} data</p>
             <div class="flex">
                 <flux:button icon="chevron-left" variant="ghost" />
                 @for ($i = 0; $i < 5; $i++)
