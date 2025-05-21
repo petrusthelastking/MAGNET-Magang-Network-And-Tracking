@@ -1,4 +1,35 @@
-<x-layouts.admin.admin>
+<?php
+
+use function Livewire\Volt\{layout, state, mount};
+
+layout('components.layouts.admin.admin');
+
+state([
+    'totalRowsPerPage' => 10,
+    'data_pengajuan_magang' => []
+]);
+
+mount(function () {
+    // $this->data_pengajuan_magang = DB::table('pengajuan_magang')
+    //     ->join('mahasiswa_profiles', 'pengajuan_magang.mahasiswa_id', '=', 'mahasiswa_profiles.id')
+    //     ->join('users', 'mahasiswa_profiles.user_id', '=', 'users.id')
+    //     ->join('users', 'lowongan_magang.user_id', '=', 'users.id')
+    //     ->join('lowongan_magang', 'lowongan_magang.id', '=', 'pengajuan_magang.lowongan_id')
+    //     ->join('perusahaan', 'lowongan_magang.perusahaan_id', '=', 'perusahaan.id')
+    //     ->select(
+    //         'users.name',
+    //         'perusahaan.nama_perusahaan',
+    //         DB::raw("'Lamongan, Jawa timur' as lokasi"),
+    //         'lowongan_magang.status',
+    //         DB::raw("123 as jumlah_pendaftar"),
+    //         DB::raw("23 as jumlah_mahasiswa_magang"),
+    //     )
+    //     ->get();
+});
+
+?>
+
+<div class="flex flex-col gap-5">
     <flux:breadcrumbs class="mb-5">
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('data-lowongan') }}" class="text-black">Kelola data lowongan magang
@@ -23,8 +54,6 @@
 
     <div class="overflow-y-auto flex flex-col items-center mt-4 rounded-lg shadow bg-white">
         <table class="table-auto w-full ">
-    <div class="overflow-y-auto flex flex-col items-center mt-4 rounded-lg shadow bg-white">
-        <table class="table-auto w-full ">
             <thead class="bg-white text-black">
                 <tr class="border-b">
                     <th class="text-center px-6 py-3">No</th>
@@ -36,10 +65,11 @@
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
-                @for ($i = 0; $i < 10; $i++)
+                <p>{{ count($data_pengajuan_magang) }}</p>
+                @for ($i = 0; $i < count($data_pengajuan_magang) && $i < $totalRowsPerPage; $i++)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">Front End Developer</td>
+                        <td class="px-6 py-3">Nama Lowongan</td>
                         <td class="px-6 py-3">PT Maju Mundur</td>
                         <td class="px-6 py-3">Lowokwaru, Malang, Jawa Timur, Indonesia</td>
                         <td class="px-6 py-3">Aktif</td>
@@ -51,20 +81,20 @@
                 @endfor
             </tbody>
         </table>
-        <div class="flex items-center justify-between w-full p-3">
-            <div class="text-black mt-6">
-                <p>Menampilkan 10 dari 1250 data</p>
+        <div class="flex items-center justify-between w-full px-8 py-4">
+            <div class="text-black">
+                <p>Menampilkan 10 dari {{ $totalRowsPerPage }} data</p>
             </div>
-            <div class="flex mt-6">
+            <div class="flex">
                 <flux:button icon="chevron-left" variant="ghost" />
-                @for ($i = 0; $i < 5; $i++)
+                @for ($i = 0; $i < ceil(count($data_pengajuan_magang) / $totalRowsPerPage); $i++)
                     <flux:button variant="ghost">{{ $i + 1 }}</flux:button>
                 @endfor
                 <flux:button icon="chevron-right" variant="ghost" />
             </div>
-            <div class="flex gap-3 items-center text-black mt-6">
+            <div class="flex gap-3 items-center text-black">
                 <p>Baris per halaman</p>
-                <flux:select placeholder="10" class="w-20!">
+                <flux:select class="w-20!" wire:model.live="totalRowsPerPage">
                     <flux:select.option>10</flux:select.option>
                     <flux:select.option>25</flux:select.option>
                     <flux:select.option>50</flux:select.option>
@@ -73,6 +103,4 @@
             </div>
         </div>
     </div>
-    </div>
-
-</x-layouts.admin.admin>
+</div>

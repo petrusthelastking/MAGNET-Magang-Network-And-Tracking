@@ -22,7 +22,7 @@ Route::middleware(['auth'])
         Volt::route('data-perusahaan', 'pages.admin.kelola-data.data-perusahaan')->name('data-perusahaan');
         Route::view('detail-perusahaan', 'pages.admin.kelola-data.detail-perusahaan')->name('detail-perusahaan');
 
-        Route::view('data-lowongan', 'pages.admin.magang.data-lowongan')->name('data-lowongan');
+        Volt::route('data-lowongan', 'pages.admin.magang.data-lowongan')->name('data-lowongan');
         Route::view('detail-lowongan', 'pages.admin.magang.detail-lowongan')->name('detail-lowongan');
     });
 
