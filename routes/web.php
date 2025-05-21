@@ -40,7 +40,7 @@ Route::prefix('mahasiswa')
         Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
         Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
         Route::get('setting-profile', [MahasiswaController::class, 'profile'])->name('setting-profile');
-    });
+        Volt::route('search-perusahaan', 'pages.mahasiswa.search')->name('search-perusahaan');
 
 require __DIR__ . '/auth.php';
 
