@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\PengajuanMagangController;
 
 Route::view('/', 'pages.landing-page')->name('landing-page');
 
@@ -30,11 +31,15 @@ Route::prefix('mahasiswa')
     ->name('mahasiswa.')
     ->group(function () {
         Route::view('dashboard', 'pages.mahasiswa.dashboard')->name('dashboard');
-        Route::view('pengajuan-magang', 'pages.mahasiswa.pengajuan-magang')->name('pengajuan-magang');
+        // Pengajuan magang routes
+        Route::get('pengajuan-magang', [PengajuanMagangController::class, 'index'])->name('pengajuan-magang');
+        Route::get('formulir-pengajuan', [PengajuanMagangController::class, 'showForm'])->name('form-pengajuan-magang');
+        Route::post('formulir-pengajuan', [PengajuanMagangController::class, 'storePengajuan'])->name('store-pengajuan-magang');
+
+        // Other routes
         Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
         Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
         Route::get('setting-profile', [MahasiswaController::class, 'profile'])->name('setting-profile');
-        Route::view('formulir-pengajuan', 'pages.mahasiswa.form-pengajuan-magang')->name('form-pengajuan-magang');
     });
 
 require __DIR__ . '/auth.php';
