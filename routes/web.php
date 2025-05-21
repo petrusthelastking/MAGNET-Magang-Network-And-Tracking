@@ -36,6 +36,7 @@ Route::prefix('mahasiswa')
     Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
     Route::get('setting-profile', [MahasiswaController::class, 'settingProfile'])->name('setting-profile');
     Route::view('formulir-pengajuan', 'pages.mahasiswa.form-pengajuan-magang')->name('form-pengajuan-magang');
+    Volt::route('search-perusahaan', 'pages.mahasiswa.search')->name('search-perusahaan');
 });
 
 require __DIR__ . '/auth.php';
