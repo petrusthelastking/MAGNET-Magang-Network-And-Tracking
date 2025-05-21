@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\MahasiswaController;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::view('/', 'pages.landing-page')->name('landing-page');
 
