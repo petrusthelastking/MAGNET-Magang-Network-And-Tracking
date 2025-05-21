@@ -61,6 +61,28 @@ return new class extends Migration {
                 'Transportasi dan Logistik Digital',
                 'Pertahanan dan Keamanan Siber',
             ]);
+            $table->enum('kompetensi', [
+                'Web Development',
+                'Mobile Development',
+                'UI/UX Design',
+                'Data Analyst',
+                'Data Engineer',
+                'Machine Learning',
+                'Artificial Intelligence',
+                'Cyber Security',
+                'Cloud Computing',
+                'Network Engineering',
+                'IT Support',
+                'Software Testing / QA',
+                'Game Development',
+                'DevOps',
+                'Database Administrator',
+                'Embedded System',
+                'IT Project Management',
+                'ERP System',
+                'Blockchain Developer',
+                'AR/VR Developer'
+            ]);
             $table->integer('upah_minimum');
             $table->timestamps();
         });
