@@ -23,12 +23,16 @@
 
         <div class="card bg-white shadow-md">
             <div class="card-body grid grid-cols-2 gap-3">
-                <flux:input readonly value="{{ $mahasiswa->skill }}" type="text" label="Skill yang anda miliki" />
-                <flux:input readonly value="{{ $mahasiswa->bidang_industri }}" type="text" label="Bidang industri" />
-                <flux:input readonly value="{{ $mahasiswa->pekerjaan_impian }}" type="text"
+                <flux:input readonly value="{{ $preferensi->keahlian ?? '-' }}" type="text"
+                    label="Skill yang anda miliki" />
+                <flux:input readonly value="{{ $preferensi->bidang_industri ?? '-' }}" type="text"
+                    label="Bidang industri" />
+                <flux:input readonly value="{{ $preferensi->pekerjaan_impian ?? '-' }}" type="text"
                     label="Pekerjaan impian" />
-                <flux:input readonly value="{{ $mahasiswa->upah_minimum }}" type="text" label="Upah minimum" />
-                <flux:input readonly value="{{ $mahasiswa->lokasi_magang }}" type="text" label="Lokasi magang" />
+                <flux:input readonly value="{{ $preferensi->upah_minimum ?? '-' }}" type="text"
+                    label="Upah minimum" />
+                <flux:input readonly value="{{ $preferensi->lokasi_magang ?? '-' }}" type="text"
+                    label="Lokasi magang" />
             </div>
 
             <div class="card-actions flex justify-end p-5">
