@@ -251,27 +251,6 @@ class MahasiswaController extends Controller
     }
 
     /**
-     * Delete preferensi magang.
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function deletePreferensiMagang(): RedirectResponse
-    {
-        $user = auth()->user();
-        $mahasiswa = MahasiswaProfiles::where('user_id', $user->id)->first();
-        $preferensi = PreferensiMagang::where('mahasiswa_id', $mahasiswa->id)->first();
-
-        if ($preferensi) {
-            $preferensi->delete();
-            return redirect()->route('mahasiswa.preference')
-                ->with('success', 'Preferensi magang berhasil dihapus.');
-        }
-
-        return redirect()->route('mahasiswa.preference')
-            ->with('info', 'Tidak ada preferensi magang untuk dihapus.');
-    }
-
-    /**
      * Show setting profile page.
      *
      * @return \Illuminate\View\View
