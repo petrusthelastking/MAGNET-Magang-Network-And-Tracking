@@ -83,7 +83,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
                     class:input="text-black!" type="email" placeholder="Masukkan email anda" required />
                 <flux:error name="username" />
                 <p class="text-xs text-magnet-def-grey-500">
-                    Masukkan NIM, NIP, atau NIDN sesuai dengan jenis pengguna anda
+                    Masukkan email sesuai dengan jenis pengguna anda
                     </p>
             </flux:field>
             <flux:field class="pt-4">
