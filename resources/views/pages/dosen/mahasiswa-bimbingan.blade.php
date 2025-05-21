@@ -12,11 +12,13 @@
         </div>
         <div class="grid grid-cols-5 gap-4">
             @for ($i=0; $i<20; $i++)
-                <div class="bg-white card">
-                <img src="https://picsum.photos/200/300">
-                <p class="text-base leading-6 font-bold text-black">Ratih Saputri</p>
-                <flux:button icon="user-round" variant="ghost">Frontend Developer</flux:button>
-                <flux:button icon="building-2" variant="ghost">PT Cinta Abadi</flux:button>
+                <div class="bg-white card py-4">
+                    <div class="p-4">
+                        <img src="https://picsum.photos/200/300" class="rounded-full w-32 h-32 object-cover mx-auto" alt="Foto Profil" />
+                    </div>
+                <p class="text-base leading-6 font-bold text-black text-center">Ratih Saputri</p>
+                <flux:button icon="user-round" variant="ghost" class="text-gray-500!">Frontend Developer</flux:button>
+                <flux:button icon="building-2" variant="ghost" class="text-gray-500!">PT Cinta Abadi</flux:button>
             </div>
             @endfor
             
