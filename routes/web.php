@@ -41,7 +41,7 @@ Route::prefix('mahasiswa')
         Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
         Route::get('setting-profile', [MahasiswaController::class, 'profile'])->name('setting-profile');
         Volt::route('search-perusahaan', 'pages.mahasiswa.search')->name('search-perusahaan');
-
+    });
 require __DIR__ . '/auth.php';
 
 Route::view('dosen/dashboard', 'pages.dosen.dashboard')->name('dosen.dashboard');
