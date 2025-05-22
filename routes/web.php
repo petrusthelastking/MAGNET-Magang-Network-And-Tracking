@@ -35,8 +35,9 @@ Route::prefix('mahasiswa')
         Route::get('pengajuan-magang', [PengajuanMagangController::class, 'index'])->name('pengajuan-magang');
         Route::get('formulir-pengajuan', [PengajuanMagangController::class, 'showForm'])->name('form-pengajuan-magang');
         Route::post('formulir-pengajuan', [PengajuanMagangController::class, 'storePengajuan'])->name('store-pengajuan-magang');
-
+        
         // Other routes
+        Route::view('konsul-dospem', 'pages.mahasiswa.konsul-dospem')->name('konsul-dospem'); //page konsultasi dospem
         Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
         Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
         Route::get('setting-profile', [MahasiswaController::class, 'profile'])->name('setting-profile');
