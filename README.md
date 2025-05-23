@@ -5,6 +5,16 @@
 [![Recommendation System](https://img.shields.io/badge/Recommendation_System-00BFFF?style=flat)](https://github.com/topics/recommendation-system)
 [![Internship](https://img.shields.io/badge/Internship-F39C12?style=flat)](https://github.com/topics/internship)
 
+![MAGNET Landing page](docs/MAGNET-Landing%20page.png)
+
+**MAGNET** is a smart platform designed to help college students discover the most suitable internship opportunities based on their individual preferences. This platform serves as a bridge between students and their ideal internship placements.
+
+Users simply enter their preferences, and MAGNET works behind the scenes using **Decision Support System (DSS)** techniques to analyze the data and recommend the best-matched internships. The goal is to make the process as simple, efficient, and user-friendly as possible — so students can focus more on preparing for their careers, and less on finding opportunities.
+
+Whether you're a student looking for a relevant experience or an institution aiming to help your students thrive, MAGNET is built to support you every step of the way.
+
+---
+
 # How to clone the project 
 1. Clone the project using Git
 
