@@ -1,0 +1,23 @@
+@startuml memperbarui-data-diri-dan-preferensi-magang
+
+actor Mahasiswa
+
+boundary HalamanProfil #LightGreen
+control MahasiswaController #Pink
+entity DataMahasiswa #SkyBlue
+entity DataPreferensiMagang #SkyBlue
+
+HalamanProfil -> MahasiswaController : requestToUpdateProfile()
+MahasiswaController -> DataMahasiswa : getProfileData()
+DataMahasiswa --> MahasiswaController : returnProfileData()
+MahasiswaController -> DataPreferensiMagang : getInternshipPreferences()
+DataPreferensiMagang --> MahasiswaController : returnInternshipPreferences()
+MahasiswaController -> HalamanProfil : showProfileData()
+HalamanProfil -> MahasiswaController : requestToUpdateProfileData()
+MahasiswaController -> DataMahasiswa : updateProfileData()
+DataMahasiswa --> MahasiswaController : returnSuccess()
+MahasiswaController -> DataPreferensiMagang : updateInternshipPreferences()
+DataPreferensiMagang --> MahasiswaController : returnSuccess()
+MahasiswaController -> HalamanProfil : showSuccessMessage()
+
+@enduml

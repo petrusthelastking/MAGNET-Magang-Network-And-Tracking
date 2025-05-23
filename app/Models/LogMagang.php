@@ -5,20 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UlasanMagang extends Model
+class LogMagang extends Model
 {
     use HasFactory;
 
-    protected $table = 'ulasan_magang';
+    protected $table = 'log_magang';
 
     protected $fillable = [
         'kontak_magang_id',
-        'rating',
-        'komentar',
+        'kegiatan',
+        'tanggal',
+        'jam_masuk',
+        'jam_keluar',
     ];
 
     protected $casts = [
-        'rating' => 'integer',
+        'tanggal' => 'date',
+        'jam_masuk' => 'datetime:H:i:s',
+        'jam_keluar' => 'datetime:H:i:s',
     ];
 
     public function kontakMagang()

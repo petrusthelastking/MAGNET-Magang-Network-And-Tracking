@@ -8,18 +8,26 @@ use Illuminate\Support\Facades\DB;
 
 class UlasanMagangSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        // Belum ada ulasan karena magang masih berlangsung
         DB::table('ulasan_magang')->insert([
             [
-                'pengajuan_id' => 5, // Fajar Nugroho (ditolak)
-                'rating' => 2,
-                'ulasan' => 'Proses seleksi cukup panjang dan kurang transparan. Feedback yang diberikan untuk penolakan juga kurang detail sehingga sulit untuk melakukan perbaikan di kesempatan berikutnya.',
-                'is_published' => true,
-                'is_anonymous' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'kontrak_magang_id' => 4,
+                'rating' => 5,
+                'komentar' => 'Pengalaman magang yang sangat berharga. Tim sangat supportive dan memberikan learning experience yang berkualitas.'
+            ],
+            [
+                'kontrak_magang_id' => 5,
+                'rating' => 4,
+                'komentar' => 'Magang di manufacturing sangat menantang. Banyak belajar tentang proses produksi yang efisien.'
+            ],
+            [
+                'kontrak_magang_id' => 1,
+                'rating' => 4,
+                'komentar' => 'Mendapat exposure yang bagus di bidang IT. Mentor sangat berpengalaman dan sabar dalam membimbing.'
             ],
         ]);
     }

@@ -1,12 +1,24 @@
 <?php
 
-use function Livewire\Volt\{layout, state};
+use function Livewire\Volt\{layout, state, mount};
 
 layout('components.layouts.admin.admin');
 
 state([
     'totalRowsPerPage' => 10,
+    'data_mahasiswa' => []
 ]);
+
+mount(function () {
+    $this->data_mahasiswa = DB::table('mahasiswa_profiles')
+        ->join('users', 'mahasiswa_profiles.user_id', '=', 'users.id')
+        ->select(
+            'users.name',
+            'mahasiswa_profiles.nim',
+            'mahasiswa_profiles.status_magang',
+        )
+        ->get();
+});
 
 ?>
 
@@ -46,24 +58,23 @@ state([
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
-                @for ($i = 0; $i < $totalRowsPerPage; $i++)
+                @for ($i = 0; $i < count($data_mahasiswa) && $i < $totalRowsPerPage; $i++)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">Budi Gunawan Herlambang Sejahtera Saputra Widodo</td>
-                        <td class="px-6 py-3">1291921281281</td>
+                        <td class="px-6 py-3">{{ $data_mahasiswa[$i]->name }}</td>
+                        <td class="px-6 py-3">{{ $data_mahasiswa[$i]->nim }}</td>
                         <td class="px-6 py-3">
-                            <flux:badge color="green" variant="solid">Sedang magang</flux:badge>
+                            <flux:badge color="green" variant="solid">{{ $data_mahasiswa[$i]->status_magang }}</flux:badge>
                         </td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-mahasiswa') }}"
-                                variant="ghost" />
+                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-mahasiswa') }}" variant="ghost" />
                         </td>
                     </tr>
                 @endfor
             </tbody>
         </table>
         <div class="flex justify-between w-full px-8 py-4">
-            <p class="text-black">Menampilkan 10 dari 1250 data</p>
+            <p class="text-black">Menampilkan 10 dari {{ $totalRowsPerPage }} data</p>
             <div class="flex">
                 <flux:button icon="chevron-left" variant="ghost" />
                 @for ($i = 0; $i < 5; $i++)
@@ -75,7 +86,7 @@ state([
                 <div class="flex gap-3 items-center text-black">
                     <p>Baris per halaman</p>
                     <flux:select class="w-20!" wire:model.live="totalRowsPerPage">
-                        <flux:select.option value="10" selected>10</flux:select.option>
+                        <flux:select.option value="10">10</flux:select.option>
                         <flux:select.option value="25">25</flux:select.option>
                         <flux:select.option value="50">50</flux:select.option>
                         <flux:select.option value="100">100</flux:select.option>
