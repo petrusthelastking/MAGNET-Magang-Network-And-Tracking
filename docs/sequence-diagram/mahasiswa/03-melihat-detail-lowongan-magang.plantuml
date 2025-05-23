@@ -1,0 +1,15 @@
+@startuml melihat-detail-lowongan-magang
+
+actor Mahasiswa
+
+boundary HalamanHasilPencarian #LightGreen
+control MagangController #Pink
+entity DataMagang #SkyBlue
+boundary HalamanDetailLowongan #LightGreen
+
+HalamanHasilPencarian -> MagangController : requestToViewInternshipDetails()
+MagangController -> DataMagang : getInternshipDetails()
+DataMagang --> MagangController : returnInternshipDetails()
+MagangController -> HalamanDetailLowongan : showInternshipDetails()
+
+@enduml

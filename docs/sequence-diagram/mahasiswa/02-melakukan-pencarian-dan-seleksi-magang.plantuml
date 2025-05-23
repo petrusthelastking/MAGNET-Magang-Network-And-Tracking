@@ -1,0 +1,19 @@
+@startuml melakukan-pencarian-dan-seleksi-magang
+
+actor Mahasiswa
+
+boundary HalamanDashboard #LightGreen
+control MagangController #Pink
+entity DataMagang #SkyBlue
+boundary HalamanHasilPencarian #LightGreen
+
+HalamanDashboard -> MagangController : requestToSearchInternship()
+
+opt Filter pencarian
+    HalamanDashboard -> MagangController : requestToSearchWithFilter()
+end
+MagangController -> DataMagang : getInternshipData()
+DataMagang --> MagangController : returnInternshipData()
+MagangController -> HalamanHasilPencarian : redirectToSearchResultsPage()
+
+@enduml

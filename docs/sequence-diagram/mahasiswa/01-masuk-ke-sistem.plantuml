@@ -1,0 +1,43 @@
+@startuml masuk-ke-sistem
+
+actor Mahasiswa
+
+boundary HalamanLogin #LightGreen
+boundary HalamanPendaftaran #LightGreen
+boundary HalamanLupaPassword #LightGreen
+boundary HalamanPembaruanPassword #LightGreen
+
+control AuthController #Pink
+
+entity DataMahasiswa #SkyBlue
+
+boundary HalamanDashboard #LightGreen
+boundary HalamanPreferensiMagang #LightGreen
+
+alt Sudah punya akun
+    alt Lupa password
+        HalamanLogin -> AuthController : requestToForgotPassword()
+        AuthController -> HalamanLupaPassword : redirectToForgotPasswordPage()
+        HalamanLupaPassword -> AuthController : requestToResetPassword()
+        AuthController -> DataMahasiswa : validateEmail()
+        DataMahasiswa --> AuthController : returnSuccess()
+        AuthController -> HalamanPembaruanPassword : redirectToUpdatePasswordPage()
+        HalamanPembaruanPassword -> AuthController : requestToUpdatePassword()
+        AuthController -> DataMahasiswa : updatePassword()
+        DataMahasiswa --> AuthController : returnSuccess()
+        AuthController -> HalamanLogin : redirectToLoginPage()
+    end
+    HalamanLogin -> AuthController : requestToLogin()
+    AuthController -> DataMahasiswa : validateLogin()
+    DataMahasiswa --> AuthController : returnSuccess()
+    AuthController -> HalamanDashboard : redirectToDashboard()
+else Sudah punya akun
+    HalamanLogin -> AuthController : requestToRegisterPage()
+    AuthController -> HalamanPendaftaran : redirectToRegisterPage()
+    HalamanPendaftaran -> AuthController : validateRegistration()
+    AuthController -> DataMahasiswa : saveData()
+    DataMahasiswa --> AuthController : returnSuccess()
+    AuthController -> HalamanPreferensiMagang : redirectToPreferencePage()
+end
+
+@enduml
