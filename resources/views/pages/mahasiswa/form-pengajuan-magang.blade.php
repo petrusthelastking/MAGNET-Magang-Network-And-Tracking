@@ -1,59 +1,88 @@
 <x-layouts.mahasiswa.mahasiswa>
-
     <div class="card bg-white shadow-md">
-        <div class="card-body">
-            <flux:input readonly value="Yanto" type="text" label="Nama Lengkap" />
-            <flux:input readonly value="Teknologi Informasi" type="text" label="Jurusan" />
-            <flux:input readonly value="D4 Teknik Informatika" type="text" label="Program Studi" />
-            <flux:input type="file" wire:model="attachments" label="Transkrip Nilai" />
-            <flux:input type="file" wire:model="attachments" label="CV" />
-            <flux:input type="file" wire:model="attachments" label="Portofolio" />
-        </div>
-        <div class="card-actions flex justify-end p-5">
-            <flux:modal.trigger name="confirm-form" class="mr-2">
-                <flux:button class="bg-magnet-sky-teal! text-white!">Kirim</flux:button>
-            </flux:modal.trigger>
+        <form action="{{ route('mahasiswa.store-pengajuan-magang') }}" method="POST" enctype="multipart/form-data"
+            id="pengajuan-form">
+            @csrf
+            <div class="card-body">
+                <flux:input readonly value="{{ $mahasiswa->nama }}" type="text" label="Nama Lengkap" />
+                <flux:input readonly value="{{ $mahasiswa->nim }}" type="text" label="NIM" />
+                <flux:input readonly value="Teknologi Informasi" type="text" label="Jurusan" />
+                <flux:input readonly value="{{ $mahasiswa->program_studi ?? '-' }}" type="text"
+                    label="Program Studi" />
 
-            <flux:modal name="confirm-form" class="min-w-[22rem]">
-                <div class="space-y-6">
-                    <div>
-                        <flux:heading size="lg">Kirim Pengajuan Magang</flux:heading>
+                <!-- CV Upload -->
+                <flux:field>
+                    <flux:input type="file" name="cv" label="CV" accept=".pdf"
+                        description="Format: PDF. Maksimal ukuran file: 2 MB." />
+                    @error('cv')
+                        <flux:error>{{ $message }}</flux:error>
+                    @enderror
+                </flux:field>
 
-                        <flux:text class="mt-2">
-                            <p>Apakah anda sudah yakin?</p>
-                        </flux:text>
+                <!-- Transkrip Nilai Upload -->
+                <flux:field>
+                    <flux:input type="file" name="transkrip_nilai" label="Transkrip Nilai" accept=".pdf"
+                        description="Format: PDF. Maksimal ukuran file: 2 MB." />
+                    @error('transkrip_nilai')
+                        <flux:error>{{ $message }}</flux:error>
+                    @enderror
+                </flux:field>
+
+                <!-- Portfolio Upload (Optional) -->
+                <flux:field>
+                    <flux:input type="file" name="portfolio" label="Portofolio (Opsional)" accept=".pdf"
+                        description="Format: PDF. Maksimal ukuran file: 2 MB." />
+                    @error('portfolio')
+                        <flux:error>{{ $message }}</flux:error>
+                    @enderror
+                </flux:field>
+            </div>
+
+            <div class="card-actions flex justify-end p-5">
+                <flux:modal.trigger name="confirm-form" class="mr-2">
+                    <flux:button type="button" class="bg-magnet-sky-teal! text-white!">Kirim</flux:button>
+                </flux:modal.trigger>
+
+                <flux:modal name="confirm-form" class="min-w-[22rem]">
+                    <div class="space-y-6">
+                        <div>
+                            <flux:heading size="lg">Kirim Pengajuan Magang</flux:heading>
+                            <flux:text class="mt-2">
+                                <p>Apakah anda sudah yakin ingin mengirim pengajuan magang?</p>
+                            </flux:text>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <flux:spacer />
+                            <flux:modal.close>
+                                <flux:button variant="ghost">Batal</flux:button>
+                            </flux:modal.close>
+                            <flux:modal.close>
+                                <flux:button type="button" onclick="document.getElementById('pengajuan-form').submit()"
+                                    class="bg-magnet-sky-teal! text-white!">
+                                    Ya, Kirim
+                                </flux:button>
+                            </flux:modal.close>
+                        </div>
                     </div>
-
-                    <div class="flex gap-2">
-                        <flux:spacer />
-
-                        <flux:modal.close>
-                            <flux:button variant="ghost">Batal</flux:button>
-                        </flux:modal.close>
-                        <flux:modal.close>
-                            <flux:modal.trigger name="show-success">
-                                <flux:button type="submit" class="bg-magnet-sky-teal! text-white!">Kirim</flux:button>
-                            </flux:modal.trigger>
-                        </flux:modal.close>
-                    </div>
-                </div>
-            </flux:modal>
-
-            <flux:modal name="show-success" class="min-w-[22rem]">
-                <div class="space-y-6">
-                    <div>
-                        <flux:heading size="lg">Pengajuan Magang Anda Telah Dikirim</flux:heading>
-                    </div>
-
-                    <div class="flex gap-2">
-                        <flux:spacer />
-                        <flux:modal.close>
-                            <flux:button type="submit" class="bg-magnet-sky-teal! text-white!">Oke</flux:button>
-                        </flux:modal.close>
-                    </div>
-                </div>
-            </flux:modal>
-
-        </div>
+                </flux:modal>
+            </div>
+        </form>
     </div>
+
+    @if (session('success'))
+        <script>
+            alert('{{ session('success') }}');
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            let errors = '';
+            @foreach ($errors->all() as $error)
+                errors += '{{ $error }}\n';
+            @endforeach
+            alert('Terjadi kesalahan:\n' + errors);
+        </script>
+    @endif
 </x-layouts.mahasiswa.mahasiswa>

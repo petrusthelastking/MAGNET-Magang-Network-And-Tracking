@@ -1,8 +1,7 @@
 <x-layouts.mahasiswa.mahasiswa>
     <div class="card bg-white shadow-md p-5">
         @php
-            // Pastikan statusMagang selalu memiliki nilai, jika tidak ada, gunakan default
-            $statusMagang = $statusMagang ?? 'Tidak magang';
+            $statusMagang = $statusMagang ?? 'belum magang';
 
             $pesan = '';
             $warnaBadge = '';
@@ -10,7 +9,9 @@
             $tombol = '';
 
             switch ($statusMagang) {
-                case 'Tidak magang':
+                case 'belum magang':
+                case null:
+                case '':
                     $pesan = 'Anda belum pernah mengajukan magang. Silakan ajukan terlebih dahulu ke admin.';
                     $warnaBadge = 'orange';
                     $labelBadge = 'Belum mengajukan';
@@ -20,14 +21,14 @@
                         '" class="flux-button bg-magnet-sky-teal text-white px-4 py-2 rounded-lg">Ajukan Pengajuan Magang</a>';
                     break;
 
-                case 'Sedang magang':
+                case 'sedang magang':
                     $pesan = 'Pengajuan magang Anda telah diproses. Anda sedang dalam masa magang.';
                     $warnaBadge = 'blue';
                     $labelBadge = 'Sedang magang';
                     $tombol = ''; // tidak ada tombol
                     break;
 
-                case 'Selesai magang':
+                case 'selesai magang':
                     $pesan = 'Anda telah menyelesaikan magang. Terima kasih atas partisipasinya.';
                     $warnaBadge = 'green';
                     $labelBadge = 'Selesai magang';
