@@ -1,4 +1,4 @@
-@startuml memperbarui-data-diri-dan-preferensi-magang
+@startuml mendapatkan-rekomendasi-magang
 
 actor Mahasiswa
 
