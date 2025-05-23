@@ -1,0 +1,16 @@
+@startuml mendapatkan-rekomendasi-magang
+
+actor Mahasiswa
+
+boundary HalamanPreferensiMagang #LightGreen
+control MahasiswaController #Pink
+entity DataPreferensiMagang #SkyBlue
+boundary HalamanDashboard #LightGreen
+
+HalamanPreferensiMagang -> MahasiswaController : requestToUpdateInternshipPreferences()
+MahasiswaController -> DataPreferensiMagang : saveInternshipPreferences()
+DataPreferensiMagang --> MahasiswaController : returnSuccess()
+MahasiswaController -> HalamanDashboard : redirectToDashboard()
+
+
+@enduml
