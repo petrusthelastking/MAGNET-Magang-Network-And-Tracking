@@ -21,7 +21,8 @@
 
         <flux:navlist.item icon="message-square-more" href="{{ route('mahasiswa.konsul-dospem') }}"
             :current="request()->is('mahasiswa/konsul-dospem')" class="whitespace-normal break-words">
-            Konsultasi Dosen Pembimbing
+            Konsultasi Dosen <br>
+            Pembimbing
         </flux:navlist.item>
 
         <flux:navlist.item icon="battery-medium" href="{{ route('mahasiswa.pembaruan-status') }}"
