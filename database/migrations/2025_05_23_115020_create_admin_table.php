@@ -10,13 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('log_aktivitas_magang', function (Blueprint $table) {
+        Schema::create('admin', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('dosen_id')->constrained('dosen_profiles');
-            $table->foreignId('pengajuan_id')->constrained('pengajuan_magang');
-            $table->date('tanggal');
-            $table->text('kegiatan');
-            $table->text('catatan_dosen')->nullable();
+            $table->string('nama');
+            $table->string('nip');
+            $table->string('password');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('log_aktivitas_magang');
+        Schema::dropIfExists('admin');
     }
 };

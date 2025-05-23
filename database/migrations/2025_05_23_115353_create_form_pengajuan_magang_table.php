@@ -10,13 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('dosen_profiles', function (Blueprint $table) {
+        Schema::create('form_pengajuan_magang', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->string('nip', 20)->unique();
-            $table->foreignId('program_studi_id')->constrained('program_studi');
-            $table->string('no_hp', 15)->nullable();
-            $table->string('foto_path')->nullable();
+            $table->foreignId('pengajuan_id')->constrained('berkas_pengajuan_magang')->onDelete('cascade');
+            $table->enum('status', ['menunggu', 'diterima', 'ditolak'])->default('menunggu');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('dosen_profiles');
+        Schema::dropIfExists('form_pengajuan_magang');
     }
 };

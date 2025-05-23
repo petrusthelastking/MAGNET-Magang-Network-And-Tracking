@@ -5,22 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LowonganMagang extends Model
+class Magang extends Model
 {
     use HasFactory;
 
-    protected $table = 'lowongan_magang';
+    protected $table = 'magang';
 
     protected $fillable = [
-        'perusahaan_id',
-        'judul',
+        'nama',
         'deskripsi',
-        'tanggal_mulai',
-        'tanggal_selesai',
-        'kuota',
-        'keahlian_utama',
         'persyaratan',
-        'status'
+        'perusahaan_id',
     ];
 
     public function perusahaan()
@@ -28,8 +23,8 @@ class LowonganMagang extends Model
         return $this->belongsTo(Perusahaan::class);
     }
 
-    public function pengajuanMagang()
+    public function kontakMagang()
     {
-        return $this->hasMany(PengajuanMagang::class, 'lowongan_id');
+        return $this->hasMany(KontrakMagang::class);
     }
 }

@@ -10,13 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('ulasan_magang', function (Blueprint $table) {
+        Schema::create('umpan_balik', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pengajuan_id')->constrained('pengajuan_magang');
-            $table->integer('rating');
-            $table->text('ulasan');
-            $table->boolean('is_published');
-            $table->boolean('is_anonymous');
+            $table->foreignId('kontrak_magang_id')->constrained('kontrak_magang')->onDelete('cascade');
+            $table->text('komentar');
+            $table->date('tanggal');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('ulasan_magang');
+        Schema::dropIfExists('umpan_balik');
     }
 };

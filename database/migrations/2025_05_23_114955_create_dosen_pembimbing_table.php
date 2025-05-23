@@ -10,12 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('admin_profiles', function (Blueprint $table) {
+        Schema::create('dosen_pembimbing', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->string('nip', 20)->unique();
-            $table->string('no_hp', 15)->nullable();
-            $table->string('foto_path')->nullable();
+            $table->string('nama');
+            $table->string('nidn');
+            $table->string('password');
+            $table->enum('jenis_kelamin', ['L', 'P']);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('admin_profiles');
+        Schema::dropIfExists('dosen_pembimbing');
     }
 };
