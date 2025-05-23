@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
             $table->string('cv');
             $table->string('transkrip_nilai');
-            $table->string('portfolio');
+            $table->string('portfolio')->nullable();
             $table->timestamps();
         });
     }

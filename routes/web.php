@@ -35,7 +35,7 @@ Route::prefix('mahasiswa')
         Route::get('pengajuan-magang', [PengajuanMagangController::class, 'index'])->name('pengajuan-magang');
         Route::get('formulir-pengajuan', [PengajuanMagangController::class, 'showForm'])->name('form-pengajuan-magang');
         Route::post('formulir-pengajuan', [PengajuanMagangController::class, 'storePengajuan'])->name('store-pengajuan-magang');
-        
+
         // Other routes
         Route::view('konsul-dospem', 'pages.mahasiswa.konsul-dospem')->name('konsul-dospem'); //page konsultasi dospem
         Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
@@ -48,3 +48,4 @@ require __DIR__ . '/auth.php';
 Route::view('dosen/dashboard', 'pages.dosen.dashboard')->name('dosen.dashboard');
 Route::view('dosen/mahasiswa-bimbingan', 'pages.dosen.mahasiswa-bimbingan')->name('dosen.mahasiswa-bimbingan');
 Route::view('dosen/detail-mahasiswa-bimbingan', 'pages.dosen.detail-mahasiswa-bimbingan')->name('dosen.detail-mahasiswa-bimbingan');
+Route::get('debug-form', [PengajuanMagangController::class, 'debugForm'])->name('debug-form');
