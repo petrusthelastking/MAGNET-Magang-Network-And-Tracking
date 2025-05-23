@@ -15,9 +15,7 @@
         </div>
 
         <div class="w-full flex justify-center">
-            <form action="{{ route('mahasiswa.search-perusahaan') }}">
-               <flux:input icon="magnifying-glass" class="w-114!" placeholder="Cari Tempat Magang Yang Anda Inginkan" /> 
-            </form>
+            <flux:input icon="magnifying-glass" class="w-114!" placeholder="Cari Tempat Magang Yang Anda Inginkan" />
         </div>
 
         <!-- Bottom content card -->

@@ -12,20 +12,21 @@ class Perusahaan extends Model
     protected $table = 'perusahaan';
 
     protected $fillable = [
-        'nama_perusahaan',
-        'alamat',
-        'kota',
-        'provinsi',
+        'nama',
         'bidang_industri',
-        'no_telp',
-        'email',
-        'deskripsi',
-        'tahun_berdiri',
-        'logo_path'
+        'lokasi',
+        'kategori',
+        'rating',
     ];
 
-    public function lowonganMagang()
+    protected $casts = [
+        'bidang_industri' => 'string',
+        'kategori' => 'string',
+        'rating' => 'float',
+    ];
+
+    public function magang()
     {
-        return $this->hasMany(LowonganMagang::class);
+        return $this->hasMany(Magang::class);
     }
 }

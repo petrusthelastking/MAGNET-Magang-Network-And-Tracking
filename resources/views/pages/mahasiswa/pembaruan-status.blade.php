@@ -12,9 +12,11 @@ $changeStatus = fn($newStatus) => $this->status = $newStatus;
     <div class="bg-[#DFF6F9] min-h-screen">
         <!-- Judul -->
         <h2 class="text-lg font-semibold text-black mb-1">Pembaruan status magang</h2>
-        <p class="text-black mb-6">Anda perlu memperbarui status magang anda secara manual jika telah diterima atau selesai kontrak magang</p>
+        <p class="text-black mb-6">Anda perlu memperbarui status magang anda secara manual jika telah diterima atau
+            selesai kontrak magang</p>
 
         <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+
             <!-- Form -->
             <form method="POST" action="#">
                 <div class="mb-4">
@@ -35,17 +37,10 @@ $changeStatus = fn($newStatus) => $this->status = $newStatus;
                 @endif
 
                 <div class="flex justify-end">
-                    <flux:modal.trigger name="delete-profile">
-                        <flux:button>Perbarui</flux:button>
-                    </flux:modal.trigger>
-
-                    <flux:modal name="delete-profile" class="min-w-[22rem]">
-                        <div class="space-y-6">
-                            <div>
-                                <flux:heading size="lg">Status magang berhasil diperbarui</flux:heading>
-                            </div>
-                        </div>
-                    </flux:modal>
+                    <button type="submit"
+                        class="bg-[#0DB3C8] text-white font-semibold px-5 py-2 rounded-md shadow hover:bg-[#0ca2b4] transition-colors">
+                        Perbarui
+                    </button>
                 </div>
             </form>
         </div>
