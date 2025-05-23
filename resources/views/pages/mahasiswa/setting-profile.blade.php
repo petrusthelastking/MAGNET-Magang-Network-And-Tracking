@@ -26,7 +26,7 @@
             <div class="card-body grid grid-cols-2 gap-3">
                 <flux:input readonly value="{{ $preferensi->bidang_pekerjaan ?? '-' }}" type="text"
                     label="Skill yang anda miliki" />
-                <flux:input readonly value="{{ $preferensia->lokasi ?? '-' }}" type="text" label="Lokasi magang" />
+                <flux:input readonly value="{{ $preferensi->lokasi ?? '-' }}" type="text" label="Lokasi magang" />
                 <flux:input readonly value="{{ $preferensi->reputasi ?? '-' }}" type="text" label="Reputasi" />
                 <flux:input readonly value="{{ $preferensi->uang_saku ?? '-' }}" type="text" label="Uang saku" />
                 <flux:input readonly value="{{ $preferensi->open_remote ?? '-' }}" type="text"
