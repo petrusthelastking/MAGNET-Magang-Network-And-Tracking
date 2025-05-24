@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->string('nim');
             $table->string('password');
             $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->integer('umur');
+            $table->integer('angkatan');
             $table->string('jurusan');
             $table->string('program_studi');
             $table->enum('status_magang', ['belum magang', 'sedang magang', 'selesai magang'])->default('belum magang');
