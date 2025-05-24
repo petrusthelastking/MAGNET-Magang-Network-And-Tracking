@@ -1,7 +1,8 @@
 <?php
 use function Livewire\Volt\{layout, state};
+
 state(['status' => 'Tidak Magang']);
-layout('components.layouts.mahasiswa.mahasiswa');
+layout('components.layouts.mahasiswa.main');
 
 $changeStatus = fn($newStatus) => ($this->status = $newStatus);
 

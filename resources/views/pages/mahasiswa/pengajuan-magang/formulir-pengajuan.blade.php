@@ -2,7 +2,7 @@
 
 use function Livewire\Volt\{layout, rules, state, protect};
 
-layout('components.layouts.mahasiswa.mahasiswa');
+layout('components.layouts.mahasiswa.main');
 
 state([
     'mahasiswa' => auth('mahasiswa')->user(),

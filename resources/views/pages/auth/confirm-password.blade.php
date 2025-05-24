@@ -5,7 +5,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.auth')] class extends Component {
+new #[Layout('components.layouts.guest.with-navbar')] class extends Component {
     public string $password = '';
 
     /**

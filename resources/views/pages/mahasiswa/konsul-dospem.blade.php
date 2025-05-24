@@ -1,3 +1,3 @@
-<x-layouts.mahasiswa.mahasiswa>
-    
-</x-layouts.mahasiswa.mahasiswa>
+<x-layouts.mahasiswa.main>
+
+</x-layouts.mahasiswa.main>
