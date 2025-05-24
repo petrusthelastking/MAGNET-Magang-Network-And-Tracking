@@ -11,7 +11,7 @@ state([
 ]);
 
 mount(function () {
-    $this->data_mahasiswa = Mahasiswa::get(['nama', 'nim', 'status_magang'])
+    $this->data_mahasiswa = Mahasiswa::get(['id', 'nama', 'nim', 'status_magang'])
         ->sortBy('nama')
         ->toArray();
 });
@@ -50,20 +50,28 @@ mount(function () {
                     <th class="text-left px-6 py-3">Nama</th>
                     <th class="text-left px-6 py-3">NIM</th>
                     <th class="text-left px-6 py-3">Status</th>
-                    <th class="text-center px-6 py-3">Aksi</th>
+                    <th class="text-center px-6 py-3">Detail</th>
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
                 @for ($i = 0; $i < count($data_mahasiswa) && $i < $totalRowsPerPage; $i++)
-                    <tr class="border-b hover:bg-gray-50">
+                    <tr onclick="window.location.href='{{ route('admin.detail-mahasiswa', $data_mahasiswa[$i]['id']) }}'" class="border-b hover:bg-gray-50 hover:cursor-pointer">
                         <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
                         <td class="px-6 py-3">{{ $data_mahasiswa[$i]['nama']}}</td>
                         <td class="px-6 py-3">{{ $data_mahasiswa[$i]['nim'] }}</td>
                         <td class="px-6 py-3">
-                            <flux:badge color="green" variant="solid">{{ $data_mahasiswa[$i]['status_magang'] }}</flux:badge>
+                            @php
+                            $status = ucfirst($data_mahasiswa[$i]['status_magang']);
+                            $colorBadge = match ($status) {
+                                'Belum magang' => 'red',
+                                'Sedang magang' => 'yellow',
+                                'Selesai magang' => 'green'
+                            };
+                            @endphp
+                            <flux:badge variant="solid" color="{{ $colorBadge }}" >{{ $status }}</flux:badge>
                         </td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-mahasiswa') }}" variant="ghost" />
+                            <flux:button icon="chevron-right" href="{{ route('admin.detail-mahasiswa', $data_mahasiswa[$i]['id']) }}" variant="ghost" />
                         </td>
                     </tr>
                 @endfor
