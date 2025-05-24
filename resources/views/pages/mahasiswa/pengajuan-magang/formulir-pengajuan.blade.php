@@ -48,6 +48,8 @@ state([
             </div>
 
             <div class="card-actions flex justify-end p-5">
+                <flux:button type="button" class="bg-magnet-sky-teal! text-white!" onclick="window.history.back();">
+                    Kembali</flux:button>
                 <flux:modal.trigger name="confirm-form" class="mr-2">
                     <flux:button type="button" class="bg-magnet-sky-teal! text-white!">Kirim</flux:button>
                 </flux:modal.trigger>
