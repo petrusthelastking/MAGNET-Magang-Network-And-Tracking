@@ -1,0 +1,26 @@
+@startuml memperbarui-status-magang
+
+actor Mahasiswa
+
+boundary HalamanStatusMagang #LightGreen
+boundary HalamanNotifikasi #LightGreen
+
+control StatusMagangController #Pink
+
+entity DataPengajuanMagang #SkyBlue
+entity DataMahasiswa #SkyBlue
+
+Mahasiswa -> HalamanStatusMagang : buka halaman status
+HalamanStatusMagang -> StatusMagangController : updateStatus(data)
+StatusMagangController -> DataMahasiswa : validasiMahasiswa()
+DataMahasiswa --> StatusMagangController : returnValidasi()
+
+alt Validasi berhasil
+    StatusMagangController -> DataPengajuanMagang : updateStatusMagang()
+    DataPengajuanMagang --> StatusMagangController : returnSuccess()
+    StatusMagangController -> HalamanNotifikasi : tampilkanPesanBerhasil()
+else Validasi gagal
+    StatusMagangController -> HalamanStatusMagang : tampilkanPesanGagal()
+end
+
+@enduml

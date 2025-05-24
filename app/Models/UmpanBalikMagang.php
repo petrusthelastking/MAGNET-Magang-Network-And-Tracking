@@ -12,7 +12,7 @@ class UmpanBalikMagang extends Model
     protected $table = 'umpan_balik_magang';
 
     protected $fillable = [
-        'kontak_magang_id',
+        'kontrak_magang_id',
         'komentar',
         'tanggal',
     ];
@@ -21,7 +21,7 @@ class UmpanBalikMagang extends Model
         'tanggal' => 'date',
     ];
 
-    public function kontakMagang()
+    public function kontrakMagang()
     {
         return $this->belongsTo(KontrakMagang::class);
     }

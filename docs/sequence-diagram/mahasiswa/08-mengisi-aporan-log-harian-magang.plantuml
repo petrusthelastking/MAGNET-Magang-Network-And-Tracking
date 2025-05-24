@@ -1,0 +1,26 @@
+@startuml mengisi-log-harian
+
+actor Mahasiswa
+
+boundary HalamanLogHarian #LightGreen
+boundary HalamanKonfirmasiLog #LightGreen
+
+control LogHarianController #Pink
+
+entity DataLogHarian #SkyBlue
+entity DataMahasiswa #SkyBlue
+
+Mahasiswa -> HalamanLogHarian : buka form log harian
+HalamanLogHarian -> LogHarianController : kirimLog(data)
+LogHarianController -> DataMahasiswa : validasiMahasiswa()
+DataMahasiswa --> LogHarianController : returnValidasi()
+
+alt Validasi berhasil
+    LogHarianController -> DataLogHarian : simpanLog()
+    DataLogHarian --> LogHarianController : returnSuccess()
+    LogHarianController -> HalamanKonfirmasiLog : tampilkanNotifikasiBerhasil()
+else Validasi gagal
+    LogHarianController -> HalamanLogHarian : tampilkanPesanError()
+end
+
+@enduml

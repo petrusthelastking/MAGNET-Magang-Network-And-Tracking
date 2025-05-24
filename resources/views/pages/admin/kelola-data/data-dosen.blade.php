@@ -1,6 +1,7 @@
 <?php
 
 use function Livewire\Volt\{layout, state, mount};
+use App\Models\DosenPembimbing;
 
 layout('components.layouts.admin.main');
 
@@ -10,14 +11,13 @@ state([
 ]);
 
 mount(function () {
-    $this->data_dosen = DB::table('dosen_profiles')
-        ->join('users', 'dosen_profiles.user_id', '=', 'users.id')
-        ->select(
-            'users.name',
-            'dosen_profiles.nip',
-            DB::raw("'3/10' as jumlah_bimbingan"),
-        )
-        ->get();
+    $this->data_dosen = DosenPembimbing::select('id', 'nama', 'nidn')
+        ->withCount([
+            'kontrakMagang as jumlah_bimbingan'
+        ])
+        ->orderBy('nama')
+        ->get()
+        ->toArray();
 });
 
 ?>
@@ -60,9 +60,9 @@ mount(function () {
                 @for ($i = 0; $i < count($data_dosen) && $i < $totalRowsPerPage; $i++)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">{{ $data_dosen[$i]->name }}</td>
-                        <td class="px-6 py-3">{{ $data_dosen[$i]->nip }}</td>
-                        <td class="px-6 py-3">{{ $data_dosen[$i]->jumlah_bimbingan }}</td>
+                        <td class="px-6 py-3">{{ $data_dosen[$i]['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $data_dosen[$i]['nidn'] }}</td>
+                        <td class="px-6 py-3">{{ $data_dosen[$i]['jumlah_bimbingan'] }}</td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-dosen') }}" variant="ghost" />
                         </td>

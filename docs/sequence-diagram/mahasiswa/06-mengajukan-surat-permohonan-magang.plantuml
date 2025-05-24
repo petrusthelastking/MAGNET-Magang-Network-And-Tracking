@@ -1,0 +1,28 @@
+@startuml mengajukan-surat-permohonan-magang
+
+actor Mahasiswa
+
+boundary HalamanLowonganMagang #LightGreen
+boundary FormSuratPermohonan #LightGreen
+boundary HalamanKonfirmasi #LightGreen
+
+control SuratPermohonanController #Pink
+
+entity DataSuratPermohonan #SkyBlue
+entity DataMahasiswa #SkyBlue
+
+Mahasiswa -> HalamanLowonganMagang : pilih lowongan
+HalamanLowonganMagang -> FormSuratPermohonan : buka form permohonan
+FormSuratPermohonan -> SuratPermohonanController : submitForm(data)
+SuratPermohonanController -> DataMahasiswa : validasiMahasiswa()
+DataMahasiswa --> SuratPermohonanController : returnValidasi()
+
+alt Validasi berhasil
+    SuratPermohonanController -> DataSuratPermohonan : simpanPermohonan()
+    DataSuratPermohonan --> SuratPermohonanController : returnSuccess()
+    SuratPermohonanController -> HalamanKonfirmasi : tampilkanNotifikasiBerhasil()
+else Validasi gagal
+    SuratPermohonanController -> FormSuratPermohonan : tampilkanPesanError()
+end
+
+@enduml

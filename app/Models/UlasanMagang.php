@@ -12,7 +12,7 @@ class UlasanMagang extends Model
     protected $table = 'ulasan_magang';
 
     protected $fillable = [
-        'kontak_magang_id',
+        'kontrak_magang_id',
         'rating',
         'komentar',
     ];
@@ -21,7 +21,7 @@ class UlasanMagang extends Model
         'rating' => 'integer',
     ];
 
-    public function kontakMagang()
+    public function kontrakMagang()
     {
         return $this->belongsTo(KontrakMagang::class);
     }

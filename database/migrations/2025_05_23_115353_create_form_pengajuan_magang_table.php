@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('form_pengajuan_magang', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pengajuan_id')->constrained('berkas_pengajuan_magang')->onDelete('cascade');
-            $table->enum('status', ['menunggu', 'diterima', 'ditolak'])->default('menunggu');
+            $table->enum('status', ['diproses', 'diterima', 'ditolak'])->default('diproses');
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });

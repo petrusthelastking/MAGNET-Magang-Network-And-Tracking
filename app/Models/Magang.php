@@ -15,6 +15,8 @@ class Magang extends Model
         'nama',
         'deskripsi',
         'persyaratan',
+        'status',
+        'lokasi',
         'perusahaan_id',
     ];
 
@@ -23,7 +25,7 @@ class Magang extends Model
         return $this->belongsTo(Perusahaan::class);
     }
 
-    public function kontakMagang()
+    public function kontrakMagang()
     {
         return $this->hasMany(KontrakMagang::class);
     }

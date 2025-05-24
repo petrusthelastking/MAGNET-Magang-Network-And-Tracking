@@ -1,0 +1,29 @@
+@startuml menerima-notifikasi
+
+actor Mahasiswa
+
+boundary HalamanNotifikasi #LightGreen
+boundary HalamanDetailNotifikasi #LightGreen
+
+control NotifikasiController #Pink
+
+entity DataNotifikasi #SkyBlue
+entity DataMahasiswa #SkyBlue
+
+Mahasiswa -> HalamanNotifikasi : buka notifikasi
+HalamanNotifikasi -> NotifikasiController : ambilNotifikasi()
+NotifikasiController -> DataMahasiswa : validasiIdentitas()
+DataMahasiswa --> NotifikasiController : returnValidasi()
+
+alt Validasi berhasil
+    NotifikasiController -> DataNotifikasi : ambilDataNotifikasi()
+    DataNotifikasi --> NotifikasiController : returnData()
+    NotifikasiController -> HalamanNotifikasi : tampilkanNotifikasi()
+    Mahasiswa -> HalamanDetailNotifikasi : buka detail notifikasi
+    HalamanDetailNotifikasi -> NotifikasiController : tandaiSebagaiDibaca()
+    NotifikasiController -> DataNotifikasi : updateStatusNotifikasi()
+else Validasi gagal
+    NotifikasiController -> HalamanNotifikasi : tampilkanPesanGagal()
+end
+
+@enduml
