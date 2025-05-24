@@ -32,7 +32,7 @@
         </flux:navlist.group>
 
         @php
-            $isRequestToMagang = request()->is('data-lowongan') || request()->is('pengajuan-magang') || request()->is('tren-magang') || request()->is('aturan-magang');
+            $isRequestToMagang = request()->is('data-lowongan') || request()->is('data-pengajuan-magang') || request()->is('tren-magang') || request()->is('aturan-magang');
         @endphp
         <flux:navlist.group expandable heading="Magang" :expanded="$isRequestToMagang">
 
@@ -40,7 +40,7 @@
                 :current="request()->is('data-lowongan')" class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="flask-conical" href="{{ route('admin.data-pengajuan') }}" :current="request()->is('pengajuan-magang')"
+            <flux:navlist.item icon="flask-conical" href="{{ route('admin.data-pengajuan-magang') }}" :current="request()->is('data-pengajuan-magang')"
                 class="text-magnet-deep-ocean-blue!">
                 Pengajuan Magang
             </flux:navlist.item>
