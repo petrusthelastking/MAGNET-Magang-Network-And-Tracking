@@ -26,14 +26,14 @@ mount(function () {
 ?>
 
 <div class="flex flex-col gap-5">
-    <flux:breadcrumbs class="mb-5">
+    <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('admin.data-lowongan') }}" class="text-black">Kelola data lowongan magang
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <h1 class="text-base font-bold leading-6 text-black">Kelola Data Lowongan Magang</h1>
 
-    <div class="flex justify-between mt-4">
+    <div class="flex justify-between">
         <div class="flex gap-3">
             <flux:input class="rounded-3xl!" placeholder="Cari Data Mahasiswa" icon="magnifying-glass" />
             <flux:button variant="primary" class="bg-white! text-black! w-17 rounded-full!"
