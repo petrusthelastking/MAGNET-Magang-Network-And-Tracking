@@ -6,7 +6,7 @@
     </a>
 
     <flux:navlist variant="outline">
-        <flux:navlist.item icon="home" href="{{ route('dashboard') }}" :current="request()->is('/dashboard')">
+        <flux:navlist.item icon="home" href="{{ route('admin.dashboard') }}" :current="request()->is('/dashboard')">
             Dashboard
         </flux:navlist.item>
 
@@ -17,25 +17,25 @@
         <flux:navlist.group expandable heading="Kelola Data" :expanded="$isRequestToKelolaData">
 
             <flux:navlist.item icon="user" :current="request()->is('data-mahasiswa')"
-                href="{{ route('data-mahasiswa') }}" class="text-magnet-deep-ocean-blue!">
+                href="{{ route('admin.data-mahasiswa') }}" class="text-magnet-deep-ocean-blue!">
                 Data Mahasiswa
             </flux:navlist.item>
-            <flux:navlist.item icon="user" :current="request()->is('data-dosen')" href="{{ route('data-dosen') }}"
+            <flux:navlist.item icon="user" :current="request()->is('data-dosen')" href="{{ route('admin.data-dosen') }}"
                 class="text-magnet-deep-ocean-blue!">
                 Data Dosen
             </flux:navlist.item>
-            <flux:navlist.item icon="building-2" href="{{ route('data-perusahaan') }}"
+            <flux:navlist.item icon="building-2" href="{{ route('admin.data-perusahaan') }}"
                 :current="request()->is('data-perusahaan')" class="text-magnet-deep-ocean-blue!">
                 Data Perusahaan
             </flux:navlist.item>
         </flux:navlist.group>
 
         <flux:navlist.group expandable heading="Magang" :expanded="false">
-            <flux:navlist.item icon="briefcase-business" href="{{ route('data-lowongan') }}"
+            <flux:navlist.item icon="briefcase-business" href="{{ route('admin.data-lowongan') }}"
                 :current="request()->is('/data-lowongan')" class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="flask-conical" href="#" :current="request()->is('/pengajuan-magang')"
+            <flux:navlist.item icon="flask-conical" href="{{ route('admin.data-pengajuan') }}" :current="request()->is('/pengajuan-magang')"
                 class="text-magnet-deep-ocean-blue!">
                 Pengajuan Magang
             </flux:navlist.item>
