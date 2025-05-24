@@ -1,6 +1,8 @@
 <?php
 
 use function Livewire\Volt\{layout, state, mount};
+use Illuminate\Database\Eloquent\Builder;
+use App\Models\Perusahaan;
 
 layout('components.layouts.admin.main');
 
@@ -10,13 +12,15 @@ state([
 ]);
 
 mount(function () {
-    $this->data_perusahaan = DB::table('perusahaan')
-        ->select(
-            'nama_perusahaan',
-            'bidang_industri',
-            DB::raw("23 as jumlah_mahasiswa_magang"),
-        )
-        ->get();
+    $this->data_perusahaan = Perusahaan::select('id', 'nama', 'bidang_industri')
+        ->withCount([
+            'magang as jumlah_mahasiswa_magang' => function (Builder $query) {
+                $query->join('kontrak_magang', 'magang.id', '=', 'kontrak_magang.magang_id');
+            }
+        ])
+        ->orderBy('jumlah_mahasiswa_magang', 'desc')
+        ->get()
+        ->toArray();
 });
 
 ?>
@@ -50,7 +54,7 @@ mount(function () {
                 <tr class="border-b">
                     <th class="text-center px-6 py-3">No</th>
                     <th class="text-left px-6 py-3">Nama</th>
-                    <th class="text-left px-6 py-3">Bidang Usaha</th>
+                    <th class="text-left px-6 py-3">Bidang Industri</th>
                     <th class="text-left px-6 py-3">Jumlah Mahasiswa Magang</th>
                     <th class="text-center px-6 py-3">Aksi</th>
                 </tr>
@@ -59,9 +63,9 @@ mount(function () {
                 @for ($i = 0; $i < count($data_perusahaan) && $i < $totalRowsPerPage; $i++)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">{{ $data_perusahaan[$i]->nama_perusahaan }}</td>
-                        <td class="px-6 py-3">{{ $data_perusahaan[$i]->bidang_industri }}</td>
-                        <td class="px-6 py-3">{{ $data_perusahaan[$i]->jumlah_mahasiswa_magang }}</td>
+                        <td class="px-6 py-3">{{ $data_perusahaan[$i]['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $data_perusahaan[$i]['bidang_industri'] }}</td>
+                        <td class="px-6 py-3">{{ $data_perusahaan[$i]['jumlah_mahasiswa_magang'] }}</td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-perusahaan') }}" variant="ghost" />
                         </td>
