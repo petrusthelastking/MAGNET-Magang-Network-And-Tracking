@@ -12,7 +12,7 @@ class LogMagang extends Model
     protected $table = 'log_magang';
 
     protected $fillable = [
-        'kontak_magang_id',
+        'kontrak_magang_id',
         'kegiatan',
         'tanggal',
         'jam_masuk',
@@ -25,7 +25,7 @@ class LogMagang extends Model
         'jam_keluar' => 'datetime:H:i:s',
     ];
 
-    public function kontakMagang()
+    public function kontrakMagang()
     {
         return $this->belongsTo(KontrakMagang::class);
     }
