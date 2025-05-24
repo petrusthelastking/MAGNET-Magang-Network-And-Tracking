@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -20,8 +19,8 @@ class MahasiswaSeeder extends Seeder
                 'nim' => '2021001001',
                 'password' => Hash::make('password123'),
                 'jenis_kelamin' => 'L',
-                'jurusan' => 'Teknik Informatika',
-                'program_studi' => 'Sistem Informasi',
+                'jurusan' => 'Teknologi Informasi',
+                'program_studi' => 'D4 Teknik Informatika',
                 'status_magang' => 'belum magang',
                 'alamat' => 'Jl. Sudirman No. 123, Jakarta Pusat'
             ],
@@ -30,8 +29,8 @@ class MahasiswaSeeder extends Seeder
                 'nim' => '2021001002',
                 'password' => Hash::make('password123'),
                 'jenis_kelamin' => 'P',
-                'jurusan' => 'Teknik Informatika',
-                'program_studi' => 'Teknik Komputer',
+                'jurusan' => 'Teknologi Informasi',
+                'program_studi' => 'D4 Sistem Informasi Bisnis',
                 'status_magang' => 'sedang magang',
                 'alamat' => 'Jl. Malioboro No. 45, Yogyakarta'
             ],
@@ -40,8 +39,8 @@ class MahasiswaSeeder extends Seeder
                 'nim' => '2021001003',
                 'password' => Hash::make('password123'),
                 'jenis_kelamin' => 'L',
-                'jurusan' => 'Manajemen',
-                'program_studi' => 'Manajemen Bisnis',
+                'jurusan' => 'Teknologi Informasi',
+                'program_studi' => 'D2 Pengembangan Piranti Lunak Situs',
                 'status_magang' => 'selesai magang',
                 'alamat' => 'Jl. Dago No. 67, Bandung'
             ],
@@ -50,8 +49,8 @@ class MahasiswaSeeder extends Seeder
                 'nim' => '2021001004',
                 'password' => Hash::make('password123'),
                 'jenis_kelamin' => 'P',
-                'jurusan' => 'Akuntansi',
-                'program_studi' => 'Akuntansi Keuangan',
+                'jurusan' => 'Teknologi Informasi',
+                'program_studi' => 'D4 Sistem Informasi Bisnis',
                 'status_magang' => 'belum magang',
                 'alamat' => 'Jl. Thamrin No. 89, Jakarta Selatan'
             ],
@@ -60,8 +59,8 @@ class MahasiswaSeeder extends Seeder
                 'nim' => '2021001005',
                 'password' => Hash::make('password123'),
                 'jenis_kelamin' => 'L',
-                'jurusan' => 'Teknik Elektro',
-                'program_studi' => 'Teknik Listrik',
+                'jurusan' => 'Teknologi Informasi',
+                'program_studi' => 'D4 Teknik Informatika',
                 'status_magang' => 'sedang magang',
                 'alamat' => 'Jl. Imam Bonjol No. 12, Medan'
             ],
@@ -70,8 +69,8 @@ class MahasiswaSeeder extends Seeder
                 'nim' => '2021001006',
                 'password' => Hash::make('password123'),
                 'jenis_kelamin' => 'P',
-                'jurusan' => 'Psikologi',
-                'program_studi' => 'Psikologi Klinis',
+                'jurusan' => 'Teknologi Informasi',
+                'program_studi' => 'D2 Pengembangan Piranti Lunak Situs',
                 'status_magang' => 'belum magang',
                 'alamat' => 'Jl. Diponegoro No. 34, Semarang'
             ],
@@ -80,8 +79,8 @@ class MahasiswaSeeder extends Seeder
                 'nim' => '2021001007',
                 'password' => Hash::make('password123'),
                 'jenis_kelamin' => 'L',
-                'jurusan' => 'Teknik Sipil',
-                'program_studi' => 'Teknik Konstruksi',
+                'jurusan' => 'Teknologi Informasi',
+                'program_studi' => 'D4 Sistem Informasi Bisnis',
                 'status_magang' => 'selesai magang',
                 'alamat' => 'Jl. Ahmad Yani No. 56, Surabaya'
             ],
@@ -90,8 +89,8 @@ class MahasiswaSeeder extends Seeder
                 'nim' => '2021001008',
                 'password' => Hash::make('password123'),
                 'jenis_kelamin' => 'P',
-                'jurusan' => 'Kedokteran',
-                'program_studi' => 'Kedokteran Umum',
+                'jurusan' => 'Teknologi Informasi',
+                'program_studi' => 'D4 Teknik Informatika',
                 'status_magang' => 'belum magang',
                 'alamat' => 'Jl. Veteran No. 78, Malang'
             ],
@@ -100,8 +99,8 @@ class MahasiswaSeeder extends Seeder
                 'nim' => '2021001009',
                 'password' => Hash::make('password123'),
                 'jenis_kelamin' => 'L',
-                'jurusan' => 'Hukum',
-                'program_studi' => 'Hukum Pidana',
+                'jurusan' => 'Teknologi Informasi',
+                'program_studi' => 'D4 Sistem Informasi Bisnis',
                 'status_magang' => 'sedang magang',
                 'alamat' => 'Jl. Gajah Mada No. 90, Denpasar'
             ],
@@ -110,8 +109,8 @@ class MahasiswaSeeder extends Seeder
                 'nim' => '2021001010',
                 'password' => Hash::make('password123'),
                 'jenis_kelamin' => 'P',
-                'jurusan' => 'Ekonomi',
-                'program_studi' => 'Ekonomi Pembangunan',
+                'jurusan' => 'Teknologi Informasi',
+                'program_studi' => 'D2 Pengembangan Piranti Lunak Situs',
                 'status_magang' => 'belum magang',
                 'alamat' => 'Jl. Pandanaran No. 123, Solo'
             ],

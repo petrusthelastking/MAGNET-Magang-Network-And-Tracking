@@ -24,8 +24,8 @@ mount(function () {
 
 <div class="flex flex-col gap-5">
     <flux:breadcrumbs>
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('data-mahasiswa') }}" class="text-black">Kelola Data Mahasiswa
+        <flux:breadcrumbs.item href="{{ route('admin.dashboard') }}" icon="home" icon:variant="outline" />
+        <flux:breadcrumbs.item href="{{ route('admin.data-mahasiswa') }}" class="text-black">Kelola Data Mahasiswa
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
@@ -67,7 +67,7 @@ mount(function () {
                             <flux:badge color="green" variant="solid">{{ $data_mahasiswa[$i]->status_magang }}</flux:badge>
                         </td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-mahasiswa') }}" variant="ghost" />
+                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-mahasiswa') }}" variant="ghost" />
                         </td>
                     </tr>
                 @endfor

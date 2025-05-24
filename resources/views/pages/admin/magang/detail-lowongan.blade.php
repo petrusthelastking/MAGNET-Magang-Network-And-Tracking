@@ -1,9 +1,9 @@
 <x-layouts.admin.admin>
     <flux:breadcrumbs class="mb-5">
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('data-lowongan') }}" class="text-black">Kelola Data Lowongan Magang
+        <flux:breadcrumbs.item href="{{ route('admin.dashboard') }}" icon="home" icon:variant="outline" />
+        <flux:breadcrumbs.item href="{{ route('admin.data-lowongan') }}" class="text-black">Kelola Data Lowongan Magang
         </flux:breadcrumbs.item>
-        <flux:breadcrumbs.item href="{{ route('detail-lowongan') }}" class="text-black">Detail Data Lowongan Magang
+        <flux:breadcrumbs.item href="{{ route('admin.detail-lowongan') }}" class="text-black">Detail Data Lowongan Magang
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <h1 class="text-base font-bold leading-6 text-black">Detail Informasi Lowongan Magang</h1>

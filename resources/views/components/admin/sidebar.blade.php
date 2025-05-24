@@ -6,7 +6,7 @@
     </a>
 
     <flux:navlist variant="outline">
-        <flux:navlist.item icon="home" href="{{ route('dashboard') }}" :current="request()->is('/dashboard')">
+        <flux:navlist.item icon="home" href="{{ route('admin.dashboard') }}" :current="request()->is('/dashboard')">
             Dashboard
         </flux:navlist.item>
 
@@ -35,7 +35,7 @@
                 :current="request()->is('/data-lowongan')" class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="flask-conical" href="#" :current="request()->is('/pengajuan-magang')"
+            <flux:navlist.item icon="flask-conical" href="{{ route('admin.data-pengajuan') }}" :current="request()->is('/pengajuan-magang')"
                 class="text-magnet-deep-ocean-blue!">
                 Pengajuan Magang
             </flux:navlist.item>
