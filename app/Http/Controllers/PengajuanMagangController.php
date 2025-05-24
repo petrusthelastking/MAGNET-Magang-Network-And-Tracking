@@ -28,11 +28,20 @@ class PengajuanMagangController extends Controller
             return redirect()->back()->with('error', 'Profil mahasiswa tidak ditemukan.');
         }
 
+        // Cek apakah mahasiswa sudah pernah mengajukan
+        $berkasPengajuan = \App\Models\BerkasPengajuanMagang::where('mahasiswa_id', $mahasiswa->id)->first();
+        $formPengajuan = null;
+
+        if ($berkasPengajuan) {
+            $formPengajuan = \App\Models\FormPengajuanMagang::where('pengajuan_id', $berkasPengajuan->id)->first();
+        }
+
         // Ubah default value menjadi 'belum magang' sesuai dengan enum di database
         $statusMagang = $mahasiswa->status_magang ?? 'belum magang';
 
         return view('pages.mahasiswa.pengajuan-magang', [
-            'statusMagang' => $statusMagang
+            'statusMagang' => $statusMagang,
+            'formPengajuan' => $formPengajuan
         ]);
     }
 
@@ -136,6 +145,10 @@ class PengajuanMagangController extends Controller
                 'mahasiswa_id' => Session::get('user_id'),
                 'message' => $e->getMessage()
             ]);
+
+            $updated = \App\Models\FormPengajuanMagang::where('mahasiswa_id', Session::get('user_id'))
+                ->where('status', '' ?? null)
+                ->update(['status' => 'menunggu', 'keterangan' => 'Pengajuan sedang ditinjau admin']);
 
             return back()->with('error', 'Terjadi kesalahan sistem. Silakan coba lagi atau hubungi admin.');
         }

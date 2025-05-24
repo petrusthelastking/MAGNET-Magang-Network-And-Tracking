@@ -14,11 +14,19 @@
                 case '':
                     $pesan = 'Anda belum pernah mengajukan magang. Silakan ajukan terlebih dahulu ke admin.';
                     $warnaBadge = 'orange';
-                    $labelBadge = 'Belum mengajukan';
-                    $tombol =
-                        '<a href="' .
-                        route('mahasiswa.form-pengajuan-magang') .
-                        '" class="flux-button bg-magnet-sky-teal text-white px-4 py-2 rounded-lg">Ajukan Pengajuan Magang</a>';
+                    $labelBadge = 'Belum magang';
+
+                    // Cek apakah ada pengajuan dan statusnya
+                    if (!$formPengajuan || $formPengajuan->status === 'ditolak') {
+                        // Tampilkan tombol jika belum ada pengajuan atau pengajuan ditolak
+                        $tombol =
+                            '<a href="' .
+                            route('mahasiswa.form-pengajuan-magang') .
+                            '" class="flux-button bg-magnet-sky-teal text-white px-4 py-2 rounded-lg">Ajukan Pengajuan Magang</a>';
+                    } else {
+                        // Jika ada pengajuan dengan status menunggu atau disetujui, tidak ada tombol
+                        $tombol = '';
+                    }
                     break;
 
                 case 'sedang magang':
@@ -51,8 +59,56 @@
                 <p class="w-60">Status magang saat ini:</p>
                 <flux:badge variant="solid" color="{{ $warnaBadge }}">{{ $labelBadge }}</flux:badge>
             </div>
+
+            {{-- Tambahan elemen untuk menampilkan status pengajuan --}}
+            @if ($formPengajuan)
+                @php
+                    $statusPengajuan = $formPengajuan->status;
+                    $warnaPengajuan = '';
+                    $labelPengajuan = '';
+
+                    switch ($statusPengajuan) {
+                        case 'menunggu':
+                            $warnaPengajuan = 'yellow';
+                            $labelPengajuan = 'Menunggu Review';
+                            break;
+                        case 'disetujui':
+                            $warnaPengajuan = 'green';
+                            $labelPengajuan = 'Disetujui';
+                            break;
+                        case 'ditolak':
+                            $warnaPengajuan = 'red';
+                            $labelPengajuan = 'Ditolak';
+                            break;
+                        default:
+                            $warnaPengajuan = 'gray';
+                            $labelPengajuan = 'Status Tidak Diketahui';
+                            break;
+                    }
+                @endphp
+
+                <div class="flex mt-3">
+                    <p class="w-60">Status pengajuan:</p>
+                    <flux:badge variant="solid" color="{{ $warnaPengajuan }}">{{ $labelPengajuan }}</flux:badge>
+                </div>
+
+                <div class="flex mt-2">
+                    <p class="w-60">Tanggal pengajuan:</p>
+                    <p class="text-gray-600">
+                        {{ $formPengajuan->created_at ? \Carbon\Carbon::parse($formPengajuan->created_at)->format('d F Y H:i') : '-' }}
+                    </p>
+                </div>
+
+                @if ($formPengajuan->keterangan)
+                    <div class="flex mt-2">
+                        <p class="w-60">Keterangan:</p>
+                        <p class="text-gray-600">{{ $formPengajuan->keterangan }}</p>
+                    </div>
+                @endif
+            @endif
         </div>
 
+        {{-- Tampilkan tombol hanya jika tidak kosong --}}
         @if (!empty($tombol))
             <div class="card-actions flex mt-4">
                 {!! $tombol !!}
