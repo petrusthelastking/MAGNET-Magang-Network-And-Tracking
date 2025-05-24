@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -16,27 +17,12 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        $user = $request->user();
-
-        if (!$user) {
-            abort(403, 'Akses tidak sah. Anda tidak memiliki izin untuk mengakses halaman ini.');
+        foreach ($roles as $role) {
+            if (Auth::guard($role)->check()) {
+                return $next($request);
+            }
         }
 
-        $userId = $user->id;
-        $userRole = null;
-
-        if (DB::table('mahasiswa')->where('user_id', $userId)->exists()) {
-            $userRole = 'mahasiswa';
-        } elseif (DB::table('admin')->where('user_id', $userId)->exists()) {
-            $userRole = 'admin';
-        } elseif (DB::table('dosen')->where('user_id', $userId)->exists()) {
-            $userRole = 'dosen';
-        }
-
-        if (!$userRole || !in_array($userRole, $roles)) {
-            abort(403, 'Akses tidak sah. Anda tidak memiliki izin untuk mengakses halaman ini.');
-        }
-
-        return $next($request);
+        return redirect()->route('login');
     }
 }

@@ -1,6 +1,4 @@
 <x-layouts.guest>
-
-
     <section class="h-screen px-6 pt-6 flex justify-around items-start">
         <div class="container mx-auto">
             <div class="bg-magnet-deep-ocean-blue text-white rounded-2xl pb-72">
@@ -12,7 +10,7 @@
                         Magang nggak harus ribet. Cukup sesuaikan minatmu, dan kami bantu carikan yang paling cocok buat
                         kamu!
                     </p>
-                    <flux:button class="text-black! bg-white! rounded-full! hover:bg-gray-200 border-0" href="{{route('login')}}">Cari
+                    <flux:button class="text-black! bg-white! rounded-full! hover:bg-gray-200 border-0" href="{{ route('login') }}">Cari
                         tempat magang impianmu Sekarang</flux:button>
                 </div>
             </div>

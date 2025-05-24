@@ -6,7 +6,7 @@
     </a>
 
     <flux:navlist variant="outline">
-        <flux:navlist.item icon="home" href="{{ route('dosen.dashboard') }}" :current="request()->is('/dashboard')">
+        <flux:navlist.item icon="home" href="{{ route('dashboard') }}" :current="request()->is('/dashboard')">
             Dashboard
         </flux:navlist.item>
 

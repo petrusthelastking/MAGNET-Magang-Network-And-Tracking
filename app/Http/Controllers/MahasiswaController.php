@@ -41,7 +41,7 @@ class MahasiswaController extends Controller
             return redirect()->route('login');
         }
 
-        return view('mahasiswa.dashboard', compact('mahasiswa'));
+        return view('dashboard', compact('mahasiswa'));
     }
 
     /**

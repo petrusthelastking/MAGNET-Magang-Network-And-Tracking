@@ -9,7 +9,7 @@
 
     {{-- GANTI navlist.item PEMBUNGKUS DENGAN navlist --}}
     <flux:navlist variant="outline">
-        <flux:navlist.item icon="home" href="{{ route('mahasiswa.dashboard') }}"
+        <flux:navlist.item icon="home" href="{{ route('dashboard') }}"
             :current="request()->is('mahasiswa/dashboard')">
             Dashboard
         </flux:navlist.item>

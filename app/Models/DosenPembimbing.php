@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable;
 
-class DosenPembimbing extends Model
+use App\Models\KontrakMagang;
+
+class DosenPembimbing extends Model implements Authenticatable
 {
     use HasFactory;
+    use \Illuminate\Auth\Authenticatable;
 
     protected $table = 'dosen_pembimbing';
 
@@ -26,7 +30,12 @@ class DosenPembimbing extends Model
         'jenis_kelamin' => 'string',
     ];
 
-    public function kontakMagang()
+    public function getRoleName(): string
+    {
+        return 'dosen';
+    }
+
+    public function kontrakMagang()
     {
         return $this->hasMany(KontrakMagang::class, 'dosen_id');
     }

@@ -28,6 +28,6 @@ class DosenController extends Controller
     {
         $user = auth()->user();
 
-        return view('dosen.dashboard', compact('user'));
+        return view('dashboard', compact('user'));
     }
 }
