@@ -23,7 +23,7 @@ class Magang extends Model
         return $this->belongsTo(Perusahaan::class);
     }
 
-    public function kontakMagang()
+    public function kontrakMagang()
     {
         return $this->hasMany(KontrakMagang::class);
     }
