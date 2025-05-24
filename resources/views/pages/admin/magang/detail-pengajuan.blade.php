@@ -1,4 +1,4 @@
-<x-layouts.admin.admin>
+<x-layouts.admin.main>
     <flux:breadcrumbs class="mb-5">
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('admin.data-pengajuan') }}" class="text-black">Kelola data pengajuan

@@ -1,4 +1,4 @@
-<x-layouts.guest>
+<x-layouts.guest.main>
     <section class="h-screen px-6 pt-6 flex justify-around items-start">
         <div class="container mx-auto">
             <div class="bg-magnet-deep-ocean-blue text-white rounded-2xl pb-72">
@@ -44,10 +44,8 @@
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-                    <!-- Contoh slot untuk logo mitra, ganti dengan asset gambar Anda -->
                     @foreach(range(1, 15) as $index)
                         <div class="p-4  flex items-center justify-center h-28">
-                            <!-- Ganti dengan asset gambar partner -->
                             <img src="{{ asset('BRI.png') }}" alt="Partner Logo"
                                 class="max-w-full max-h-24 object-contain">
                         </div>
@@ -95,4 +93,4 @@
     </section>
 
     <x-guest.footer />
-</x-layouts.guest>
+</x-layouts.guest.main>

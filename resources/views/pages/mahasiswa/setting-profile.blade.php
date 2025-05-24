@@ -1,4 +1,4 @@
-<x-layouts.mahasiswa.mahasiswa>
+<x-layouts.mahasiswa.main>
     <div class="gap-3 flex flex-col">
         <div class="card bg-white shadow-md">
             <div class="card-body p-5">
@@ -39,4 +39,4 @@
             </div>
         </div>
     </div>
-</x-layouts.mahasiswa.mahasiswa>
+</x-layouts.mahasiswa.main>

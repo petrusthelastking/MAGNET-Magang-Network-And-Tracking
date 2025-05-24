@@ -1,4 +1,4 @@
-<x-layouts.dosen.dosen>
+<x-layouts.dosen.main>
     <flux:breadcrumbs class="mb-5">
     <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
     <flux:breadcrumbs.item href="{{ route('dosen.mahasiswa-bimbingan') }}" class="text-black">Mahasiswa Bimbingan</flux:breadcrumbs.item>
@@ -13,7 +13,7 @@
         <div class="grid grid-cols-5 gap-4">
             @for ($i=0; $i<20; $i++)
                 <div class="bg-white card py-4">
-                    <a href="{{ route('dosen.detail-mahasiswa-bimbingan')}}"> 
+                    <a href="{{ route('dosen.detail-mahasiswa-bimbingan')}}">
                         <div class="p-4">
                             <img src="https://picsum.photos/200/300" class="rounded-full w-32 h-32 object-cover mx-auto" alt="Foto Profil" />
                         </div>
@@ -23,7 +23,7 @@
                     </a>
             </div>
             @endfor
-            
-            
+
+
         </div>
 </x-layouts.dosen.dosen>

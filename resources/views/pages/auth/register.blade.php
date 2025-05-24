@@ -8,32 +8,27 @@ use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.auth')] class extends Component {
-    public string $name = '';
-    public string $email = '';
-    public string $password = '';
-    public string $password_confirmation = '';
+use function Livewire\Volt\{layout, rules, state, protect};
 
-    /**
-     * Handle an incoming registration request.
-     */
-    public function register(): void
-    {
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ]);
+layout('components.layouts.guest.with-navbar');
 
-        $validated['password'] = Hash::make($validated['password']);
+state([
+    'nim' => '',
+    'nama' => '',
+    'jurusan' => '',
+    'prodi' => '',
+    'jenis_kelamin' => '',
+    'email' => '',
+    'password' => '',
+    'password_confirmation' => '',
+]);
 
-        event(new Registered(($user = User::create($validated))));
+$register = function () : void {
 
-        Auth::login($user);
+};
 
-        $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
-    }
-}; ?>
+
+?>
 
 <div class="flex flex-col gap-6 pt-11">
     <div class="bg-white shadow-lg flex flex-col rounded-md p-7">
@@ -42,7 +37,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
         <x-auth-session-status class="text-center" :status="session('status')" />
 
         <form wire:submit="register" class="flex flex-col gap-4 pt-8">
-            <!-- NIM -->
             <flux:field>
                 <flux:label class="text-black!">NIM</flux:label>
                 <flux:input wire:model="nim" type="text" required autofocus autocomplete="nim"
@@ -50,7 +44,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 <flux:error name="nim" />
             </flux:field>
 
-            <!-- Nama -->
             <flux:field>
                 <flux:label class="text-black!">Nama Lengkap</flux:label>
                 <flux:input wire:model="name" type="text" required autofocus autocomplete="name"
@@ -77,7 +70,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 <flux:error name="prodi" />
             </flux:field>
 
-
             <flux:field>
                 <flux:label class="text-black!">Jenis Kelamin</flux:label>
                 <flux:input.group>
@@ -90,7 +82,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 <flux:error name="jenis_kelamin" />
             </flux:field>
 
-            <!-- Password -->
             <flux:field>
                 <flux:label class="text-black!">Password</flux:label>
                 <flux:input wire:model="password" type="password" required autocomplete="new-password"
@@ -100,7 +91,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 <flux:error name="password" />
             </flux:field>
 
-            <!-- Konfirmasi Password -->
             <flux:field>
                 <flux:label class="text-black!">Konfirmasi Password</flux:label>
                 <flux:input wire:model="password_confirmation" type="password" required autocomplete="new-password"
@@ -114,8 +104,5 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 </flux:button>
             </div>
         </form>
-
     </div>
-
-    <!-- Session Status -->
 </div>

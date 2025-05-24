@@ -1,4 +1,4 @@
-<x-layouts.mahasiswa.mahasiswa>
+<x-layouts.mahasiswa.main>
 
     <!-- Wrapper dengan jarak 9px antar card -->
     <div class="flex flex-col gap-[30px]">
@@ -80,4 +80,4 @@
             </div>
         </div>
     </div>
-</x-layouts.mahasiswa.mahasiswa>
+</x-layouts.mahasiswa.main>

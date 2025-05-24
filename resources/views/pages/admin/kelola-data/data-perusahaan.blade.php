@@ -2,7 +2,7 @@
 
 use function Livewire\Volt\{layout, state, mount};
 
-layout('components.layouts.admin.admin');
+layout('components.layouts.admin.main');
 
 state([
     'totalRowsPerPage' => 10,

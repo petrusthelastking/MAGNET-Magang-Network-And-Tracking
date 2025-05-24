@@ -10,7 +10,7 @@ use Illuminate\Validation\ValidationException;
 
 use function Livewire\Volt\{layout, rules, state, protect};
 
-layout('components.layouts.auth');
+layout('components.layouts.guest.with-navbar');
 
 state([
     'userID' => '',

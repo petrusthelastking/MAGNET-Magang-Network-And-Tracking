@@ -4,13 +4,13 @@
     </flux:navbar.item>
     <div class="flex">
         <flux:navbar.item href="#alur">
-            <flux:text class=" text-white text-lg">Pedoman Magang</flux:text>
+            <flux:text class=" text-white">Pedoman Magang</flux:text>
         </flux:navbar.item>
         <flux:navbar.item href="#tata-tertib">
-            <flux:text class=" text-white text-lg">Tata Tertib</flux:text>
+            <flux:text class=" text-white">Tata Tertib</flux:text>
         </flux:navbar.item>
         <flux:navbar.item href="#kendala">
-            <flux:text class=" text-white text-lg">Pusat Bantuan</flux:text>
+            <flux:text class=" text-white">Pusat Bantuan</flux:text>
         </flux:navbar.item>
     </div>
 </flux:navbar>
