@@ -2,25 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PreferensiMahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
-use App\Models\MahasiswaProfiles;
-use App\Models\PreferensiMagang;
-
+use Illuminate\Support\Facades\Session;
+use App\Models\mahasiswa;
 
 class MahasiswaController extends Controller
 {
     /**
-     * Constructor
+     * Get current authenticated mahasiswa
      */
-    public function __construct()
+    private function getCurrentMahasiswa()
     {
-        $this->middleware('auth');              // Hanya user yang login
-        $this->middleware('role:mahasiswa');    // Hanya role mahasiswa yang boleh masuk
+        $userId = Session::get('user_id');
+        $userRole = Session::get('user_role');
+
+        if (!$userId || $userRole !== 'mahasiswa') {
+            return null;
+        }
+
+        return mahasiswa::find($userId);
     }
 
     /**
@@ -30,10 +35,13 @@ class MahasiswaController extends Controller
      */
     public function dashboard()
     {
-        $user = auth()->user();
-        $mahasiswa = MahasiswaProfiles::where('user_id', $user->id)->first();
+        $mahasiswa = $this->getCurrentMahasiswa();
 
-        return view('mahasiswa.dashboard', compact('user', 'mahasiswa'));
+        if (!$mahasiswa) {
+            return redirect()->route('login');
+        }
+
+        return view('mahasiswa.dashboard', compact('mahasiswa'));
     }
 
     /**
@@ -43,15 +51,15 @@ class MahasiswaController extends Controller
      */
     public function profile()
     {
-        $user = auth()->user();
+        $mahasiswa = $this->getCurrentMahasiswa();
 
-        $mahasiswa = MahasiswaProfiles::with('programStudi')
-            ->where('user_id', $user->id)
-            ->first();
+        if (!$mahasiswa) {
+            return redirect()->route('login');
+        }
 
-        $preferensi = PreferensiMagang::where('mahasiswa_id', $mahasiswa->id)->first();
+        $preferensi = PreferensiMahasiswa::where('mahasiswa_id', $mahasiswa->id)->first();
 
-        return view('pages.mahasiswa.setting-profile', compact('user', 'mahasiswa', 'preferensi'));
+        return view('pages.mahasiswa.setting-profile', compact('mahasiswa', 'preferensi'));
     }
 
     /**
@@ -61,10 +69,13 @@ class MahasiswaController extends Controller
      */
     public function editProfile()
     {
-        $user = auth()->user();
-        $mahasiswa = MahasiswaProfiles::where('user_id', $user->id)->first();
+        $mahasiswa = $this->getCurrentMahasiswa();
 
-        return view('mahasiswa.edit-profile', compact('user', 'mahasiswa'));
+        if (!$mahasiswa) {
+            return redirect()->route('login');
+        }
+
+        return view('mahasiswa.edit-profile', compact('mahasiswa'));
     }
 
     /**
@@ -75,53 +86,52 @@ class MahasiswaController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $user = auth()->user();
+        $mahasiswa = $this->getCurrentMahasiswa();
+
+        if (!$mahasiswa) {
+            return redirect()->route('login');
+        }
 
         // Validasi input
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'password' => 'nullable|string|min:8|confirmed',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        // Update user
-        $user->name = $validated['name'];
+        // Update mahasiswa
+        $mahasiswa->nama = $validated['nama'];
+        $mahasiswa->alamat = $validated['alamat'] ?? $mahasiswa->alamat;
 
         // Update password jika diisi
         if (!empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
+            $mahasiswa->password = Hash::make($validated['password']);
         }
 
         // Upload dan update foto jika ada
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
-            $mahasiswa = MahasiswaProfiles::where('user_id', $user->id)->first();
-            if ($mahasiswa && $mahasiswa->foto_path) {
+            if ($mahasiswa->foto_path) {
                 Storage::disk('public')->delete($mahasiswa->foto_path);
             }
 
             // Upload foto baru
             $fotoPath = $request->file('foto')->store('profile-photos', 'public');
-
-            // Update path foto di database
-            if ($mahasiswa) {
-                $mahasiswa->foto_path = $fotoPath;
-                $mahasiswa->alamat = $validated['alamat'];
-                $mahasiswa->save();
-            }
-        } else if (isset($validated['alamat'])) {
-            // Update alamat tanpa foto
-            $mahasiswa = MahasiswaProfiles::where('user_id', $user->id)->first();
-            if ($mahasiswa) {
-                $mahasiswa->alamat = $validated['alamat'];
-                $mahasiswa->save();
-            }
+            $mahasiswa->foto_path = $fotoPath;
         }
 
-        $user->save();
+        $mahasiswa->save();
 
-        return redirect()->route('mahasiswa.profile')
+        // Update session data
+        Session::put('user_data', [
+            'id' => $mahasiswa->id,
+            'nama' => $mahasiswa->nama,
+            'role' => 'mahasiswa',
+            'identifier' => $mahasiswa->nim
+        ]);
+
+        return redirect()->route('mahasiswa.setting-profile')
             ->with('success', 'Profil berhasil diperbarui.');
     }
 
@@ -130,11 +140,15 @@ class MahasiswaController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function editPreferensiMagang()
+    public function editPreferensiMahasiswa()
     {
-        $user = auth()->user();
-        $mahasiswa = MahasiswaProfiles::where('user_id', $user->id)->first();
-        $preferensi = PreferensiMagang::where('mahasiswa_id', $mahasiswa->id)->first();
+        $mahasiswa = $this->getCurrentMahasiswa();
+
+        if (!$mahasiswa) {
+            return redirect()->route('login');
+        }
+
+        $preferensi = PreferensiMahasiswa::where('mahasiswa_id', $mahasiswa->id)->first();
 
         // List untuk dropdown
         $keahlianList = [
@@ -200,7 +214,6 @@ class MahasiswaController extends Controller
         ];
 
         return view('mahasiswa.edit-preferensi-magang', compact(
-            'user',
             'mahasiswa',
             'preferensi',
             'keahlianList',
@@ -216,10 +229,13 @@ class MahasiswaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function updatePreferensiMagang(Request $request): RedirectResponse
+    public function updatePreferensiMahasiswa(Request $request): RedirectResponse
     {
-        $user = auth()->user();
-        $mahasiswa = MahasiswaProfiles::where('user_id', $user->id)->first();
+        $mahasiswa = $this->getCurrentMahasiswa();
+
+        if (!$mahasiswa) {
+            return redirect()->route('login');
+        }
 
         // Validasi input
         $validated = $request->validate([
@@ -231,7 +247,7 @@ class MahasiswaController extends Controller
         ]);
 
         // Cari atau buat preferensi magang
-        $preferensi = PreferensiMagang::firstOrNew(['mahasiswa_id' => $mahasiswa->id]);
+        $preferensi = PreferensiMahasiswa::firstOrNew(['mahasiswa_id' => $mahasiswa->id]);
 
         // Update data preferensi
         $preferensi->keahlian = $validated['keahlian'];
@@ -257,12 +273,14 @@ class MahasiswaController extends Controller
      */
     public function settingProfile()
     {
-        $user = auth()->user();
-        $mahasiswa = MahasiswaProfiles::where('user_id', $user->id)
-            ->with('programStudi')
-            ->first();
-        $preferensi = PreferensiMagang::where('mahasiswa_id', $mahasiswa->id)->first();
+        $mahasiswa = $this->getCurrentMahasiswa();
 
-        return view('pages.mahasiswa.setting-profile', compact('user', 'mahasiswa', 'preferensi'));
+        if (!$mahasiswa) {
+            return redirect()->route('login');
+        }
+
+        $preferensi = PreferensiMahasiswa::where('mahasiswa_id', $mahasiswa->id)->first();
+
+        return view('pages.mahasiswa.setting-profile', compact('mahasiswa', 'preferensi'));
     }
 }
