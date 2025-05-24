@@ -9,62 +9,6 @@ use Illuminate\Support\Facades\Session;
 
 class PengajuanMagangController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            if (Session::get('user_role') !== 'mahasiswa') {
-                return redirect()->route('login')->with('error', 'Akses ditolak.');
-            }
-            return $next($request);
-        });
-    }
-
-    public function index()
-    {
-        $mahasiswaId = Session::get('user_id');
-        $mahasiswa = Mahasiswa::find($mahasiswaId);
-
-        if (!$mahasiswa) {
-            return redirect()->back()->with('error', 'Profil mahasiswa tidak ditemukan.');
-        }
-
-        // Cek apakah mahasiswa sudah pernah mengajukan
-        $berkasPengajuan = \App\Models\BerkasPengajuanMagang::where('mahasiswa_id', $mahasiswa->id)->first();
-        $formPengajuan = null;
-
-        if ($berkasPengajuan) {
-            $formPengajuan = \App\Models\FormPengajuanMagang::where('pengajuan_id', $berkasPengajuan->id)->first();
-        }
-
-        // Ubah default value menjadi 'belum magang' sesuai dengan enum di database
-        $statusMagang = $mahasiswa->status_magang ?? 'belum magang';
-
-        return view('pages.mahasiswa.pengajuan-magang', [
-            'statusMagang' => $statusMagang,
-            'formPengajuan' => $formPengajuan
-        ]);
-    }
-
-    public function showForm()
-    {
-        $mahasiswaId = Session::get('user_id');
-        $mahasiswa = Mahasiswa::find($mahasiswaId);
-
-        if (!$mahasiswa) {
-            return redirect()->back()->with('error', 'Profil mahasiswa tidak ditemukan.');
-        }
-
-        $lowonganMagang = Magang::with('perusahaan')->get();
-
-        return view('pages.mahasiswa.form-pengajuan-magang', [
-            'nama' => $mahasiswa->nama,
-            'jurusan' => $mahasiswa->jurusan,
-            'programStudi' => $mahasiswa->program_studi,
-            'mahasiswa' => $mahasiswa,
-            'lowonganMagang' => $lowonganMagang,
-        ]);
-    }
-
     public function storePengajuan(Request $request)
     {
         try {

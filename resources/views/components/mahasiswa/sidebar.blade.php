@@ -7,31 +7,30 @@
         <h1 class="text-3xl font-black ps-2 mx-4 text-center text-[#219EBC]">MAGNET</h1>
     </a>
 
-    {{-- GANTI navlist.item PEMBUNGKUS DENGAN navlist --}}
     <flux:navlist variant="outline">
         <flux:navlist.item icon="home" href="{{ route('dashboard') }}"
-            :current="request()->is('mahasiswa/dashboard')">
+            :current="request()->is('dashboard')">
             Dashboard
         </flux:navlist.item>
 
         <flux:navlist.item icon="flask-conical" href="{{ route('mahasiswa.pengajuan-magang') }}"
-            :current="request()->is('mahasiswa/pengajuan-magang')">
+            :current="request()->is('pengajuan-magang')">
             Pengajuan Magang
         </flux:navlist.item>
 
         <flux:navlist.item icon="message-square-more" href="{{ route('mahasiswa.konsul-dospem') }}"
-            :current="request()->is('mahasiswa/konsul-dospem')" class="whitespace-normal break-words">
+            :current="request()->is('konsul-dospem')" class="whitespace-normal break-words">
             Konsultasi Dosen <br>
             Pembimbing
         </flux:navlist.item>
 
         <flux:navlist.item icon="battery-medium" href="{{ route('mahasiswa.pembaruan-status') }}"
-            :current="request()->is('mahasiswa/pembaruan-status')">
+            :current="request()->is('pembaruan-status')">
             Pembaruan Status
         </flux:navlist.item>
 
         <flux:navlist.item icon="file-chart-column-increasing" href="{{ route('mahasiswa.log-mahasiswa') }}"
-            :current="request()->is('mahasiswa/log-mahasiswa')">
+            :current="request()->is('log-mahasiswa')">
             Log Magang
         </flux:navlist.item>
     </flux:navlist>
