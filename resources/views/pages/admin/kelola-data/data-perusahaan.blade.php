@@ -23,8 +23,8 @@ mount(function () {
 
 <div class="flex flex-col gap-5">
     <flux:breadcrumbs>
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('detail-perusahaan') }}" class="text-black">Kelola Data Perusahaan
+        <flux:breadcrumbs.item href="{{ route('admin.dashboard') }}" icon="home" icon:variant="outline" />
+        <flux:breadcrumbs.item href="{{ route('admin.detail-perusahaan') }}" class="text-black">Kelola Data Perusahaan
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <h1 class="text-base font-bold leading-6 text-black">Kelola Data Perusahaan</h1>
@@ -63,7 +63,7 @@ mount(function () {
                         <td class="px-6 py-3">{{ $data_perusahaan[$i]->bidang_industri }}</td>
                         <td class="px-6 py-3">{{ $data_perusahaan[$i]->jumlah_mahasiswa_magang }}</td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-perusahaan') }}" variant="ghost" />
+                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-perusahaan') }}" variant="ghost" />
                         </td>
                     </tr>
                 @endfor

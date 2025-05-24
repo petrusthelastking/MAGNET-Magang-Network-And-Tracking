@@ -24,8 +24,8 @@ mount(function () {
 
 <div class="flex flex-col gap-5">
     <flux:breadcrumbs>
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('detail-dosen') }}" class="text-black">Kelola Data Dosen
+        <flux:breadcrumbs.item href="{{ route('admin.dashboard') }}" icon="home" icon:variant="outline" />
+        <flux:breadcrumbs.item href="{{ route('admin.detail-dosen') }}" class="text-black">Kelola Data Dosen
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <h1 class="text-base font-bold leading-6 text-black">Kelola Data Dosen</h1>
@@ -64,7 +64,7 @@ mount(function () {
                         <td class="px-6 py-3">{{ $data_dosen[$i]->nip }}</td>
                         <td class="px-6 py-3">{{ $data_dosen[$i]->jumlah_bimbingan }}</td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-dosen') }}" variant="ghost" />
+                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-dosen') }}" variant="ghost" />
                         </td>
                     </tr>
                 @endfor

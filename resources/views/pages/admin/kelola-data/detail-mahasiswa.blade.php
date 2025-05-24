@@ -1,16 +1,16 @@
 <x-layouts.admin.admin>
     <flux:breadcrumbs class="mb-5">
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('data-mahasiswa') }}" class="text-black">Kelola Data Mahasiswa
+        <flux:breadcrumbs.item href="{{ route('admin.dashboard') }}" icon="home" icon:variant="outline" />
+        <flux:breadcrumbs.item href="{{ route('admin.data-mahasiswa') }}" class="text-black">Kelola Data Mahasiswa
         </flux:breadcrumbs.item>
-        <flux:breadcrumbs.item href="{{ route('detail-mahasiswa') }}" class="text-black">Detail Data Mahasiswa
+        <flux:breadcrumbs.item href="{{ route('admin.detail-mahasiswa') }}" class="text-black">Detail Data Mahasiswa
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <h1 class="text-base font-bold leading-6 text-black">Detail Informasi Mahasiswa</h1>
 
     <div class="min-h-screen p-6">
         <div class="px-4 font-sans text-black">
-            @livewire('detail-mahasiswa')
+            @livewire('admin.detail-mahasiswa')
         </div>
     </div>
     <flux:modal name="delete-profile" class="min-w-[22rem]">

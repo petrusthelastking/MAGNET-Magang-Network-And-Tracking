@@ -14,17 +14,6 @@ Route::middleware(['auth'])
         Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
         Volt::route('settings/password', 'settings.password')->name('settings.password');
         Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
-
-        Route::view('dashboard', 'pages.admin.dashboard')->name('dashboard');
-        Volt::route('data-mahasiswa', 'pages.admin.kelola-data.data-mahasiswa')->name('data-mahasiswa');
-        Route::view('detail-mahasiswa', 'pages.admin.kelola-data.detail-mahasiswa')->name('detail-mahasiswa');
-        Volt::route('data-dosen', 'pages.admin.kelola-data.data-dosen')->name('data-dosen');
-        Route::view('detail-dosen', 'pages.admin.kelola-data.detail-dosen')->name('detail-dosen');
-        Volt::route('data-perusahaan', 'pages.admin.kelola-data.data-perusahaan')->name('data-perusahaan');
-        Route::view('detail-perusahaan', 'pages.admin.kelola-data.detail-perusahaan')->name('detail-perusahaan');
-
-        Volt::route('data-lowongan', 'pages.admin.magang.data-lowongan')->name('data-lowongan');
-        Route::view('detail-lowongan', 'pages.admin.magang.detail-lowongan')->name('detail-lowongan');
     });
 
 Route::prefix('mahasiswa')
@@ -49,3 +38,16 @@ Route::view('dosen/dashboard', 'pages.dosen.dashboard')->name('dosen.dashboard')
 Route::view('dosen/mahasiswa-bimbingan', 'pages.dosen.mahasiswa-bimbingan')->name('dosen.mahasiswa-bimbingan');
 Route::view('dosen/detail-mahasiswa-bimbingan', 'pages.dosen.detail-mahasiswa-bimbingan')->name('dosen.detail-mahasiswa-bimbingan');
 Route::get('debug-form', [PengajuanMagangController::class, 'debugForm'])->name('debug-form');
+
+
+Route::view('dashboard', 'pages.admin.dashboard')->name('admin.dashboard');
+Volt::route('data-mahasiswa', 'pages.admin.kelola-data.data-mahasiswa')->name('admin.data-mahasiswa');
+Route::view('detail-mahasiswa', 'pages.admin.kelola-data.detail-mahasiswa')->name('admin.detail-mahasiswa');
+Volt::route('data-dosen', 'pages.admin.kelola-data.data-dosen')->name('admin.data-dosen');
+Route::view('detail-dosen', 'pages.admin.kelola-data.detail-dosen')->name('admin.detail-dosen');
+Volt::route('data-perusahaan', 'pages.admin.kelola-data.data-perusahaan')->name('admin.data-perusahaan');
+Route::view('detail-perusahaan', 'pages.admin.kelola-data.detail-perusahaan')->name('admin.detail-perusahaan');
+Volt::route('data-lowongan', 'pages.admin.magang.data-lowongan')->name('admin.data-lowongan');
+Route::view('detail-lowongan', 'pages.admin.magang.detail-lowongan')->name('admin.detail-lowongan');
+Route::view('pengajuan-magang', 'pages.admin.magang.data-pengajuan')->name('admin.data-pengajuan');
+Route::view('detail-pengajuan', 'pages.admin.magang.detail-pengajuan')->name('admin.detail-pengajuan');

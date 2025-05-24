@@ -1,9 +1,9 @@
 <x-layouts.admin.admin>
     <flux:breadcrumbs class="mb-5">
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('data-dosen') }}" class="text-black">Kelola Data Dosen
+        <flux:breadcrumbs.item href="{{ route('admin.dashboard') }}" icon="home" icon:variant="outline" />
+        <flux:breadcrumbs.item href="{{ route('admin.data-dosen') }}" class="text-black">Kelola Data Dosen
         </flux:breadcrumbs.item>
-        <flux:breadcrumbs.item href="{{ route('detail-dosen') }}" class="text-black">Detail Data Dosen
+        <flux:breadcrumbs.item href="{{ route('admin.detail-dosen') }}" class="text-black">Detail Data Dosen
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <h1 class="text-base font-bold leading-6 text-black">Detail Informasi Dosen</h1>
