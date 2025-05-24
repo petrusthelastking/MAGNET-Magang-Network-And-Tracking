@@ -39,20 +39,23 @@
     <flux:spacer />
 
     <flux:dropdown position="top" align="start" class="max-lg:hidden">
-        <flux:profile avatar="https://unavatar.io/x/calebporzio" name="Olivia Martin" />
+        <flux:profile avatar="https://unavatar.io/x/calebporzio" name="{{ auth('mahasiswa')->user()->nama }}" />
 
-        <flux:menu>
+        <flux:menu class="p-0!">
             <flux:navlist variant="outline" class="w-full">
-                <flux:avatar src="https://unavatar.io/x/calebporzio" class="mx-auto mb-1.5 " />
-                <flux:navlist.item href="{{ route('mahasiswa.setting-profile') }}"
-                    class="bg-cyan-300 hover:bg-blue-200 text-black! text-center! h-10!">
-                    Olivia Martin
-                </flux:navlist.item>
+                <flux:button variant="ghost" class="flex my-2">
+                    <flux:avatar src="https://unavatar.io/x/calebporzio" class="mx-auto" />
+                    <flux:navlist.item href="{{ route('mahasiswa.setting-profile') }}"
+                        class="text-black!">
+                        <div class="text-base leading-6 font-normal">{{ auth('mahasiswa')->user()->nama }}</div>
+                        <div class="text-xs leading-4 font-medium">{{ auth('mahasiswa')->user()->nim }}</div>
+                    </flux:navlist.item>
+                </flux:button>
             </flux:navlist>
 
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
-                <flux:button type="submit" variant="danger" class="w-full h-10!" icon="arrow-right-start-on-rectangle">
+                <flux:button type="submit" variant="danger" class="w-full rounded-t-none! hover:cursor-pointer" icon="arrow-right-start-on-rectangle">
                     {{ __('Log Out') }}
                 </flux:button>
             </form>
