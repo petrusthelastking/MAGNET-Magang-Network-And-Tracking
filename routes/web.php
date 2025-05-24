@@ -36,8 +36,8 @@ Route::name('admin.')
 Route::name('mahasiswa.')
     ->middleware('role:mahasiswa')
     ->group(function () {
-        Route::get('pengajuan-magang', [PengajuanMagangController::class, 'index'])->name('pengajuan-magang');
-        Route::get('formulir-pengajuan', [PengajuanMagangController::class, 'showForm'])->name('form-pengajuan-magang');
+        Volt::route('pengajuan-magang', 'pages.mahasiswa.pengajuan-magang.pengajuan-magang')->name('pengajuan-magang');
+        Volt::route('formulir-pengajuan', 'pages.mahasiswa.pengajuan-magang.formulir-pengajuan')->name('form-pengajuan-magang');
         Route::post('formulir-pengajuan', [PengajuanMagangController::class, 'storePengajuan'])->name('store-pengajuan-magang');
 
         Route::view('konsul-dospem', 'pages.mahasiswa.konsul-dospem')->name('konsul-dospem');

@@ -1,4 +1,16 @@
-<x-layouts.mahasiswa.mahasiswa>
+<?php
+
+use function Livewire\Volt\{layout, rules, state, protect};
+
+layout('components.layouts.mahasiswa.mahasiswa');
+
+state([
+    'mahasiswa' => auth('mahasiswa')->user(),
+]);
+
+?>
+
+<div class="text-black flex flex-col gap-6">
     <div class="card bg-white shadow-md">
         <form action="{{ route('mahasiswa.store-pengajuan-magang') }}" method="POST" enctype="multipart/form-data"
             id="pengajuan-form">
@@ -10,7 +22,6 @@
                 <flux:input readonly value="{{ $mahasiswa->program_studi ?? '-' }}" type="text"
                     label="Program Studi" />
 
-                <!-- CV Upload -->
                 <flux:field>
                     <flux:input type="file" name="cv" label="CV" accept=".pdf"
                         description="Format: PDF. Maksimal ukuran file: 2 MB." />
@@ -19,7 +30,6 @@
                     @enderror
                 </flux:field>
 
-                <!-- Transkrip Nilai Upload -->
                 <flux:field>
                     <flux:input type="file" name="transkrip_nilai" label="Transkrip Nilai" accept=".pdf"
                         description="Format: PDF. Maksimal ukuran file: 2 MB." />
@@ -28,7 +38,6 @@
                     @enderror
                 </flux:field>
 
-                <!-- Portfolio Upload (Optional) -->
                 <flux:field>
                     <flux:input type="file" name="portfolio" label="Portofolio (Opsional)" accept=".pdf"
                         description="Format: PDF. Maksimal ukuran file: 2 MB." />
@@ -85,4 +94,4 @@
             alert('Terjadi kesalahan:\n' + errors);
         </script>
     @endif
-</x-layouts.mahasiswa.mahasiswa>
+</div>
