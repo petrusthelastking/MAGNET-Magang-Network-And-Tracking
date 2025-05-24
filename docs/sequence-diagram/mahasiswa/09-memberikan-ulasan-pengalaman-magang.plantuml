@@ -1,0 +1,26 @@
+@startuml memberikan-ulasan-magang
+
+actor Mahasiswa
+
+boundary HalamanUlasanMagang #LightGreen
+boundary HalamanKonfirmasiUlasan #LightGreen
+
+control UlasanController #Pink
+
+entity DataUlasanMagang #SkyBlue
+entity DataMahasiswa #SkyBlue
+
+Mahasiswa -> HalamanUlasanMagang : isi ulasan
+HalamanUlasanMagang -> UlasanController : kirimUlasan(data)
+UlasanController -> DataMahasiswa : validasiRiwayatMagang()
+DataMahasiswa --> UlasanController : returnValidasi()
+
+alt Validasi berhasil
+    UlasanController -> DataUlasanMagang : simpanUlasan()
+    DataUlasanMagang --> UlasanController : returnSuccess()
+    UlasanController -> HalamanKonfirmasiUlasan : tampilkanPesanSukses()
+else Validasi gagal
+    UlasanController -> HalamanUlasanMagang : tampilkanPesanGagal()
+end
+
+@enduml
