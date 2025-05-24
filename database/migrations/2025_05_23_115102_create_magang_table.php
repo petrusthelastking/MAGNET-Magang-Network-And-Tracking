@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->string('nama');
             $table->text('deskripsi');
             $table->text('persyaratan');
+            $table->enum('status', ['buka', 'tutup'])->default('buka');
+            $table->string('lokasi');
             $table->foreignId('perusahaan_id')->constrained('perusahaan')->onDelete('cascade');
             $table->timestamps();
         });
