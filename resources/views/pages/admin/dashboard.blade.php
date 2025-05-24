@@ -1,7 +1,7 @@
 <x-layouts.admin.admin>
   <flux:breadcrumbs class="mb-5">
-    <flux:breadcrumbs.item href="{{ route('admin.dashboard') }}" icon="home" icon:variant="outline" />
-    <flux:breadcrumbs.item href="{{ route('admin.dashboard') }}" class="text-black">Dashboard</flux:breadcrumbs.item>
+    <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
+    <flux:breadcrumbs.item href="{{ route('dashboard') }}" class="text-black">Dashboard</flux:breadcrumbs.item>
   </flux:breadcrumbs>
   <div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

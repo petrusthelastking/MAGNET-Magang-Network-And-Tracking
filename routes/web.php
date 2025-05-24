@@ -28,11 +28,8 @@ Route::name('admin.')
         Volt::route('data-lowongan', 'pages.admin.magang.data-lowongan')->name('data-lowongan');
         Route::view('detail-lowongan', 'pages.admin.magang.detail-lowongan')->name('detail-lowongan');
 
-        Route::redirect('settings', 'settings/profile');
-
-        Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
-        Volt::route('settings/password', 'settings.password')->name('settings.password');
-        Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
+        Route::view('data-pengajuan-magang', 'pages.admin.magang.data-pengajuan')->name('data-pengajuan');
+        Route::view('detail-pengajuan', 'pages.admin.magang.detail-pengajuan')->name('detail-pengajuan');
 });
 
 

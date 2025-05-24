@@ -15,20 +15,30 @@
         </flux:navlist.item>
 
     </flux:navlist>
+
     <flux:spacer />
-    <flux:navlist variant="outline">
-        <flux:navlist.item icon="cog-6-tooth" href="#">Settings</flux:navlist.item>
-        <flux:navlist.item icon="information-circle" href="#">Help</flux:navlist.item>
-    </flux:navlist>
+
     <flux:dropdown position="top" align="start" class="max-lg:hidden">
-        <flux:profile avatar="https://fluxui.dev/img/demo/user.png" name="Olivia Martin" />
-        <flux:menu>
-            <flux:menu.radio.group>
-                <flux:menu.radio checked>Olivia Martin</flux:menu.radio>
-                <flux:menu.radio>Truly Delta</flux:menu.radio>
-            </flux:menu.radio.group>
-            <flux:menu.separator />
-            <flux:menu.item icon="arrow-right-start-on-rectangle">Logout</flux:menu.item>
+        <flux:profile avatar="https://unavatar.io/x/calebporzio" name="{{ auth('dosen')->user()->nama }}" />
+
+        <flux:menu class="p-0!">
+            <flux:navlist variant="outline" class="w-full">
+                <flux:button variant="ghost" class="flex my-2">
+                    <flux:avatar src="https://unavatar.io/x/calebporzio" class="mx-auto" />
+                    <flux:navlist.item href="{{ route('mahasiswa.setting-profile') }}"
+                        class="text-black!">
+                        <div class="text-base leading-6 font-normal">{{ auth('dosen')->user()->nama }}</div>
+                        <div class="text-xs leading-4 font-medium">{{ auth('dosen')->user()->nidn }}</div>
+                    </flux:navlist.item>
+                </flux:button>
+            </flux:navlist>
+
+            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                @csrf
+                <flux:button type="submit" variant="danger" class="w-full rounded-t-none! hover:cursor-pointer" icon="arrow-right-start-on-rectangle">
+                    {{ __('Log Out') }}
+                </flux:button>
+            </form>
         </flux:menu>
     </flux:dropdown>
 </flux:sidebar>
