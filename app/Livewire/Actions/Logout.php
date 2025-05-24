@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Actions;
 
+use App\Helpers\UserAuthenticationHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -12,7 +13,7 @@ class Logout
      */
     public function __invoke()
     {
-        Auth::guard('web')->logout();
+        Auth::guard(UserAuthenticationHelper::getUserRole())->logout();
 
         Session::invalidate();
         Session::regenerateToken();

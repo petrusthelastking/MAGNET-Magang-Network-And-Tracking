@@ -1,6 +1,4 @@
 <x-layouts.guest>
-
-
     <section class="h-screen px-6 pt-6 flex justify-around items-start">
         <div class="container mx-auto">
             <div class="bg-magnet-deep-ocean-blue text-white rounded-2xl pb-72">
@@ -13,7 +11,7 @@
                         kamu!
                     </p>
                     <flux:button class="text-black! bg-white! rounded-full! hover:bg-gray-200 border-0"
-                        href="{{route('login')}}">Cari
+                        href="{{ route('login') }}">Cari
                         tempat magang impianmu Sekarang</flux:button>
                 </div>
             </div>
@@ -60,7 +58,7 @@
     </section>
 
     <section class="h-screen px-16 pt-16 pb-8 flex items-center justify-center" id="tata-tertib">
-      
+
 
     </section>
 

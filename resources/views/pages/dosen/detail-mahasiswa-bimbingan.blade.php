@@ -1,6 +1,6 @@
 <x-layouts.dosen.dosen>
     <flux:breadcrumbs class="mb-5">
-        <flux:breadcrumbs.item href="{{ route('dosen.dashboard') }}" icon="home" icon:variant="outline" />
+        <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('dosen.mahasiswa-bimbingan') }}" class="text-black">Mahasiswa Bimbingan
         </flux:breadcrumbs.item>
         <flux:breadcrumbs.item class="text-black">Detail Mahasiswa Bimbingan

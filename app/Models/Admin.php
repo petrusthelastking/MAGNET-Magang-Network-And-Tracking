@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable;
 
-class Admin extends Model
+class Admin extends Model implements Authenticatable
 {
     use HasFactory;
+    use \Illuminate\Auth\Authenticatable;
 
     protected $table = 'admin';
 
@@ -20,4 +22,9 @@ class Admin extends Model
     protected $hidden = [
         'password',
     ];
+
+    public function getRoleName(): string
+    {
+        return 'admin';
+    }
 }

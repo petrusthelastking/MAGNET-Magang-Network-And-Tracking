@@ -4,14 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 use App\Models\BerkasPengajuanMagang;
-use App\Models\KontakMagang;
 use App\Models\PreferensiMahasiswa;
+use App\Models\KontrakMagang;
 
-class Mahasiswa extends Model
+class Mahasiswa extends Model implements Authenticatable
 {
     use HasFactory;
+    use \Illuminate\Auth\Authenticatable;
 
     protected $table = 'mahasiswa';
 
@@ -35,12 +37,17 @@ class Mahasiswa extends Model
         'status_magang' => 'string',
     ];
 
+    public function getRoleName(): string
+    {
+        return 'mahasiswa';
+    }
+
     public function berkasPengajuanMagang()
     {
         return $this->hasMany(BerkasPengajuanMagang::class);
     }
 
-    public function kontakMagang()
+    public function kontrakMagang()
     {
         return $this->hasMany(KontrakMagang::class);
     }
