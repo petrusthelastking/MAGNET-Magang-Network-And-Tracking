@@ -10,6 +10,7 @@
             Dashboard
         </flux:navlist.item>
 
+
         @php
             $isRequestToKelolaData = request()->is('data-mahasiswa') || request()->is('data-perusahaan') || request()->is('data-dosen');
         @endphp
@@ -30,20 +31,24 @@
             </flux:navlist.item>
         </flux:navlist.group>
 
-        <flux:navlist.group expandable heading="Magang" :expanded="false">
+        @php
+            $isRequestToMagang = request()->is('data-lowongan') || request()->is('pengajuan-magang') || request()->is('tren-magang') || request()->is('aturan-magang');
+        @endphp
+        <flux:navlist.group expandable heading="Magang" :expanded="$isRequestToMagang">
+
             <flux:navlist.item icon="briefcase-business" href="{{ route('admin.data-lowongan') }}"
-                :current="request()->is('/data-lowongan')" class="text-magnet-deep-ocean-blue!">
+                :current="request()->is('data-lowongan')" class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="flask-conical" href="{{ route('admin.data-pengajuan') }}" :current="request()->is('/pengajuan-magang')"
+            <flux:navlist.item icon="flask-conical" href="{{ route('admin.data-pengajuan') }}" :current="request()->is('pengajuan-magang')"
                 class="text-magnet-deep-ocean-blue!">
                 Pengajuan Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="chart-no-axes-combined" href="#" :current="request()->is('/tren-magang')"
+            <flux:navlist.item icon="chart-no-axes-combined" href="#" :current="request()->is('tren-magang')"
                 class="text-magnet-deep-ocean-blue!">
                 Tren Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="crown" href="#" :current="request()->is('/aturan-magang')"
+            <flux:navlist.item icon="crown" href="#" :current="request()->is('aturan-magang')"
                 class="text-magnet-deep-ocean-blue!">
                 Aturan Magang
             </flux:navlist.item>
