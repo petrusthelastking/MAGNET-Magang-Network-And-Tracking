@@ -10,16 +10,6 @@ use Illuminate\Support\Facades\Storage;
 
 class PembaruanStatusController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            if (Session::get('user_role') !== 'mahasiswa') {
-                return redirect()->route('login')->with('error', 'Akses ditolak.');
-            }
-            return $next($request);
-        });
-    }
-
     public function index()
     {
         $mahasiswaId = Session::get('user_id');
