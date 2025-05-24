@@ -16,7 +16,7 @@ class FormPengajuanMagangSeeder extends Seeder
         DB::table('form_pengajuan_magang')->insert([
             [
                 'pengajuan_id' => 1,
-                'status' => 'menunggu',
+                'status' => 'diproses',
                 'keterangan' => 'Sedang dalam proses review oleh HRD perusahaan'
             ],
             [
@@ -26,7 +26,7 @@ class FormPengajuanMagangSeeder extends Seeder
             ],
             [
                 'pengajuan_id' => 3,
-                'status' => 'menunggu',
+                'status' => 'diproses',
                 'keterangan' => 'Dokumen lengkap, menunggu jadwal interview'
             ],
             [
