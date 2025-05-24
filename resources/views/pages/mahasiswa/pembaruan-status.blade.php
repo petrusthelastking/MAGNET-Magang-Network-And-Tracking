@@ -1,9 +1,9 @@
 <?php
 use function Livewire\Volt\{layout, state};
-state(['status' => "Tidak Magang"]);
+state(['status' => 'Tidak Magang']);
 layout('components.layouts.mahasiswa.mahasiswa');
 
-$changeStatus = fn($newStatus) => $this->status = $newStatus;
+$changeStatus = fn($newStatus) => ($this->status = $newStatus);
 
 ?>
 
@@ -30,9 +30,9 @@ $changeStatus = fn($newStatus) => $this->status = $newStatus;
                     </flux:field>
                 </div>
 
-                @if($status == "Sedang Magang")
+                @if ($status == 'Sedang Magang')
                     @livewire('mahasiswa.pembaruan-status-sedang-magang')
-                @elseif($status == "Selesai Magang")
+                @elseif($status == 'Selesai Magang')
                     @livewire('mahasiswa.pembaruan-status-selesai-magang')
                 @endif
 
