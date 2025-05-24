@@ -1,6 +1,7 @@
 <?php
 
 use function Livewire\Volt\{layout, state, mount};
+use App\Models\Magang;
 
 layout('components.layouts.admin.main');
 
@@ -10,34 +11,29 @@ state([
 ]);
 
 mount(function () {
-    // $this->data_pengajuan_magang = DB::table('pengajuan_magang')
-    //     ->join('mahasiswa_profiles', 'pengajuan_magang.mahasiswa_id', '=', 'mahasiswa_profiles.id')
-    //     ->join('users', 'mahasiswa_profiles.user_id', '=', 'users.id')
-    //     ->join('users', 'lowongan_magang.user_id', '=', 'users.id')
-    //     ->join('lowongan_magang', 'lowongan_magang.id', '=', 'pengajuan_magang.lowongan_id')
-    //     ->join('perusahaan', 'lowongan_magang.perusahaan_id', '=', 'perusahaan.id')
-    //     ->select(
-    //         'users.name',
-    //         'perusahaan.nama_perusahaan',
-    //         DB::raw("'Lamongan, Jawa timur' as lokasi"),
-    //         'lowongan_magang.status',
-    //         DB::raw("123 as jumlah_pendaftar"),
-    //         DB::raw("23 as jumlah_mahasiswa_magang"),
-    //     )
-    //     ->get();
+    $this->data_pengajuan_magang = Magang::select('id', 'nama', 'perusahaan_id', 'lokasi', 'status')
+        ->with(['perusahaan' => function ($query) {
+            $query->select('id', 'nama');
+        }])
+        ->withCount([
+            'kontrakMagang as jumlah_pendaftar'
+        ])
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->toArray();
 });
 
 ?>
 
 <div class="flex flex-col gap-5">
-    <flux:breadcrumbs class="mb-5">
+    <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('admin.data-lowongan') }}" class="text-black">Kelola data lowongan magang
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <h1 class="text-base font-bold leading-6 text-black">Kelola Data Lowongan Magang</h1>
 
-    <div class="flex justify-between mt-4">
+    <div class="flex justify-between">
         <div class="flex gap-3">
             <flux:input class="rounded-3xl!" placeholder="Cari Data Mahasiswa" icon="magnifying-glass" />
             <flux:button variant="primary" class="bg-white! text-black! w-17 rounded-full!"
@@ -69,13 +65,13 @@ mount(function () {
                 @for ($i = 0; $i < count($data_pengajuan_magang) && $i < $totalRowsPerPage; $i++)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">Nama Lowongan</td>
-                        <td class="px-6 py-3">PT Maju Mundur</td>
-                        <td class="px-6 py-3">Lowokwaru, Malang, Jawa Timur, Indonesia</td>
-                        <td class="px-6 py-3">Aktif</td>
-                        <td class="px-6 py-3">123</td>
+                        <td class="px-6 py-3">{{ $data_pengajuan_magang[$i]['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $data_pengajuan_magang[$i]['perusahaan']['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $data_pengajuan_magang[$i]['lokasi'] }}</td>
+                        <td class="px-6 py-3">{{ $data_pengajuan_magang[$i]['status'] }}</td>
+                        <td class="px-6 py-3 text-right">{{ $data_pengajuan_magang[$i]['jumlah_pendaftar']}}</td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('detail-lowongan') }}" variant="ghost" />
+                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-lowongan') }}" variant="ghost" />
                         </td>
                     </tr>
                 @endfor

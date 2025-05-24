@@ -15,6 +15,8 @@ class Magang extends Model
         'nama',
         'deskripsi',
         'persyaratan',
+        'status',
+        'lokasi',
         'perusahaan_id',
     ];
 
