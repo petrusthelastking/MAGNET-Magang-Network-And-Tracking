@@ -30,6 +30,7 @@ Route::name('admin.')
 
         Volt::route('data-pengajuan-magang', 'pages.admin.magang.data-pengajuan')->name('data-pengajuan-magang');
         Route::view('detail-pengajuan', 'pages.admin.magang.detail-pengajuan')->name('detail-pengajuan');
+        // Route::view('setting-profile', 'pages.admin.setting-profile')->name('setting-profile');
 });
 
 
