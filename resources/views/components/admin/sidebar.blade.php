@@ -76,7 +76,7 @@
             <flux:navlist variant="outline" class="w-full">
                 <flux:button variant="ghost" class="flex my-2">
                     <flux:avatar src="https://unavatar.io/x/calebporzio" class="mx-auto" />
-                    <flux:navlist.item href="{{ route('mahasiswa.setting-profile') }}"
+                    <flux:navlist.item href="{{ route('admin.setting-profile') }}"
                         class="text-black!">
                         <div class="text-base leading-6 font-normal">{{ auth('admin')->user()->nama }}</div>
                         <div class="text-xs leading-4 font-medium">{{ auth('admin')->user()->nip }}</div>
