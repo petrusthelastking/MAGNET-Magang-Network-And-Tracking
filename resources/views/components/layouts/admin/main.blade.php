@@ -5,18 +5,17 @@
     @include('partials.head')
 </head>
 
-<body class="bg-magnet-frost-mist">
-    <div class="flex min-h-screen">
-        <x-admin.sidebar />
+<body class="bg-magnet-frost-mist flex min-h-screen">
+    <x-admin.sidebar />
 
-        <div class="w-full">
-            <x-user.topbar />
-            <div class="p-8 flex flex-col gap-5">
+    <div class="w-full">
+        <x-user.topbar />
+        <div class="p-8 flex flex-col gap-5">
 
-                {{ $slot }}
-            </div>
+            {{ $slot }}
         </div>
     </div>
+
     @fluxScripts
 </body>
 

@@ -21,7 +21,7 @@ mount(function () {
 <div class="flex flex-col gap-5">
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('admin.data-mahasiswa') }}" class="text-black">Kelola Data Mahasiswa
+        <flux:breadcrumbs.item class="text-black">Kelola Data Mahasiswa
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
