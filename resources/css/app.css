@@ -13,7 +13,7 @@
 @import "@fontsource/inter/600.css";
 @import "@fontsource/inter/700.css";
 
-@theme {    
+@theme {
     --font-sans: Inter, sans-serif;
 
      --color-zinc-50: #fafafa;
@@ -78,6 +78,10 @@ input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+button:hover {
+    cursor: pointer;
 }
 
 /* \[:where(&)\]:size-4 {
