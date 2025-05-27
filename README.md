@@ -67,27 +67,33 @@ Whether you're a student looking for a relevant experience or an institution aim
     </thead>
     <tbody>
         <tr>
-            <td>
+            <td align="center">
                 <a href="https://github.com/FarrelAD">
                     <img src="https://avatars.githubusercontent.com/u/140877757?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
+                    <br>
+                    <img src="https://img.shields.io/badge/FarrelAD-181717?style=flat&logo=github" />
                 </a>
             </td>
             <td>Farrel Augusta Dinata</td>
             <td>Project Manager, UI/UX Designer, Backend Developer</td>
         </tr>
         <tr>
-            <td>
+            <td align="center">
                 <a href="https://github.com/saalsabl">
                     <img src="https://avatars.githubusercontent.com/u/144090093?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
+                    <br>
+                    <img src="https://img.shields.io/badge/saalsabl-181717?style=flat&logo=github" />
                 </a>
             </td>
             <td>Aaisyah Nursalsabil Ni Patriarti</td>
             <td>UI/UX Designer, Frontend Developer</td>
         </tr>
         <tr>
-            <td>
+            <td align="center">
                 <a href="https://github.com/AstorBoy11">
                     <img src="https://avatars.githubusercontent.com/u/144084394?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
+                    <br>
+                    <img src="https://img.shields.io/badge/AstorBoy11-181717?style=flat&logo=github" />
                 </a>
             </td>
             <td>Aril Ibbet Ardana Putra</td>
@@ -97,15 +103,19 @@ Whether you're a student looking for a relevant experience or an institution aim
             <td>
                 <a href="https://github.com/Dimas0824">
                     <img src="https://avatars.githubusercontent.com/u/143877889?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
+                    <br>
+                    <img src="https://img.shields.io/badge/Dimas0824-181717?style=flat&logo=github" />
                 </a>
             </td>
             <td>Muhammad Irsyad Dimas Abdillah</td>
             <td>Database Designer, Backend Developer</td>
         </tr>
         <tr>
-            <td>
+            <td align="center">
                 <a href="https://github.com/vanstevanzaky">
                     <img src="https://avatars.githubusercontent.com/u/143470195?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
+                    <br>
+                    <img src="https://img.shields.io/badge/vanstevanzaky-181717?style=flat&logo=github" />
                 </a>
             </td>
             <td>Stevan Zaky Setyanto</td>
