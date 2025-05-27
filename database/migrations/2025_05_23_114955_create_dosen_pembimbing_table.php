@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('nama');
             $table->string('nidn');
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->timestamps();
         });
