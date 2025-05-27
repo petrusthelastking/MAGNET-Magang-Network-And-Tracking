@@ -1,7 +1,7 @@
 <?php
 
 use Flux\Flux;
-use function Livewire\Volt\{layout, state, mount, form};
+use function Livewire\Volt\{layout, state, mount, computed, usesPagination, with};
 use Carbon\Carbon;
 use App\Models\Mahasiswa;
 
@@ -9,7 +9,6 @@ layout('components.layouts.admin.main');
 
 state([
     'totalRowsPerPage' => 10,
-    'data_mahasiswa' => [],
     'statusInsertSingleData' => '',
     'storeMahasiswaNama' => null,
     'storeMahasiswaNIM' => null,
@@ -17,13 +16,13 @@ state([
     'storeMahasiswaTanggalLahir' => null,
     'storeMahasiswaProdi' => null,
     'storeMahasiswaAngkatan' => null,
-    'storeMahasiswaAlamat' => null,
+    'storeMahasiswaAlamat' => null
 ]);
 
-mount(function () {
-    $this->data_mahasiswa = Mahasiswa::get(['id', 'nama', 'nim', 'status_magang'])
-        ->sortBy('nama')
-        ->toArray();
+usesPagination();
+
+with(function () {
+    return ['dataMahasiswa' => Mahasiswa::orderBy('nama')->paginate($this->totalRowsPerPage, ['id', 'nama', 'nim', 'status_magang'])];
 });
 
 $storeSingleData = function (): void {
@@ -46,6 +45,10 @@ $storeSingleData = function (): void {
         Flux::modal('failed-submit-form')->show();
     }
 };
+
+$goToSpecificPage = fn(int $page) => $this->setPage($page);
+$goToPrevPage = fn() => $this->previousPage();
+$goToNextPage = fn() => $this->nextPage();
 
 ?>
 
@@ -87,15 +90,15 @@ $storeSingleData = function (): void {
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
-                @for ($i = 0; $i < count($data_mahasiswa) && $i < $totalRowsPerPage; $i++)
-                    <tr onclick="window.location.href='{{ route('admin.detail-mahasiswa', $data_mahasiswa[$i]['id']) }}'"
+                @foreach ($dataMahasiswa as $mahasiswa)
+                    <tr onclick="window.location.href='{{ route('admin.detail-mahasiswa', $mahasiswa['id']) }}'"
                         class="border-b hover:bg-gray-50 hover:cursor-pointer">
-                        <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">{{ $data_mahasiswa[$i]['nama'] }}</td>
-                        <td class="px-6 py-3">{{ $data_mahasiswa[$i]['nim'] }}</td>
+                        <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-3">{{ $mahasiswa['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $mahasiswa['nim'] }}</td>
                         <td class="px-6 py-3">
                             @php
-                                $status = ucfirst($data_mahasiswa[$i]['status_magang']);
+                                $status = ucfirst($mahasiswa['status_magang']);
                                 $colorBadge = match ($status) {
                                     'Belum magang' => 'red',
                                     'Sedang magang' => 'yellow',
@@ -106,21 +109,23 @@ $storeSingleData = function (): void {
                         </td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="chevron-right"
-                                href="{{ route('admin.detail-mahasiswa', $data_mahasiswa[$i]['id']) }}"
+                                href="{{ route('admin.detail-mahasiswa', $mahasiswa['id']) }}"
                                 variant="ghost" />
                         </td>
                     </tr>
-                @endfor
+                @endforeach
             </tbody>
         </table>
         <div class="flex justify-between w-full px-8 py-4">
-            <p class="text-black">Menampilkan 10 dari {{ $totalRowsPerPage }} data</p>
+            <p class="text-black">Menampilkan 10 dari {{ $dataMahasiswa->perPage() }} data</p>
+
             <div class="flex">
-                <flux:button icon="chevron-left" variant="ghost" />
-                @for ($i = 0; $i < ceil(count($data_mahasiswa) / $totalRowsPerPage); $i++)
-                    <flux:button variant="ghost">{{ $i + 1 }}</flux:button>
+                <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage"/>
+                @for ($i = 0; $i < $dataMahasiswa->lastPage(); $i++)
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i + 1 }})">{{ $i + 1 }}
+                    </flux:button>
                 @endfor
-                <flux:button icon="chevron-right" variant="ghost" />
+                <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage"/>
             </div>
             <div>
                 <div class="flex gap-3 items-center text-black">
@@ -135,6 +140,7 @@ $storeSingleData = function (): void {
             </div>
         </div>
     </div>
+
 
     <flux:modal name="add-new-student" class="md:w-96">
         <form wire:submit="storeSingleData" class="space-y-6">
