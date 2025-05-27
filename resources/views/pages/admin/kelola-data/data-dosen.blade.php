@@ -87,7 +87,7 @@ $goToNextPage = fn() => $this->nextPage();
             </thead>
             <tbody class="bg-white text-black">
                 @foreach ($dataDosen as $dosen)
-                    <tr onclick="window.location.href='{{ route('admin.detail-dosen', $dosen['id']) }}'" class="border-b hover:bg-gray-50">
+                    <tr onclick="window.location.href='{{ route('admin.detail-dosen', $dosen['id']) }}'" class="border-b">
                         <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
                         <td class="px-6 py-3">{{ $dosen['nama'] }}</td>
                         <td class="px-6 py-3">{{ $dosen['nidn'] }}</td>
@@ -101,7 +101,7 @@ $goToNextPage = fn() => $this->nextPage();
         </table>
         <div class="flex items-center justify-between w-full px-8 py-4">
             <div class="text-black">
-                <p>Menampilkan 10 dari {{ $dataDosen->perPage() }} data</p>
+                <p>Menampilkan {{ $dataDosen->count() }} dari {{ $dataDosen->perPage() }} data</p>
             </div>
             <div class="flex">
                 <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage"/>
@@ -143,9 +143,7 @@ $goToNextPage = fn() => $this->nextPage();
 
             <div class="flex">
                 <flux:spacer />
-                <flux:modal.trigger name="store-student-data-confirmation">
-                    <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal">Simpan</flux:button>
-                </flux:modal.trigger>
+                <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal">Simpan</flux:button>
             </div>
         </form>
     </flux:modal>
