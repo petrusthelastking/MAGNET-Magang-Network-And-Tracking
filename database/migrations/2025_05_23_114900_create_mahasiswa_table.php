@@ -14,10 +14,11 @@ return new class extends Migration {
             $table->id();
             $table->string('nama');
             $table->string('nim');
+            $table->string('email');
             $table->string('password')->nullable();
-            $table->enum('jenis_kelamin', ['L', 'P']);
-            $table->integer('umur');
             $table->integer('angkatan');
+            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->date('tanggal_lahir');
             $table->string('jurusan')->default("Teknologi Informasi");
             $table->enum('program_studi', [
                 'D4 Teknik Informatika', 'D4 Sistem Informasi Bisnis', 'D2 Pengembangan Piranti Lunak Situs'
