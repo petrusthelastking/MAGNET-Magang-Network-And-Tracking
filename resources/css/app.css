@@ -84,6 +84,10 @@ button:hover {
     cursor: pointer;
 }
 
+table > tbody > tr:nth-child(even) {
+    background-color: oklch(96.7% 0.003 264.542);
+}
+
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
