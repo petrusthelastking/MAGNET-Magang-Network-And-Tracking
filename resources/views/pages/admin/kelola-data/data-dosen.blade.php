@@ -101,7 +101,7 @@ $goToNextPage = fn() => $this->nextPage();
         </table>
         <div class="flex items-center justify-between w-full px-8 py-4">
             <div class="text-black">
-                <p>Menampilkan 10 dari {{ $dataDosen->perPage() }} data</p>
+                <p>Menampilkan {{ $dataDosen->count() }} dari {{ $dataDosen->perPage() }} data</p>
             </div>
             <div class="flex">
                 <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage"/>
