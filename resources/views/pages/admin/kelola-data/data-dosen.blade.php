@@ -1,24 +1,51 @@
 <?php
 
-use function Livewire\Volt\{layout, state, mount};
+use Flux\Flux;
+use function Livewire\Volt\{layout, state, mount, usesPagination, with};
 use App\Models\DosenPembimbing;
+
 
 layout('components.layouts.admin.main');
 
 state([
     'totalRowsPerPage' => 10,
-    'data_dosen' => []
+    'statusInsertSingleData' => '',
+    'storeDosenNama' => null,
+    'storeDosenNIDN' => null,
+    'storeDosenJenisKelamin' => null
 ]);
 
-mount(function () {
-    $this->data_dosen = DosenPembimbing::select('id', 'nama', 'nidn')
-        ->withCount([
-            'kontrakMagang as jumlah_bimbingan'
-        ])
-        ->orderBy('nama')
-        ->get()
-        ->toArray();
+usesPagination();
+
+with(function () {
+    return ['dataDosen' => DosenPembimbing::select('id', 'nama', 'nidn')
+                            ->withCount([
+                                'kontrakMagang as jumlah_bimbingan'
+                            ])
+                            ->orderBy('nama')
+                            ->paginate($this->totalRowsPerPage)];
 });
+
+$storeSingleData = function (): void {
+    $dosen = DosenPembimbing::create([
+        'nama' => $this->storeDosenNama,
+        'nidn' => $this->storeDosenNIDN,
+        'jenis_kelamin' => $this->storeDosenJenisKelamin
+    ]);
+
+    $this->statusInsertSingleData = $dosen ? 'success' : 'failed';
+    Flux::modal('add-new-data')->close();
+
+    if ($dosen) {
+        Flux::modal('success-submit-form')->show();
+    } else {
+        Flux::modal('failed-submit-form')->show();
+    }
+};
+
+$goToSpecificPage = fn(int $page) => $this->setPage($page);
+$goToPrevPage = fn() => $this->previousPage();
+$goToNextPage = fn() => $this->nextPage();
 
 ?>
 
@@ -39,14 +66,16 @@ mount(function () {
             </flux:button>
         </div>
         <div class="flex gap-3">
-            <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus">Tambah Dosen</flux:button>
+            <flux:modal.trigger name="add-new-data">
+                <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus">Tambah Dosen</flux:button>
+            </flux:modal.trigger>
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="download">Import</flux:button>
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="upload">Export</flux:button>
         </div>
     </div>
 
     <div class="overflow-y-auto flex flex-col items-center rounded-lg shadow bg-white">
-        <table class="table-auto w-full ">
+        <table class="table-auto w-full">
             <thead class="bg-white text-black">
                 <tr class="border-b">
                     <th class="text-center px-6 py-3">No</th>
@@ -57,29 +86,30 @@ mount(function () {
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
-                @for ($i = 0; $i < count($data_dosen) && $i < $totalRowsPerPage; $i++)
+                @foreach ($dataDosen as $dosen)
                     <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">{{ $data_dosen[$i]['nama'] }}</td>
-                        <td class="px-6 py-3">{{ $data_dosen[$i]['nidn'] }}</td>
-                        <td class="px-6 py-3">{{ $data_dosen[$i]['jumlah_bimbingan'] }}</td>
+                        <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-3">{{ $dosen['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $dosen['nidn'] }}</td>
+                        <td class="px-6 py-3 text-right">{{ $dosen['jumlah_bimbingan'] }}</td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-dosen') }}" variant="ghost" />
                         </td>
                     </tr>
-                @endfor
+                @endforeach
             </tbody>
         </table>
         <div class="flex items-center justify-between w-full px-8 py-4">
             <div class="text-black">
-                <p>Menampilkan 10 dari {{ $totalRowsPerPage }} data</p>
+                <p>Menampilkan 10 dari {{ $dataDosen->perPage() }} data</p>
             </div>
             <div class="flex">
-                <flux:button icon="chevron-left" variant="ghost" />
-                @for ($i = 0; $i < ceil(count($data_dosen) / $totalRowsPerPage); $i++)
-                    <flux:button variant="ghost">{{ $i + 1 }}</flux:button>
+                <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage"/>
+                @for ($i = 0; $i < $dataDosen->lastPage(); $i++)
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i + 1 }})">{{ $i + 1 }}
+                    </flux:button>
                 @endfor
-                <flux:button icon="chevron-right" variant="ghost" />
+                <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage"/>
             </div>
             <div class="flex gap-3 items-center text-black">
                 <p>Baris per halaman</p>
@@ -92,4 +122,59 @@ mount(function () {
             </div>
         </div>
     </div>
+
+
+    <flux:modal name="add-new-data" class="md:w-96">
+        <form wire:submit="storeSingleData" class="space-y-6">
+            <div>
+                <flux:heading size="lg">Tambahkan data dosen baru</flux:heading>
+            </div>
+
+            <flux:input label="Nama" placeholder="Nama dosen" wire:model="storeDosenNama" />
+            <flux:input label="NIM" placeholder="NIDN" wire:model="storeDosenNIDN" />
+            <flux:field>
+                <flux:label>Jenis Kelamin</flux:label>
+                <flux:select placeholder="Jenis kelamin mahasiswa" wire:model="storeDosenJenisKelamin">
+                    <flux:select.option value="L">Laki-laki</flux:select.option>
+                    <flux:select.option value="P">Perempuan</flux:select.option>
+                </flux:select>
+                <flux:error name="jenis_kelamin" />
+            </flux:field>
+
+            <div class="flex">
+                <flux:spacer />
+                <flux:modal.trigger name="store-student-data-confirmation">
+                    <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal">Simpan</flux:button>
+                </flux:modal.trigger>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="success-submit-form">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Sukses menambahkan data dosen!</flux:heading>
+            </div>
+            <div class="flex">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal">OK</flux:button>
+                </flux:modal.close>
+            </div>
+        </div>
+    </flux:modal>
+
+    <flux:modal name="failed-submit-form">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Gagal menambahkan data dosen!</flux:heading>
+            </div>
+            <div class="flex">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal">OK</flux:button>
+                </flux:modal.close>
+            </div>
+        </div>
+    </flux:modal>
 </div>
