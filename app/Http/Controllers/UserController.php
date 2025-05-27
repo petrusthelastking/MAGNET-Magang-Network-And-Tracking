@@ -12,4 +12,10 @@ class UserController extends Controller
         $currentRole = UserAuthenticationHelper::getUserRole();
         return view("pages.$currentRole.dashboard");
     }
+
+    public function showProfile()
+    {
+        $currentRole = UserAuthenticationHelper::getUserRole();
+        return view("pages.$currentRole.profile");
+    }
 }
