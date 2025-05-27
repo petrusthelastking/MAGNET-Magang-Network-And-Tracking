@@ -5,9 +5,9 @@
     @include('partials.head')
 </head>
 
-<body class="bg-magnet-frost-mist">
+<body class="bg-magnet-frost-mist text-black">
     {{ $slot }}
-    
+
     @fluxScripts
 </body>
 

@@ -90,8 +90,8 @@ $throttleKey = protect(function () : string {
 
 ?>
 
-<div class="flex flex-col gap-6 ">
-    <div class="bg-white shadow-lg flex flex-col rounded-md p-6">
+<div class="flex flex-col gap-6 w-full min-h-fit h-svh justify-center items-center">
+    <div class="bg-white shadow-lg flex flex-col rounded-md p-6 w-2/6">
         <h1 class="text-black font-black text-center text-xl">Masuk</h1>
         <form wire:submit="login" class="flex flex-col pt-9">
             <flux:field>
