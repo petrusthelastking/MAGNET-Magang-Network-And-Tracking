@@ -20,12 +20,13 @@ class Mahasiswa extends Model implements Authenticatable
     protected $fillable = [
         'nama',
         'nim',
+        'email',
         'password',
         'jenis_kelamin',
         'jurusan',
         'program_studi',
         'angkatan',
-        'umur',
+        'tanggal_lahir',
         'status_magang',
         'alamat',
     ];
