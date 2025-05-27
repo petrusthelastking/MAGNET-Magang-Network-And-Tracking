@@ -100,7 +100,7 @@ Whether you're a student looking for a relevant experience or an institution aim
             <td>Frontend Developer</td>
         </tr>
         <tr>
-            <td>
+            <td align="center">
                 <a href="https://github.com/Dimas0824">
                     <img src="https://avatars.githubusercontent.com/u/143877889?v=4?s=100" width="100px;" alt="Aaisyah Nursalsabil Ni Patriarti"/>
                     <br>
