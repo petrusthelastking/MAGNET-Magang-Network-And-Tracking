@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
-use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\UserController;
 
@@ -22,7 +21,7 @@ Route::name('admin.')
         Volt::route('data-mahasiswa', 'pages.admin.kelola-data.data-mahasiswa')->name('data-mahasiswa');
         Volt::route('detail-mahasiswa/{id}', 'pages.admin.kelola-data.detail-mahasiswa')->name('detail-mahasiswa');
         Volt::route('data-dosen', 'pages.admin.kelola-data.data-dosen')->name('data-dosen');
-        Route::view('detail-dosen', 'pages.admin.kelola-data.detail-dosen')->name('detail-dosen');
+        Volt::route('detail-dosen/{id}', 'pages.admin.kelola-data.detail-dosen')->name('detail-dosen');
         Volt::route('data-perusahaan', 'pages.admin.kelola-data.data-perusahaan')->name('data-perusahaan');
         Route::view('detail-perusahaan', 'pages.admin.kelola-data.detail-perusahaan')->name('detail-perusahaan');
 
@@ -31,7 +30,6 @@ Route::name('admin.')
 
         Volt::route('data-pengajuan-magang', 'pages.admin.magang.data-pengajuan')->name('data-pengajuan-magang');
         Route::view('detail-pengajuan', 'pages.admin.magang.detail-pengajuan')->name('detail-pengajuan');
-
 });
 
 
@@ -54,4 +52,3 @@ Route::name('dosen.')
         Route::view('mahasiswa-bimbingan', 'pages.dosen.mahasiswa-bimbingan')->name('mahasiswa-bimbingan');
         Route::view('detail-mahasiswa-bimbingan', 'pages.dosen.detail-mahasiswa-bimbingan')->name('detail-mahasiswa-bimbingan');
 });
-
