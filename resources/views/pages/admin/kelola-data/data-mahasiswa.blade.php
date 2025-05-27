@@ -175,9 +175,7 @@ $goToNextPage = fn() => $this->nextPage();
 
             <div class="flex">
                 <flux:spacer />
-                <flux:modal.trigger name="store-student-data-confirmation">
-                    <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal">Simpan</flux:button>
-                </flux:modal.trigger>
+                <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal">Simpan</flux:button>
             </div>
         </form>
     </flux:modal>
