@@ -10,7 +10,7 @@
         <x-dosen.sidebar />
 
         <div class="w-full">
-            <x-user.topbar />
+            <livewire:components.user.topbar />
             <div class="p-8 flex flex-col gap-5">
 
                 {{ $slot }}

@@ -13,7 +13,7 @@ Route::view('/', 'pages.landing-page')->name('landing-page');
 Route::middleware('role:admin,mahasiswa,dosen')
     ->group(function () {
         Route::get('dashboard', [UserController::class, 'showDashboard'])->name('dashboard');
-        Route::view('setting-profile', 'pages.admin.setting-profile')->name('admin.setting-profile');
+        Route::get('profile', [UserController::class, 'showProfile'])->name('profile');
 });
 
 Route::name('admin.')
@@ -31,7 +31,7 @@ Route::name('admin.')
 
         Volt::route('data-pengajuan-magang', 'pages.admin.magang.data-pengajuan')->name('data-pengajuan-magang');
         Route::view('detail-pengajuan', 'pages.admin.magang.detail-pengajuan')->name('detail-pengajuan');
-        
+
 });
 
 
@@ -45,7 +45,6 @@ Route::name('mahasiswa.')
         Route::view('konsul-dospem', 'pages.mahasiswa.konsul-dospem')->name('konsul-dospem');
         Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
         Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
-        Route::get('setting-profile', [MahasiswaController::class, 'profile'])->name('setting-profile');
         Volt::route('search-perusahaan', 'pages.mahasiswa.search')->name('search-perusahaan');
     });
 
@@ -56,4 +55,3 @@ Route::name('dosen.')
         Route::view('detail-mahasiswa-bimbingan', 'pages.dosen.detail-mahasiswa-bimbingan')->name('detail-mahasiswa-bimbingan');
 });
 
-Route::view('setting-profile', 'pages.admin.setting-profile')->name('admin.setting-profile');

@@ -10,7 +10,7 @@
         <x-mahasiswa.sidebar />
 
         <div class="w-full">
-            <x-user.topbar />
+            <livewire:components.user.topbar />
             <div class="p-8">
                 @yield('content')
 
