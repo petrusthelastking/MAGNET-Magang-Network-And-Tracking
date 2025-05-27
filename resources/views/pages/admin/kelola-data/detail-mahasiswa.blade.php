@@ -104,7 +104,7 @@ $deleteData = function () {
                 <div class="flex flex-col gap-4 w-full">
                     @if ($isEditing)
                         <div class="flex w-full gap-2">
-                            <flux:button wire:click="editData" icon="pencil"
+                            <flux:button wire:click="editData" icon="x"
                                 class="w-1/2 bg-gray-700! hover:bg-gray-400! text-white! text-wrap! text-left rounded-md items-center">
                                 Batalkan
                             </flux:button>
