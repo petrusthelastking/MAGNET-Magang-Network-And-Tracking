@@ -89,7 +89,7 @@ table > tbody > tr:nth-child(even) {
 }
 
 table > tbody > tr {
-    @apply hover:cursor-pointer;
+    @apply hover:cursor-pointer hover:bg-gray-100;
 }
 
 input:read-only {

@@ -92,7 +92,7 @@ $goToNextPage = fn() => $this->nextPage();
             <tbody class="bg-white text-black">
                 @foreach ($dataMahasiswa as $mahasiswa)
                     <tr onclick="window.location.href='{{ route('admin.detail-mahasiswa', $mahasiswa['id']) }}'"
-                        class="border-b hover:bg-gray-50 hover:cursor-pointer">
+                        class="border-b hover:bg-gray-50">
                         <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
                         <td class="px-6 py-3">{{ $mahasiswa['nama'] }}</td>
                         <td class="px-6 py-3">{{ $mahasiswa['nim'] }}</td>
