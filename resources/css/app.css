@@ -85,7 +85,11 @@ button:hover {
 }
 
 table > tbody > tr:nth-child(even) {
-    background-color: oklch(96.7% 0.003 264.542);
+    @apply bg-gray-100;
+}
+
+input:read-only {
+    @apply bg-gray-100;
 }
 
 /* \[:where(&)\]:size-4 {
