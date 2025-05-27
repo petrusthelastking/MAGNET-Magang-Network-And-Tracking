@@ -1,7 +1,7 @@
 <?php
 
 use Flux\Flux;
-use function Livewire\Volt\{layout, state, mount, usesPagination, with};
+use function Livewire\Volt\{layout, state, usesPagination, with};
 use App\Models\DosenPembimbing;
 
 
@@ -22,7 +22,7 @@ with(function () {
                             ->withCount([
                                 'kontrakMagang as jumlah_bimbingan'
                             ])
-                            ->orderBy('nama')
+                            ->orderBy('jumlah_bimbingan', 'desc')
                             ->paginate($this->totalRowsPerPage)];
 });
 
@@ -87,13 +87,13 @@ $goToNextPage = fn() => $this->nextPage();
             </thead>
             <tbody class="bg-white text-black">
                 @foreach ($dataDosen as $dosen)
-                    <tr class="border-b hover:bg-gray-50">
+                    <tr onclick="window.location.href='{{ route('admin.detail-dosen', $dosen['id']) }}'" class="border-b hover:bg-gray-50">
                         <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
                         <td class="px-6 py-3">{{ $dosen['nama'] }}</td>
                         <td class="px-6 py-3">{{ $dosen['nidn'] }}</td>
                         <td class="px-6 py-3 text-right">{{ $dosen['jumlah_bimbingan'] }}</td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-dosen') }}" variant="ghost" />
+                            <flux:button icon="chevron-right" href="{{ route('admin.detail-dosen', $dosen['id']) }}" variant="ghost" />
                         </td>
                     </tr>
                 @endforeach
