@@ -24,6 +24,8 @@ class Mahasiswa extends Model implements Authenticatable
         'jenis_kelamin',
         'jurusan',
         'program_studi',
+        'angkatan',
+        'umur',
         'status_magang',
         'alamat',
     ];
