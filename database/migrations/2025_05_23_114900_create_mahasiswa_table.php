@@ -14,13 +14,17 @@ return new class extends Migration {
             $table->id();
             $table->string('nama');
             $table->string('nim');
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->integer('umur');
             $table->integer('angkatan');
-            $table->string('jurusan');
-            $table->string('program_studi');
-            $table->enum('status_magang', ['belum magang', 'sedang magang', 'selesai magang'])->default('belum magang');
+            $table->string('jurusan')->default("Teknologi Informasi");
+            $table->enum('program_studi', [
+                'D4 Teknik Informatika', 'D4 Sistem Informasi Bisnis', 'D2 Pengembangan Piranti Lunak Situs'
+            ]);
+            $table->enum('status_magang', [
+                'belum magang', 'sedang magang', 'selesai magang'
+            ])->default('belum magang');
             $table->text('alamat');
             $table->timestamps();
         });

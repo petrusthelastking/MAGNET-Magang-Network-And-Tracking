@@ -1,27 +1,61 @@
 <?php
 
+use Flux\Flux;
+use function Livewire\Volt\{layout, state, mount, computed, usesPagination, with};
+use Carbon\Carbon;
 use App\Models\Mahasiswa;
-use function Livewire\Volt\{layout, state, mount};
 
 layout('components.layouts.admin.main');
 
 state([
     'totalRowsPerPage' => 10,
-    'data_mahasiswa' => []
+    'statusInsertSingleData' => '',
+    'storeMahasiswaNama' => null,
+    'storeMahasiswaNIM' => null,
+    'storeMahasiswaJenisKelamin' => null,
+    'storeMahasiswaTanggalLahir' => null,
+    'storeMahasiswaProdi' => null,
+    'storeMahasiswaAngkatan' => null,
+    'storeMahasiswaAlamat' => null
 ]);
 
-mount(function () {
-    $this->data_mahasiswa = Mahasiswa::get(['id', 'nama', 'nim', 'status_magang'])
-        ->sortBy('nama')
-        ->toArray();
+usesPagination();
+
+with(function () {
+    return ['dataMahasiswa' => Mahasiswa::orderBy('nama')->paginate($this->totalRowsPerPage, ['id', 'nama', 'nim', 'status_magang'])];
 });
+
+$storeSingleData = function (): void {
+    $mahasiswa = Mahasiswa::create([
+        'nama' => $this->storeMahasiswaNama,
+        'nim' => $this->storeMahasiswaNIM,
+        'jenis_kelamin' => $this->storeMahasiswaJenisKelamin,
+        'umur' => Carbon::parse($this->storeMahasiswaTanggalLahir)->age,
+        'program_studi' => $this->storeMahasiswaProdi,
+        'angkatan' => $this->storeMahasiswaAngkatan,
+        'alamat' => $this->storeMahasiswaAlamat,
+    ]);
+
+    $this->statusInsertSingleData = $mahasiswa ? 'success' : 'failed';
+    Flux::modal('add-new-student')->close();
+
+    if ($mahasiswa) {
+        Flux::modal('success-submit-form')->show();
+    } else {
+        Flux::modal('failed-submit-form')->show();
+    }
+};
+
+$goToSpecificPage = fn(int $page) => $this->setPage($page);
+$goToPrevPage = fn() => $this->previousPage();
+$goToNextPage = fn() => $this->nextPage();
 
 ?>
 
 <div class="flex flex-col gap-5">
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('admin.data-mahasiswa') }}" class="text-black">Kelola Data Mahasiswa
+        <flux:breadcrumbs.item class="text-black">Kelola Data Mahasiswa
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
@@ -36,7 +70,9 @@ mount(function () {
             </flux:button>
         </div>
         <div class="flex gap-3">
-            <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus">Tambah Mahasiswa</flux:button>
+            <flux:modal.trigger name="add-new-student">
+                <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus">Tambah Mahasiswa</flux:button>
+            </flux:modal.trigger>
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="download">Import</flux:button>
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="upload">Export</flux:button>
         </div>
@@ -54,37 +90,42 @@ mount(function () {
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
-                @for ($i = 0; $i < count($data_mahasiswa) && $i < $totalRowsPerPage; $i++)
-                    <tr onclick="window.location.href='{{ route('admin.detail-mahasiswa', $data_mahasiswa[$i]['id']) }}'" class="border-b hover:bg-gray-50 hover:cursor-pointer">
-                        <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">{{ $data_mahasiswa[$i]['nama']}}</td>
-                        <td class="px-6 py-3">{{ $data_mahasiswa[$i]['nim'] }}</td>
+                @foreach ($dataMahasiswa as $mahasiswa)
+                    <tr onclick="window.location.href='{{ route('admin.detail-mahasiswa', $mahasiswa['id']) }}'"
+                        class="border-b hover:bg-gray-50 hover:cursor-pointer">
+                        <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-3">{{ $mahasiswa['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $mahasiswa['nim'] }}</td>
                         <td class="px-6 py-3">
                             @php
-                            $status = ucfirst($data_mahasiswa[$i]['status_magang']);
-                            $colorBadge = match ($status) {
-                                'Belum magang' => 'red',
-                                'Sedang magang' => 'yellow',
-                                'Selesai magang' => 'green'
-                            };
+                                $status = ucfirst($mahasiswa['status_magang']);
+                                $colorBadge = match ($status) {
+                                    'Belum magang' => 'red',
+                                    'Sedang magang' => 'yellow',
+                                    'Selesai magang' => 'green',
+                                };
                             @endphp
-                            <flux:badge variant="solid" color="{{ $colorBadge }}" >{{ $status }}</flux:badge>
+                            <flux:badge variant="solid" color="{{ $colorBadge }}">{{ $status }}</flux:badge>
                         </td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="chevron-right" href="{{ route('admin.detail-mahasiswa', $data_mahasiswa[$i]['id']) }}" variant="ghost" />
+                            <flux:button icon="chevron-right"
+                                href="{{ route('admin.detail-mahasiswa', $mahasiswa['id']) }}"
+                                variant="ghost" />
                         </td>
                     </tr>
-                @endfor
+                @endforeach
             </tbody>
         </table>
         <div class="flex justify-between w-full px-8 py-4">
-            <p class="text-black">Menampilkan 10 dari {{ $totalRowsPerPage }} data</p>
+            <p class="text-black">Menampilkan 10 dari {{ $dataMahasiswa->perPage() }} data</p>
+
             <div class="flex">
-                <flux:button icon="chevron-left" variant="ghost" />
-                @for ($i = 0; $i < ceil(count($data_mahasiswa) / $totalRowsPerPage); $i++)
-                    <flux:button variant="ghost">{{ $i + 1 }}</flux:button>
+                <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage"/>
+                @for ($i = 0; $i < $dataMahasiswa->lastPage(); $i++)
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i + 1 }})">{{ $i + 1 }}
+                    </flux:button>
                 @endfor
-                <flux:button icon="chevron-right" variant="ghost" />
+                <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage"/>
             </div>
             <div>
                 <div class="flex gap-3 items-center text-black">
@@ -99,4 +140,73 @@ mount(function () {
             </div>
         </div>
     </div>
+
+
+    <flux:modal name="add-new-student" class="md:w-96">
+        <form wire:submit="storeSingleData" class="space-y-6">
+            <div>
+                <flux:heading size="lg">Tambahkan data mahasiswa baru</flux:heading>
+            </div>
+
+            <flux:input label="Nama" placeholder="Nama mahasiswa" wire:model="storeMahasiswaNama" />
+            <flux:input label="NIM" placeholder="NIM mahasiswa" wire:model="storeMahasiswaNIM" />
+            <flux:field>
+                <flux:label>Jenis Kelamin</flux:label>
+                <flux:select placeholder="Jenis kelamin mahasiswa" wire:model="storeMahasiswaJenisKelamin">
+                    <flux:select.option value="L">Laki-laki</flux:select.option>
+                    <flux:select.option value="P">Perempuan</flux:select.option>
+                </flux:select>
+                <flux:error name="jenis_kelamin" />
+            </flux:field>
+            <flux:input label="Tanggal lahir" type="date" max="2999-12-31" wire:model="storeMahasiswaTanggalLahir" />
+            <flux:input label="Angkatan" placeholder="Tahun angkatan mahasiswa" wire:model="storeMahasiswaAngkatan" />
+            <flux:field>
+                <flux:label>Program Studi</flux:label>
+                <flux:select placeholder="Program studi mahasiswa" wire:model="storeMahasiswaProdi">
+                    <flux:select.option value="D4 Teknik Informatika">D4 Teknik Informatika</flux:select.option>
+                    <flux:select.option value="D4 Sistem Informasi Bisnis">D4 Sistem Informasi Bisnis
+                    </flux:select.option>
+                    <flux:select.option value="D2 Pengembangan Piranti Lunak Situs">D2 Pengembangan Piranti Lunak Situs
+                    </flux:select.option>
+                </flux:select>
+                <flux:error name="program_studi" />
+            </flux:field>
+            <flux:input label="Alamat" placeholder="Alamat mahasiswa" wire:model="storeMahasiswaAlamat" />
+
+            <div class="flex">
+                <flux:spacer />
+                <flux:modal.trigger name="store-student-data-confirmation">
+                    <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal">Simpan</flux:button>
+                </flux:modal.trigger>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="success-submit-form">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Sukses menambahkan data mahasiswa!</flux:heading>
+            </div>
+            <div class="flex">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal">OK</flux:button>
+                </flux:modal.close>
+            </div>
+        </div>
+    </flux:modal>
+
+    <flux:modal name="failed-submit-form">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Gagal menambahkan data mahasiswa!</flux:heading>
+            </div>
+            <div class="flex">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal">OK</flux:button>
+                </flux:modal.close>
+            </div>
+        </div>
+    </flux:modal>
 </div>
