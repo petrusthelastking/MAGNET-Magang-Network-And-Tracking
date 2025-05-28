@@ -52,12 +52,12 @@ $register = function (): void {
 
     Auth::guard('mahasiswa')->login($mahasiswa);
 
-    $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
+    $this->redirectIntended(route('mahasiswa.persiapan-preferensi', absolute: false), navigate: true);
 };
 
 ?>
 
-<div class="flex flex-col gap-6 pt-11">
+<div class="flex flex-col gap-6 w-full h-fit justify-center items-center p-14">
     <div class="bg-white shadow-lg flex flex-col rounded-md p-7">
         <h1 class="text-black font-black text-center text-3xl">DAFTAR</h1>
 

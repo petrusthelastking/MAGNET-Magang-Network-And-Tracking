@@ -13,9 +13,9 @@ class PreferensiMahasiswa extends Model
 
     protected $fillable = [
         'mahasiswa_id',
-        'bidang_pekerjaan',
+        'skil',
+        'bidang_industri',
         'lokasi',
-        'reputasi',
         'uang_saku',
         'open_remote',
     ];

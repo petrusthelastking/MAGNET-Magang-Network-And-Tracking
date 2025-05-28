@@ -14,11 +14,12 @@ class Kriteria extends Model
     protected $fillable = [
         'nama_kriteria',
         'nilai',
+        'nilai_numerik',
         'rank',
     ];
 
     protected $casts = [
-        'nilai' => 'float',
+        'nilai_numerik' => 'float',
         'rank' => 'integer',
     ];
 
