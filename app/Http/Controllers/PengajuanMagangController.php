@@ -40,6 +40,50 @@ class PengajuanMagangController extends Controller
         return "{$type}_{$date}_{$name}.{$extension}";
     }
 
+    /**
+     * Update status pengajuan magang ke 'menunggu'
+     */
+    private function updateStatusPengajuan($mahasiswaId)
+    {
+        try {
+            // Cari berkas pengajuan mahasiswa
+            $berkas = BerkasPengajuanMagang::where('mahasiswa_id', $mahasiswaId)->latest()->first();
+
+            if ($berkas) {
+                // Update status form pengajuan menjadi 'menunggu'
+                FormPengajuanMagang::where('pengajuan_id', $berkas->id)
+                    ->update([
+                        'status' => 'menunggu',
+                        'keterangan' => 'Dokumen telah dikirim, menunggu review admin',
+                        'updated_at' => now()
+                    ]);
+
+                Log::info('Status pengajuan updated to menunggu', [
+                    'mahasiswa_id' => $mahasiswaId,
+                    'berkas_id' => $berkas->id
+                ]);
+
+                return true;
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            Log::error('Error updating status pengajuan', [
+                'mahasiswa_id' => $mahasiswaId,
+                'message' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * Public method untuk mengubah status ke menunggu
+     */
+    public function setStatusMenunggu($mahasiswaId)
+    {
+        return $this->updateStatusPengajuan($mahasiswaId);
+    }
+
     public function storePengajuan(Request $request)
     {
         try {
@@ -113,16 +157,19 @@ class PengajuanMagangController extends Controller
                     'portfolio' => $portfolioPath
                 ]);
 
-                // Buat form pengajuan
+                // Buat form pengajuan dengan status 'menunggu'
                 FormPengajuanMagang::create([
                     'pengajuan_id' => $berkas->id,
                     'status' => 'menunggu',
-                    'keterangan' => null
+                    'keterangan' => 'Dokumen telah dikirim, menunggu review admin'
                 ]);
+
+                // Update status pengajuan ke menunggu
+                $this->updateStatusPengajuan($mahasiswa->id);
             });
 
             return redirect()->route('mahasiswa.pengajuan-magang')
-                ->with('success', 'Pengajuan magang berhasil dikirim! Silakan cek riwayat pengajuan.');
+                ->with('success', 'Pengajuan magang berhasil dikirim! Status pengajuan telah diubah menjadi menunggu review.');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()

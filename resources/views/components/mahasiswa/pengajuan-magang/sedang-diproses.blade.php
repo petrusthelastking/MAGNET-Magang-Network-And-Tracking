@@ -4,5 +4,6 @@
         <flux:badge variant="solid" color="yellow">Sedang diproses</flux:badge>
     </div>
 
-    <flux:text>Mohon menunggu hingga pengajuan magang berhasil diverifikasi. Proses verifikasi memerlukan waktu 2-3 hari kerja</flux:text>
+    <flux:text>Mohon menunggu hingga pengajuan magang berhasil diverifikasi. Proses verifikasi memerlukan waktu 2-3 hari
+        kerja</flux:text>
 </div>
