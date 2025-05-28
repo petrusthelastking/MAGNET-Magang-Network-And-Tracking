@@ -38,6 +38,7 @@ Route::name('admin.')
 Route::name('mahasiswa.')
     ->middleware('role:mahasiswa')
     ->group(function () {
+        Volt::route('persiapan', 'pages.mahasiswa.persiapan-preferensi')->name('persiapan-preferensi');
         Volt::route('pengajuan-magang', 'pages.mahasiswa.pengajuan-magang.pengajuan-magang')->name('pengajuan-magang');
         Volt::route('formulir-pengajuan', 'pages.mahasiswa.pengajuan-magang.formulir-pengajuan')->name('form-pengajuan-magang');
         Route::post('formulir-pengajuan', [PengajuanMagangController::class, 'storePengajuan'])->name('store-pengajuan-magang');

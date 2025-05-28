@@ -13,9 +13,9 @@ return new class extends Migration {
         Schema::create('preferensi_mahasiswa', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
-            $table->foreignId('bidang_pekerjaan')->constrained('kriteria')->onDelete('cascade');
+            $table->foreignId('skil')->constrained('kriteria')->onDelete('cascade');
+            $table->foreignId('bidang_industri')->constrained('kriteria')->onDelete('cascade');
             $table->foreignId('lokasi')->constrained('kriteria')->onDelete('cascade');
-            $table->foreignId('reputasi')->constrained('kriteria')->onDelete('cascade');
             $table->foreignId('uang_saku')->constrained('kriteria')->onDelete('cascade');
             $table->foreignId('open_remote')->constrained('kriteria')->onDelete('cascade');
             $table->timestamps();
