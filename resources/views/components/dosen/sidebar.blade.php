@@ -14,6 +14,10 @@
             Mahasiswa Bimbingan
         </flux:navlist.item>
 
+    <flux:navlist.item icon="message-square-more" href="{{ route('dosen.komunikasi') }}">
+            Komunikasi
+        </flux:navlist.item>
+
     </flux:navlist>
 
     <flux:spacer />

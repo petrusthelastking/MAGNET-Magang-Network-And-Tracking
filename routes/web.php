@@ -53,4 +53,5 @@ Route::name('dosen.')
     ->group(function () {
         Route::view('mahasiswa-bimbingan', 'pages.dosen.mahasiswa-bimbingan')->name('mahasiswa-bimbingan');
         Route::view('detail-mahasiswa-bimbingan', 'pages.dosen.detail-mahasiswa-bimbingan')->name('detail-mahasiswa-bimbingan');
+        Route::view('komunikasi', 'pages.dosen.masukan-magang')->name('komunikasi');
 });
