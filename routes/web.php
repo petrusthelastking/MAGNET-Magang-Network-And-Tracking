@@ -45,7 +45,7 @@ Route::name('mahasiswa.')
         Route::view('konsul-dospem', 'pages.mahasiswa.konsul-dospem')->name('konsul-dospem');
         Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
         Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
-        Volt::route('search-perusahaan', 'pages.mahasiswa.search')->name('search-perusahaan');
+        Volt::route('search', 'pages.mahasiswa.search')->name('search');
     });
 
 Route::name('dosen.')
