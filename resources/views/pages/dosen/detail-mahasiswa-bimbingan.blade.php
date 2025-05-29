@@ -62,7 +62,7 @@
                 </form>
             </div>
         </div>
-        <flux:button class="bg-magnet-sky-teal! text-white! my-5">Berikan Masukan kepada Mahasiswa</flux:button>
+        <flux:button class="bg-magnet-sky-teal! text-white! my-5"  href="{{route('dosen.komunikasi')}}">Berikan Masukan kepada Mahasiswa</flux:button>
         <div>
             <h1 class="text-base font-bold leading-6 text-black my-4">Log Mahasiswa</h1>
         </div>
