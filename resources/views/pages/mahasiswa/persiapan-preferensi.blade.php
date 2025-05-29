@@ -41,35 +41,35 @@ $storePreferensiMahasiswa = function () {
         $skil_kriteria = Kriteria::create([
             'nama_kriteria' => 'skil',
             'nilai' => $this->skil,
-            'nilai_numerik' => ROC::getRank($this->skil_rank, 5),
+            'nilai_numerik' => ROC::getWeight($this->skil_rank, 5),
             'rank' => $this->skil_rank,
         ]);
 
         $bidang_industri_kriteria = Kriteria::create([
             'nama_kriteria' => 'bidang industri',
             'nilai' => $this->bidang_industri,
-            'nilai_numerik' => ROC::getRank($this->bidang_industri_rank, 5),
+            'nilai_numerik' => ROC::getWeight($this->bidang_industri_rank, 5),
             'rank' => $this->bidang_industri_rank,
         ]);
 
         $open_remote_kriteria = Kriteria::create([
             'nama_kriteria' => 'open remote',
             'nilai' => $this->open_remote,
-            'nilai_numerik' => ROC::getRank($this->open_remote_rank, 5),
+            'nilai_numerik' => ROC::getWeight($this->open_remote_rank, 5),
             'rank' => $this->open_remote_rank,
         ]);
 
         $lokasi_kriteria = Kriteria::create([
             'nama_kriteria' => 'lokasi',
             'nilai' => $this->lokasi,
-            'nilai_numerik' => ROC::getRank($this->lokasi_rank, 5),
+            'nilai_numerik' => ROC::getWeight($this->lokasi_rank, 5),
             'rank' => $this->lokasi_rank,
         ]);
 
         $uang_saku_kriteria = Kriteria::create([
             'nama_kriteria' => 'uang saku',
             'nilai' => $this->uang_saku,
-            'nilai_numerik' => ROC::getRank($this->uang_saku_rank, 5),
+            'nilai_numerik' => ROC::getWeight($this->uang_saku_rank, 5),
             'rank' => $this->uang_saku_rank,
         ]);
 
