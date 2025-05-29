@@ -80,7 +80,7 @@ $deleteData = function () {
 
     @if (!$isDataDeleted)
         <div class="min-h-full flex gap-8 items-start">
-            <div class="flex flex-col items-center bg-white p-4 rounded-xl shadow-md w-72 max-w-72">
+            <div class="flex flex-col items-center bg-white p-4 rounded-xl shadow-md w-96 max-w-96">
                 <img src="{{ asset('img/student-dosen.png') }}" alt="Foto Dosen"
                     class="w-64 object-cover rounded-md mb-4" />
                 <div class="flex flex-col gap-4 w-full">
