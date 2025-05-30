@@ -1,25 +1,22 @@
 <?php
 use function Livewire\Volt\{layout, state};
 
-state(['status' => 'Tidak Magang']);
-layout('components.layouts.mahasiswa.main');
+state([
+    'status' => 'Tidak Magang',
+]);
 
-$changeStatus = fn($newStatus) => ($this->status = $newStatus);
+layout('components.layouts.mahasiswa.main');
 
 ?>
 
 <div>
-    <!-- Konten -->
-    <div class="bg-[#DFF6F9] min-h-screen">
-        <!-- Judul -->
+    <div class="bg-[#DFF6F9] min-h-screen p-6">
         <h2 class="text-lg font-semibold text-black mb-1">Pembaruan status magang</h2>
         <p class="text-black mb-6">Anda perlu memperbarui status magang anda secara manual jika telah diterima atau
             selesai kontrak magang</p>
 
         <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-
-            <!-- Form -->
-            <form method="POST" action="#">
+            <form wire:submit="updateStatus">
                 <div class="mb-4">
                     <flux:field>
                         <flux:label>Status Magang Saat Ini</flux:label>
@@ -37,10 +34,10 @@ $changeStatus = fn($newStatus) => ($this->status = $newStatus);
                     @livewire('mahasiswa.pembaruan-status-selesai-magang')
                 @endif
 
-                <div class="flex justify-end">
+                <div class="flex justify-end mt-6">
                     <button type="submit"
                         class="bg-[#0DB3C8] text-white font-semibold px-5 py-2 rounded-md shadow hover:bg-[#0ca2b4] transition-colors">
-                        Perbarui
+                        Perbarui Status
                     </button>
                 </div>
             </form>

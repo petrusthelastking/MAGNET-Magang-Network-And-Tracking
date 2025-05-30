@@ -7,6 +7,7 @@ use App\Models\KontrakMagang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class PembaruanStatusController extends Controller
 {
@@ -156,6 +157,71 @@ class PembaruanStatusController extends Controller
             ]);
 
             return back()->with('error', 'Terjadi kesalahan sistem. Silakan coba lagi.');
+        }
+    }
+
+    //ambil data perusahaan yang mitra dengan kampus
+    public function getPerusahaanMitra()
+    {
+        $mahasiswaId = Session::get('user_id');
+        $mahasiswa = Mahasiswa::find($mahasiswaId);
+
+        if (!$mahasiswa) {
+            return response()->json(['error' => 'Mahasiswa tidak ditemukan'], 404);
+        }
+
+        $perusahaanMitra = $mahasiswa->perusahaanMitra()->get();
+
+        return view('pages.mahasiswa.pembaruan-status-sedang-magang', [
+            'mahasiswa' => $mahasiswa,
+            'perusahaanMitra' => $perusahaanMitra
+        ]);
+    }
+
+    //tambah perusahaan jika non mitra
+    public function tambahPerusahaan(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'nama' => 'required|string|max:255|unique:perusahaan,nama',
+                'bidang_industri' => 'required|in:Perbankan,Kesehatan,Pendidikan,E-Commerce,Telekomunikasi,Transportasi,Pemerintahan,Manufaktur,Energi,Media,Teknologi,Agrikultur,Pariwisata,Keamanan',
+                'lokasi' => 'required|string|max:255',
+                'rating' => 'nullable|numeric|min:0|max:5',
+            ], [
+                'nama.required' => 'Nama perusahaan wajib diisi.',
+                'nama.unique' => 'Perusahaan dengan nama ini sudah terdaftar.',
+                'bidang_industri.required' => 'Bidang industri wajib dipilih.',
+                'lokasi.required' => 'Lokasi perusahaan wajib diisi.',
+                'rating.numeric' => 'Rating harus berupa angka.',
+                'rating.min' => 'Rating minimal 0.',
+                'rating.max' => 'Rating maksimal 5.',
+            ]);
+
+            // Simpan perusahaan baru dengan kategori non_mitra
+            $perusahaanId = DB::table('perusahaan')->insertGetId([
+                'nama' => $validated['nama'],
+                'bidang_industri' => $validated['bidang_industri'],
+                'lokasi' => $validated['lokasi'],
+                'kategori' => 'non_mitra',
+                'rating' => $validated['rating'] ?? null
+            ]);
+
+            return response()->json([
+                'message' => 'Perusahaan non mitra berhasil ditambahkan.',
+                'perusahaan' => $perusahaanId
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors(),
+                'message' => 'Terdapat kesalahan pada input data.'
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Error tambah perusahaan', ['message' => $e->getMessage()]);
+
+            return response()->json([
+                'message' => 'Terjadi kesalahan sistem. Perusahaan gagal ditambahkan.'
+            ], 500);
         }
     }
 }
