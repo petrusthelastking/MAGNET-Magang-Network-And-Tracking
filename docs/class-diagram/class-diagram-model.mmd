@@ -1,0 +1,163 @@
+classDiagram
+
+
+class Model
+<<Abstract>> Model
+
+class Authenticable
+<<Interface>> Authenticable
+
+
+class Mahasiswa {
+    +String name
+    +String nim
+    +String email
+    +String password
+    +int angkatan
+    +String jenisKelamin
+    +String tanggalLahir
+    +String jurusan
+    +String programStudi
+    +String statusMagang
+    +String alamat
+    +getRoleName() String
+    +berkasPengajuanMagang() HasMany
+    +kontrakMagang() HasMany
+    +preferensiMahasiswa() HasOne
+}
+
+class Admin {
+    +String nama
+    +String nip
+    +String password
+    +getRoleName() String
+}
+
+class DosenPembimbing {
+    +String nama
+    +String nidn
+    +String password
+    +String jenisKelamin
+    +getRoleName() String
+    +kontrakMagang() HasMany
+}
+
+class Perusahaan {
+    +String nama
+    +String bidangIndustri
+    +String lokasi
+    +String kategori
+    +float rating
+    +magang() HasMany
+}
+
+class Magang {
+    +String nama
+    +String deskripsi
+    +String persyaratan
+    +String status
+    +String lokasi
+    +int perusahaanID
+    +perusahaan() BelongsTo
+    +kontrakMagang() HasMany
+}
+
+class BerkasPengajuanMagang {
+    +int mahasiswaID
+    +String cv
+    +String transkripNilai
+    +String portfolio
+    +mahasiswa() BelongsTo
+    +formPengajuanMagang() HasOne
+}
+
+class FormPengajuanMagang {
+    +int pengajuanID
+    +String status
+    +String keterangan
+    +berkasPengajuanMagang() BelongsTo
+}
+
+class KontrakMagang {
+    +int mahasiswaID
+    +int dosenID
+    +int magangID
+    +String waktuAwal
+    +String waktuAkhir
+    +mahasiswa() BelongsTo
+    +dosenPembimbing() BelongsTo
+    +magang() BelongsTo
+    +logMagang() HasMany
+    +ulasanMagang() HasOne
+    +umpanBalikMagang() HasMany
+}
+
+class Kriteria {
+    +String namaKriteria
+    +String nilai
+    +float nilaiNumerik
+    +int rank
+    +preferensiBidangPekerjaan() HasMany
+    +preferensiLokasi() HasMany
+    +preferensiReputasi() HasMany
+    +preferensiUangSaku() HasMany
+    +preferensiOpenRemote() HasMany
+}
+
+class LogMagang {
+    +int kontrakMagangID
+    +String kegiatan
+    +String tanggal
+    +String jamMasuk
+    +String jamKeluar
+    +kontrakMagang() BelongsTo
+}
+
+class PreferensiMahasiswa {
+    +int mahasiswaID
+    +String skil
+    +String bidangIndustri
+    +String lokasi
+    +String uangSaku
+    +String openRemote
+    +mahasiswa() BelongsTo
+    +kriteriaBidangPekerjaan() BelongsTo
+    +kriteriaLokasi() BelongsTo
+    +kriteriaReputasi() BelongsTo
+    +kriteriaUangSaku() BelongsTo
+    +kriteriaOpenRemote() BelongsTo
+}
+
+class UlasanMagang {
+    +int kontrakMagangID
+    +float rating
+    +String komentar
+    +kontrakMagang() BelongsTo
+}
+
+class UmpanBalikMagang {
+    +int kontrakMagangID
+    +String komentar
+    +String tanggal
+    +kontrakMagang() BelongsTo
+}
+
+
+Authenticable ..|> Mahasiswa
+Authenticable ..|> Admin
+Authenticable ..|> DosenPembimbing
+
+Model --|> Mahasiswa
+Model --|> Admin
+Model --|> DosenPembimbing
+Model --|> BerkasPengajuanMagang
+Model --|> FormPengajuanMagang
+Model --|> KontrakMagang
+Model --|> Kriteria
+Model --|> LogMagang
+Model --|> Magang
+Model --|> Perusahaan
+Model --|> PreferensiMahasiswa
+Model --|> UlasanMagang
+Model --|> UmpanBalikMagang
+
