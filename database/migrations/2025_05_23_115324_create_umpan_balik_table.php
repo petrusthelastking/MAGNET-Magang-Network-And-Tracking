@@ -10,10 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('umpan_balik', function (Blueprint $table) {
+        Schema::create('umpan_balik_magang', function (Blueprint $table) {
             $table->id();
             $table->foreignId('kontrak_magang_id')->constrained('kontrak_magang')->onDelete('cascade');
-            $table->text('komentar');
+            $table->string('komentar', 50);
             $table->date('tanggal');
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('umpan_balik');
+        Schema::dropIfExists('umpan_balik_magang');
     }
 };

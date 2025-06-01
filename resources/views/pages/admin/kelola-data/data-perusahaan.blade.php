@@ -106,7 +106,7 @@ $goToNextPage = fn() => $this->nextPage();
                         <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
                         <td class="px-6 py-3">{{ $perusahaan['nama'] }}</td>
                         <td class="px-6 py-3">{{ $perusahaan['bidang_industri'] }}</td>
-                        <td class="px-6 py-3">{{ $perusahaan['jumlah_mahasiswa_magang'] }}</td>
+                        <td class="px-6 py-3 text-right">{{ $perusahaan['jumlah_mahasiswa_magang'] }}</td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="chevron-right" href="{{ route('admin.detail-perusahaan', $perusahaan['id']) }}"
                                 variant="ghost" />
