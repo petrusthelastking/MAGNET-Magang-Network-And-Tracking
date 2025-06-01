@@ -5,7 +5,7 @@ use function Livewire\Volt\{layout, state, mount, computed, usesPagination, with
 use Carbon\Carbon;
 use App\Models\Mahasiswa;
 
-layout('components.layouts.admin.main');
+layout('components.layouts.user.main');
 
 state([
     'totalRowsPerPage' => 10,
@@ -53,6 +53,8 @@ $goToNextPage = fn() => $this->nextPage();
 ?>
 
 <div class="flex flex-col gap-5">
+    <x-slot:user>admin</x-slot:user>
+
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item class="text-black">Kelola Data Mahasiswa

@@ -5,8 +5,14 @@
     @include('partials.head')
 </head>
 
-<body class="bg-magnet-frost-mist flex min-h-screen">
-    <x-dosen.sidebar />
+<body class="bg-magnet-frost-mist flex min-h-screen text-black">
+    @if ($user == 'admin')
+        <x-admin.sidebar />
+    @elseif ($user == 'dosen')
+        <x-dosen.sidebar />
+    @elseif ($user == 'mahasiswa')
+        <x-mahasiswa.sidebar />
+    @endif
 
     <div class="w-full">
         <livewire:components.user.topbar />

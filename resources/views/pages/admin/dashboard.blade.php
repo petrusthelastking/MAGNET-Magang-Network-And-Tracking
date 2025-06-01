@@ -1,4 +1,4 @@
-<x-layouts.admin.main>
+<x-layouts.user.main user="admin">
   <flux:breadcrumbs class="mb-5">
     <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
     <flux:breadcrumbs.item href="{{ route('dashboard') }}" class="text-black">Dashboard</flux:breadcrumbs.item>

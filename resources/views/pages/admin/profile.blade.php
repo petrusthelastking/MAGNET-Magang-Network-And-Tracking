@@ -1,4 +1,4 @@
-<x-layouts.admin.main>
+<x-layouts.user.main>
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('profile') }}" class="text-black">Profil Anda

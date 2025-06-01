@@ -3,7 +3,7 @@
 use function Livewire\Volt\{layout, state, mount};
 use App\Models\Magang;
 
-layout('components.layouts.admin.main');
+layout('components.layouts.user.main');
 
 state([
     'totalRowsPerPage' => 10,
@@ -26,6 +26,8 @@ mount(function () {
 ?>
 
 <div class="flex flex-col gap-5">
+    <x-slot:user>admin</x-slot:user>
+    
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('admin.data-lowongan') }}" class="text-black">Kelola data lowongan magang
