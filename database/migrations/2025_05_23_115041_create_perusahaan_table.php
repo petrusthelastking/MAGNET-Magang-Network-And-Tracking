@@ -29,7 +29,7 @@ return new class extends Migration {
                 'Pariwisata',
                 'Keamanan'
             ]);
-            $table->string('lokasi');
+            $table->string('lokasi', 100);
             $table->enum('kategori', ['mitra', 'non_mitra']);
             $table->float('rating')->nullable();
             $table->timestamps();

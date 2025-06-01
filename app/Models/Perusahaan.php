@@ -20,7 +20,6 @@ class Perusahaan extends Model
     ];
 
     protected $casts = [
-        'bidang_industri' => 'string',
         'kategori' => 'string',
         'rating' => 'float',
     ];
@@ -28,5 +27,9 @@ class Perusahaan extends Model
     public function magang()
     {
         return $this->hasMany(Magang::class);
+    }
+
+    public function bidangIndustri() {
+        return $this->belongsTo(BidangIndustri::class);
     }
 }

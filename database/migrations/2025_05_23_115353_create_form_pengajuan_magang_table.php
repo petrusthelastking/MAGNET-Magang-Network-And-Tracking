@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('pengajuan_id')->constrained('berkas_pengajuan_magang')->onDelete('cascade');
             $table->enum('status', ['diproses', 'diterima', 'ditolak'])->default('diproses');
-            $table->text('keterangan')->nullable();
+            $table->string('keterangan', 100)->nullable();
             $table->timestamps();
         });
     }

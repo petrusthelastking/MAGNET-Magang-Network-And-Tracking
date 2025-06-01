@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\PreferensiMahasiswa;
+use App\Models\UmpanBalikMagang;
 use Illuminate\Database\Seeder;
 
-class PreferensiMahasiswaSeeder extends Seeder
+class UmpanBalikMagangSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        PreferensiMahasiswa::factory()->count(20)->create();
+        UmpanBalikMagang::factory()->count(100)->create();
     }
 }
