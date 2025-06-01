@@ -4,7 +4,7 @@ use Flux\Flux;
 use function Livewire\Volt\{layout, state, mount};
 use App\Models\DosenPembimbing;
 
-layout('components.layouts.admin.main');
+layout('components.layouts.user.main');
 
 state([
     'dosen' => null,
@@ -68,6 +68,8 @@ $deleteData = function () {
 ?>
 
 <div class="flex flex-col gap-5">
+    <x-slot:user>admin</x-slot:user>
+
     <flux:breadcrumbs class="mb-5">
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('admin.data-dosen') }}" class="text-black">Kelola Data Dosen

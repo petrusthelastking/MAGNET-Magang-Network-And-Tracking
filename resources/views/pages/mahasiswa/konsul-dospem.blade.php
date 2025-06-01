@@ -1,3 +1,3 @@
-<x-layouts.mahasiswa.main>
+<x-layouts.user.main user="mahasiswa">
 
-</x-layouts.mahasiswa.main>
+</x-layouts.user.main>

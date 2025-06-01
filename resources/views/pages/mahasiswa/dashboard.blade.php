@@ -1,4 +1,4 @@
-<x-layouts.mahasiswa.main>
+<x-layouts.user.main user="mahasiswa">
 
     <!-- Wrapper dengan jarak 9px antar card -->
     <div class="flex flex-col gap-[30px]">

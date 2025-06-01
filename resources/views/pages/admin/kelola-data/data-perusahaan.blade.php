@@ -5,7 +5,7 @@ use function Livewire\Volt\{layout, state, usesPagination, with};
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Perusahaan;
 
-layout('components.layouts.admin.main');
+layout('components.layouts.user.main');
 
 state([
     'totalRowsPerPage' => 10,
@@ -62,6 +62,8 @@ $goToNextPage = fn() => $this->nextPage();
 ?>
 
 <div class="flex flex-col gap-5">
+    <x-slot:user>admin</x-slot:user>
+
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item class="text-black">Kelola Data Perusahaan

@@ -2,17 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable;
-
 use App\Models\KontrakMagang;
+use App\Models\UserBase;
 
-class DosenPembimbing extends Model implements Authenticatable
+class DosenPembimbing extends UserBase
 {
-    use HasFactory;
-    use \Illuminate\Auth\Authenticatable;
-
     protected $table = 'dosen_pembimbing';
 
     protected $fillable = [

@@ -2,6 +2,8 @@
 
 use function Livewire\Volt\{layout, rules, state, protect};
 
+layout('components.layouts.user.main');
+
 $mahasiswa = auth('mahasiswa')->user();
 $berkas = $mahasiswa->berkasPengajuanMagang()->latest('updated_at')->first();
 $formPengajuan = $berkas?->formPengajuanMagang()->first();
@@ -13,10 +15,11 @@ state([
     'alasanDitolak' => $formPengajuan?->keterangan, // jika kamu simpan alasan di field ini
 ]);
 
-layout('components.layouts.mahasiswa.main');
 ?>
 
 <div class="text-black flex flex-col gap-6">
+    <x-slot:user>mahasiswa</x-slot:user>
+
     <h2 class="text-base leading-6 font-bold">Pengajuan Magang</h2>
 
     @if ($status == 'belum magang')

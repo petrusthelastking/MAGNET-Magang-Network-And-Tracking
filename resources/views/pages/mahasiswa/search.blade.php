@@ -1,12 +1,12 @@
 <?php
 
-use function Livewire\Volt\{layout, state, mount};
+use function Livewire\Volt\{layout, state};
 
-layout('components.layouts.mahasiswa.main');
+layout('components.layouts.user.main');
 
 state([
     'isOpenDetailJob' => false,
-]); 
+]);
 
 $openDetailJob = fn() => $this->isOpenDetailJob = true;
 
@@ -14,7 +14,8 @@ $openDetailJob = fn() => $this->isOpenDetailJob = true;
 
 
 <div>
-    <!-- Search Bar -->
+    <x-slot:user>mahasiswa</x-slot:user>
+
     <div class="flex gap-3">
         <flux:input class="rounded-3xl!" placeholder="Cari Data Pengajuan Magang" icon="magnifying-glass" />
         <flux:button variant="primary" class="bg-white! text-black! w-17 rounded-full!" icon="arrow-down-wide-narrow">

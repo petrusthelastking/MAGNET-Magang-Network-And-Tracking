@@ -3,7 +3,7 @@
 use function Livewire\Volt\{layout, state, mount};
 use App\Models\FormPengajuanMagang;
 
-layout('components.layouts.admin.main');
+layout('components.layouts.user.main');
 
 state([
     'totalRowsPerPage' => 10,
@@ -26,6 +26,8 @@ mount(function () {
 ?>
 
 <div class="flex flex-col gap-5">
+    <x-slot:user>admin</x-slot:user>
+    
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('admin.data-pengajuan-magang') }}" class="text-black">Kelola data pengajuan magang

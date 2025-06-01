@@ -1,4 +1,4 @@
-<x-layouts.mahasiswa.main>
+<div>
     <div class="gap-3 flex flex-col">
         <div class="card bg-white shadow-md">
             <div class="card-body p-5">
@@ -24,7 +24,7 @@
 
         <div class="card bg-white shadow-md">
             <div class="card-body grid grid-cols-2 gap-3">
-                <flux:input readonly value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->bidang_pekerjaan }}" type="text"
+                <flux:input readonly value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->bidang_industri }}" type="text"
                     label="Bidang pekerjaan" />
                 <flux:input readonly value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->lokasi }}" type="text" label="Lokasi magang" />
                 <flux:input readonly value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->reputasi }}" type="text" label="Reputasi" />
@@ -39,4 +39,4 @@
             </div>
         </div>
     </div>
-</x-layouts.mahasiswa.main>
+</div>

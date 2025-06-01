@@ -2,14 +2,15 @@
 use function Livewire\Volt\{layout, state};
 
 state(['status' => 'Tidak Magang']);
-layout('components.layouts.mahasiswa.main');
+layout('components.layouts.user.main');
 
 $changeStatus = fn($newStatus) => ($this->status = $newStatus);
 
 ?>
 
 <div>
-    <!-- Konten -->
+    <x-slot:user>mahasiswa</x-slot:user>
+
     <div class="bg-[#DFF6F9] min-h-screen">
         <!-- Judul -->
         <h2 class="text-lg font-semibold text-black mb-1">Pembaruan status magang</h2>
