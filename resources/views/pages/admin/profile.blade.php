@@ -1,4 +1,4 @@
-<x-layouts.user.main>
+<div>
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('profile') }}" class="text-black">Profil Anda
@@ -20,4 +20,4 @@
             </div>
         </div>
     </div>
-</x-layouts.admin.main>
+</div>
