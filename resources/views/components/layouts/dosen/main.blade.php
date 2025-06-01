@@ -5,18 +5,17 @@
     @include('partials.head')
 </head>
 
-<body class="bg-magnet-frost-mist">
-    <div class="flex min-h-screen">
-        <x-dosen.sidebar />
+<body class="bg-magnet-frost-mist flex min-h-screen">
+    <x-dosen.sidebar />
 
-        <div class="w-full">
-            <livewire:components.user.topbar />
-            <div class="p-8 flex flex-col gap-5">
+    <div class="w-full">
+        <livewire:components.user.topbar />
+        <div class="p-8 flex flex-col gap-5">
 
-                {{ $slot }}
-            </div>
+            {{ $slot }}
         </div>
     </div>
+
     @fluxScripts
 </body>
 
