@@ -2,7 +2,7 @@
 use function Livewire\Volt\{layout, state};
 
 state([
-    'status' => 'Tidak Magang',
+    'status' => '',
 ]);
 
 layout('components.layouts.mahasiswa.main');
@@ -33,13 +33,6 @@ layout('components.layouts.mahasiswa.main');
                 @elseif($status == 'Selesai Magang')
                     @livewire('mahasiswa.pembaruan-status-selesai-magang')
                 @endif
-
-                <div class="flex justify-end mt-6">
-                    <button type="submit"
-                        class="bg-[#0DB3C8] text-white font-semibold px-5 py-2 rounded-md shadow hover:bg-[#0ca2b4] transition-colors">
-                        Perbarui Status
-                    </button>
-                </div>
             </form>
         </div>
     </div>
