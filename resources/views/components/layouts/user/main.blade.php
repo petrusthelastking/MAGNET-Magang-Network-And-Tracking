@@ -3,6 +3,8 @@
 
 <head>
     @include('partials.head')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="bg-magnet-frost-mist flex min-h-screen text-black">
