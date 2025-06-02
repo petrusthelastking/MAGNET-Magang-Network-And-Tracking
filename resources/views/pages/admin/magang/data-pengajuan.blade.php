@@ -1,34 +1,43 @@
 <?php
 
-use function Livewire\Volt\{layout, state, mount};
+use function Livewire\Volt\{layout, state, usesPagination, with};
 use App\Models\FormPengajuanMagang;
 
-layout('components.layouts.admin.main');
+layout('components.layouts.user.main');
 
 state([
     'totalRowsPerPage' => 10,
-    'data_pengajuan' => []
 ]);
 
-mount(function () {
-    $this->data_pengajuan = FormPengajuanMagang::with(['berkasPengajuanMagang.mahasiswa'])
-        ->get()
-        ->map(function ($form) {
-            return [
+usesPagination();
+
+with(function () {
+    return [
+        'dataPengajuan' => FormPengajuanMagang::with('berkasPengajuanMagang.mahasiswa')
+            ->paginate($this->totalRowsPerPage)
+            ->through(
+            fn($form) => [
                 'nama' => $form->berkasPengajuanMagang->mahasiswa->nama ?? null,
                 'tanggal_pengajuan' => $form->created_at,
                 'status' => $form->status,
-            ];
-        })
-        ->toArray();
+            ],
+        ),
+    ];
 });
+
+$goToSpecificPage = fn(int $page) => $this->setPage($page);
+$goToPrevPage = fn() => $this->previousPage();
+$goToNextPage = fn() => $this->nextPage();
 
 ?>
 
 <div class="flex flex-col gap-5">
+    <x-slot:user>admin</x-slot:user>
+
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('admin.data-lowongan') }}" class="text-black">Kelola data pengajuan magang
+        <flux:breadcrumbs.item href="{{ route('admin.data-pengajuan-magang') }}" class="text-black">Kelola data pengajuan
+            magang
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
@@ -56,14 +65,17 @@ mount(function () {
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
-                @for ($i = 0; $i < count($data_pengajuan) && $i < $totalRowsPerPage; $i++)
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">{{ $data_pengajuan[$i]['nama'] }}</td>
-                        <td class="px-6 py-3">{{ $data_pengajuan[$i]['tanggal_pengajuan'] }}</td>
+                @foreach ($dataPengajuan as $pengajuan)
+                    <tr class="border-b">
+                        <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-3">{{ $pengajuan['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $pengajuan['tanggal_pengajuan'] }}</td>
                         <td class="px-6 py-3">
                             @php
-                                $status = $data_pengajuan[$i]['status'] == 'diproses' ? 'Belum diverifikasi' : ucfirst($data_pengajuan[$i]['status']);
+                                $status =
+                                    $pengajuan['status'] == 'diproses'
+                                        ? 'Belum diverifikasi'
+                                        : ucfirst($pengajuan['status']);
 
                                 $badgeColor = match ($status) {
                                     'Diterima' => 'green',
@@ -75,22 +87,25 @@ mount(function () {
                             <flux:badge variant="solid" color="{{ $badgeColor }}">{{ $status }}</flux:badge>
                         </td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-pengajuan') }}" variant="ghost" />
+                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-pengajuan') }}"
+                                variant="ghost" />
                         </td>
                     </tr>
-                @endfor
+                @endforeach
             </tbody>
         </table>
         <div class="flex items-center justify-between w-full px-8 py-4">
             <div class="text-black">
-                <p>Menampilkan 10 dari {{ $totalRowsPerPage }} data</p>
+                <p>Menampilkan {{ $dataPengajuan->count() }} dari {{ $dataPengajuan->perPage() }} data</p>
             </div>
             <div class="flex">
-                <flux:button icon="chevron-left" variant="ghost" />
-                @for ($i = 0; $i < ceil(count($data_pengajuan) / $totalRowsPerPage); $i++)
-                    <flux:button variant="ghost">{{ $i + 1 }}</flux:button>
+                <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage" />
+                @for ($i = 0; $i < $dataPengajuan->lastPage(); $i++)
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i + 1 }})">
+                        {{ $i + 1 }}
+                    </flux:button>
                 @endfor
-                <flux:button icon="chevron-right" variant="ghost" />
+                <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage" />
             </div>
             <div class="flex gap-3 items-center text-black">
                 <p>Baris per halaman</p>

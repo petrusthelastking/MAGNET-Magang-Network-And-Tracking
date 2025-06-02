@@ -7,7 +7,7 @@ state([
     'mahasiswa' => null,
 ]);
 
-layout('components.layouts.mahasiswa.main');
+layout('components.layouts.user.main');
 
 mount(function () {
     $this->mahasiswa = Auth::guard('mahasiswa')->user();
@@ -74,7 +74,10 @@ $refreshParent = function () {
 ?>
 
 <div>
-    <div class="bg-[#DFF6F9] min-h-screen p-6">
+    <x-slot:user>mahasiswa</x-slot:user>
+
+    <div class="bg-[#DFF6F9] min-h-screen">
+        <!-- Judul -->
         <h2 class="text-lg font-semibold text-black mb-1">Pembaruan status magang</h2>
         <p class="text-black mb-6">Anda perlu memperbarui status magang anda secara manual jika telah diterima atau
             selesai kontrak magang</p>

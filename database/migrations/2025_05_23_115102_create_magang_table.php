@@ -12,11 +12,11 @@ return new class extends Migration {
     {
         Schema::create('magang', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
+            $table->string('nama', 100);
             $table->text('deskripsi');
             $table->text('persyaratan');
             $table->enum('status', ['buka', 'tutup'])->default('buka');
-            $table->string('lokasi');
+            $table->string('lokasi', 100);
             $table->foreignId('perusahaan_id')->constrained('perusahaan')->onDelete('cascade');
             $table->timestamps();
         });

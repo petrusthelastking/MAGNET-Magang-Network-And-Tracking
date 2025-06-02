@@ -2,28 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable;
-
 use App\Models\BerkasPengajuanMagang;
 use App\Models\PreferensiMahasiswa;
 use App\Models\KontrakMagang;
+use App\Models\UserBase;
 
-class Mahasiswa extends Model implements Authenticatable
+class Mahasiswa extends UserBase
 {
-    use HasFactory;
-    use \Illuminate\Auth\Authenticatable;
-
     protected $table = 'mahasiswa';
 
     protected $fillable = [
         'nama',
         'nim',
+        'email',
         'password',
         'jenis_kelamin',
         'jurusan',
         'program_studi',
+        'angkatan',
+        'tanggal_lahir',
         'status_magang',
         'alamat',
     ];

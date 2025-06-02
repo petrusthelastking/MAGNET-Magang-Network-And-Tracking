@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('dosen_pembimbing', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('nidn');
-            $table->string('password');
+            $table->char('nidn', 10)->unique();
+            $table->string('password')->nullable();
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->timestamps();
         });

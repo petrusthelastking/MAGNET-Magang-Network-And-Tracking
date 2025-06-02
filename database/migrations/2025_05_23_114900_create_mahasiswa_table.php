@@ -13,12 +13,19 @@ return new class extends Migration {
         Schema::create('mahasiswa', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('nim');
-            $table->string('password');
+            $table->string('nim')->unique();
+            $table->string('email')->unique();
+            $table->string('password')->nullable();
+            $table->integer('angkatan');
             $table->enum('jenis_kelamin', ['L', 'P']);
-            $table->string('jurusan');
-            $table->string('program_studi');
-            $table->enum('status_magang', ['belum magang', 'sedang magang', 'selesai magang'])->default('belum magang');
+            $table->date('tanggal_lahir');
+            $table->string('jurusan')->default("Teknologi Informasi");
+            $table->enum('program_studi', [
+                'D4 Teknik Informatika', 'D4 Sistem Informasi Bisnis', 'D2 Pengembangan Piranti Lunak Situs'
+            ]);
+            $table->enum('status_magang', [
+                'belum magang', 'sedang magang', 'selesai magang'
+            ])->default('belum magang');
             $table->text('alamat');
             $table->timestamps();
         });
