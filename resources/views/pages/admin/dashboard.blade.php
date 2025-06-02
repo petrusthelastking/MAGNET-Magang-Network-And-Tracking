@@ -23,4 +23,4 @@
     </div>
   </div>
 
-</x-layouts.admin.main>
+</x-layouts.user.main>
