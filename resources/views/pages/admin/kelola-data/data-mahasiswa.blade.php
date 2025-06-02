@@ -1,7 +1,7 @@
 <?php
 
 use Flux\Flux;
-use function Livewire\Volt\{layout, state, mount, computed, usesPagination, with};
+use function Livewire\Volt\{layout, state, usesPagination, with};
 use Carbon\Carbon;
 use App\Models\Mahasiswa;
 
@@ -80,7 +80,7 @@ $goToNextPage = fn() => $this->nextPage();
         </div>
     </div>
 
-    <div class="overflow-y-auto rounded-lg shadow bg-white">
+    <div class="overflow-y-auto flex flex-col items-center rounded-lg shadow bg-white">
         <table class="table-auto w-full">
             <thead class="bg-white text-black">
                 <tr class="border-b">
@@ -94,8 +94,8 @@ $goToNextPage = fn() => $this->nextPage();
             <tbody class="bg-white text-black">
                 @foreach ($dataMahasiswa as $mahasiswa)
                     <tr onclick="window.location.href='{{ route('admin.detail-mahasiswa', $mahasiswa['id']) }}'"
-                        class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
+                        class="border-b">
+                        <td class="px-6 py-3 text-center">{{ $loop->iteration + ($dataMahasiswa->firstItem() - 1) }}</td>
                         <td class="px-6 py-3">{{ $mahasiswa['nama'] }}</td>
                         <td class="px-6 py-3">{{ $mahasiswa['nim'] }}</td>
                         <td class="px-6 py-3">
@@ -118,27 +118,33 @@ $goToNextPage = fn() => $this->nextPage();
                 @endforeach
             </tbody>
         </table>
-        <div class="flex justify-between w-full px-8 py-4">
-            <p class="text-black">Menampilkan {{ $dataMahasiswa->count() }} dari {{ $dataMahasiswa->perPage() }} data</p>
+        <div class="flex items-center justify-between w-full px-8 py-4">
+            <p>Menampilkan {{ $dataMahasiswa->count() }} dari {{ $dataMahasiswa->total() }} data</p>
 
             <div class="flex">
-                <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage"/>
-                @for ($i = 0; $i < $dataMahasiswa->lastPage(); $i++)
-                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i + 1 }})">{{ $i + 1 }}
+                <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage" />
+                @for ($i = $dataMahasiswa->currentPage(); $i <= $dataMahasiswa->currentPage() + 5 && $i < $dataMahasiswa->lastPage(); $i++)
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i }})">
+                        {{ $i }}
                     </flux:button>
                 @endfor
-                <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage"/>
+
+                @if ($dataMahasiswa->lastPage() > 6)
+                    <flux:button variant="ghost" disabled>...</flux:button>
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataMahasiswa->lastPage() }})">
+                        {{ $dataMahasiswa->lastPage() }}
+                    </flux:button>
+                @endif
+                <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage" />
             </div>
-            <div>
-                <div class="flex gap-3 items-center text-black">
-                    <p>Baris per halaman</p>
-                    <flux:select class="w-20!" wire:model.live="totalRowsPerPage">
-                        <flux:select.option value="10">10</flux:select.option>
-                        <flux:select.option value="25">25</flux:select.option>
-                        <flux:select.option value="50">50</flux:select.option>
-                        <flux:select.option value="100">100</flux:select.option>
-                    </flux:select>
-                </div>
+            <div class="flex gap-3 items-center text-black">
+                <p>Baris per halaman</p>
+                <flux:select class="w-20!" wire:model.live="totalRowsPerPage">
+                    <flux:select.option>10</flux:select.option>
+                    <flux:select.option>25</flux:select.option>
+                    <flux:select.option>50</flux:select.option>
+                    <flux:select.option>100</flux:select.option>
+                </flux:select>
             </div>
         </div>
     </div>
