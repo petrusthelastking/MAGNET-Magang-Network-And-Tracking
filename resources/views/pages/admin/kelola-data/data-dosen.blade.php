@@ -4,7 +4,6 @@ use Flux\Flux;
 use function Livewire\Volt\{layout, state, usesPagination, with};
 use App\Models\DosenPembimbing;
 
-
 layout('components.layouts.user.main');
 
 state([
@@ -12,25 +11,25 @@ state([
     'statusInsertSingleData' => '',
     'storeDosenNama' => null,
     'storeDosenNIDN' => null,
-    'storeDosenJenisKelamin' => null
+    'storeDosenJenisKelamin' => null,
 ]);
 
 usesPagination();
 
 with(function () {
-    return ['dataDosen' => DosenPembimbing::select('id', 'nama', 'nidn')
-                            ->withCount([
-                                'kontrakMagang as jumlah_bimbingan'
-                            ])
-                            ->orderBy('jumlah_bimbingan', 'desc')
-                            ->paginate($this->totalRowsPerPage)];
+    return [
+        'dataDosen' => DosenPembimbing::select('id', 'nama', 'nidn')
+            ->withCount(['kontrakMagang as jumlah_bimbingan'])
+            ->orderBy('jumlah_bimbingan', 'desc')
+            ->paginate($this->totalRowsPerPage),
+    ];
 });
 
 $storeSingleData = function (): void {
     $dosen = DosenPembimbing::create([
         'nama' => $this->storeDosenNama,
         'nidn' => $this->storeDosenNIDN,
-        'jenis_kelamin' => $this->storeDosenJenisKelamin
+        'jenis_kelamin' => $this->storeDosenJenisKelamin,
     ]);
 
     $this->statusInsertSingleData = $dosen ? 'success' : 'failed';
@@ -51,12 +50,13 @@ $goToNextPage = fn() => $this->nextPage();
 
 <div class="flex flex-col gap-5">
     <x-slot:user>admin</x-slot:user>
-    
+
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('admin.data-dosen') }}" class="text-black">Kelola Data Dosen
+        <flux:breadcrumbs.item class="text-black">Kelola Data Dosen
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
+
     <h1 class="text-base font-bold leading-6 text-black">Kelola Data Dosen</h1>
 
     <div class="flex justify-between">
@@ -89,29 +89,38 @@ $goToNextPage = fn() => $this->nextPage();
             </thead>
             <tbody class="bg-white text-black">
                 @foreach ($dataDosen as $dosen)
-                    <tr onclick="window.location.href='{{ route('admin.detail-dosen', $dosen['id']) }}'" class="border-b">
-                        <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
+                    <tr onclick="window.location.href='{{ route('admin.detail-dosen', $dosen['id']) }}'"
+                        class="border-b">
+                        <td class="px-6 py-3 text-center">{{ $loop->iteration + ($dataDosen->firstItem() - 1) }}</td>
                         <td class="px-6 py-3">{{ $dosen['nama'] }}</td>
                         <td class="px-6 py-3">{{ $dosen['nidn'] }}</td>
                         <td class="px-6 py-3 text-right">{{ $dosen['jumlah_bimbingan'] }}</td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="chevron-right" href="{{ route('admin.detail-dosen', $dosen['id']) }}" variant="ghost" />
+                            <flux:button icon="chevron-right" href="{{ route('admin.detail-dosen', $dosen['id']) }}"
+                                variant="ghost" />
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
         <div class="flex items-center justify-between w-full px-8 py-4">
-            <div class="text-black">
-                <p>Menampilkan {{ $dataDosen->count() }} dari {{ $dataDosen->perPage() }} data</p>
-            </div>
+            <p>Menampilkan {{ $dataDosen->count() }} dari {{ $dataDosen->total() }} data</p>
+
             <div class="flex">
-                <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage"/>
-                @for ($i = 0; $i < $dataDosen->lastPage(); $i++)
-                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i + 1 }})">{{ $i + 1 }}
+                <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage" />
+                @for ($i = $dataDosen->currentPage(); $i <= $dataDosen->currentPage() + 5 && $i < $dataDosen->lastPage(); $i++)
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i }})">
+                        {{ $i }}
                     </flux:button>
                 @endfor
-                <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage"/>
+
+                @if ($dataDosen->lastPage() > 6)
+                    <flux:button variant="ghost" disabled>...</flux:button>
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataDosen->lastPage() }})">
+                        {{ $dataDosen->lastPage() }}
+                    </flux:button>
+                @endif
+                <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage" />
             </div>
             <div class="flex gap-3 items-center text-black">
                 <p>Baris per halaman</p>
