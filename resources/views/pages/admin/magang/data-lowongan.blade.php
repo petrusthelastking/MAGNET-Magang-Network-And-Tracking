@@ -77,7 +77,15 @@ $goToNextPage = fn() => $this->nextPage();
                         <td class="px-6 py-3">{{ $pengajuan['nama'] }}</td>
                         <td class="px-6 py-3">{{ $pengajuan['perusahaan']['nama'] }}</td>
                         <td class="px-6 py-3">{{ $pengajuan['lokasi'] }}</td>
-                        <td class="px-6 py-3">{{ $pengajuan['status'] }}</td>
+                        <td class="px-6 py-3">
+                            @php
+                                $badgeColor = match ($pengajuan['status']) {
+                                    'tutup' => 'red',
+                                    'buka' => 'green',
+                                }
+                            @endphp
+                            <flux:badge variant="solid" color="{{ $badgeColor }}">{{ ucfirst($pengajuan['status']) }}</flux:badge>
+                        </td>
                         <td class="px-6 py-3 text-right">{{ $pengajuan['jumlah_pendaftar'] }}</td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-lowongan') }}"
