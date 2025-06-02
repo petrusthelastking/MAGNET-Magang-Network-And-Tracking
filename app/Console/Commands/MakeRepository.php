@@ -67,7 +67,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class {$name}
 {
-    protected \$model;
+    protected Model \$model;
 
     public function __construct(Model \$model)
     {
