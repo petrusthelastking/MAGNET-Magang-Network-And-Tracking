@@ -244,8 +244,6 @@ class MultiMOORA
         // Ekstrak preferensi kriteria (ranking) dari preferensi mahasiswa
         foreach ($preferensiMahasiswa as $kriteria => $idKriteria) {
             if (in_array($kriteria, ['bidang_pekerjaan', 'lokasi', 'reputasi', 'uang_saku', 'open_remote'])) {
-                // Asumsi ranking disimpan di tabel kriteria, Anda mungkin perlu mengambilnya
-                // Untuk saat ini, menggunakan mapping sederhana
                 $preferensiKriteria[$kriteria] = $idKriteria; // Ini seharusnya nilai ranking
             }
         }
@@ -255,11 +253,11 @@ class MultiMOORA
             $namaAlt = $magang['nama'] ?? 'Magang_' . $magang['id'];
 
             $alternatif[$namaAlt] = [
-                'bidang_pekerjaan' => $magang['skor_bidang_cocok'] ?? 1, // Anda perlu mendefinisikan cara menghitung skor ini
-                'lokasi' => $magang['skor_lokasi'] ?? 1, // Anda perlu mendefinisikan cara menghitung skor ini
+                'bidang_pekerjaan' => $magang['skor_bidang_cocok'] ?? 1,
+                'lokasi' => $magang['skor_lokasi'] ?? 1,
                 'reputasi' => $magang['rating'] ?? 1,
-                'uang_saku' => $magang['skor_gaji'] ?? 1, // Anda perlu mendefinisikan cara menghitung skor ini
-                'open_remote' => $magang['skor_remote'] ?? 1, // Anda perlu mendefinisikan cara menghitung skor ini
+                'uang_saku' => $magang['skor_gaji'] ?? 1,
+                'open_remote' => $magang['skor_remote'] ?? 1,
             ];
         }
 
