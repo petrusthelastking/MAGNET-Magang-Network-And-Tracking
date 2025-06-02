@@ -23,7 +23,7 @@ class MakeRepository extends Command
 
     protected $files;
 
-        public function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->files = new Filesystem();
@@ -55,30 +55,68 @@ class MakeRepository extends Command
         return 0;
     }
 
-        protected function getStub($name)
+    protected function getStub($name)
     {
         return <<<EOT
 <?php
 
 namespace App\Repositories;
 
+use App\Models\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 class {$name}
 {
-    // Add your repository methods here
+    protected \$model;
 
+    public function __construct(Model \$model)
+    {
+        \$this->model = \$model;
+    }
+
+    /**
+     * Get all records.
+     */
     public function all()
     {
-        // Return all records
+        return \$this->model->all();
     }
 
+    /**
+     * Find a record by ID.
+     */
     public function find(\$id)
     {
-        // Find a record by ID
+        return \$this->model->findOrFail(\$id);
     }
 
-    // Add more repository methods as needed
-}
+    /**
+     * Create a new record.
+     */
+    public function create(array \$data)
+    {
+        return \$this->model->create(\$data);
+    }
 
+    /**
+     * Update a record by ID.
+     */
+    public function update(\$id, array \$data)
+    {
+        \$record = \$this->model->findOrFail(\$id);
+        \$record->update(\$data);
+        return \$record;
+    }
+
+    /**
+     * Delete a record by ID.
+     */
+    public function delete(\$id)
+    {
+        \$record = \$this->model->findOrFail(\$id);
+        return \$record->delete();
+    }
+}
 EOT;
     }
 }
