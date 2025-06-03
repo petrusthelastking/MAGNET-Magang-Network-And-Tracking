@@ -44,11 +44,11 @@
                 class="text-magnet-deep-ocean-blue!">
                 Pengajuan Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="chart-no-axes-combined" href="#" :current="request()->is('tren-magang')"
+            <flux:navlist.item icon="chart-no-axes-combined" href="{{ route('admin.statistik-magang') }}" :current="request()->is('tren-magang')"
                 class="text-magnet-deep-ocean-blue!">
-                Tren Magang
+                Statistik Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="crown" href="#" :current="request()->is('aturan-magang')"
+            <flux:navlist.item icon="crown" href="{{ route('admin.aturan-magang') }}" :current="request()->is('aturan-magang')"
                 class="text-magnet-deep-ocean-blue!">
                 Aturan Magang
             </flux:navlist.item>
