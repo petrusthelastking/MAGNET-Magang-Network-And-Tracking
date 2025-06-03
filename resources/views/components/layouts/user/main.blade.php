@@ -16,7 +16,7 @@
 
     <div class="w-full">
         <livewire:components.user.topbar />
-        <div class="p-8 flex flex-col gap-5">
+        <div class="{{ $isFullPage??'p-8 flex flex-col gap-5'}}">
 
             {{ $slot }}
         </div>
