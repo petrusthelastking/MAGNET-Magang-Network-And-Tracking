@@ -103,7 +103,7 @@ $goToNextPage = fn() => $this->nextPage();
                     <th class="text-left px-6 py-3">Nama</th>
                     <th class="text-left px-6 py-3">Bidang Industri</th>
                     <th class="text-left px-6 py-3">Jumlah Mahasiswa Magang</th>
-                    <th class="text-center px-6 py-3">Aksi</th>
+                    <th class="text-center px-6 py-3">Detail</th>
                 </tr>
             </thead>
             <tbody class="bg-white text-black">

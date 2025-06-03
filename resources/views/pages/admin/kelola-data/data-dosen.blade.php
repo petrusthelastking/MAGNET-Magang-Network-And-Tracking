@@ -84,7 +84,7 @@ $goToNextPage = fn() => $this->nextPage();
                     <th class="text-left px-6 py-3">Nama</th>
                     <th class="text-left px-6 py-3">NIDN</th>
                     <th class="text-left px-6 py-3">Jumlah Bimbingan</th>
-                    <th class="text-center px-6 py-3">Aksi</th>
+                    <th class="text-center px-6 py-3">Detail</th>
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
