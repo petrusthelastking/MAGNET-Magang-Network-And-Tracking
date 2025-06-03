@@ -163,7 +163,7 @@ $resetForm = function () {
             <strong>Mahasiswa:</strong> {{ $mahasiswa->nama }} ({{ $mahasiswa->nim }}) <br>
             <strong>Status:</strong> {{ ucwords(str_replace('_', ' ', $mahasiswa->status_magang)) }} <br>
             @if ($mahasiswa->status_magang === 'sedang magang')
-                <strong>Lokasi Magang:</strong> {{ $this->getInternshipInfo() }}
+                <strong>Lokasi Magang:</strong> {{ $getInternshipInfo() }}
             @endif
         </div>
 

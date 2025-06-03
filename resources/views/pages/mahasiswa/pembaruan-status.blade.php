@@ -76,13 +76,12 @@ $refreshParent = function () {
 <div>
     <x-slot:user>mahasiswa</x-slot:user>
 
-    <div class="bg-[#DFF6F9] min-h-screen">
-        <!-- Judul -->
-        <h2 class="text-lg font-semibold text-black mb-1">Pembaruan status magang</h2>
-        <p class="text-black mb-6">Anda perlu memperbarui status magang anda secara manual jika telah diterima atau
+    <div class="bg-magnet-frost-mist min-h-screen flex flex-col gap-5">
+        <h2 class="text-lg font-semibold text-black">Pembaruan status magang</h2>
+        <p class="text-black">Anda perlu memperbarui status magang anda secara manual jika telah diterima atau
             selesai kontrak magang</p>
 
-        <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <div class="w-full bg-white p-6 rounded-lg shadow-md">
             @if (session()->has('success'))
                 <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50">
                     {{ session('success') }}
@@ -102,7 +101,7 @@ $refreshParent = function () {
                 </div>
             @endif
 
-            <div class="mb-4">
+            <div>
                 <flux:field>
                     <flux:label>Status Magang Saat Ini</flux:label>
                     <flux:select wire:model.live="status" placeholder="Status Magang Saat Ini">
@@ -114,9 +113,9 @@ $refreshParent = function () {
             </div>
 
             @if ($status == 'Sedang Magang')
-                @livewire('mahasiswa.pembaruan-status-sedang-magang')
+                <livewire:components.mahasiswa.pembaruan-status-magang.sedang-magang />
             @elseif($status == 'Selesai Magang')
-                @livewire('mahasiswa.pembaruan-status-selesai-magang')
+                <livewire:components.mahasiswa.pembaruan-status-magang.selesai-magang />
             @endif
         </div>
     </div>
