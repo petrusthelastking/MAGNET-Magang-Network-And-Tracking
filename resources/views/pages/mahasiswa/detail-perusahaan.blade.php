@@ -16,6 +16,15 @@
                         <flux:icon.banknote class="mr-1 size-4" />
                         <p>Tidak dibayar</p>
                     </div>
+                    <div>
+                        <div class="flex items-center underline-offset-1">
+                            <a href="{{ route('mahasiswa.profil-perusahaan') }}"
+                                class="text-sm text-gray-400 flex items-center">
+                                Lihat selengkapnya profil perusahaan
+                                <flux:icon.chevron-right class="ml-1 size-4" />
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="flex flex-col items-end gap-2">
@@ -25,6 +34,7 @@
                     <flux:icon.map class="ml-1 size-4" />
                 </a>
             </div>
+
         </div>
 
         {{-- === Deskripsi Magang === --}}
