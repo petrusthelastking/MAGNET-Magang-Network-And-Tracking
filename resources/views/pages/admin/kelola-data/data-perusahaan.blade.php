@@ -25,14 +25,20 @@ usesPagination();
 
 with(function () {
     return [
-        'dataPerusahaan' => Perusahaan::select('id', 'nama', 'bidang_industri')
-            ->withCount([
-                'magang as jumlah_mahasiswa_magang' => function (Builder $query) {
-                    $query->join('kontrak_magang', 'magang.id', '=', 'kontrak_magang.magang_id');
-                },
-            ])
-            ->orderBy('jumlah_mahasiswa_magang', 'desc')
-            ->paginate($this->totalRowsPerPage),
+        'dataPerusahaan' => Perusahaan::select(
+            'perusahaan.id',
+            'perusahaan.nama',
+            'perusahaan.bidang_industri_id',
+            'bidang_industri.nama as nama_bidang_industri'
+        )
+        ->leftJoin('bidang_industri', 'perusahaan.bidang_industri_id', '=', 'bidang_industri.id')
+        ->withCount([
+            'magang as jumlah_mahasiswa_magang' => function (Builder $query) {
+                $query->join('kontrak_magang', 'magang.id', '=', 'kontrak_magang.magang_id');
+            },
+        ])
+        ->orderBy('jumlah_mahasiswa_magang', 'desc')
+        ->paginate($this->totalRowsPerPage),
     ];
 });
 
@@ -103,9 +109,9 @@ $goToNextPage = fn() => $this->nextPage();
             <tbody class="bg-white text-black">
                 @foreach ($dataPerusahaan as $perusahaan)
                     <tr onclick="window.location.href='{{ route('admin.detail-perusahaan', $perusahaan['id']) }}'" class="border-b">
-                        <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-3 text-center">{{ $loop->iteration + ($dataPerusahaan->firstItem() - 1)}}</td>
                         <td class="px-6 py-3">{{ $perusahaan['nama'] }}</td>
-                        <td class="px-6 py-3">{{ $perusahaan['bidang_industri'] }}</td>
+                        <td class="px-6 py-3">{{ $perusahaan['nama_bidang_industri'] }}</td>
                         <td class="px-6 py-3 text-right">{{ $perusahaan['jumlah_mahasiswa_magang'] }}</td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="chevron-right" href="{{ route('admin.detail-perusahaan', $perusahaan['id']) }}"
@@ -116,15 +122,22 @@ $goToNextPage = fn() => $this->nextPage();
             </tbody>
         </table>
         <div class="flex items-center justify-between w-full px-8 py-4">
-            <div class="text-black">
-                <p>Menampilkan {{ $dataPerusahaan->count() }} dari {{ $dataPerusahaan->perPage() }} data</p>
-            </div>
+            <p>Menampilkan {{ $dataPerusahaan->count() }} dari {{ $dataPerusahaan->total() }} data</p>
+
             <div class="flex">
                 <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage" />
-                @for ($i = 0; $i < $dataPerusahaan->lastPage(); $i++)
-                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i + 1 }})">{{ $i + 1 }}
+                @for ($i = $dataPerusahaan->currentPage(); $i <= $dataPerusahaan->currentPage() + 5 && $i < $dataPerusahaan->lastPage(); $i++)
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i }})">
+                        {{ $i }}
                     </flux:button>
                 @endfor
+
+                @if ($dataPerusahaan->lastPage() > 6)
+                    <flux:button variant="ghost" disabled>...</flux:button>
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataPerusahaan->lastPage() }})">
+                        {{ $dataPerusahaan->lastPage() }}
+                    </flux:button>
+                @endif
                 <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage" />
             </div>
             <div class="flex gap-3 items-center text-black">

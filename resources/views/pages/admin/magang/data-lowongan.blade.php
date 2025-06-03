@@ -1,38 +1,45 @@
 <?php
 
-use function Livewire\Volt\{layout, state, mount};
+use function Livewire\Volt\{layout, state, with, usesPagination};
 use App\Models\Magang;
 
 layout('components.layouts.user.main');
 
 state([
     'totalRowsPerPage' => 10,
-    'data_pengajuan_magang' => []
 ]);
 
-mount(function () {
-    $this->data_pengajuan_magang = Magang::select('id', 'nama', 'perusahaan_id', 'lokasi', 'status')
-        ->with(['perusahaan' => function ($query) {
-            $query->select('id', 'nama');
-        }])
-        ->withCount([
-            'kontrakMagang as jumlah_pendaftar'
-        ])
-        ->orderBy('created_at', 'desc')
-        ->get()
-        ->toArray();
+usesPagination();
+
+with(function () {
+    return [
+        'dataPengajuanMagang' => Magang::select('id', 'nama', 'perusahaan_id', 'lokasi', 'status')
+            ->with([
+                'perusahaan' => function ($query) {
+                    $query->select('id', 'nama');
+                },
+            ])
+            ->withCount(['kontrakMagang as jumlah_pendaftar'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($this->totalRowsPerPage),
+    ];
 });
+
+$goToSpecificPage = fn(int $page) => $this->setPage($page);
+$goToPrevPage = fn() => $this->previousPage();
+$goToNextPage = fn() => $this->nextPage();
 
 ?>
 
 <div class="flex flex-col gap-5">
     <x-slot:user>admin</x-slot:user>
-    
+
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('admin.data-lowongan') }}" class="text-black">Kelola data lowongan magang
+        <flux:breadcrumbs.item class="text-black">Kelola data lowongan magang
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
+
     <h1 class="text-base font-bold leading-6 text-black">Kelola Data Lowongan Magang</h1>
 
     <div class="flex justify-between">
@@ -63,32 +70,49 @@ mount(function () {
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
-                <p>{{ count($data_pengajuan_magang) }}</p>
-                @for ($i = 0; $i < count($data_pengajuan_magang) && $i < $totalRowsPerPage; $i++)
+                @foreach ($dataPengajuanMagang as $pengajuan)
                     <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-3 text-center">{{ $i + 1 }}</td>
-                        <td class="px-6 py-3">{{ $data_pengajuan_magang[$i]['nama'] }}</td>
-                        <td class="px-6 py-3">{{ $data_pengajuan_magang[$i]['perusahaan']['nama'] }}</td>
-                        <td class="px-6 py-3">{{ $data_pengajuan_magang[$i]['lokasi'] }}</td>
-                        <td class="px-6 py-3">{{ $data_pengajuan_magang[$i]['status'] }}</td>
-                        <td class="px-6 py-3 text-right">{{ $data_pengajuan_magang[$i]['jumlah_pendaftar']}}</td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-lowongan') }}" variant="ghost" />
+                            {{ $loop->iteration + ($dataPengajuanMagang->firstItem() - 1) }}</td>
+                        <td class="px-6 py-3">{{ $pengajuan['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $pengajuan['perusahaan']['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $pengajuan['lokasi'] }}</td>
+                        <td class="px-6 py-3">
+                            @php
+                                $badgeColor = match ($pengajuan['status']) {
+                                    'tutup' => 'red',
+                                    'buka' => 'green',
+                                }
+                            @endphp
+                            <flux:badge variant="solid" color="{{ $badgeColor }}">{{ ucfirst($pengajuan['status']) }}</flux:badge>
+                        </td>
+                        <td class="px-6 py-3 text-right">{{ $pengajuan['jumlah_pendaftar'] }}</td>
+                        <td class="px-6 py-3 text-center">
+                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-lowongan') }}"
+                                variant="ghost" />
                         </td>
                     </tr>
-                @endfor
+                @endforeach
             </tbody>
         </table>
         <div class="flex items-center justify-between w-full px-8 py-4">
-            <div class="text-black">
-                <p>Menampilkan 10 dari {{ $totalRowsPerPage }} data</p>
-            </div>
+            <p>Menampilkan {{ $dataPengajuanMagang->count() }} dari {{ $dataPengajuanMagang->total() }} data</p>
+
             <div class="flex">
-                <flux:button icon="chevron-left" variant="ghost" />
-                @for ($i = 0; $i < ceil(count($data_pengajuan_magang) / $totalRowsPerPage); $i++)
-                    <flux:button variant="ghost">{{ $i + 1 }}</flux:button>
+                <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage" />
+                @for ($i = $dataPengajuanMagang->currentPage(); $i <= $dataPengajuanMagang->currentPage() + 5 && $i < $dataPengajuanMagang->lastPage(); $i++)
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i }})">
+                        {{ $i }}
+                    </flux:button>
                 @endfor
-                <flux:button icon="chevron-right" variant="ghost" />
+
+                @if ($dataPengajuanMagang->lastPage() > 6)
+                    <flux:button variant="ghost" disabled>...</flux:button>
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataPengajuanMagang->lastPage() }})">
+                        {{ $dataPengajuanMagang->lastPage() }}
+                    </flux:button>
+                @endif
+                <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage" />
             </div>
             <div class="flex gap-3 items-center text-black">
                 <p>Baris per halaman</p>
