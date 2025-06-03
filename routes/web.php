@@ -36,6 +36,7 @@ Route::name('admin.')
         Route::view('statistik-magang', 'pages.admin.magang.statistik-magang')->name('statistik-magang');
 
         Route::view('perusahaan-terpopuler', 'pages.admin.magang.perusahaan-terpopuler')->name('perusahaan-terpopuler'); 
+        Route::view('aturan-magang', 'pages.admin.magang.aturan-magang')->name('aturan-magang');
 });
 
 

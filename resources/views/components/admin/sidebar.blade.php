@@ -48,7 +48,7 @@
                 class="text-magnet-deep-ocean-blue!">
                 Statistik Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="crown" href="#" :current="request()->is('aturan-magang')"
+            <flux:navlist.item icon="crown" href="{{ route('admin.aturan-magang') }}" :current="request()->is('aturan-magang')"
                 class="text-magnet-deep-ocean-blue!">
                 Aturan Magang
             </flux:navlist.item>
