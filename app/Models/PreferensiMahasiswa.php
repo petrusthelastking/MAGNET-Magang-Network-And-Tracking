@@ -13,11 +13,12 @@ class PreferensiMahasiswa extends Model
 
     protected $fillable = [
         'mahasiswa_id',
-        'skil',
-        'bidang_industri',
-        'lokasi',
-        'uang_saku',
-        'open_remote',
+        'kriteria_pekerjaan_id',
+        'kriteria_bidang_industri_id',
+        'kriteria_lokasi_magang_id',
+        'kriteria_reputasi_perusahaan_id',
+        'kriteria_jenis_magang_id',
+        'kriteria_open_remote_id',
     ];
 
     public function mahasiswa()
@@ -25,28 +26,28 @@ class PreferensiMahasiswa extends Model
         return $this->belongsTo(Mahasiswa::class);
     }
 
-    public function kriteriaBidangPekerjaan()
+    public function pekerjaan()
     {
-        return $this->belongsTo(Kriteria::class, 'bidang_pekerjaan');
+        return $this->hasOne(KriteriaPekerjaan::class, 'pekerjaan_id');
     }
 
-    public function kriteriaLokasi()
+    public function bidangIndustri()
     {
-        return $this->belongsTo(Kriteria::class, 'lokasi');
+        return $this->hasOne(KriteriaBidangIndustri::class, 'bidang_industri_id');
     }
 
-    public function kriteriaReputasi()
+    public function lokasiMagang()
     {
-        return $this->belongsTo(Kriteria::class, 'reputasi');
+        return $this->hasOne(KriteriaLokasiMagang::class, 'lokasi_magang_id');
     }
 
-    public function kriteriaUangSaku()
+    public function jenisMagang()
     {
-        return $this->belongsTo(Kriteria::class, 'uang_saku');
+        return $this->hasOne(KriteriaJenisMagang::class, 'jenis_magang_id');
     }
 
-    public function kriteriaOpenRemote()
+    public function openRemote()
     {
-        return $this->belongsTo(Kriteria::class, 'open_remote');
+        return $this->hasOne(KriteriaOpenRemote::class, 'open_remote_id');
     }
 }

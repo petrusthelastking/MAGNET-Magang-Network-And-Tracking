@@ -13,7 +13,7 @@ usesPagination();
 
 with(function () {
     return [
-        'dataPengajuanMagang' => Magang::select('id', 'nama', 'perusahaan_id', 'lokasi', 'status')
+        'dataLowonganMagang' => Magang::select('id', 'nama', 'perusahaan_id', 'lokasi', 'status')
             ->with([
                 'perusahaan' => function ($query) {
                     $query->select('id', 'nama');
@@ -67,29 +67,29 @@ $goToNextPage = fn() => $this->nextPage();
                     <th class="text-left px-6 py-3">Lokasi</th>
                     <th class="text-center px-6 py-3">Status</th>
                     <th class="text-center px-6 py-3">Jumlah Pendaftar</th>
-                    <th class="text-center px-6 py-3">Aksi</th>
+                    <th class="text-center px-6 py-3">Detail</th>
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
-                @foreach ($dataPengajuanMagang as $pengajuan)
-                    <tr class="border-b hover:bg-gray-50">
+                @foreach ($dataLowonganMagang as $lowongan)
+                    <tr onclick="window.location.href='{{ route('admin.detail-lowongan', $lowongan['id']) }}'"  class="border-b hover:bg-gray-50">
                         <td class="px-6 py-3 text-center">
-                            {{ $loop->iteration + ($dataPengajuanMagang->firstItem() - 1) }}</td>
-                        <td class="px-6 py-3">{{ $pengajuan['nama'] }}</td>
-                        <td class="px-6 py-3">{{ $pengajuan['perusahaan']['nama'] }}</td>
-                        <td class="px-6 py-3">{{ $pengajuan['lokasi'] }}</td>
+                            {{ $loop->iteration + ($dataLowonganMagang->firstItem() - 1) }}</td>
+                        <td class="px-6 py-3">{{ $lowongan['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $lowongan['perusahaan']['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $lowongan['lokasi'] }}</td>
                         <td class="px-6 py-3">
                             @php
-                                $badgeColor = match ($pengajuan['status']) {
+                                $badgeColor = match ($lowongan['status']) {
                                     'tutup' => 'red',
                                     'buka' => 'green',
                                 }
                             @endphp
-                            <flux:badge variant="solid" color="{{ $badgeColor }}">{{ ucfirst($pengajuan['status']) }}</flux:badge>
+                            <flux:badge variant="solid" color="{{ $badgeColor }}">{{ ucfirst($lowongan['status']) }}</flux:badge>
                         </td>
-                        <td class="px-6 py-3 text-center">{{ $pengajuan['jumlah_pendaftar'] }}</td>
+                        <td class="px-6 py-3 text-right">{{ $lowongan['jumlah_pendaftar'] }}</td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-lowongan') }}"
+                            <flux:button icon="chevron-right" href="{{ route('admin.detail-lowongan', $lowongan['id']) }}"
                                 variant="ghost" />
                         </td>
                     </tr>
@@ -97,20 +97,20 @@ $goToNextPage = fn() => $this->nextPage();
             </tbody>
         </table>
         <div class="flex items-center justify-between w-full px-8 py-4">
-            <p>Menampilkan {{ $dataPengajuanMagang->count() }} dari {{ $dataPengajuanMagang->total() }} data</p>
+            <p>Menampilkan {{ $dataLowonganMagang->count() }} dari {{ $dataLowonganMagang->total() }} data</p>
 
             <div class="flex">
                 <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage" />
-                @for ($i = $dataPengajuanMagang->currentPage(); $i <= $dataPengajuanMagang->currentPage() + 5 && $i < $dataPengajuanMagang->lastPage(); $i++)
+                @for ($i = $dataLowonganMagang->currentPage(); $i <= $dataLowonganMagang->currentPage() + 5 && $i < $dataLowonganMagang->lastPage(); $i++)
                     <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i }})">
                         {{ $i }}
                     </flux:button>
                 @endfor
 
-                @if ($dataPengajuanMagang->lastPage() > 6)
+                @if ($dataLowonganMagang->lastPage() > 6)
                     <flux:button variant="ghost" disabled>...</flux:button>
-                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataPengajuanMagang->lastPage() }})">
-                        {{ $dataPengajuanMagang->lastPage() }}
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataLowonganMagang->lastPage() }})">
+                        {{ $dataLowonganMagang->lastPage() }}
                     </flux:button>
                 @endif
                 <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage" />
