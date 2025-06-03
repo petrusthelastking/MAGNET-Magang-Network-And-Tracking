@@ -46,7 +46,7 @@ state([
             <a href="#">
                 <flux:icon.bookmark />
             </a>
-            <a href="#">
+            <a route="notifikasi" href="{{ route('mahasiswa.notifikasi') }}">
                 <flux:icon.bell />
             </a>
         </div>
