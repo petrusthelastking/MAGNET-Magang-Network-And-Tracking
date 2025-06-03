@@ -13,11 +13,10 @@ usesPagination();
 
 with(function () {
     return [
-        'dataPengajuan' => FormPengajuanMagang::with('berkasPengajuanMagang.mahasiswa')
-            ->paginate($this->totalRowsPerPage)
-            ->through(
+        'dataPengajuan' => FormPengajuanMagang::with('berkasPengajuanMagang.mahasiswa')->paginate($this->totalRowsPerPage)->through(
             fn($form) => [
-                'nama' => $form->berkasPengajuanMagang->mahasiswa->nama ?? null,
+                'id' => $form->id,
+                'nama' => $form->berkasPengajuanMagang->mahasiswa->nama,
                 'tanggal_pengajuan' => $form->created_at,
                 'status' => $form->status,
             ],
@@ -36,7 +35,7 @@ $goToNextPage = fn() => $this->nextPage();
 
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('admin.data-pengajuan-magang') }}" class="text-black">Kelola data pengajuan
+        <flux:breadcrumbs.item class="text-black">Kelola data pengajuan
             magang
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
@@ -59,14 +58,15 @@ $goToNextPage = fn() => $this->nextPage();
                 <tr class="border-b">
                     <th class="text-center px-6 py-3">No</th>
                     <th class="text-left px-6 py-3">Mahasiswa</th>
-                    <th class="text-left px-6 py-3">Tanggal Pengajuan</th>
+                    <th class="text-left px-6 py-3">Waktu Pengajuan</th>
                     <th class="text-center px-6 py-3">Status</th>
                     <th class="text-center px-6 py-3">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
                 @foreach ($dataPengajuan as $pengajuan)
-                    <tr class="border-b">
+                    <tr onclick="window.location.href='{{ route('admin.detail-pengajuan', $pengajuan['id']) }}'"
+                        class="border-b">
                         <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
                         <td class="px-6 py-3">{{ $pengajuan['nama'] }}</td>
                         <td class="px-6 py-3">{{ $pengajuan['tanggal_pengajuan'] }}</td>
@@ -87,24 +87,34 @@ $goToNextPage = fn() => $this->nextPage();
                             <flux:badge variant="solid" color="{{ $badgeColor }}">{{ $status }}</flux:badge>
                         </td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-pengajuan') }}"
-                                variant="ghost" />
+                            <flux:button icon="chevron-right"
+                                href="{{ route('admin.detail-pengajuan', $pengajuan['id']) }}" variant="ghost" />
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
         <div class="flex items-center justify-between w-full px-8 py-4">
-            <div class="text-black">
-                <p>Menampilkan {{ $dataPengajuan->count() }} dari {{ $dataPengajuan->perPage() }} data</p>
-            </div>
+            <p>Menampilkan {{ $dataPengajuan->count() }} dari {{ $dataPengajuan->total() }} data</p>
+
             <div class="flex">
                 <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage" />
-                @for ($i = 0; $i < $dataPengajuan->lastPage(); $i++)
-                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i + 1 }})">
-                        {{ $i + 1 }}
+                @if ($dataPengajuan->lastPage() == 1)
+                    <flux:button variant="ghost" wire:click="goToSpecificPage(1)">1</flux:button>
+                @endif
+
+                @for ($i = $dataPengajuan->currentPage(); $i <= $dataPengajuan->currentPage() + 5 && $i < $dataPengajuan->lastPage(); $i++)
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $i }})">
+                        {{ $i }}
                     </flux:button>
                 @endfor
+
+                @if ($dataPengajuan->lastPage() > 6)
+                    <flux:button variant="ghost" disabled>...</flux:button>
+                    <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataPengajuan->lastPage() }})">
+                        {{ $dataPengajuan->lastPage() }}
+                    </flux:button>
+                @endif
                 <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage" />
             </div>
             <div class="flex gap-3 items-center text-black">

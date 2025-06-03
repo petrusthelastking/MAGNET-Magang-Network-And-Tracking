@@ -31,7 +31,7 @@ Route::name('admin.')
         Route::view('detail-lowongan', 'pages.admin.magang.detail-lowongan')->name('detail-lowongan');
 
         Volt::route('data-pengajuan-magang', 'pages.admin.magang.data-pengajuan')->name('data-pengajuan-magang');
-        Route::view('detail-pengajuan', 'pages.admin.magang.detail-pengajuan')->name('detail-pengajuan');
+        Volt::route('detail-pengajuan/{id}', 'pages.admin.magang.detail-pengajuan')->name('detail-pengajuan');
 });
 
 
