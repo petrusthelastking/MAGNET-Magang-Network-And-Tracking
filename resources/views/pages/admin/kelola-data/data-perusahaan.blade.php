@@ -31,14 +31,14 @@ with(function () {
             'perusahaan.bidang_industri_id',
             'bidang_industri.nama as nama_bidang_industri'
         )
-        ->leftJoin('bidang_industri', 'perusahaan.bidang_industri_id', '=', 'bidang_industri.id')
-        ->withCount([
-            'magang as jumlah_mahasiswa_magang' => function (Builder $query) {
-                $query->join('kontrak_magang', 'magang.id', '=', 'kontrak_magang.magang_id');
-            },
-        ])
-        ->orderBy('jumlah_mahasiswa_magang', 'desc')
-        ->paginate($this->totalRowsPerPage),
+            ->leftJoin('bidang_industri', 'perusahaan.bidang_industri_id', '=', 'bidang_industri.id')
+            ->withCount([
+                'magang as jumlah_mahasiswa_magang' => function (Builder $query) {
+                    $query->join('kontrak_magang', 'magang.id', '=', 'kontrak_magang.magang_id');
+                },
+            ])
+            ->orderBy('jumlah_mahasiswa_magang', 'desc')
+            ->paginate($this->totalRowsPerPage),
     ];
 });
 
@@ -99,23 +99,28 @@ $goToNextPage = fn() => $this->nextPage();
         <table class="table-auto w-full ">
             <thead class="bg-white text-black">
                 <tr class="border-b">
-                    <th class="text-center px-6 py-3">No</th>
-                    <th class="text-left px-6 py-3">Nama</th>
-                    <th class="text-left px-6 py-3">Bidang Industri</th>
-                    <th class="text-left px-6 py-3">Jumlah Mahasiswa Magang</th>
-                    <th class="text-center px-6 py-3">Aksi</th>
+                    <th class="text-center px-6 py-3 w-16">No</th>
+                    <th class="text-left px-6 py-3 w-1/3">Nama</th>
+                    <th class="text-left px-6 py-3 w-1/5">Bidang Industri</th>
+                    <th class="text-center px-6 py-3 w-1/4">Jumlah Mahasiswa Magang</th>
+                    <th class="text-center px-6 py-3 w-20">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
                 @foreach ($dataPerusahaan as $perusahaan)
-                    <tr onclick="window.location.href='{{ route('admin.detail-perusahaan', $perusahaan['id']) }}'" class="border-b">
+                    <tr onclick="window.location.href='{{ route('admin.detail-perusahaan', $perusahaan['id']) }}'"
+                        class="border-b">
                         <td class="px-6 py-3 text-center">{{ $loop->iteration + ($dataPerusahaan->firstItem() - 1)}}</td>
                         <td class="px-6 py-3">{{ $perusahaan['nama'] }}</td>
                         <td class="px-6 py-3">{{ $perusahaan['nama_bidang_industri'] }}</td>
-                        <td class="px-6 py-3 text-right">{{ $perusahaan['jumlah_mahasiswa_magang'] }}</td>
+                        <td class="px-6 py-3 text-center flex justify-center">
+                            <flux:badge class="px-3 py-0.5! text-lg! font-medium bg-blue-600! flex items-center min-w-20!" variant="solid">
+                                {{ $perusahaan['jumlah_mahasiswa_magang'] }} <p class="ms-2 text-xs">Siswa</p>
+                            </flux:badge>
+                        </td>
                         <td class="px-6 py-3 text-center">
-                            <flux:button icon="chevron-right" href="{{ route('admin.detail-perusahaan', $perusahaan['id']) }}"
-                                variant="ghost" />
+                            <flux:button icon="chevron-right"
+                                href="{{ route('admin.detail-perusahaan', $perusahaan['id']) }}" variant="ghost" />
                         </td>
                     </tr>
                 @endforeach

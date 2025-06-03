@@ -67,6 +67,7 @@ $goToNextPage = fn() => $this->nextPage();
                     <th class="text-left px-6 py-3">Lokasi</th>
                     <th class="text-center px-6 py-3">Status</th>
                     <th class="text-center px-6 py-3">Jumlah Pendaftar</th>
+                    <th class="text-center px-6 py-3">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
@@ -86,7 +87,7 @@ $goToNextPage = fn() => $this->nextPage();
                             @endphp
                             <flux:badge variant="solid" color="{{ $badgeColor }}">{{ ucfirst($pengajuan['status']) }}</flux:badge>
                         </td>
-                        <td class="px-6 py-3 text-right">{{ $pengajuan['jumlah_pendaftar'] }}</td>
+                        <td class="px-6 py-3 text-center">{{ $pengajuan['jumlah_pendaftar'] }}</td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="ellipsis-vertical" href="{{ route('admin.detail-lowongan') }}"
                                 variant="ghost" />

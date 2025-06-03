@@ -39,7 +39,7 @@
     </div>
     {{-- bawah --}}
 
-    <div class="flex justify-between w-full mt-11 gap-11 text-black">
+    <div class="grid lg:grid-cols-2 md:grid-cols-1 w-full mt-11 gap-11 text-black">
       <div class="w-full bg-white rounded-md border border-magnet-def-grey-400 p-6">
         <div class="flex flex-col h-full">
           <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Tren Mahasiswa Magang</h3>
@@ -103,6 +103,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
   {{-- Script untuk Chart --}}
