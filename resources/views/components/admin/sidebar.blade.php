@@ -55,13 +55,13 @@
         </flux:navlist.group>
 
         <flux:navlist.group expandable heading="Laporan" :expanded="false" class="text-magnet-deep-ocean-blue!">
-            <flux:navlist.item icon="file-text" href="#" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="file-text" href="{{ route('admin.laporan-statistik-magang') }}" class="text-magnet-deep-ocean-blue!">
                 Laporan Statistik<br>Magang
             </flux:navlist.item>
         </flux:navlist.group>
 
         <flux:navlist.group expandable heading="Sistem" :expanded="false" class="text-magnet-deep-ocean-blue!">
-            <flux:navlist.item icon="file-cog" href="#" class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="file-cog" href="{{ route('admin.evaluasi-sistem-rekomendasi') }}" class="text-magnet-deep-ocean-blue!">
                 Evaluasi Sistem<br>Rekomendasi
             </flux:navlist.item>
         </flux:navlist.group>

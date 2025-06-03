@@ -39,7 +39,7 @@
     </div>
     {{-- bawah --}}
 
-    <div class="flex justify-between w-full mt-11 gap-11 text-black">
+    <div class="grid lg:grid-cols-2 md:grid-cols-1 w-full mt-11 gap-11 text-black">
       <div class="w-full bg-white rounded-md border border-magnet-def-grey-400 p-6">
         <div class="flex flex-col h-full">
           <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Tren Mahasiswa Magang</h3>
@@ -48,58 +48,62 @@
           </div>
         </div>
       </div>
-      <div class="w-full bg-white rounded-md border border-magnet-def-grey-400 p-6">
-        <div class="flex flex-col h-full">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Bidang Industri Terpopuler </h3>
-          <div class="flex items-center justify-center">
-            <div class="mt-3">
-              <ol class="space-y-4 text-black">
-                <li class="flex justify-between items-center">
-                  <div class="flex items-center space-x-3">
-                    <span class="font-bold text-md">1</span>
-                    <span class="font-semibold text-md">Pariwisata</span>
-                  </div>
-                  <span class="text-sm">451 mahasiswa magang</span>
-                </li>
-
-                <li class="flex justify-between items-center">
-                  <div class="flex items-center space-x-3">
-                    <span class="font-bold text-md">2</span>
-                    <span class="font-semibold text-md">Makanan & minuman</span>
-                  </div>
-                  <span class="text-sm">367 mahasiswa magang</span>
-                </li>
-
-                <li class="flex justify-between items-center">
-                  <div class="flex items-center space-x-3">
-                    <span class="font-bold text-md">3</span>
-                    <span class="font-semibold text-md">Konveksi</span>
-                  </div>
-                  <span class="text-sm">278 mahasiswa magang</span>
-                </li>
-
-                <li class="flex justify-between items-center">
-                  <div class="flex items-center space-x-3">
-                    <span class="font-bold text-md">4</span>
-                    <span class="font-semibold text-md">Pertanian</span>
-                  </div>
-                  <span class="text-sm">123 mahasiswa magang</span>
-                </li>
-
-                <li class="flex justify-between items-center">
-                  <div class="flex items-center space-x-3">
-                    <span class="font-bold text-md">5</span>
-                    <span class="font-semibold text-md">Pendidikan</span>
-                  </div>
-                  <span class="text-sm">56 mahasiswa magang</span>
-                </li>
-              </ol>
-
+      <div class="w-full bg-white rounded-md border border-magnet-def-grey-400 p-4">
+        <div class="px-6 pb-4 border-b border-gray-200">
+          <h3 class="pt-2 text-lg font-semibold text-gray-900 text-center">Bidang industri terpopuler</h3>
+        </div>
+        <div class="p-4">
+          <div class="space-y-1">
+            <div class="flex items-center justify-between py-3 border-b border-gray-100">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                  <span class="text-sm font-semibold text-blue-600">1</span>
+                </div>
+                <p class="font-medium text-gray-900">Pariwisata</p>
+              </div>
+              <span class="text-sm font-semibold text-gray-900">451 mahasiswa magang</span>
+            </div>
+            <div class="flex items-center justify-between py-3 border-b border-gray-100">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                  <span class="text-sm font-semibold text-blue-600">2</span>
+                </div>
+                <p class="font-medium text-gray-900">Makanan & minuman</p>
+              </div>
+              <span class="text-sm font-semibold text-gray-900">367 mahasiswa magang</span>
+            </div>
+            <div class="flex items-center justify-between py-3 border-b border-gray-100">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                  <span class="text-sm font-semibold text-blue-600">3</span>
+                </div>
+                <p class="font-medium text-gray-900">Konveksi</p>
+              </div>
+              <span class="text-sm font-semibold text-gray-900">278 mahasiswa magang</span>
+            </div>
+            <div class="flex items-center justify-between py-3 border-b border-gray-100">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                  <span class="text-sm font-semibold text-blue-600">4</span>
+                </div>
+                <p class="font-medium text-gray-900">Pertanian</p>
+              </div>
+              <span class="text-sm font-semibold text-gray-900">123 mahasiswa magang</span>
+            </div>
+            <div class="flex items-center justify-between py-3">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                  <span class="text-sm font-semibold text-blue-600">5</span>
+                </div>
+                <p class="font-medium text-gray-900">Pendidikan</p>
+              </div>
+              <span class="text-sm font-semibold text-gray-900">56 mahasiswa magang</span>
             </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
   {{-- Script untuk Chart --}}
@@ -135,7 +139,7 @@
       }
     });
 
-    
+
   </script>
 
 </x-layouts.user.main>

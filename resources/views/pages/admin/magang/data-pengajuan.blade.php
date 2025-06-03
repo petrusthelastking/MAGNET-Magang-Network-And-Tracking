@@ -56,11 +56,11 @@ $goToNextPage = fn() => $this->nextPage();
         <table class="table-auto w-full ">
             <thead class="bg-white text-black">
                 <tr class="border-b">
-                    <th class="text-center px-6 py-3">No</th>
-                    <th class="text-left px-6 py-3">Mahasiswa</th>
-                    <th class="text-left px-6 py-3">Waktu Pengajuan</th>
-                    <th class="text-center px-6 py-3">Status</th>
-                    <th class="text-center px-6 py-3">Aksi</th>
+                    <th class="text-center px-6 py-3 w-16">No</th>
+                    <th class="text-left px-6 py-3 w-1/3">Mahasiswa</th>
+                    <th class="text-left px-6 py-3 w-1/4">Waktu Pengajuan</th>
+                    <th class="text-left px-6 py-3 w-1/5">Status</th>
+                    <th class="text-center px-6 py-3 w-20">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
@@ -84,7 +84,7 @@ $goToNextPage = fn() => $this->nextPage();
                                 };
                             @endphp
 
-                            <flux:badge variant="solid" color="{{ $badgeColor }}">{{ $status }}</flux:badge>
+                            <flux:badge class="min-w-32! flex justify-center " variant="solid" color="{{ $badgeColor }}">{{ $status }}</flux:badge>
                         </td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="chevron-right"
