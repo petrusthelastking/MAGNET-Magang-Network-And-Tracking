@@ -43,6 +43,12 @@ state([
             <p>Status magang Anda: Sedang Magang</p>
             <flux:text>Anda sedang menjalani magang. Tidak perlu mengajukan lagi.</flux:text>
         </div>
+    @elseif ($status == 'selesai magang')
+        {{-- Sudah selesai magang, tidak perlu ajukan lagi --}}
+        <div class="card bg-white shadow-md p-5 text-black flex flex-col gap-5">
+            <p>Status magang Anda: Selesai Magang</p>
+            <flux:text>Anda sudah menyelesaikan magang. Tidak perlu mengajukan lagi.</flux:text>
+        </div>
     @else
         {{-- Status magang tidak dikenali --}}
         <div class="card bg-white shadow-md p-5 text-black flex flex-col gap-5">
