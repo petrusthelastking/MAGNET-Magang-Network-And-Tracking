@@ -56,6 +56,7 @@ Route::name('dosen.')
         Route::view('mahasiswa-bimbingan', 'pages.dosen.mahasiswa-bimbingan')->name('mahasiswa-bimbingan');
         Route::view('detail-mahasiswa-bimbingan', 'pages.dosen.detail-mahasiswa-bimbingan')->name('detail-mahasiswa-bimbingan');
         Route::view('komunikasi', 'pages.dosen.komunikasi-mahasiswa')->name('komunikasi');
+        Route::view('komunikasi/mahasiswa', 'pages.dosen.masukan-magang')->name('komunikasi-mahasiswa');
 });
 
 Route::view('data-pendukung', 'pages.auth.data-pendukung')->name('data-pendukung');
