@@ -13,7 +13,7 @@ state([
     'nama' => null,
     'email' => null,
     'jurusan' => 'Teknologi Informasi',
-    'program_studi' => null,
+    'program_studi',
     'angkatan' => null,
     'jenis_kelamin' => null,
     'tanggal_lahir' => null,
@@ -94,15 +94,13 @@ $register = function (): void {
 
             <flux:field>
                 <flux:label>Program Studi</flux:label>
-                <flux:input.group class="rounded-xl">
-                    <flux:select wire:model="program_studi">
-                        <flux:select.option value="D4 Teknik Informatika">D4 Teknik Informatika</flux:select.option>
-                        <flux:select.option value="D4 Sistem Informasi Bisnis">D4 Sistem Informasi Bisnis
-                        </flux:select.option>
-                        <flux:select.option value="D2 Pengembangan Piranti Lunak Situs">D2 Pengembangan Piranti Lunak
-                            Situs</flux:select.option>
-                    </flux:select>
-                </flux:input.group>
+                <flux:select wire:model.live="program_studi" placeholder="Pilih program studi anda">
+                    <flux:select.option value="D4 Teknik Informatika">D4 Teknik Informatika</flux:select.option>
+                    <flux:select.option value="D4 Sistem Informasi Bisnis">D4 Sistem Informasi Bisnis
+                    </flux:select.option>
+                    <flux:select.option value="D2 Pengembangan Piranti Lunak Situs">D2 Pengembangan Piranti Lunak
+                        Situs</flux:select.option>
+                </flux:select>
                 <flux:error name="program_studi" />
             </flux:field>
 

@@ -35,7 +35,7 @@ Route::name('admin.')
 
         Route::view('statistik-magang', 'pages.admin.magang.statistik-magang')->name('statistik-magang');
 
-        Route::view('perusahaan-terpopuler', 'pages.admin.magang.perusahaan-terpopuler')->name('perusahaan-terpopuler'); 
+        Route::view('perusahaan-terpopuler', 'pages.admin.magang.perusahaan-terpopuler')->name('perusahaan-terpopuler');
         Route::view('aturan-magang', 'pages.admin.magang.aturan-magang')->name('aturan-magang');
 });
 
@@ -64,5 +64,3 @@ Route::name('dosen.')
         Route::view('komunikasi', 'pages.dosen.komunikasi-mahasiswa')->name('komunikasi');
         Route::view('komunikasi/mahasiswa', 'pages.dosen.masukan-magang')->name('komunikasi-mahasiswa');
 });
-
-Route::view('data-pendukung', 'pages.auth.data-pendukung')->name('data-pendukung');
