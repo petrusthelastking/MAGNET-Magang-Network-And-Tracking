@@ -48,6 +48,7 @@ Route::name('mahasiswa.')
         Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
         Volt::route('search', 'pages.mahasiswa.search')->name('search');
         Route::view('detail-perusahaan', 'pages.mahasiswa.detail-perusahaan')->name('detail-perusahaan');
+        Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
     });
 
 Route::name('dosen.')
