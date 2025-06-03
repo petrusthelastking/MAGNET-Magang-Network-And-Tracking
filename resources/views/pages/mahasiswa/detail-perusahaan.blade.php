@@ -3,20 +3,32 @@
 
         {{-- === Kartu Info Magang === --}}
         <div class="bg-white rounded-xl shadow-md p-6 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <img src="{{ asset('logo-perusahaan.png') }}" alt="Logo Perusahaan" class="w-16 h-16 object-contain ">
-                <div>
-                    <h2 class="text-xl font-bold">CUDA Programming</h2>
-                    <p class="text-sm text-gray-600">PT ESEMKA</p> <!-- menambahkan icon 'map-pin' -->
-                    <p class="text-sm text-gray-600">Jayapura</p> <!-- menambahkan icon 'banknote' -->
-                    <p class="text-sm text-gray-600">Tidak dibayar</p>
-                </div>
+    <div class="flex items-center gap-4">
+        <img src="{{ asset('logo-perusahaan.png') }}" alt="Logo Perusahaan" class="w-16 h-16 object-contain ">
+        <div>
+            <h2 class="text-xl font-bold">CUDA Programming</h2>
+            <p class="text-sm text-gray-600">PT ESEMKA</p>
+            {{-- Modifikasi di sini: Gunakan flex untuk mensejajarkan ikon dan teks --}}
+            <div class="flex items-center text-sm text-gray-600">
+                <flux:icon.map-pin class="mr-1" /> {{-- Tambahkan class "mr-1" untuk margin kanan --}}
+                <p>Jayapura</p>
             </div>
-            <div class="flex flex-col items-end gap-2">
-                <flux:button class="bg-magnet-sky-teal! text-white!" icon="save">Simpan</flux:button>
-                <a href="#" class="text-sm text-black ">Cek lokasi perusahaan di peta</a> <!-- menambahkan icon 'map' -->
+            <div class="flex items-center text-sm text-gray-600">
+                <flux:icon.banknote class="mr-1" /> {{-- Tambahkan class "mr-1" untuk margin kanan --}}
+                <p>Tidak dibayar</p>
             </div>
         </div>
+    </div>
+    <div class="flex flex-col items-end gap-2">
+        <flux:button class="bg-magnet-sky-teal! text-white!" icon="save">Simpan</flux:button>
+        <a href="#" class="text-sm text-black ">Cek lokasi perusahaan di peta</a>
+        {{-- Modifikasi di sini: Gunakan flex untuk mensejajarkan ikon peta dan panah --}}
+        <div class="flex items-center">
+            <flux:icon.map size-micro/>
+            <i class="fas fa-arrow-right text-gray-800 ml-1"></i> {{-- Menggunakan Font Awesome untuk ikon panah --}}
+        </div>
+    </div>
+</div>
 
         {{-- === Deskripsi Magang === --}}
         <div class="bg-white rounded-xl shadow-md p-6">

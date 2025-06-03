@@ -1,10 +1,9 @@
-<x-layouts.user.main user="mahasiswa">
-    <div class="w-full bg-white rounded-lg overflow-hidden flex flex-col h-full">
+<x-layouts.user.main user="mahasiswa" isFullPage="true">
+    <div class="space-y-10 bg-[url(/public/wallpaper-chat.png)] h-full">
         <div class="flex items-center justify-between p-4 bg-white border-b border-gray-200 shadow-sm z-10">
             <div class="flex items-center">
-                <div class="ml-3">
-                    <p class="font-semibold text-gray-800">Prof. Dr. Mulyono, S.H., M.Kom.</p>
-                </div>
+                <img src="{{ asset('logo-perusahaan.png') }}" alt="Logo Perusahaan" class="w-10 h-10 object-contain rounded-full mr-3">
+                <p class="font-semibold text-gray-800">Prof. Dr. Mulyono, S.H., M.Kom.</p> {{-- Hapus div pembungkus jika hanya ada p ini --}}
             </div>
         </div>
 
