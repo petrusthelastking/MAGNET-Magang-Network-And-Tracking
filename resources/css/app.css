@@ -46,6 +46,12 @@
     --color-magnet-vibrant-orange: #FFB703;
     --color-magnet-def-grey-400: #9CA3AF;
     --color-magnet-def-grey-500: #6B7280;
+    --color-magnet-def-red-300: #FCA5A5;
+    --color-magnet-def-yellow-300: #FCD34D;
+    --color-magnet-def-green-300: #6EE7B7;
+    --color-magnet-def-purple-300: #C4B5FD;
+    --color-magnet-def-indigo-300: #A5B4FC;
+
 }
 @layer theme {
     .dark {
