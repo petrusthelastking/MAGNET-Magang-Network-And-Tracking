@@ -16,7 +16,6 @@ class PreferensiMahasiswa extends Model
         'kriteria_pekerjaan_id',
         'kriteria_bidang_industri_id',
         'kriteria_lokasi_magang_id',
-        'kriteria_reputasi_perusahaan_id',
         'kriteria_jenis_magang_id',
         'kriteria_open_remote_id',
     ];
