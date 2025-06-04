@@ -12,6 +12,6 @@ class PreferensiMahasiswaSeeder extends Seeder
      */
     public function run(): void
     {
-        PreferensiMahasiswa::factory()->count(20)->create();
+        PreferensiMahasiswa::factory()->count(200)->create();
     }
 }

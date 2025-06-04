@@ -81,14 +81,14 @@ $goToNextPage = fn() => $this->nextPage();
     </div>
 
     <div class="overflow-y-auto flex flex-col items-center rounded-lg shadow bg-white">
-        <table class="table-auto w-full">
+        <table class="table-fixed w-full">
             <thead class="bg-white text-black">
                 <tr class="border-b">
-                    <th class="text-center px-6 py-3">No</th>
-                    <th class="text-left px-6 py-3">Nama</th>
-                    <th class="text-left px-6 py-3">NIM</th>
-                    <th class="text-left px-6 py-3">Status</th>
-                    <th class="text-center px-6 py-3">Detail</th>
+                    <th class="text-center px-6 py-3 w-16">No</th> <!-- TAMBAH: w-16 -->
+                    <th class="text-left px-6 py-3 w-1/3">Nama</th> <!-- TAMBAH: w-1/3 -->
+                    <th class="text-left px-6 py-3 w-1/4">NIM</th> <!-- TAMBAH: w-1/4 -->
+                    <th class="text-left px-6 py-3 w-1/5">Status</th> <!-- TAMBAH: w-1/5 -->
+                    <th class="text-center px-6 py-3 w-20">Detail</th> <!-- TAMBAH: w-20 -->
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
@@ -107,11 +107,11 @@ $goToNextPage = fn() => $this->nextPage();
                                     'Selesai magang' => 'green',
                                 };
                             @endphp
-                            <flux:badge variant="solid" color="{{ $colorBadge }}">{{ $status }}</flux:badge>
+                            <flux:badge class="w-40! flex justify-center!" variant="solid" color="{{ $colorBadge }}">{{ $status }}</flux:badge>
                         </td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="chevron-right"
-                                href="{{ route('admin.detail-mahasiswa', $mahasiswa['id']) }}"
+                            href="{{ route('admin.detail-mahasiswa', $mahasiswa['id']) }}"
                                 variant="ghost" />
                         </td>
                     </tr>

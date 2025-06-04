@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
             DosenPembimbingSeeder::class,
             AdminSeeder::class,
             BidangIndustriSeeder::class,
+            PekerjaanSeeder::class,
+            LokasiMagangSeeder::class,
             PerusahaanSeeder::class,
             MagangSeeder::class,
             KontrakMagangSeeder::class,
@@ -24,7 +26,6 @@ class DatabaseSeeder extends Seeder
             UmpanBalikMagangSeeder::class,
             BerkasPengajuanMagangSeeder::class,
             FormPengajuanMagangSeeder::class,
-            KriteriaSeeder::class,
             PreferensiMahasiswaSeeder::class,
         ]);
     }

@@ -80,11 +80,11 @@ $goToNextPage = fn() => $this->nextPage();
         <table class="table-auto w-full">
             <thead class="bg-white text-black">
                 <tr class="border-b">
-                    <th class="text-center px-6 py-3">No</th>
-                    <th class="text-left px-6 py-3">Nama</th>
-                    <th class="text-left px-6 py-3">NIDN</th>
-                    <th class="text-left px-6 py-3">Jumlah Bimbingan</th>
-                    <th class="text-center px-6 py-3">Detail</th>
+                    <th class="text-center px-6 py-3 w-16">No</th>
+                    <th class="text-left px-6 py-3 w-1/3">Nama</th>
+                    <th class="text-left px-6 py-3 w-1/4">NIDN</th>
+                    <th class="text-center px-6 py-3 w-1/5">Jumlah Bimbingan</th>
+                    <th class="text-center px-6 py-3 w-20">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white text-black">
@@ -94,7 +94,12 @@ $goToNextPage = fn() => $this->nextPage();
                         <td class="px-6 py-3 text-center">{{ $loop->iteration + ($dataDosen->firstItem() - 1) }}</td>
                         <td class="px-6 py-3">{{ $dosen['nama'] }}</td>
                         <td class="px-6 py-3">{{ $dosen['nidn'] }}</td>
-                        <td class="px-6 py-3 text-right">{{ $dosen['jumlah_bimbingan'] }}</td>
+                        <td class="px-6 py-3 text-center flex justify-center">
+                            <flux:badge class="px-3 py-0.5! text-lg! font-medium bg-blue-600! flex items-center min-w-auto" variant="solid">
+                                {{ $dosen['jumlah_bimbingan'] }} <p class="ms-2 text-xs">Bimbingan</p>
+                            </flux:badge>
+                        </td>
+                        {{-- <td class="px-6 py-3 text-center">{{ $dosen['jumlah_bimbingan'] }}</td> --}}
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="chevron-right" href="{{ route('admin.detail-dosen', $dosen['id']) }}"
                                 variant="ghost" />
