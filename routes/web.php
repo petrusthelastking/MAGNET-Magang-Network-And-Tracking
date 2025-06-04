@@ -13,7 +13,7 @@ Route::middleware('role:admin,mahasiswa,dosen')
     ->group(function () {
         Route::get('dashboard', [UserController::class, 'showDashboard'])->name('dashboard');
         Route::get('profile', [UserController::class, 'showProfile'])->name('profile');
-});
+    });
 
 Route::name('admin.')
     ->middleware('role:admin')
@@ -39,7 +39,7 @@ Route::name('admin.')
         Route::view('aturan-magang', 'pages.admin.magang.aturan-magang')->name('aturan-magang');
         Route::view('laporan-statistik-magang', 'pages.admin.laporan-statistik-magang')->name('laporan-statistik-magang');
         Route::view('evaluasi-sistem-rekomendasi', 'pages.admin.evaluasi-sistem')->name('evaluasi-sistem-rekomendasi');
-});
+    });
 
 
 Route::name('mahasiswa.')
@@ -52,12 +52,12 @@ Route::name('mahasiswa.')
 
         Route::view('konsul-dospem', 'pages.mahasiswa.konsul-dospem')->name('konsul-dospem');
         Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
-        Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
+        Volt::route('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
         Volt::route('search', 'pages.mahasiswa.search')->name('search');
         Route::view('detail-perusahaan', 'pages.mahasiswa.detail-perusahaan')->name('detail-perusahaan');
         Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
         Route::view('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
-        Route::view('detail-log', 'pages.mahasiswa.detail-log')->name('detail-log');
+        Volt::route('detail-log', 'pages.mahasiswa.detail-log')->name('detail-log');
         Route::view('log-magang', 'pages.mahasiswa.log-magang')->name('log-magang');
         Route::view('tambah-log', 'pages.mahasiswa.tambah-log')->name('tambah-log');
 
@@ -70,4 +70,4 @@ Route::name('dosen.')
         Route::view('detail-mahasiswa-bimbingan', 'pages.dosen.detail-mahasiswa-bimbingan')->name('detail-mahasiswa-bimbingan');
         Route::view('komunikasi', 'pages.dosen.komunikasi-mahasiswa')->name('komunikasi');
         Route::view('komunikasi/mahasiswa', 'pages.dosen.masukan-magang')->name('komunikasi-mahasiswa');
-});
+    });

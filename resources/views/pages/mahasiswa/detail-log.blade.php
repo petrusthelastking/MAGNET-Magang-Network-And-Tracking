@@ -6,7 +6,9 @@
 
         </div>
         <div class="flex gap-3">
-            <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus" onclick="window.location='{{ route('mahasiswa.tambah-log') }}'">Buat laporan log magang baru</flux:button>
+            <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus"
+                onclick="window.location='{{ route('mahasiswa.tambah-log') }}'">Buat laporan log magang baru
+            </flux:button>
         </div>
     </div>
     <div class="overflow-y-auto flex flex-col items-center mt-4 rounded-lg shadow bg-white">

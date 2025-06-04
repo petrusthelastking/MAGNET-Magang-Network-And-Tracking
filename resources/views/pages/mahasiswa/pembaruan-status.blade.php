@@ -5,6 +5,7 @@ use function Livewire\Volt\{layout, state, mount};
 state([
     'status' => '',
     'mahasiswa' => null,
+    'isStatusLocked' => false,
 ]);
 
 layout('components.layouts.user.main');
@@ -20,18 +21,22 @@ mount(function () {
             case 'tidak_magang':
             case 'tidak magang':
                 $this->status = 'Tidak Magang';
+                $this->isStatusLocked = false;
                 break;
             case 'sedang_magang':
             case 'sedang magang':
                 $this->status = 'Sedang Magang';
+                $this->isStatusLocked = false;
                 break;
             case 'selesai':
             case 'selesai_magang':
             case 'selesai magang':
                 $this->status = 'Selesai Magang';
+                $this->isStatusLocked = true; // Lock the dropdown for completed internships
                 break;
             default:
                 $this->status = '';
+                $this->isStatusLocked = false;
         }
     }
 });
@@ -57,15 +62,18 @@ $refreshParent = function () {
             case 'tidak_magang':
             case 'tidak magang':
                 $this->status = 'Tidak Magang';
+                $this->isStatusLocked = false;
                 break;
             case 'sedang_magang':
             case 'sedang magang':
                 $this->status = 'Sedang Magang';
+                $this->isStatusLocked = false;
                 break;
             case 'selesai':
             case 'selesai_magang':
             case 'selesai magang':
                 $this->status = 'Selesai Magang';
+                $this->isStatusLocked = true;
                 break;
         }
     }
@@ -104,18 +112,36 @@ $refreshParent = function () {
             <div>
                 <flux:field>
                     <flux:label>Status Magang Saat Ini</flux:label>
-                    <flux:select wire:model.live="status" placeholder="Status Magang Saat Ini">
-                        <flux:select.option value="Tidak Magang">Tidak Magang</flux:select.option>
-                        <flux:select.option value="Sedang Magang">Sedang Magang</flux:select.option>
-                        <flux:select.option value="Selesai Magang">Selesai Magang</flux:select.option>
-                    </flux:select>
+                    @if ($isStatusLocked)
+                        <flux:select wire:model.live="status" placeholder="Status Magang Saat Ini" disabled>
+                            <flux:select.option value="Tidak Magang">Tidak Magang</flux:select.option>
+                            <flux:select.option value="Sedang Magang">Sedang Magang</flux:select.option>
+                            <flux:select.option value="Selesai Magang">Selesai Magang</flux:select.option>
+                        </flux:select>
+                    @else
+                        <flux:select wire:model.live="status" placeholder="Status Magang Saat Ini">
+                            <flux:select.option value="Tidak Magang">Tidak Magang</flux:select.option>
+                            <flux:select.option value="Sedang Magang">Sedang Magang</flux:select.option>
+                            <flux:select.option value="Selesai Magang">Selesai Magang</flux:select.option>
+                        </flux:select>
+                    @endif
+
+                    @if ($isStatusLocked)
+                        <flux:description class="text-gray-500">
+                            Status tidak dapat diubah karena magang telah selesai.
+                        </flux:description>
+                    @endif
+
+                    <flux:error name="status" />
                 </flux:field>
             </div>
 
             @if ($status == 'Sedang Magang')
                 <livewire:components.mahasiswa.pembaruan-status-magang.sedang-magang />
-            @elseif($status == 'Selesai Magang')
+            @elseif ($status == 'Selesai Magang')
                 <livewire:components.mahasiswa.pembaruan-status-magang.selesai-magang />
+            @else
+                <livewire:components.mahasiswa.pembaruan-status-magang.tidak-magang />
             @endif
         </div>
     </div>
