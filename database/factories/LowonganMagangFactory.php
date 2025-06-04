@@ -25,6 +25,8 @@ class LowonganMagangFactory extends Factory
             'kuota' => $this->faker->numberBetween(1, 50),
             'deskripsi' => $this->faker->paragraph(),
             'persyaratan' => $this->faker->paragraph(),
+            'jenis_magang' => $this->faker->randomElement(['berbayar', 'tidak berbayar']),
+            'open_remote' => $this->faker->randomElement(['ya', 'tidak']),
             'status' => $this->faker->randomElement(['buka', 'tutup']),
             'lokasi' => $this->faker->address(),
             'perusahaan_id' => fn() => Perusahaan::inRandomOrder()->value('id')

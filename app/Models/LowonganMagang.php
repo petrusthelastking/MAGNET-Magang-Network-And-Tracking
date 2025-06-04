@@ -16,6 +16,8 @@ class LowonganMagang extends Model
         'kuota',
         'deskripsi',
         'persyaratan',
+        'jenis_magang',
+        'open_remote',
         'status',
         'lokasi',
         'perusahaan_id',

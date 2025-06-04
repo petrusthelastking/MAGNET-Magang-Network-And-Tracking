@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->integer('kuota');
             $table->text('deskripsi');
             $table->text('persyaratan');
+            $table->enum('jenis_magang', ['berbayar', 'tidak berbayar']);
+            $table->enum('open_remote', ['ya', 'tidak']);
             $table->enum('status', ['buka', 'tutup'])->default('buka');
             $table->string('lokasi', 100);
             $table->foreignId('perusahaan_id')->constrained('perusahaan')->onDelete('cascade');
