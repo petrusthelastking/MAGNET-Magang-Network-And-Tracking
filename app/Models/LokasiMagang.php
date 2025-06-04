@@ -12,7 +12,8 @@ class LokasiMagang extends Model
     protected $table = 'lokasi_magang';
 
     protected $fillable = [
-        'kategori_lokasi'
+        'kategori_lokasi',
+        'lokasi'
     ];
 
     public function kriteriaLokasiMagang() {
