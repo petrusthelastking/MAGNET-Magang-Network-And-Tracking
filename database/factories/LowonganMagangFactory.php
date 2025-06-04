@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Magang;
+use App\Models\LowonganMagang;
 use App\Models\Perusahaan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Magang>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\LowonganMagang>
  */
-class MagangFactory extends Factory
+class LowonganMagangFactory extends Factory
 {
-    protected $model = Magang::class;
-    
+    protected $model = LowonganMagang::class;
+
     /**
      * Define the model's default state.
      *
@@ -22,6 +22,7 @@ class MagangFactory extends Factory
     {
         return [
             'nama' => $this->faker->jobTitle(),
+            'kuota' => $this->faker->numberBetween(1, 50),
             'deskripsi' => $this->faker->paragraph(),
             'persyaratan' => $this->faker->paragraph(),
             'status' => $this->faker->randomElement(['buka', 'tutup']),

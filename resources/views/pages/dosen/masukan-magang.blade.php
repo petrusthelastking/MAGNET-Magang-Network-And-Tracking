@@ -1,5 +1,5 @@
 <x-layouts.user.main user="dosen" isFullPage="true">
-    <div class="space-y-10 bg-[url(/public/wallpaper-chat.png)] h-full">
+    <div class="space-y-10 bg-[url(/public/wallpaper/wallpaper-chat.png)] h-full">
         <div class="flex items-center justify-between p-4 bg-white border-b border-gray-200 shadow-sm z-10">
             <div class="flex items-center">
                 <img src="{{ asset('logo-perusahaan.png') }}" alt="Logo Perusahaan" class="w-10 h-10 object-contain rounded-full mr-3">

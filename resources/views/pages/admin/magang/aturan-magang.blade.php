@@ -24,7 +24,7 @@
 
             <div class="text-center mb-8 border-b pb-6">
                 <div class="mb-4">
-                    <img src={{asset('polinema.png')}} alt="Logo Polinema" class="mx-auto h-16 mb-3" />
+                    <img src={{asset('img/logo/polinema.png')}} alt="Logo Polinema" class="mx-auto h-16 mb-3" />
                 </div>
                 <h1 class="text-xl font-bold text-gray-900 mb-2">POLITEKNIK NEGERI MALANG</h1>
                 <h2 class="text-lg font-semibold text-gray-800 mb-1">JURUSAN TEKNOLOGI INFORMASI</h2>

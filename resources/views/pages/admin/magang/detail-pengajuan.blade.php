@@ -98,7 +98,7 @@ $verifyFormRequest = function (string $status) {
     @if ($isDataFound)
         <div class="min-h-full flex gap-8 items-start">
             <div class="flex flex-col items-center bg-white p-4 rounded-xl shadow-md w-96 max-w-96">
-                <img src="{{ asset('img/student-girl.png') }}" alt="Foto Mahasiswa"
+                <img src="{{ asset('img/user/student-girl.png') }}" alt="Foto Mahasiswa"
                     class="w-64 object-cover rounded-md" />
             </div>
 
