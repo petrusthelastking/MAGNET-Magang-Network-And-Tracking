@@ -2,7 +2,8 @@
     <div class="card bg-white shadow-md">
         <div class="card-body flex flex-row items-center">
             <div class="flex items-center gap-4 w-full">
-                <img src="{{ asset('img/company-kimia-farma.png') }}" alt="Logo Perusahaan" class="w-16 h-16 object-contain ">
+                <img src="{{ asset('img/company-kimia-farma.png') }}" alt="Logo Perusahaan"
+                    class="w-16 h-16 object-contain ">
                 <div class="flex flex-col gap-4">
                     <h2 class="text-xl font-bold">CUDA Programming</h2>
                     <div>
@@ -32,7 +33,8 @@
                     </div>
                 </div>
             </div>
-            <flux:button variant="primary" class="bg-magnet-sky-teal! text-white!" icon="bookmark-plus">Simpan</flux:button>
+            <flux:button variant="primary" class="bg-magnet-sky-teal! text-white!" icon="bookmark-plus">Simpan
+            </flux:button>
         </div>
     </div>
 
@@ -40,8 +42,17 @@
         <div class="card-body">
             <h3 class="text-base font-semibold">Deskripsi magang</h3>
             <p class="text-sm text-gray-700 mt-2">
-                Lorem ipsum dolor sit amet consectetur. Tristique egestas pharetra euismod iaculis fames velit accumsan
-                nec ullamcorper...
+                Lorem ipsum dolor sit amet consectetur. Tristique egestas pharetra euismod iaculis fames
+                velit accumsan nec ullamcorper. Vestibulum et quis aliquam mattis egestas. Vel tincidunt
+                quam nec et. Sed amet nunc sem massa mattis. A congue malesuada vel massa sagittis sed
+                elit sit. In magna in odio cursus. Venenatis pulvinar faucibus nullam mi in lectus
+                lobortis pellentesque scelerisque. Donec diam eget ante arcu mattis sapien aliquet
+                tellus. Mauris id porta sit sapien eget scelerisque nunc. Elit eget ut nam lacus in.
+                Faucibus a at dolor consectetur massa sagittis vitae. Nibh sit ullamcorper tincidunt
+                convallis rhoncus tristique. Ac laoreet tortor eros integer arcu sed lectus. Mauris nisi
+                elit faucibus eu condimentum eleifend. In netus adipiscing vitae nisi augue. Proin non
+                dis purus magna in. Faucibus massa pharetra magna tincidunt hendrerit est. Mauris
+                molestie ut massa neque netus aliquet quis leo. Morbi elit senectus dui pulvinar.
             </p>
         </div>
     </div>
@@ -52,7 +63,8 @@
             <div class="flex flex-col gap-4">
                 @foreach (range(1, 3) as $ulasan)
                     <div class="bg-white rounded-lg shadow-sm p-4 flex gap-3">
-                        <img src="https://unavatar.io/budi" class="w-10 h-10 rounded-full object-cover" alt="Foto Reviewer">
+                        <img src="https://unavatar.io/budi" class="w-10 h-10 rounded-full object-cover"
+                            alt="Foto Reviewer">
                         <div>
                             <h4 class="font-semibold">Budi Herlambang</h4>
                             <p class="text-sm mt-1 text-gray-700">
