@@ -18,4 +18,8 @@ class Pekerjaan extends Model
     public function kriteriPekerjaan() {
         return $this->hasMany(KriteriaPekerjaan::class);
     }
+
+    public function lowonganMagang() {
+        return $this->hasMany(LowonganMagang::class);
+    }
 }

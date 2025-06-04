@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->enum('open_remote', ['ya', 'tidak']);
             $table->enum('status', ['buka', 'tutup'])->default('buka');
             $table->string('lokasi', 100);
-            $table->foreignId('perusahaan_id')->constrained('perusahaan')->onDelete('cascade');
+            $table->foreignId('perusahaan_id')->constrained('perusahaan');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('magang');
+        Schema::dropIfExists('lowongan_magang');
     }
 };

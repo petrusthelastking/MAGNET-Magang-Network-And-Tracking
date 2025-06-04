@@ -14,6 +14,7 @@ class LowonganMagang extends Model
     protected $fillable = [
         'nama',
         'kuota',
+        'pekerjaan_id',
         'deskripsi',
         'persyaratan',
         'jenis_magang',
@@ -22,6 +23,10 @@ class LowonganMagang extends Model
         'lokasi',
         'perusahaan_id',
     ];
+
+    public function pekerjaan() {
+        return $this->belongsTo(Pekerjaan::class);
+    }
 
     public function perusahaan()
     {

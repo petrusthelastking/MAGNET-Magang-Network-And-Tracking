@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\LowonganMagang;
+use App\Models\Pekerjaan;
 use App\Models\Perusahaan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -23,6 +24,7 @@ class LowonganMagangFactory extends Factory
         return [
             'nama' => $this->faker->jobTitle(),
             'kuota' => $this->faker->numberBetween(1, 50),
+            'pekerjaan_id' => fn() => Pekerjaan::inRandomOrder()->value('id'),
             'deskripsi' => $this->faker->paragraph(),
             'persyaratan' => $this->faker->paragraph(),
             'jenis_magang' => $this->faker->randomElement(['berbayar', 'tidak berbayar']),
