@@ -2,7 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Kriteria;
+use App\Models\KriteriaBidangIndustri;
+use App\Models\KriteriaJenisMagang;
+use App\Models\KriteriaLokasiMagang;
+use App\Models\KriteriaOpenRemote;
+use App\Models\KriteriaPekerjaan;
+use App\Models\KriteriaReputasiPerusahaan;
 use App\Models\Mahasiswa;
 use App\Models\PreferensiMahasiswa;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,11 +28,12 @@ class PreferensiMahasiswaFactory extends Factory
     {
         return [
             'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
-            'skil' => fn() => Kriteria::inRandomOrder()->value('id'),
-            'bidang_industri' => fn() => Kriteria::inRandomOrder()->value('id'),
-            'lokasi' => fn() => Kriteria::inRandomOrder()->value('id'),
-            'uang_saku' => fn() => Kriteria::inRandomOrder()->value('id'),
-            'open_remote' => fn() => Kriteria::inRandomOrder()->value('id'),
+            'kriteria_pekerjaan_id' => KriteriaPekerjaan::factory(),
+            'kriteria_bidang_industri_id' => KriteriaBidangIndustri::factory(),
+            'kriteria_lokasi_magang_id' => KriteriaLokasiMagang::factory(),
+            'kriteria_reputasi_perusahaan_id' => KriteriaReputasiPerusahaan::factory(),
+            'kriteria_jenis_magang_id' => KriteriaJenisMagang::factory(),
+            'kriteria_open_remote_id' => KriteriaOpenRemote::factory(),
         ];
     }
 }
