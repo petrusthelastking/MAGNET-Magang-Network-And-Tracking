@@ -46,21 +46,25 @@ Route::name('mahasiswa.')
     ->middleware('role:mahasiswa')
     ->group(function () {
         Volt::route('persiapan', 'pages.mahasiswa.persiapan-preferensi')->name('persiapan-preferensi');
+
         Volt::route('pengajuan-magang', 'pages.mahasiswa.pengajuan-magang.pengajuan-magang')->name('pengajuan-magang');
         Volt::route('formulir-pengajuan', 'pages.mahasiswa.pengajuan-magang.formulir-pengajuan')->name('form-pengajuan-magang');
         Route::post('formulir-pengajuan', [PengajuanMagangController::class, 'storePengajuan'])->name('store-pengajuan-magang');
 
         Route::view('konsul-dospem', 'pages.mahasiswa.konsul-dospem')->name('konsul-dospem');
+
         Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
+
         Route::view('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
-        Volt::route('search', 'pages.mahasiswa.search')->name('search');
-        Route::view('detail-perusahaan', 'pages.mahasiswa.detail-perusahaan')->name('detail-perusahaan');
-        Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
-        Route::view('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
         Route::view('detail-log', 'pages.mahasiswa.detail-log')->name('detail-log');
         Route::view('log-magang', 'pages.mahasiswa.log-magang')->name('log-magang');
         Route::view('tambah-log', 'pages.mahasiswa.tambah-log')->name('tambah-log');
 
+        Volt::route('pencarian', 'pages.mahasiswa.hasil-pencarian')->name('hasil-pencarian');
+        Route::view('detail-perusahaan', 'pages.mahasiswa.detail-perusahaan')->name('detail-perusahaan');
+        Route::view('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
+
+        Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
     });
 
 Route::name('dosen.')
