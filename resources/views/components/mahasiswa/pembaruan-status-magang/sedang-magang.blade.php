@@ -1,22 +1,26 @@
 <?php
 
-use App\Models\{Perusahaan, KontrakMagang, Magang};
-use Illuminate\Support\Facades\{Auth, Log};
+use App\Models\{Perusahaan, KontrakMagang, LowonganMagang};
+use Illuminate\Support\Facades\{Auth, Log, Storage};
 use Livewire\WithFileUploads;
-use function Livewire\Volt\{state, mount, rules, uses};
+use function Livewire\Volt\{state, mount, rules, uses, computed, updated};
 
 uses(WithFileUploads::class);
 
 state([
     'company_type' => '',
     'selected_company_id' => '',
+    'selected_lowongan_id' => '',
     'company_name' => '',
     'company_address' => '',
     'bidang_industri' => '',
     'lokasi_magang' => '',
     'surat_izin_magang' => null,
     'partner_companies' => [],
+    'available_lowongan' => [],
     'mahasiswa' => null,
+    'debug_mode' => false,
+    'debug_logs' => [],
 ]);
 
 rules([
@@ -24,52 +28,156 @@ rules([
     'company_address' => 'required_if:company_type,non_partner|string',
     'bidang_industri' => 'required_if:company_type,non_partner|string',
     'selected_company_id' => 'required_if:company_type,partner|exists:perusahaan,id',
+    'selected_lowongan_id' => 'required_if:company_type,partner|exists:lowongan_magang,id',
     'lokasi_magang' => 'required|string|max:255',
     'surat_izin_magang' => 'required|file|mimes:pdf|max:2048',
 ]);
 
 mount(function () {
-    $this->mahasiswa = Auth::guard('mahasiswa')->user();
+    try {
+        $this->addDebugLog('Mount function started');
+        $this->debug_mode = env('APP_DEBUG', false);
 
-    if (!$this->mahasiswa) {
-        session()->flash('error', 'Anda harus login sebagai mahasiswa.');
-        return;
+        $this->mahasiswa = Auth::guard('mahasiswa')->user();
+        $this->addDebugLog('Retrieved mahasiswa from auth', [
+            'mahasiswa_exists' => !is_null($this->mahasiswa),
+            'mahasiswa_id' => $this->mahasiswa->id ?? null,
+            'mahasiswa_name' => $this->mahasiswa->nama ?? null,
+        ]);
+
+        if (!$this->mahasiswa) {
+            $this->addDebugLog('No mahasiswa found, setting error message');
+            session()->flash('error', 'Anda harus login sebagai mahasiswa.');
+            return;
+        }
+
+        // Check existing internship contract
+        $existingContract = KontrakMagang::where('mahasiswa_id', $this->mahasiswa->id)->exists();
+        $this->addDebugLog('Checked existing contract', ['has_contract' => $existingContract]);
+
+        $this->partner_companies = Perusahaan::where('kategori', 'mitra')->get();
+        $this->addDebugLog('Retrieved partner companies', [
+            'count' => $this->partner_companies->count(),
+            'companies' => $this->partner_companies->pluck('nama', 'id')->toArray(),
+        ]);
+    } catch (\Exception $e) {
+        $this->addDebugLog('Error in mount function', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        Log::error('Mount function error', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        session()->flash('error', 'Terjadi kesalahan saat memuat data.');
     }
-
-    $this->partner_companies = Perusahaan::where('kategori', 'mitra')->get();
 });
+
+// Use updated() for watching property changes
+updated([
+    'selected_company_id' => function ($value) {
+        $this->loadLowongan();
+    },
+]);
+
+$loadLowongan = function () {
+    try {
+        $this->addDebugLog('Loading lowongan for company', ['company_id' => $this->selected_company_id]);
+
+        if (!$this->selected_company_id) {
+            $this->available_lowongan = [];
+            $this->selected_lowongan_id = '';
+            return;
+        }
+
+        $this->available_lowongan = LowonganMagang::where('perusahaan_id', $this->selected_company_id)->where('status', 'buka')->get();
+
+        $this->addDebugLog('Retrieved lowongan', [
+            'count' => $this->available_lowongan->count(),
+            'lowongan' => $this->available_lowongan->pluck('nama', 'id')->toArray(),
+        ]);
+
+        // Reset selected lowongan when company changes
+        $this->selected_lowongan_id = '';
+    } catch (\Exception $e) {
+        $this->addDebugLog('Error loading lowongan', [
+            'error' => $e->getMessage(),
+            'company_id' => $this->selected_company_id,
+        ]);
+
+        $this->available_lowongan = [];
+        $this->selected_lowongan_id = '';
+    }
+};
 
 $save = function () {
     try {
+        $this->addDebugLog('Save function started');
+
         if (!$this->mahasiswa) {
+            $this->addDebugLog('No mahasiswa found during save');
             session()->flash('error', 'Data mahasiswa tidak ditemukan.');
             return;
         }
 
+        $this->addDebugLog('Validating form data', [
+            'company_type' => $this->company_type,
+            'selected_company_id' => $this->selected_company_id,
+            'selected_lowongan_id' => $this->selected_lowongan_id,
+            'company_name' => $this->company_name,
+        ]);
+
         $this->validate();
+        $this->addDebugLog('Validation passed');
 
         // Check if student already has active internship
-        if (KontrakMagang::where('mahasiswa_id', $this->mahasiswa->id)->exists()) {
+        $existingContract = KontrakMagang::where('mahasiswa_id', $this->mahasiswa->id)->exists();
+        if ($existingContract) {
+            $this->addDebugLog('Student already has active contract');
             session()->flash('error', 'Anda sudah memiliki kontrak magang aktif.');
             return;
         }
 
-        $magang_id = null;
+        $lowongan_magang_id = null;
+        $suratPath = null;
 
         if ($this->company_type === 'partner') {
-            // Handle partner company
+            $this->addDebugLog('Processing partner company');
+
+            // Validate selected company exists
             $selectedCompany = Perusahaan::find($this->selected_company_id);
             if (!$selectedCompany) {
+                $this->addDebugLog('Selected company not found', ['company_id' => $this->selected_company_id]);
                 session()->flash('error', 'Perusahaan mitra tidak ditemukan.');
                 return;
             }
 
-            $magang = Magang::where('perusahaan_id', $selectedCompany->id)->first();
-            if ($magang) {
-                $magang_id = $magang->id;
+            // Validate selected lowongan exists and belongs to the company
+            $selectedLowongan = LowonganMagang::where('id', $this->selected_lowongan_id)->where('perusahaan_id', $this->selected_company_id)->first();
+
+            if (!$selectedLowongan) {
+                $this->addDebugLog('Selected lowongan not found or invalid', [
+                    'lowongan_id' => $this->selected_lowongan_id,
+                    'company_id' => $this->selected_company_id,
+                ]);
+                session()->flash('error', 'Lowongan magang tidak ditemukan atau tidak valid.');
+                return;
             }
+
+            $lowongan_magang_id = $selectedLowongan->id;
+            $this->addDebugLog('Using existing lowongan', ['lowongan_magang_id' => $lowongan_magang_id]);
         } else {
-            // Handle non-partner company - create new company and internship
+            $this->addDebugLog('Processing non-partner company');
+
+            // Handle file upload
+            if ($this->surat_izin_magang) {
+                $suratPath = $this->surat_izin_magang->store('surat-izin-magang', 'public');
+                $this->addDebugLog('File uploaded', ['path' => $suratPath]);
+            }
+
+            // Create new company
             $newCompany = Perusahaan::create([
                 'nama' => $this->company_name,
                 'bidang_industri' => $this->bidang_industri,
@@ -78,68 +186,132 @@ $save = function () {
                 'rating' => 0,
             ]);
 
-            $magang = Magang::create([
+            $this->addDebugLog('Created new company', ['company_id' => $newCompany->id]);
+
+            // Create new lowongan
+            $magang = LowonganMagang::create([
                 'nama' => "Magang di {$this->company_name}",
                 'deskripsi' => "Program magang di {$this->company_name}",
                 'persyaratan' => 'Sesuai dengan persyaratan perusahaan',
                 'perusahaan_id' => $newCompany->id,
+                'status' => 'buka',
+                'lokasi' => $this->lokasi_magang,
             ]);
 
-            $magang_id = $magang->id;
+            $lowongan_magang_id = $magang->id;
+            $this->addDebugLog('Created new lowongan', ['lowongan_magang_id' => $lowongan_magang_id]);
         }
 
-        // Create internship contract
-        KontrakMagang::create([
+        // Create internship contract - FIXED: Use 'lowongan_magang_id' instead of 'magang_id'
+        $kontrak = KontrakMagang::create([
             'mahasiswa_id' => $this->mahasiswa->id,
-            'magang_id' => $magang_id,
+            'lowongan_magang_id' => $lowongan_magang_id, // CHANGED: from 'magang_id' to 'lowongan_magang_id'
             'waktu_awal' => now(),
             'waktu_akhir' => now()->addMonths(3),
+            'status' => 'aktif',
+            'surat_izin_path' => $suratPath,
         ]);
+
+        $this->addDebugLog('Created internship contract', ['kontrak_id' => $kontrak->id]);
 
         // Update student internship status
         $this->mahasiswa->update(['status_magang' => 'sedang magang']);
+        $this->addDebugLog('Updated mahasiswa status');
 
         // Get internship location info
         $internshipInfo = $this->getInternshipInfo();
+        $this->addDebugLog('Retrieved internship info', ['info' => $internshipInfo]);
 
         session()->flash('success', "Data magang berhasil disimpan! Anda sedang magang di: {$internshipInfo}");
         $this->resetForm();
+
+        $this->addDebugLog('Save process completed successfully');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        $this->addDebugLog('Validation error', [
+            'errors' => $e->errors(),
+            'failed_rules' => $e->validator->failed(),
+        ]);
+        throw $e;
     } catch (\Exception $e) {
-        Log::error('Error saving internship data', [
-            'mahasiswa_id' => $this->mahasiswa->id ?? null,
+        $this->addDebugLog('Error in save function', [
             'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
         ]);
 
-        session()->flash('error', 'Terjadi kesalahan. Silakan coba lagi.');
+        Log::error('Error saving internship data', [
+            'mahasiswa_id' => $this->mahasiswa->id ?? null,
+            'company_type' => $this->company_type,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        session()->flash('error', 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.');
     }
 };
 
 $getInternshipInfo = function () {
-    if (!$this->mahasiswa) {
-        return 'Tidak diketahui';
+    try {
+        if (!$this->mahasiswa) {
+            $this->addDebugLog('No mahasiswa for internship info');
+            return 'Tidak diketahui';
+        }
+
+        // FIXED: Updated relationship name to match actual database field
+        $kontrak = KontrakMagang::with(['lowonganMagang.perusahaan']) // CHANGED: from 'magang' to 'lowonganMagang'
+            ->where('mahasiswa_id', $this->mahasiswa->id)
+            ->latest()
+            ->first();
+
+        $this->addDebugLog('Retrieved contract for info', [
+            'contract_exists' => !is_null($kontrak),
+            'has_lowongan' => $kontrak && $kontrak->lowonganMagang, // CHANGED: from 'magang' to 'lowonganMagang'
+            'has_perusahaan' => $kontrak && $kontrak->lowonganMagang && $kontrak->lowonganMagang->perusahaan,
+        ]);
+
+        if ($kontrak && $kontrak->lowonganMagang && $kontrak->lowonganMagang->perusahaan) {
+            // CHANGED: from 'magang' to 'lowonganMagang'
+            $perusahaan = $kontrak->lowonganMagang->perusahaan;
+            return "{$perusahaan->nama} - {$perusahaan->lokasi}";
+        }
+
+        return 'Lokasi magang belum ditentukan';
+    } catch (\Exception $e) {
+        $this->addDebugLog('Error getting internship info', ['error' => $e->getMessage()]);
+        return 'Error mengambil informasi magang';
     }
-
-    $kontrak = KontrakMagang::with(['magang.perusahaan'])
-        ->where('mahasiswa_id', $this->mahasiswa->id)
-        ->latest()
-        ->first();
-
-    if ($kontrak && $kontrak->magang && $kontrak->magang->perusahaan) {
-        $perusahaan = $kontrak->magang->perusahaan;
-        return "{$perusahaan->nama} - {$perusahaan->lokasi}";
-    }
-
-    return 'Lokasi magang belum ditentukan';
 };
 
 $resetForm = function () {
-    $this->reset(['company_type', 'selected_company_id', 'company_name', 'company_address', 'bidang_industri', 'lokasi_magang', 'surat_izin_magang']);
+    $this->addDebugLog('Resetting form');
+    $this->reset(['company_type', 'selected_company_id', 'selected_lowongan_id', 'company_name', 'company_address', 'bidang_industri', 'lokasi_magang', 'surat_izin_magang', 'available_lowongan']);
+};
+
+$addDebugLog = function ($message, $data = null) {
+    if ($this->debug_mode) {
+        $logs = $this->debug_logs ?? [];
+        $logs[] = [
+            'timestamp' => now()->format('H:i:s'),
+            'message' => $message,
+            'data' => $data,
+        ];
+        $this->debug_logs = $logs;
+
+        Log::info("Internship Form Debug: {$message}", [
+            'mahasiswa_id' => $this->mahasiswa->id ?? 'not_found',
+            'data' => $data,
+        ]);
+    }
+};
+
+$clearDebugLogs = function () {
+    $this->debug_logs = [];
 };
 
 ?>
 
 <div class="space-y-4 border-t pt-4 mt-4">
     <h3 class="text-md font-semibold text-gray-700">Informasi Magang</h3>
+
 
     @if (!$mahasiswa)
         <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50">
@@ -185,7 +357,7 @@ $resetForm = function () {
             <div>
                 <x-flux::field>
                     <x-flux::label>Pilih Perusahaan Mitra</x-flux::label>
-                    <x-flux::select wire:model="selected_company_id" placeholder="Pilih perusahaan">
+                    <x-flux::select wire:model.live="selected_company_id" placeholder="Pilih perusahaan">
                         <option value="">Pilih perusahaan</option>
                         @foreach ($partner_companies as $company)
                             <option value="{{ $company->id }}">
@@ -196,6 +368,48 @@ $resetForm = function () {
                     <x-flux::error for="selected_company_id" />
                 </x-flux::field>
             </div>
+
+            <!-- Job Selection for Partner Company -->
+            @if ($selected_company_id && count($available_lowongan) > 0)
+                <div>
+                    <x-flux::field>
+                        <x-flux::label>Pilih Lowongan Magang</x-flux::label>
+                        <x-flux::select wire:model="selected_lowongan_id" placeholder="Pilih lowongan">
+                            <option value="">Pilih lowongan</option>
+                            @foreach ($available_lowongan as $lowongan)
+                                <option value="{{ $lowongan->id }}">
+                                    {{ $lowongan->nama }}
+                                    @if ($lowongan->lokasi)
+                                        - {{ $lowongan->lokasi }}
+                                    @endif
+                                </option>
+                            @endforeach
+                        </x-flux::select>
+                        <x-flux::error for="selected_lowongan_id" />
+                    </x-flux::field>
+                </div>
+
+                <!-- Show selected job details -->
+                @if ($selected_lowongan_id)
+                    @php
+                        $selectedJob = $available_lowongan->firstWhere('id', $selected_lowongan_id);
+                    @endphp
+                    @if ($selectedJob)
+                        <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50">
+                            <strong>Detail Lowongan:</strong><br>
+                            <strong>Nama:</strong> {{ $selectedJob->nama }}<br>
+                            <strong>Deskripsi:</strong> {{ Str::limit($selectedJob->deskripsi, 200) }}<br>
+                            @if ($selectedJob->persyaratan)
+                                <strong>Persyaratan:</strong> {{ Str::limit($selectedJob->persyaratan, 200) }}
+                            @endif
+                        </div>
+                    @endif
+                @endif
+            @elseif ($selected_company_id && count($available_lowongan) == 0)
+                <div class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50">
+                    Tidak ada lowongan magang yang tersedia untuk perusahaan ini saat ini.
+                </div>
+            @endif
         @endif
 
         <!-- Non-Partner Company Form -->
