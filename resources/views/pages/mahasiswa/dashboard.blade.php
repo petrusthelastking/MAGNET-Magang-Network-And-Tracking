@@ -1,13 +1,24 @@
-<x-layouts.user.main user="mahasiswa">
+<?php
 
-    <!-- Wrapper dengan jarak 9px antar card -->
-    <div class="flex flex-col gap-[30px]">
-        <!-- Mid content card -->
-        <h2 class="text-[18px] font-extrabold leading-6 text-black w-[570.126px] flex-shrink-0 font-['Inter']">
+use function Livewire\Volt\{state, mount};
+
+$startMCDMInternshipRecommendation = function () {
+
+};
+
+mount(function () {
+    $startMCDMInternshipRecommendation;
+});
+
+?>
+
+<div>
+    <div class="flex flex-col gap-8">
+        <h2 class="font-semibold leading-6 text-black w-full flex-shrink-0">
             Pemberitahuan Terbaru
         </h2>
         <div
-            class="w-full h-[162px] flex-shrink-0 rounded-[15px] bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-4 flex flex-col justify-between">
+            class="w-full h-[162px] flex-shrink-0 rounded-[15px] bg-white s p-4 flex flex-col justify-between">
             <p class="text-black text-base font-medium">
                 Isi pemberitahuan terbaru
             </p>
@@ -162,4 +173,4 @@
             </button>
         </div>
     </div>
-    </x-layouts.mahasiswa.main>
+</div>
