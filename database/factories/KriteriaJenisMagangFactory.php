@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Helpers\ROC;
+use App\Helpers\DecisionMaking\ROC;
 use App\Models\KriteriaJenisMagang;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
