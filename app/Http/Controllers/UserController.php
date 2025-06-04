@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\UserAuthenticationHelper;
+use App\Helpers\Auth\UserAuthenticationHelper;
 
 class UserController extends Controller
 {

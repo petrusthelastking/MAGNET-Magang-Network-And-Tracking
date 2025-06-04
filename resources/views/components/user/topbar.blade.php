@@ -1,7 +1,7 @@
 <?php
 
 use function Livewire\Volt\{state};
-use App\Helpers\UserAuthenticationHelper;
+use App\Helpers\Auth\UserAuthenticationHelper;
 
 state([
     'userRole' => UserAuthenticationHelper::getUserRole()
