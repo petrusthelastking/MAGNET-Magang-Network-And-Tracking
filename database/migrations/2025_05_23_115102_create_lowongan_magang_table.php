@@ -10,9 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('magang', function (Blueprint $table) {
+        Schema::create('lowongan_magang', function (Blueprint $table) {
             $table->id();
             $table->string('nama', 100);
+            $table->integer('kuota');
             $table->text('deskripsi');
             $table->text('persyaratan');
             $table->enum('status', ['buka', 'tutup'])->default('buka');

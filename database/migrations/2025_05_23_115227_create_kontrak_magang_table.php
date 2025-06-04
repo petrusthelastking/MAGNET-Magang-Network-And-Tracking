@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
             $table->foreignId('dosen_id')->constrained('dosen_pembimbing')->onDelete('cascade');
-            $table->foreignId('magang_id')->constrained('magang')->onDelete('cascade');
+            $table->foreignId('lowongan_magang_id')->constrained('lowongan_magang')->onDelete('cascade');
             $table->dateTime('waktu_awal');
             $table->dateTime('waktu_akhir');
             $table->timestamps();
