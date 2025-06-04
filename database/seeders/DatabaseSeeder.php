@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             PekerjaanSeeder::class,
             LokasiMagangSeeder::class,
             PerusahaanSeeder::class,
-            MagangSeeder::class,
+            LowonganMagangSeeder::class,
             KontrakMagangSeeder::class,
             LogMagangSeeder::class,
             UlasanMagangSeeder::class,

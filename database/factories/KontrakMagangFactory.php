@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\DosenPembimbing;
 use App\Models\KontrakMagang;
-use App\Models\Magang;
+use App\Models\LowonganMagang;
 use App\Models\Mahasiswa;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class KontrakMagangFactory extends Factory
 {
     protected $model = KontrakMagang::class;
-    
+
     /**
      * Define the model's default state.
      *
@@ -28,7 +28,7 @@ class KontrakMagangFactory extends Factory
         return [
             'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
             'dosen_id' => fn() => DosenPembimbing::inRandomOrder()->value('id'),
-            'magang_id' => fn() => Magang::inRandomOrder()->value('id'),
+            'lowongan_magang_id' => fn() => LowonganMagang::inRandomOrder()->value('id'),
             'waktu_awal' => $startDate,
             'waktu_akhir' => $finishDate
         ];
