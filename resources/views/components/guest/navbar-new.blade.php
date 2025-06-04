@@ -7,9 +7,9 @@
     </div>
     <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1 flex">
-            <flux:button variant="ghost" class="text-white!" href="#">Pedoman Magang</flux:button>
-            <flux:button variant="ghost" class="text-white!" href="#">FAQ</flux:button>
-            <flux:button variant="ghost" class="text-white!" href="#">Tentang Kami</flux:button>
+            <flux:button variant="ghost" class="text-white!" href="#petunjuk">Pedoman Magang</flux:button>
+            <flux:button variant="ghost" class="text-white!" href="#kendala">FAQ</flux:button>
+            <flux:button variant="ghost" class="text-white!" href="#about">Tentang Kami</flux:button>
         </ul>
     </div>
     <div class="navbar-end">
