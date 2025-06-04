@@ -25,7 +25,7 @@ mount(function () {
         </div>
 
         <div class="w-full flex justify-center">
-            <form action="{{ route('mahasiswa.search') }}" method="GET" class="flex w-full justify-center">
+            <form action="{{ route('mahasiswa.hasil-pencarian') }}" method="GET" class="flex w-full justify-center">
                 <flux:input type="submit" icon="magnifying-glass" name="query" class="w-1/3!"
                     placeholder="Cari Tempat Magang Yang Anda Inginkan" />
             </form>
