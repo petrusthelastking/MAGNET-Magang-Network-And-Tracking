@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\DosenController;
+use App\Http\Controllers\LowonganMultiMooraController;
 
 require_once __DIR__ . '/auth.php';
 
@@ -69,7 +69,6 @@ Route::name('mahasiswa.')
         Route::view('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
 
         Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
-
         Route::view('riwayat-rekomendasi', 'pages.mahasiswa.riwayat-rekomendasi')->name('riwayat-rekomendasi');
         Route::view('riwayat-rekomendasi/detail', 'pages.mahasiswa.detail-rekomendasi')->name('detail-rekomendasi');
     });
