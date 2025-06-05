@@ -18,9 +18,9 @@ mount(function () {
         $currentStatus = $this->mahasiswa->status_magang;
 
         switch ($currentStatus) {
-            case 'tidak_magang':
-            case 'tidak magang':
-                $this->status = 'Tidak Magang';
+            case 'belum_magang':
+            case 'belum magang':
+                $this->status = 'Belum Magang';
                 $this->isStatusLocked = false;
                 break;
             case 'sedang_magang':
@@ -59,9 +59,9 @@ $refreshParent = function () {
         $currentStatus = $this->mahasiswa->status_magang;
 
         switch ($currentStatus) {
-            case 'tidak_magang':
-            case 'tidak magang':
-                $this->status = 'Tidak Magang';
+            case 'belum_magang':
+            case 'belum magang':
+                $this->status = 'Belum Magang';
                 $this->isStatusLocked = false;
                 break;
             case 'sedang_magang':
@@ -114,13 +114,13 @@ $refreshParent = function () {
                     <flux:label>Status Magang Saat Ini</flux:label>
                     @if ($isStatusLocked)
                         <flux:select wire:model.live="status" placeholder="Status Magang Saat Ini" disabled>
-                            <flux:select.option value="Tidak Magang">Tidak Magang</flux:select.option>
+                            <flux:select.option value="Belum Magang">Belum Magang</flux:select.option>
                             <flux:select.option value="Sedang Magang">Sedang Magang</flux:select.option>
                             <flux:select.option value="Selesai Magang">Selesai Magang</flux:select.option>
                         </flux:select>
                     @else
                         <flux:select wire:model.live="status" placeholder="Status Magang Saat Ini">
-                            <flux:select.option value="Tidak Magang">Tidak Magang</flux:select.option>
+                            <flux:select.option value="Belum Magang">Belum Magang</flux:select.option>
                             <flux:select.option value="Sedang Magang">Sedang Magang</flux:select.option>
                             <flux:select.option value="Selesai Magang">Selesai Magang</flux:select.option>
                         </flux:select>
@@ -131,17 +131,14 @@ $refreshParent = function () {
                             Status tidak dapat diubah karena magang telah selesai.
                         </flux:description>
                     @endif
-
                     <flux:error name="status" />
                 </flux:field>
             </div>
 
             @if ($status == 'Sedang Magang')
                 <livewire:components.mahasiswa.pembaruan-status-magang.sedang-magang />
-            @elseif ($status == 'Selesai Magang')
-                <livewire:components.mahasiswa.pembaruan-status-magang.selesai-magang />
             @else
-                <livewire:components.mahasiswa.pembaruan-status-magang.tidak-magang />
+                <livewire:components.mahasiswa.pembaruan-status-magang.selesai-magang />
             @endif
         </div>
     </div>

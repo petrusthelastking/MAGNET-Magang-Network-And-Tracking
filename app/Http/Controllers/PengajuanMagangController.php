@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mahasiswa;
-use App\Models\Magang;
+use App\Models\LowonganMagang as Magang;
 use App\Models\BerkasPengajuanMagang;
 use App\Models\FormPengajuanMagang;
 use Illuminate\Http\Request;
@@ -41,7 +41,7 @@ class PengajuanMagangController extends Controller
     }
 
     /**
-     * Update status pengajuan magang ke 'menunggu'
+     * Update status pengajuan magang ke 'diproses'
      */
     private function updateStatusPengajuan($mahasiswaId)
     {
@@ -50,15 +50,15 @@ class PengajuanMagangController extends Controller
             $berkas = BerkasPengajuanMagang::where('mahasiswa_id', $mahasiswaId)->latest()->first();
 
             if ($berkas) {
-                // Update status form pengajuan menjadi 'menunggu'
+                // Update status form pengajuan menjadi 'diproses'
                 FormPengajuanMagang::where('pengajuan_id', $berkas->id)
                     ->update([
-                        'status' => 'menunggu',
-                        'keterangan' => 'Dokumen telah dikirim, menunggu review admin',
+                        'status' => 'diproses',
+                        'keterangan' => 'Dokumen telah dikirim, diproses review admin',
                         'updated_at' => now()
                     ]);
 
-                Log::info('Status pengajuan updated to menunggu', [
+                Log::info('Status pengajuan updated to diproses', [
                     'mahasiswa_id' => $mahasiswaId,
                     'berkas_id' => $berkas->id
                 ]);
@@ -77,9 +77,9 @@ class PengajuanMagangController extends Controller
     }
 
     /**
-     * Public method untuk mengubah status ke menunggu
+     * Public method untuk mengubah status ke diproses
      */
-    public function setStatusMenunggu($mahasiswaId)
+    public function setStatusdiproses($mahasiswaId)
     {
         return $this->updateStatusPengajuan($mahasiswaId);
     }
@@ -107,12 +107,24 @@ class PengajuanMagangController extends Controller
             ]);
 
             // Ambil data mahasiswa
-            $mahasiswaId = Session::get('user_id') ?? auth('mahasiswa')->id();
+            $mahasiswaId = auth('mahasiswa')->id();
+            if (!$mahasiswaId) {
+                Log::error('Authentication failed - no mahasiswa ID found');
+                return back()->with('error', 'Sesi login berakhir. Silakan login ulang.');
+            }
             $mahasiswa = Mahasiswa::find($mahasiswaId);
 
             if (!$mahasiswa) {
+                Log::error('Mahasiswa not found', ['mahasiswa_id' => $mahasiswaId]);
                 return back()->with('error', 'Data mahasiswa tidak ditemukan. Silakan login ulang.');
             }
+
+            // Log successful mahasiswa retrieval
+            Log::info('Mahasiswa found for pengajuan', [
+                'mahasiswa_id' => $mahasiswa->id,
+                'nama' => $mahasiswa->nama,
+                'nim' => $mahasiswa->nim
+            ]);
 
             // Cek dan hapus berkas lama jika ada
             $existing = BerkasPengajuanMagang::where('mahasiswa_id', $mahasiswa->id)->first();
@@ -157,19 +169,19 @@ class PengajuanMagangController extends Controller
                     'portfolio' => $portfolioPath
                 ]);
 
-                // Buat form pengajuan dengan status 'menunggu'
+                // Buat form pengajuan dengan status 'diproses'
                 FormPengajuanMagang::create([
                     'pengajuan_id' => $berkas->id,
-                    'status' => 'menunggu',
-                    'keterangan' => 'Dokumen telah dikirim, menunggu review admin'
+                    'status' => 'diproses',
+                    'keterangan' => 'Dokumen telah dikirim, diproses review admin'
                 ]);
 
-                // Update status pengajuan ke menunggu
+                // Update status pengajuan ke diproses
                 $this->updateStatusPengajuan($mahasiswa->id);
             });
 
             return redirect()->route('mahasiswa.pengajuan-magang')
-                ->with('success', 'Pengajuan magang berhasil dikirim! Status pengajuan telah diubah menjadi menunggu review.');
+                ->with('success', 'Pengajuan magang berhasil dikirim! Status pengajuan telah diubah menjadi diproses review.');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()
@@ -178,10 +190,18 @@ class PengajuanMagangController extends Controller
                 ->with('error', 'Terdapat kesalahan dalam pengisian form. Silakan periksa kembali.');
         } catch (\Exception $e) {
             Log::error('Error pengajuan magang', [
-                'mahasiswa_id' => Session::get('user_id') ?? auth('mahasiswa')->id(),
+                'mahasiswa_id' => auth('mahasiswa')->id(),
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->except(['cv', 'transkrip_nilai', 'portfolio'])
             ]);
+
+            // Show actual error in debug mode
+            if (config('app.debug')) {
+                return back()->with('error', 'Debug Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            }
 
             return back()->with('error', 'Terjadi kesalahan sistem. Silakan coba lagi atau hubungi admin.');
         }

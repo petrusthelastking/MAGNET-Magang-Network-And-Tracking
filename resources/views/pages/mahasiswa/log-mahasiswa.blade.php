@@ -2,7 +2,7 @@
 use Illuminate\Support\Facades\Auth;
 use App\Models\Mahasiswa;
 use App\Models\KontrakMagang;
-use App\Models\Magang;
+use App\Models\LowonganMagang;
 use App\Models\Perusahaan;
 use function Livewire\Volt\{layout, state, mount};
 
@@ -27,7 +27,7 @@ mount(function () {
     if ($this->mahasiswa) {
         // Query kontrak magang dengan relasi
         $this->kontrak_magang = KontrakMagang::where('mahasiswa_id', $this->mahasiswa->id)
-            ->with(['magang.perusahaan', 'magang'])
+            ->with(['lowonganMagang.perusahaan', 'lowonganMagang'])
             ->latest()
             ->first();
 
@@ -36,11 +36,11 @@ mount(function () {
 
         if ($this->kontrak_magang) {
             $this->debug_info['kontrak_magang_id'] = $this->kontrak_magang->id;
-            $this->debug_info['magang_id'] = $this->kontrak_magang->magang_id ?? 'null';
+            $this->debug_info['magang_id'] = $this->kontrak_magang->lowongan_magang_id ?? 'null';
 
             // Set magang dan perusahaan
-            $this->magang = $this->kontrak_magang->magang;
-            $this->perusahaan = $this->kontrak_magang->magang->perusahaan ?? null;
+            $this->magang = $this->kontrak_magang->lowonganMagang;
+            $this->perusahaan = $this->kontrak_magang->lowonganMagang->perusahaan ?? null;
 
             // Debug: Log magang dan perusahaan
             $this->debug_info['magang_nama'] = $this->magang->nama ?? 'null';
@@ -54,7 +54,7 @@ mount(function () {
             case 'tidak_magang':
             case 'tidak magang':
             case 'belum magang':
-                $this->status = 'Tidak Magang';
+                $this->status = 'Belum Magang';
                 break;
             case 'sedang_magang':
             case 'sedang magang':
@@ -79,7 +79,7 @@ mount(function () {
 <div>
     <x-slot:user>mahasiswa</x-slot:user>
 
-    @if ($status === 'Tidak Magang')
+    @if ($status === 'Belum Magang')
         <x-mahasiswa.log-magang.belum-magang />
     @elseif ($status === 'Sedang Magang')
         <x-mahasiswa.log-magang.sedang-magang :perusahaan="$this->perusahaan" :magang="$this->magang" :kontrak-magang="$this->kontrak_magang" />

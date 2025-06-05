@@ -26,12 +26,14 @@ state([
         @if (is_null($pengajuanMagang))
             {{-- Belum pernah mengajukan --}}
             <x-mahasiswa.pengajuan-magang.belum-diajukan />
-        @elseif ($pengajuanMagang == 'menunggu' || $pengajuanMagang == 'diterima')
+        @elseif ($pengajuanMagang == 'diproses' || $pengajuanMagang == 'diterima')
             {{-- Sedang diproses --}}
             <x-mahasiswa.pengajuan-magang.sedang-diproses />
+        @elseif ($pengajuanMagang == 'diterima')
+            {{-- Sudah diterima --}}
+            <x-mahasiswa.pengajuan-magang.pengajuan-diterima /> {{-- Sudah mengajukan, tunggu proses selanjutnya --}}
         @elseif ($pengajuanMagang == 'ditolak')
-            {{-- Ditolak, tampilkan alasan dan form ulang --}}
-            <div class="bg-red-100 p-4 rounded shadow">
+            {{-- Ditolak, tampilkan alasan dan form ulang --}} <div class="bg-red-100 p-4 rounded shadow">
                 <p class="text-red-600 font-semibold">Pengajuan Anda ditolak.</p>
                 <p class="text-sm mt-1">Alasan: {{ $alasanDitolak ?? 'Tidak ada alasan yang diberikan.' }}</p>
             </div>
