@@ -10,14 +10,17 @@ state([
 layout('components.layouts.user.main');
 
 $mahasiswa = computed(function () {
+    $dosenId = Auth::guard('dosen')->id();
+
     return Mahasiswa::query()
-        ->select(['mahasiswa.*', 'perusahaan.nama as perusahaan_nama', 'lowongan_magang.nama as posisi_nama', 'mahasiswa.status_magang'])
+        ->select(['mahasiswa.*', 'perusahaan.nama as perusahaan_nama', 'lowongan_magang.nama as posisi_nama', 'kontrak_magang.id as kontrak_id', 'kontrak_magang.waktu_awal', 'kontrak_magang.waktu_akhir'])
         ->join('kontrak_magang', 'mahasiswa.id', '=', 'kontrak_magang.mahasiswa_id')
         ->join('lowongan_magang', 'kontrak_magang.lowongan_magang_id', '=', 'lowongan_magang.id')
         ->join('perusahaan', 'lowongan_magang.perusahaan_id', '=', 'perusahaan.id')
-        ->where('kontrak_magang.dosen_id', Auth::guard('dosen')->id())
+        ->where('kontrak_magang.dosen_id', $dosenId)
+        ->where('mahasiswa.status_magang', '!=', 'belum magang') // Tambahkan kondisi ini untuk konsistensi
         ->orderBy('mahasiswa.nama', 'asc')
-        ->get(); // Get all data for client-side processing
+        ->get();
 });
 
 ?>

@@ -14,6 +14,7 @@ class DosenPembimbing extends UserBase
         'nidn',
         'password',
         'jenis_kelamin',
+        'foto',
     ];
 
     protected $hidden = [
