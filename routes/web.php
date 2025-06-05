@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\DosenController;
+use App\Http\Controllers\LowonganMultiMooraController;
 
 require_once __DIR__ . '/auth.php';
 
@@ -14,6 +14,11 @@ Route::middleware('role:admin,mahasiswa,dosen')
     ->group(function () {
         Route::get('dashboard', [UserController::class, 'showDashboard'])->name('dashboard');
         Route::get('profile', [UserController::class, 'showProfile'])->name('profile');
+
+        // Profile management routes
+        Route::get('profile/edit', [UserController::class, 'showEditProfile'])->name('profile.edit');
+        Route::put('profile', [UserController::class, 'updateProfile'])->name('profile.update');
+        Route::delete('profile/photo', [UserController::class, 'deletePhoto'])->name('profile.delete-photo');
     });
 
 Route::name('admin.')
@@ -69,6 +74,8 @@ Route::name('mahasiswa.')
         Route::view('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
 
         Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
+        Route::view('riwayat-rekomendasi', 'pages.mahasiswa.riwayat-rekomendasi')->name('riwayat-rekomendasi');
+        Route::view('riwayat-rekomendasi/detail', 'pages.mahasiswa.detail-rekomendasi')->name('detail-rekomendasi');
     });
 
 Route::name('dosen.')
