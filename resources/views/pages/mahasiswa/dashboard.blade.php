@@ -1,13 +1,19 @@
 <?php
 
 use function Livewire\Volt\{state, mount};
+use App\Models\LowonganMagang;
+
+
+state([
+    'my_state'
+]);
 
 $startMCDMInternshipRecommendation = function () {
-
+    $this->my_state = 'a';
 };
 
 mount(function () {
-    $startMCDMInternshipRecommendation;
+    $this->startMCDMInternshipRecommendation();
 });
 
 ?>
@@ -39,7 +45,7 @@ mount(function () {
                 class="card shadow-lg hover:cursor-pointer">
                 <div class="card-body bg-white hover:bg-gray-100 transition-colors rounded-md">
                     <div class="flex align-middle items-center gap-4">
-                        <img src="{{ asset('img/company-kimia-farma.png') }}" alt="Logo Perusahaan"
+                        <img src="{{ asset('img/company/company-kimia-farma.png') }}" alt="Logo Perusahaan"
                             class="w-10 h-10 object-contain">
                         <p>PT. Kimia Farma</p>
                     </div>
