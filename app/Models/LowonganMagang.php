@@ -30,7 +30,7 @@ class LowonganMagang extends Model
         return $this->hasOne(LowonganMagangNumerik::class);
     }
 
-    public function lokasi() {
+    public function lokasiMagang() {
         return $this->belongsTo(LokasiMagang::class);
     }
 

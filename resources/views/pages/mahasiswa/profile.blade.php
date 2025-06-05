@@ -16,11 +16,19 @@ state([
 
 mount(function () {
     $lowonganMagangList = LowonganMagang::with([
-        'pekerjaan',
-        'perusahaan.bidangIndustri'
-        ])
-        ->get()
-        ->toArray();
+        'pekerjaan:id,nama',
+        'lokasiMagang:id,lokasi',
+        'perusahaan.bidangIndustri:id,nama'
+    ])->get()->map(function ($item) {
+        return [
+            'id' => $item->id,
+            'pekerjaan' => $item->pekerjaan->nama ?? null,
+            'open_remote' => $item->open_remote,
+            'jenis_magang' => $item->jenis_magang,
+            'bidang_industri' => $item->perusahaan->bidangIndustri->nama ?? null,
+            'lokasi_magang' => $item->lokasiMagang->lokasi ?? null,
+        ];
+    })->toArray();
     $preferensiMahasiswa = auth('mahasiswa')->user()->preferensiMahasiswa()->first();
 
     $this->bidang_industri = $preferensiMahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
@@ -29,14 +37,15 @@ mount(function () {
     $this->pekerjaan = $preferensiMahasiswa->kriteriaPekerjaan->pekerjaan->nama;
     $this->open_remote = $preferensiMahasiswa->kriteriaOpenRemote->open_remote;
 
-    $multimoora = new MultiMOORA([
+    $criterias = [
         $this->bidang_industri,
         $this->jenis_magang,
         $this->lokasi_magang,
         $this->pekerjaan,
         $this->open_remote
-    ], $lowonganMagangList);
+    ];
 
+    $multimoora = new MultiMOORA($criterias, $lowonganMagangList, $preferensiMahasiswa);
     $multimoora->computeMultiMOORA();
 });
 
