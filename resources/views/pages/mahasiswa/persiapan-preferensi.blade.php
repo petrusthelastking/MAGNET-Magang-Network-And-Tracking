@@ -4,7 +4,7 @@ use Flux\Flux;
 use function Livewire\Volt\{layout, state, updated};
 use Illuminate\Support\Facades\DB;
 use App\Models\{PreferensiMahasiswa, BidangIndustri, Pekerjaan, LokasiMagang, KriteriaPekerjaan, KriteriaBidangIndustri, KriteriaJenisMagang, KriteriaLokasiMagang, KriteriaOpenRemote, KriteriaReputasiPerusahaan};
-use App\Helpers\ROC;
+use App\Helpers\DecisionMaking\ROC;
 
 layout('components.layouts.guest.with-navbar');
 

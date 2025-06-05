@@ -18,7 +18,7 @@ class KriteriaLokasiMagang extends Model
         'bobot'
     ];
 
-    public function kriteriaLokasiMagang() {
+    public function lokasiMagang() {
         return $this->belongsTo(LokasiMagang::class);
     }
 }

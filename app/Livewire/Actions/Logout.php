@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Actions;
 
-use App\Helpers\UserAuthenticationHelper;
+use App\Helpers\Auth\UserAuthenticationHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 

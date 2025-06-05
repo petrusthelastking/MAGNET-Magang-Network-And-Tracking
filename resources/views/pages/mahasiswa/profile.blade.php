@@ -1,3 +1,28 @@
+<?php
+
+use function Livewire\Volt\{state, mount};
+
+state([
+    'isUpdatePreference' => false,
+    'bidang_industri',
+    'jenis_magang',
+    'lokasi_magang',
+    'pekerjaan',
+    'open_remote'
+
+]);
+
+mount(function () {
+    $preferensiMahasiswa = auth('mahasiswa')->user()->preferensiMahasiswa()->first();
+    $this->bidang_industri = $preferensiMahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
+    $this->jenis_magang = $preferensiMahasiswa->kriteriaJenisMagang->jenis_magang;
+    $this->lokasi_magang = $preferensiMahasiswa->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
+    $this->pekerjaan = $preferensiMahasiswa->kriteriaPekerjaan->pekerjaan->nama;
+    $this->open_remote = $preferensiMahasiswa->kriteriaOpenRemote->open_remote;
+});
+
+?>
+
 <div>
     <div class="gap-3 flex flex-col">
         <div class="card bg-white shadow-md">
@@ -28,16 +53,17 @@
         <div class="card bg-white shadow-md">
             <div class="card-body grid grid-cols-2 gap-3">
                 <flux:input readonly
-                    value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->bidang_industri }}"
-                    type="text" label="Bidang pekerjaan" />
-                <flux:input readonly value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->lokasi }}"
-                    type="text" label="Lokasi magang" />
-                <flux:input readonly value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->reputasi }}"
-                    type="text" label="Reputasi" />
-                <flux:input readonly value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->uang_saku }}"
-                    type="text" label="Uang saku" />
+                    value="{{ $pekerjaan }}"
+                    type="text" label="Pekerjaan" />
                 <flux:input readonly
-                    value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->open_remote }}" type="text"
+                    value="{{ $bidang_industri }}"
+                    type="text" label="Bidang industri" />
+                <flux:input readonly value="{{ $lokasi_magang }}"
+                    type="text" label="Lokasi magang" />
+                <flux:input readonly value="{{ ucfirst($jenis_magang) }}"
+                    type="text" label="Jenis magang" />
+                <flux:input readonly
+                    value="{{ ucfirst($open_remote) }}" type="text"
                     label="Open remote" />
             </div>
 
