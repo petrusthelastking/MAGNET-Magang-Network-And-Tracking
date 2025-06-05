@@ -24,7 +24,8 @@ class DosenPembimbingFactory extends Factory
             'nama' => $this->faker->name(),
             'nidn' => (string) $this->faker->unique()->numerify(str_repeat('#', 10)),
             'password' => Hash::make('dosen123'),
-            'jenis_kelamin' => $this->faker->randomElement(['L', 'P'])
+            'jenis_kelamin' => $this->faker->randomElement(['L', 'P']),
+            'foto' => $this->faker->imageUrl(640, 480, 'people', true, 'Dosen Pembimbing', true),
         ];
     }
 }

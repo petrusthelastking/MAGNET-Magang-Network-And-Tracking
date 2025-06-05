@@ -14,6 +14,11 @@ Route::middleware('role:admin,mahasiswa,dosen')
     ->group(function () {
         Route::get('dashboard', [UserController::class, 'showDashboard'])->name('dashboard');
         Route::get('profile', [UserController::class, 'showProfile'])->name('profile');
+
+        // Profile management routes
+        Route::get('profile/edit', [UserController::class, 'showEditProfile'])->name('profile.edit');
+        Route::put('profile', [UserController::class, 'updateProfile'])->name('profile.update');
+        Route::delete('profile/photo', [UserController::class, 'deletePhoto'])->name('profile.delete-photo');
     });
 
 Route::name('admin.')
