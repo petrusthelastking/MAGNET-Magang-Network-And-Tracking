@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\LokasiMagang;
 use App\Models\LowonganMagang;
 use App\Models\Pekerjaan;
 use App\Models\Perusahaan;
@@ -30,7 +31,7 @@ class LowonganMagangFactory extends Factory
             'jenis_magang' => $this->faker->randomElement(['berbayar', 'tidak berbayar']),
             'open_remote' => $this->faker->randomElement(['ya', 'tidak']),
             'status' => $this->faker->randomElement(['buka', 'tutup']),
-            'lokasi' => $this->faker->address(),
+            'lokasi_magang_id' => fn() => LokasiMagang::inRandomOrder()->value('id'),
             'perusahaan_id' => fn() => Perusahaan::inRandomOrder()->value('id')
         ];
     }

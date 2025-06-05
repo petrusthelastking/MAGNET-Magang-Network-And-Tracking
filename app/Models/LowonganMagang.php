@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\LowonganMagangSaved;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,11 +21,21 @@ class LowonganMagang extends Model
         'jenis_magang',
         'open_remote',
         'status',
-        'lokasi',
+        'lokasi_id',
         'perusahaan_id',
     ];
 
-    public function pekerjaan() {
+    public function lowonganMagangNumerik()
+    {
+        return $this->hasOne(LowonganMagangNumerik::class);
+    }
+
+    public function lokasi() {
+        return $this->belongsTo(LokasiMagang::class);
+    }
+
+    public function pekerjaan()
+    {
         return $this->belongsTo(Pekerjaan::class);
     }
 
