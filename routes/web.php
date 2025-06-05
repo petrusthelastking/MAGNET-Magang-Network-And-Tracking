@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DosenController;
 
 require_once __DIR__ . '/auth.php';
 
@@ -73,8 +74,8 @@ Route::name('mahasiswa.')
 Route::name('dosen.')
     ->middleware('role:dosen')
     ->group(function () {
-        Route::view('mahasiswa-bimbingan', 'pages.dosen.mahasiswa-bimbingan')->name('mahasiswa-bimbingan');
-        Route::view('detail-mahasiswa-bimbingan', 'pages.dosen.detail-mahasiswa-bimbingan')->name('detail-mahasiswa-bimbingan');
-        Route::view('komunikasi', 'pages.dosen.komunikasi-mahasiswa')->name('komunikasi');
-        Route::view('komunikasi/mahasiswa', 'pages.dosen.masukan-magang')->name('komunikasi-mahasiswa');
+        Volt::route('/mahasiswa-bimbingan', 'pages.dosen.mahasiswa-bimbingan')->name('mahasiswa-bimbingan');
+        Volt::route('/mahasiswa-bimbingan/{id}', 'pages.dosen.detail-mahasiswa-bimbingan')->name('detail-mahasiswa-bimbingan');
+        Route::view('/komunikasi', 'pages.dosen.komunikasi-mahasiswa')->name('komunikasi');
+        Route::view('/komunikasi/mahasiswa', 'pages.dosen.masukan-magang')->name('komunikasi-mahasiswa');
     });
