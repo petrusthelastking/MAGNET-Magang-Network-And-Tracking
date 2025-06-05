@@ -89,11 +89,12 @@ class MultiMOORA
 
         // start multimoora decision making
         $this->euclideanNormalization();
+        $this->vectorNormalization();
     }
 
-    private function euclideanNormalization()
+    private function euclideanNormalization(): void
     {
-        $encodedAlternatives = Storage::read('preference_internship.json');
+        $encodedAlternatives = Storage::read('preference_internship_mahasiswa_1.json');
         $encodedAlternatives = json_decode($encodedAlternatives, true);
 
         $pekerjaanList = collect($encodedAlternatives)->pluck('pekerjaan')->all();
@@ -130,7 +131,58 @@ class MultiMOORA
         Storage::put('euclidean_normalization_mahasiswa_1.json', $euclideanNormalizationEncoded);
     }
 
-    private function vectorNormalization() {}
+    private function vectorNormalization(): void
+    {
+        $preferenceInternship = Storage::read('preference_internship_mahasiswa_1.json');
+        $preferenceInternship = json_decode($preferenceInternship, true);
+        $euclideanNormalization = Storage::read('euclidean_normalization_mahasiswa_1.json');
+        $euclideanNormalizationD = json_decode($euclideanNormalization, true);
+
+        $pekerjaanList = collect($preferenceInternship)->pluck('pekerjaan')->all();
+        $bidangIndustriList = collect($preferenceInternship)->pluck('bidang_industri')->all();
+        $jenisMagangList = collect($preferenceInternship)->pluck('jenis_magang')->all();
+        $lokasiMagangList = collect($preferenceInternship)->pluck('lokasi_magang')->all();
+        $openRemoteList = collect($preferenceInternship)->pluck('open_remote')->all();
+
+        $listOfCriterias = [
+            'pekerjaan' => $pekerjaanList,
+            'bidang_industri' => $bidangIndustriList,
+            'lokasi_magang' => $lokasiMagangList,
+            'open_remote' => $openRemoteList,
+            'jenis_magang' => $jenisMagangList
+        ];
+
+        Log::info('kasjncakscn', ['akscj' => $euclideanNormalizationD]);
+
+        $computeVectorNormalization = function (string $criteria, array $list) use ($euclideanNormalizationD): array {
+            $result = [];
+            foreach ($list as $item) {
+                $result[] = $item / $euclideanNormalizationD[$criteria];
+            }
+
+            return $result;
+        };
+
+        $tempResult = [];
+        foreach ($listOfCriterias as $criteria => $list) {
+            $tempResult[$criteria] = $computeVectorNormalization($criteria, $list);
+        }
+
+        $finalResult = [];
+        for ($i=0; $i < count($preferenceInternship); $i++) {
+            $finalResult[] = [
+                'id' => $preferenceInternship[$i]['id'],
+                'pekerjaan' => $tempResult['pekerjaan'][$i],
+                'open_remote' => $tempResult['open_remote'][$i],
+                'jenis_magang' => $tempResult['jenis_magang'][$i],
+                'bidang_industri' => $tempResult['bidang_industri'][$i],
+                'lokasi_magang' => $tempResult['lokasi_magang'][$i]
+            ];
+        }
+
+        $finalResultEncoded = json_encode($finalResult, JSON_PRETTY_PRINT);
+        Storage::put('vector_normalization_mahasiswa_1.json', $finalResultEncoded);
+    }
 
     private function computeRatioSystem() {}
 
