@@ -13,6 +13,14 @@ use App\Models\mahasiswa;
 
 class MahasiswaController extends Controller
 {
+
+    protected $multimooraController;
+
+    public function __construct(LowonganMultiMooraController $multimooraController)
+    {
+        $this->multimooraController = $multimooraController;
+    }
+
     /**
      * Get current authenticated mahasiswa
      */
@@ -36,6 +44,9 @@ class MahasiswaController extends Controller
     public function dashboard()
     {
         $mahasiswa = $this->getCurrentMahasiswa();
+
+        $lowonganController = new LowonganMultiMooraController();
+        $lowonganController->process();
 
         if (!$mahasiswa) {
             return redirect()->route('login');
