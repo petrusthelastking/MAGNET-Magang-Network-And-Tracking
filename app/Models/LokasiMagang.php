@@ -19,4 +19,8 @@ class LokasiMagang extends Model
     public function kriteriaLokasiMagang() {
         return $this->hasMany(KriteriaLokasiMagang::class);
     }
+
+    public function lowonganMagang() {
+        return $this->hasMany(LowonganMagang::class);
+    }
 }
