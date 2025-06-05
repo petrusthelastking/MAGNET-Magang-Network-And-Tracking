@@ -12,6 +12,8 @@ class MultiMOORA
     private array $criterias;
     private array $alternatives;
     private PreferensiMahasiswa $preferensiMahasiswa;
+    private array $euclideanNorms;
+
 
     public function __construct(array $criterias, array $alternatives, PreferensiMahasiswa $preferensiMahasiswa)
     {
@@ -77,16 +79,56 @@ class MultiMOORA
 
         // encoded alternatives for current user
         $dataCategorizedEncoded = json_encode($dataCategorizedDecoded, JSON_PRETTY_PRINT);
-        Storage::put('preference_internship.json', $dataCategorizedEncoded);
+        Storage::put('preference_internship_mahasiswa_1.json', $dataCategorizedEncoded);
     }
 
     public function computeMultiMOORA()
     {
         $this->dataCategorization();
         $this->dataEncoding();
+
+        // start multimoora decision making
+        $this->euclideanNormalization();
     }
 
-    private function euclideanNormalization() {}
+    private function euclideanNormalization()
+    {
+        $encodedAlternatives = Storage::read('preference_internship.json');
+        $encodedAlternatives = json_decode($encodedAlternatives, true);
+
+        $pekerjaanList = collect($encodedAlternatives)->pluck('pekerjaan')->all();
+        $bidangIndustriList = collect($encodedAlternatives)->pluck('bidang_industri')->all();
+        $jenisMagangList = collect($encodedAlternatives)->pluck('jenis_magang')->all();
+        $lokasiMagangList = collect($encodedAlternatives)->pluck('lokasi_magang')->all();
+        $openRemoteList = collect($encodedAlternatives)->pluck('open_remote')->all();
+
+
+        $computeEuclidean = function (array $list) {
+            $sumSquares = 0.0;
+
+            foreach ($list as $item) {
+                $sumSquares += pow($item, 2);
+            }
+
+            return sqrt($sumSquares);
+        };
+
+        $listOfCriterias = [
+            'pekerjaan' => $pekerjaanList,
+            'bidang_industri' => $bidangIndustriList,
+            'lokasi_magang' => $lokasiMagangList,
+            'open_remote' => $openRemoteList,
+            'jenis_magang' => $jenisMagangList
+        ];
+
+        $euclideanNormalizationList = [];
+        foreach ($listOfCriterias as $criteria => $list) {
+            $euclideanNormalizationList[$criteria] = $computeEuclidean($list);
+        }
+
+        $euclideanNormalizationEncoded = json_encode($euclideanNormalizationList, JSON_PRETTY_PRINT);
+        Storage::put('euclidean_normalization_mahasiswa_1.json', $euclideanNormalizationEncoded);
+    }
 
     private function vectorNormalization() {}
 
