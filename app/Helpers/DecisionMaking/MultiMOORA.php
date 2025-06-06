@@ -2,6 +2,11 @@
 
 namespace App\Helpers\DecisionMaking;
 
+use App\Models\KriteriaBidangIndustri;
+use App\Models\KriteriaJenisMagang;
+use App\Models\KriteriaLokasiMagang;
+use App\Models\KriteriaOpenRemote;
+use App\Models\KriteriaPekerjaan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Models\LokasiMagang;
@@ -12,6 +17,13 @@ class MultiMOORA
     private array $criterias;
     private array $alternatives;
     private PreferensiMahasiswa $preferensiMahasiswa;
+    private KriteriaPekerjaan $kriteriaPekerjaan;
+    private KriteriaOpenRemote $kriteriaOpenRemote;
+    private KriteriaBidangIndustri $kriteriaBidangIndustri;
+    private KriteriaJenisMagang $kriteriaJenisMagang;
+    private KriteriaLokasiMagang $kriteriaLokasiMagang;
+    private array $vectorNormalizationResult;
+    private array $ratioSystemResult;
 
 
     public function __construct(array $criterias, array $alternatives, PreferensiMahasiswa $preferensiMahasiswa)
@@ -19,13 +31,20 @@ class MultiMOORA
         $this->criterias = $criterias;
         $this->alternatives = $alternatives;
         $this->preferensiMahasiswa = $preferensiMahasiswa;
+
+        $this->kriteriaPekerjaan = $this->preferensiMahasiswa->kriteriaPekerjaan;
+        $this->kriteriaOpenRemote = $this->preferensiMahasiswa->kriteriaOpenRemote;
+        $this->kriteriaBidangIndustri = $this->preferensiMahasiswa->kriteriaBidangIndustri;
+        $this->kriteriaJenisMagang = $this->preferensiMahasiswa->kriteriaJenisMagang;
+        $this->kriteriaLokasiMagang = $this->preferensiMahasiswa->kriteriaLokasiMagang;
     }
 
     /**
      * Compute data categorization from raw alternatives data
      * @return void
      */
-    private function dataCategorization(): void {
+    private function dataCategorization(): void
+    {
         // convert raw data to json file
         $jsonDataRaw = json_encode($this->alternatives, JSON_PRETTY_PRINT);
         Storage::put('raw_lowongan_magang.json', $jsonDataRaw);
@@ -66,12 +85,13 @@ class MultiMOORA
      * Compute data encoding based from to all alternatives data based on user preference
      * @return array<int, array<string, int>>
      */
-    private function dataEncoding(): array {
-        $pekerjaan = $this->preferensiMahasiswa->kriteriaPekerjaan->pekerjaan->nama;
-        $bidang_industri = $this->preferensiMahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
-        $jenis_magang = $this->preferensiMahasiswa->kriteriaJenisMagang->jenis_magang;
-        $lokasi_magang = $this->preferensiMahasiswa->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
-        $open_remote = $this->preferensiMahasiswa->kriteriaOpenRemote->open_remote;
+    private function dataEncoding(): array
+    {
+        $pekerjaan = $this->kriteriaPekerjaan->pekerjaan->nama;
+        $bidang_industri = $this->kriteriaBidangIndustri->bidangIndustri->nama;
+        $jenis_magang = $this->kriteriaJenisMagang->jenis_magang;
+        $lokasi_magang = $this->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
+        $open_remote = $this->kriteriaOpenRemote->open_remote;
 
         $dataCategorized = Storage::read('lowongan_categorized.json');
         $dataCategorizedDecoded = json_decode($dataCategorized, true);
@@ -98,9 +118,8 @@ class MultiMOORA
 
         // start multimoora decision making
         $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
-        $vectorNormalizationResult = $this->vectorNormalization($euclideanNormalizationResult);
+        $this->vectorNormalization($euclideanNormalizationResult);
         $this->computeRatioSystem();
-
     }
 
     /**
@@ -145,7 +164,12 @@ class MultiMOORA
         return $euclideanNormalizationList;
     }
 
-    private function vectorNormalization(array $euclideanNormalization): array
+    /**
+     * Compute vector normalization for all alternatives data
+     * @param array $euclideanNormalization
+     * @return void
+     */
+    private function vectorNormalization(array $euclideanNormalization): void
     {
         $preferenceInternship = Storage::read('preference_internship_mahasiswa_1.json');
         $preferenceInternship = json_decode($preferenceInternship, true);
@@ -183,7 +207,7 @@ class MultiMOORA
         }
 
         $finalResult = [];
-        for ($i=0; $i < count($preferenceInternship); $i++) {
+        for ($i = 0; $i < count($preferenceInternship); $i++) {
             $finalResult[] = [
                 'id' => $preferenceInternship[$i]['id'],
                 'pekerjaan' => $tempResult['pekerjaan'][$i],
@@ -197,10 +221,37 @@ class MultiMOORA
         $finalResultEncoded = json_encode($finalResult, JSON_PRETTY_PRINT);
         Storage::put('vector_normalization_mahasiswa_1.json', $finalResultEncoded);
 
-        return $finalResult;
+        $this->vectorNormalizationResult = $finalResult;
     }
 
-    private function computeRatioSystem() {}
+    private function computeRatioSystem(): void
+    {
+        $weights = [
+            'pekerjaan' => $this->kriteriaPekerjaan->bobot,
+            'open_remote' => $this->kriteriaOpenRemote->bobot,
+            'bidang_industri' => $this->kriteriaBidangIndustri->bobot,
+            'jenis_magang' => $this->kriteriaJenisMagang->bobot,
+            'lokasi_magang' => $this->kriteriaLokasiMagang->bobot
+        ];
+
+        $ratioSystemResult = array_map(function (array $alt) use ($weights) {
+            return [
+                'id' => $alt['id'],
+                'score' => array_sum([
+                    $alt['pekerjaan'] * $weights['pekerjaan'],
+                    $alt['open_remote'] * $weights['open_remote'],
+                    $alt['bidang_industri'] * $weights['bidang_industri'],
+                    $alt['jenis_magang'] * $weights['jenis_magang'],
+                    $alt['lokasi_magang'] * $weights['lokasi_magang']
+                ])
+            ];
+        }, $this->vectorNormalizationResult);
+
+        $this->ratioSystemResult = $ratioSystemResult;
+
+        $ratioSystemResultJSON = json_encode($ratioSystemResult, JSON_PRETTY_PRINT);
+        Storage::put('ratio_system_mahasiswa_1.json', $ratioSystemResultJSON);
+    }
 
     private function computeReferencePoint() {}
 
