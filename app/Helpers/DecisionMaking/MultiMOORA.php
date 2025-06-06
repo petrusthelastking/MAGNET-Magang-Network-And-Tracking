@@ -67,6 +67,15 @@ class MultiMOORA
      */
     private array $fmfResult;
 
+    /**
+     * @var array<array{
+     *  id: int,
+     *  avg_rank: float,
+     *  rank: int
+     * }>
+     */
+    private array $finalRanks;
+
 
     public function __construct(array $criterias, array $alternatives, PreferensiMahasiswa $preferensiMahasiswa)
     {
@@ -79,6 +88,20 @@ class MultiMOORA
         $this->kriteriaBidangIndustri = $this->preferensiMahasiswa->kriteriaBidangIndustri;
         $this->kriteriaJenisMagang = $this->preferensiMahasiswa->kriteriaJenisMagang;
         $this->kriteriaLokasiMagang = $this->preferensiMahasiswa->kriteriaLokasiMagang;
+    }
+
+    public function computeMultiMOORA(): void
+    {
+        $this->dataCategorization();
+        $dataEncodingResult = $this->dataEncoding();
+
+        // start multimoora decision making
+        $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
+        $this->vectorNormalization($euclideanNormalizationResult);
+        $this->computeRatioSystem();
+        $this->computeReferencePoint();
+        $this->computeFullMultiplicativeForm();
+        $this->computeFinalRank();
     }
 
     /**
@@ -153,19 +176,6 @@ class MultiMOORA
         return $dataCategorizedDecoded;
     }
 
-    public function computeMultiMOORA()
-    {
-        $this->dataCategorization();
-        $dataEncodingResult = $this->dataEncoding();
-
-        // start multimoora decision making
-        $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
-        $this->vectorNormalization($euclideanNormalizationResult);
-        $this->computeRatioSystem();
-        $this->computeReferencePoint();
-        $this->computeFullMultiplicativeForm();
-    }
-
     /**
      * Compute euclidean normalization
      * @return array<string, int[]>
@@ -233,8 +243,6 @@ class MultiMOORA
             'open_remote' => $openRemoteList,
             'jenis_magang' => $jenisMagangList
         ];
-
-        Log::info('kasjncakscn', ['akscj' => $euclideanNormalizationD]);
 
         $computeVectorNormalization = function (string $criteria, array $list) use ($euclideanNormalizationD): array {
             $result = [];
@@ -331,7 +339,7 @@ class MultiMOORA
 
         $referencePointList = [];
         foreach ($this->vectorNormalizationResult as $item) {
-            $maxVal = array_reduce($item, function (float $carry, float $curr) : float{
+            $maxVal = array_reduce($item, function (float $carry, float $curr): float {
                 return $curr > $carry ? $curr : $carry;
             }, PHP_FLOAT_MIN);
 
@@ -381,7 +389,7 @@ class MultiMOORA
             ];
         }
 
-        $this->ratioSystemResult = $referencePointFinalResult;
+        $this->referencePointResult = $referencePointFinalResult;
 
         $referenceFinalPointResultJSON = json_encode($referencePointFinalResult, JSON_PRETTY_PRINT);
         Storage::put('reference_point_final_mahasiswa_1.json', $referenceFinalPointResultJSON);
@@ -401,7 +409,7 @@ class MultiMOORA
             'lokasi_magang' => $this->kriteriaLokasiMagang->bobot
         ];
 
-        $fmfScores = array_map(function (array $alt) use ($weights) : array{
+        $fmfScores = array_map(function (array $alt) use ($weights): array {
             $scores = [
                 pow($alt['pekerjaan'], $weights['pekerjaan']),
                 pow($alt['open_remote'], $weights['open_remote']),
@@ -412,7 +420,7 @@ class MultiMOORA
 
             return [
                 'id' => $alt['id'],
-                'score' => array_reduce($scores, function (float $carry, float $item) : float {
+                'score' => array_reduce($scores, function (float $carry, float $item): float {
                     return $carry * $item;
                 }, 1),
             ];
@@ -440,5 +448,57 @@ class MultiMOORA
         Storage::put('fmf_ranks_mahasiswa_1.json', $fmfFinalRanksJSON);
     }
 
-    private function computeFinalRank() {}
+    /**
+     * Compute final rank of alternatives with MultiMOORA method
+     * @return void
+     */
+    private function computeFinalRank()
+    {
+        $ratioSystemRanks = array_column($this->ratioSystemResult, 'rank', 'id');
+        $referencePointRanks = array_column($this->referencePointResult, 'rank', 'id');
+        $fmfRanks = array_column($this->fmfResult, 'rank', 'id');
+
+        // collect all IDs
+        $allIDs = array_unique(
+            array_merge(
+                array_keys($ratioSystemRanks),
+                array_keys($referencePointRanks),
+                array_keys($fmfRanks)
+            )
+        );
+
+        // combine all array into a single array based on ID
+        $combinedArray = [];
+        foreach ($allIDs as $id) {
+            $avgRank = array_sum([$ratioSystemRanks[$id], $referencePointRanks[$id], $fmfRanks[$id]]) / 3;
+            $combinedArray[$id] = [
+                'ratio_system_rank' => $ratioSystemRanks[$id] ?? null,
+                'reference_point_rank' => $referencePointRanks[$id] ?? null,
+                'fmf_rank' => $fmfRanks[$id] ?? null,
+                'avg_rank' => $avgRank
+            ];
+        }
+
+        // ranking process (ascending)
+        usort($combinedArray, function ($a, $b) {
+            return $a['avg_rank'] <=> $b['avg_rank'];
+        });
+
+        $finalRanks = [];
+        $rank = 1;
+        foreach ($combinedArray as $key => $val) {
+            $finalRanks[$key] = [
+                'ratio_system_rank' => $val['ratio_system_rank'],
+                'reference_point_rank' => $val['reference_point_rank'],
+                'fmf_rank' => $val['fmf_rank'],
+                'avg_rank' => $val['avg_rank'],
+                'final_rank' => $rank++
+            ];
+        }
+
+        $this->finalRanks = $finalRanks;
+
+        $finalRanksJSON = json_encode($finalRanks, JSON_PRETTY_PRINT);
+        Storage::put('final_ranks_mahasiswa_1.json', $finalRanksJSON);
+    }
 }
