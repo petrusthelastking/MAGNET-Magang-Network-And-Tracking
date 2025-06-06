@@ -9,6 +9,12 @@ use App\Http\Controllers\LowonganMultiMooraController;
 require_once __DIR__ . '/auth.php';
 
 Route::view('/', 'pages.landing-page')->name('landing-page');
+Route::view('/pengembang', 'pages.pengembang')->name('pengembang');
+Route::view('/tata-tertib', 'pages.tatatertib')->name('tatatertib');
+
+Route::view('/cara-magang', 'pages.cara-magang')->name('cara-magang');
+
+Route::view('/tips-memilih-magang', 'pages.tips-memilih-magang')->name('tips-memilih-magang');
 
 Route::middleware('role:admin,mahasiswa,dosen')
     ->group(function () {
