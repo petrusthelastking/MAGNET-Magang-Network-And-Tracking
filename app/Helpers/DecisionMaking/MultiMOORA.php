@@ -247,9 +247,23 @@ class MultiMOORA
             ];
         }, $this->vectorNormalizationResult);
 
-        $this->ratioSystemResult = $ratioSystemResult;
+        usort($ratioSystemResult, function ($a, $b) {
+            return $b['score'] <=> $a['score'];
+        });
 
-        $ratioSystemResultJSON = json_encode($ratioSystemResult, JSON_PRETTY_PRINT);
+        $ratioSystemRank = [];
+        $rank = 1;
+        foreach ($ratioSystemResult as $item) {
+            $ratioSystemRank[] = [
+                'id' => $item['id'],
+                'score' => $item['score'],
+                'rank' => $rank++
+            ];
+        }
+
+        $this->ratioSystemResult = $ratioSystemRank;
+
+        $ratioSystemResultJSON = json_encode($ratioSystemRank, JSON_PRETTY_PRINT);
         Storage::put('ratio_system_mahasiswa_1.json', $ratioSystemResultJSON);
     }
 
