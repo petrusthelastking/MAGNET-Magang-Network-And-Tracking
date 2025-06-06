@@ -24,9 +24,9 @@ class Perusahaan extends Model
         'rating' => 'float',
     ];
 
-    public function magang()
+    public function lowonganMagang()
     {
-        return $this->hasMany(Magang::class);
+        return $this->hasMany(LowonganMagang::class);
     }
 
     public function bidangIndustri() {

@@ -23,13 +23,13 @@
             <div class="bg-white rounded-lg p-4 sm:p-6 lg:p-8 shadow-lg -mt-24 sm:-mt-40 lg:-mt-64 relative z-10 mx-4 sm:mx-8 md:mx-20 lg:mx-72">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     <div class="rounded-lg h-48 sm:h-56 lg:h-72 flex justify-center items-center overflow-hidden">
-                        <img src="{{asset('Mobdev.png')}}" alt="Mobile Development" class="object-cover w-full h-full">
+                        <img src="{{asset('img/card/man-1.png')}}" alt="Mobile Development" class="object-cover w-full h-full">
                     </div>
                     <div class="rounded-lg h-48 sm:h-56 lg:h-72 flex justify-center items-center overflow-hidden">
-                        <img src="{{asset('UI UX.png')}}" alt="UI UX" class="object-cover w-full h-full">
+                        <img src="{{asset('img/card/man-2.png')}}" alt="UI UX" class="object-cover w-full h-full">
                     </div>
                     <div class="rounded-lg h-48 sm:h-56 lg:h-72 flex justify-center items-center overflow-hidden sm:col-span-2 lg:col-span-1">
-                        <img src="{{asset('sectr.png')}}" alt="Security Engineer" class="object-cover w-full h-full">
+                        <img src="{{asset('img/card/woman-1.png')}}" alt="Security Engineer" class="object-cover w-full h-full">
                     </div>
                 </div>
             </div>

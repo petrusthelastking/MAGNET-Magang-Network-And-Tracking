@@ -16,7 +16,6 @@ class PreferensiMahasiswa extends Model
         'kriteria_pekerjaan_id',
         'kriteria_bidang_industri_id',
         'kriteria_lokasi_magang_id',
-        'kriteria_reputasi_perusahaan_id',
         'kriteria_jenis_magang_id',
         'kriteria_open_remote_id',
     ];
@@ -26,28 +25,28 @@ class PreferensiMahasiswa extends Model
         return $this->belongsTo(Mahasiswa::class);
     }
 
-    public function pekerjaan()
+    public function kriteriaPekerjaan()
     {
-        return $this->hasOne(KriteriaPekerjaan::class, 'pekerjaan_id');
+        return $this->belongsTo(KriteriaPekerjaan::class);
     }
 
-    public function bidangIndustri()
+    public function kriteriaBidangIndustri()
     {
-        return $this->hasOne(KriteriaBidangIndustri::class, 'bidang_industri_id');
+        return $this->belongsTo(KriteriaBidangIndustri::class);
     }
 
-    public function lokasiMagang()
+    public function kriteriaLokasiMagang()
     {
-        return $this->hasOne(KriteriaLokasiMagang::class, 'lokasi_magang_id');
+        return $this->belongsTo(KriteriaLokasiMagang::class);
     }
 
-    public function jenisMagang()
+    public function kriteriaJenisMagang()
     {
-        return $this->hasOne(KriteriaJenisMagang::class, 'jenis_magang_id');
+        return $this->belongsTo(KriteriaJenisMagang::class);
     }
 
-    public function openRemote()
+    public function kriteriaOpenRemote()
     {
-        return $this->hasOne(KriteriaOpenRemote::class, 'open_remote_id');
+        return $this->belongsTo(KriteriaOpenRemote::class);
     }
 }

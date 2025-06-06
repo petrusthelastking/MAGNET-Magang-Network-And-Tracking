@@ -14,7 +14,7 @@ class KontrakMagang extends Model
     protected $fillable = [
         'mahasiswa_id',
         'dosen_id',
-        'magang_id',
+        'lowongan_magang_id',
         'waktu_awal',
         'waktu_akhir',
     ];
@@ -31,12 +31,12 @@ class KontrakMagang extends Model
 
     public function dosenPembimbing()
     {
-        return $this->belongsTo(DosenPembimbing::class, 'dosen_id');
+        return $this->belongsTo(DosenPembimbing::class);
     }
 
-    public function magang()
+    public function lowonganMagang()
     {
-        return $this->belongsTo(Magang::class);
+        return $this->belongsTo(LowonganMagang::class);
     }
 
     public function logMagang()

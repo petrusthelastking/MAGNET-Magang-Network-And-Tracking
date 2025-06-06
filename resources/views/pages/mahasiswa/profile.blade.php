@@ -1,3 +1,55 @@
+<?php
+
+use function Livewire\Volt\{state, mount};
+use App\Helpers\DecisionMaking\MultiMOORA;
+use App\Models\LowonganMagang;
+
+state([
+    'bidang_industri',
+    'jenis_magang',
+    'lokasi_magang',
+    'pekerjaan',
+    'open_remote',
+
+    'isUpdatePreference' => false
+]);
+
+mount(function () {
+    $lowonganMagangList = LowonganMagang::with([
+        'pekerjaan',
+        'perusahaan.bidangIndustri'
+        ])
+        ->get()
+        ->toArray();
+    $preferensiMahasiswa = auth('mahasiswa')->user()->preferensiMahasiswa()->first();
+
+    $this->bidang_industri = $preferensiMahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
+    $this->jenis_magang = $preferensiMahasiswa->kriteriaJenisMagang->jenis_magang;
+    $this->lokasi_magang = $preferensiMahasiswa->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
+    $this->pekerjaan = $preferensiMahasiswa->kriteriaPekerjaan->pekerjaan->nama;
+    $this->open_remote = $preferensiMahasiswa->kriteriaOpenRemote->open_remote;
+
+    $multimoora = new MultiMOORA([
+        $this->bidang_industri,
+        $this->jenis_magang,
+        $this->lokasi_magang,
+        $this->pekerjaan,
+        $this->open_remote
+    ], $lowonganMagangList);
+
+    $multimoora->computeMultiMOORA();
+});
+
+$updatePreference = function () {
+    $this->isUpdatePreference = true;
+};
+
+$cancelUpdatePreference = function () {
+    $this->isUpdatePreference = false;
+};
+
+?>
+
 <div>
     <div class="gap-3 flex flex-col">
         <div class="card bg-white shadow-md">
@@ -27,23 +79,31 @@
 
         <div class="card bg-white shadow-md">
             <div class="card-body grid grid-cols-2 gap-3">
-                <flux:input readonly
-                    value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->bidang_industri }}"
-                    type="text" label="Bidang pekerjaan" />
-                <flux:input readonly value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->lokasi }}"
-                    type="text" label="Lokasi magang" />
-                <flux:input readonly value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->reputasi }}"
-                    type="text" label="Reputasi" />
-                <flux:input readonly value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->uang_saku }}"
-                    type="text" label="Uang saku" />
-                <flux:input readonly
-                    value="{{ auth('mahasiswa')->user()->preferensiMahasiswa()->first()->open_remote }}" type="text"
-                    label="Open remote" />
+                @if (!$isUpdatePreference)
+                    <flux:input readonly value="{{ $pekerjaan }}" type="text" label="Pekerjaan" />
+                    <flux:input readonly value="{{ $bidang_industri }}" type="text" label="Bidang industri" />
+                    <flux:input readonly value="{{ $lokasi_magang }}" type="text" label="Lokasi magang" />
+                    <flux:input readonly value="{{ ucfirst($jenis_magang) }}" type="text" label="Jenis magang" />
+                    <flux:input readonly value="{{ ucfirst($open_remote) }}" type="text" label="Open remote" />
+                @else
+                    <flux:input value="{{ $pekerjaan }}" type="text" label="Pekerjaan" />
+                    <flux:input value="{{ $bidang_industri }}" type="text" label="Bidang industri" />
+                    <flux:input value="{{ $lokasi_magang }}" type="text" label="Lokasi magang" />
+                    <flux:input value="{{ ucfirst($jenis_magang) }}" type="text" label="Jenis magang" />
+                    <flux:input value="{{ ucfirst($open_remote) }}" type="text" label="Open remote" />
+                @endif
             </div>
 
             <div class="card-actions flex justify-end p-5">
-                <flux:button class="bg-magnet-sky-teal! text-white!" icon="pencil">Edit data preferensi magang
-                </flux:button>
+                @if (!$isUpdatePreference)
+                    <flux:button wire:click="updatePreference" class="bg-magnet-sky-teal! text-white! hover:bg-emerald-400!" icon="pencil">
+                        Edit data preferensi magang
+                    </flux:button>
+                @else
+                    <flux:button wire:click="cancelUpdatePreference" class="bg-gray-700! text-white! hover:bg-gray-400!" icon="x">
+                        Batalkan pembaruan
+                    </flux:button>
+                @endif
             </div>
         </div>
     </div>

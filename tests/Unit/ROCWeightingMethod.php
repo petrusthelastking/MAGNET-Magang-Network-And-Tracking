@@ -1,6 +1,6 @@
 <?php
 
-use App\Helpers\ROC;
+use App\Helpers\DecisionMaking\ROC;
 
 test('roc weighting method', function () {
     $weight = ROC::getWeight(1, 3);

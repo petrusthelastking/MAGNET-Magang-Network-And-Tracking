@@ -29,29 +29,34 @@ rules([
     'password.min' => 'Password harus terdiri dari minimal 8 karakter.',
 ]);
 
-$login = function () : void {
+$login = function (): void {
     $this->validate();
     $this->ensureIsNotRateLimited();
 
     $role = null;
 
-    if (Auth::guard('mahasiswa')->attempt([
-        'nim' => $this->userID,
-        'password' => $this->password,
-    ])) {
+    if (
+        Auth::guard('mahasiswa')->attempt([
+            'nim' => $this->userID,
+            'password' => $this->password,
+        ])
+    ) {
         $role = 'mahasiswa';
-    } else if (Auth::guard('dosen')->attempt([
-        'nidn' => $this->userID,
-        'password' => $this->password,
-    ])) {
+    } elseif (
+        Auth::guard('dosen')->attempt([
+            'nidn' => $this->userID,
+            'password' => $this->password,
+        ])
+    ) {
         $role = 'dosen';
-    } else if (Auth::guard('admin')->attempt([
-        'nip' => $this->userID,
-        'password' => $this->password,
-    ])) {
+    } elseif (
+        Auth::guard('admin')->attempt([
+            'nip' => $this->userID,
+            'password' => $this->password,
+        ])
+    ) {
         $role = 'admin';
     }
-
 
     if (!$role) {
         RateLimiter::hit($this->throttleKey());
@@ -67,7 +72,7 @@ $login = function () : void {
     redirect(route('dashboard'));
 };
 
-$ensureIsNotRateLimited = protect(function () : void {
+$ensureIsNotRateLimited = protect(function (): void {
     if (!RateLimiter::tooManyAttempts($this->throttleKey(), 3)) {
         return;
     }
@@ -84,7 +89,7 @@ $ensureIsNotRateLimited = protect(function () : void {
     ]);
 });
 
-$throttleKey = protect(function () : string {
+$throttleKey = protect(function (): string {
     return Str::transliterate(Str::lower($this->userID) . '|' . request()->ip());
 });
 
@@ -106,7 +111,8 @@ $throttleKey = protect(function () : string {
             <flux:field class="pt-4">
                 <flux:label class="text-black!">Password</flux:label>
                 <flux:input wire:model="password" class="border-2 border-magnet-def-grey-400 rounded-xl"
-                    class:input="text-black!" type="password" placeholder="Masukkan password anda" required />
+                    class:input="text-black!" type="password" placeholder="Masukkan password anda" required
+                    autocomplete="current-password" viewable />
                 <flux:error name="password" />
             </flux:field>
             <flux:link class="text-sm text-end my-3 text-magnet-sky-teal" href="#">Lupa Password?</flux:link>

@@ -1,8 +1,9 @@
 <x-layouts.user.main user="mahasiswa" isFullPage="true">
-    <div class="space-y-10 bg-[url(/public/wallpaper-chat.png)] h-full">
+    <div class="space-y-10 bg-[url(/public/wallpaper/wallpaper-chat.png)] h-full">
         <div class="flex items-center justify-between p-4 bg-white border-b border-gray-200 shadow-sm z-10">
             <div class="flex items-center">
-                <img src="{{ asset('logo-perusahaan.png') }}" alt="Logo Perusahaan" class="w-10 h-10 object-contain rounded-full mr-3">
+                <img src="{{ asset('logo-perusahaan.png') }}" alt="Logo Perusahaan"
+                    class="w-10 h-10 object-contain rounded-full mr-3">
                 <p class="font-semibold text-gray-800">Prof. Dr. Mulyono, S.H., M.Kom.</p>
             </div>
         </div>
@@ -33,12 +34,6 @@
                 <div class="bg-white rounded-lg p-3 shadow-sm max-w-[calc(100%-60px)]">
                     <p class="text-base text-gray-800">Good</p>
                     <p class="text-right text-xs text-gray-400 mt-2">11:18</p>
-                </div>
-            </div>
-            <div class="flex justify-end mb-4">
-                <div class="bg-blue-100 rounded-lg p-3 shadow-sm max-w-[calc(100%-60px)]">
-                    <p class="text-base text-gray-800">P</p>
-                    <p class="text-right text-xs text-gray-500 mt-2">11:21</p>
                 </div>
             </div>
         </div>
