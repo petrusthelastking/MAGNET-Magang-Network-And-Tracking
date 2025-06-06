@@ -271,7 +271,7 @@
     </div>
     <footer class="bg-magnet-deep-ocean-blue text-white py-8">
         <div class="container mx-auto px-6 text-center">
-            <p class="mb-2">&copy; 2024 Jurusan Teknologi Informasi - Politeknik Negeri Malang</p>
+            <p class="mb-2">&copy; 2025 Jurusan Teknologi Informasi - Politeknik Negeri Malang</p>
             <p class="text-gray-400 text-sm">Sistem Rekomendasi Magang Berbasis Web</p>
         </div>
     </footer>
