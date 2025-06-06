@@ -10,11 +10,11 @@
             Dashboard
         </flux:navlist.item>
 
-    <flux:navlist.item icon="user-round" href="{{ route('dosen.mahasiswa-bimbingan') }}">
+        <flux:navlist.item icon="user-round" href="{{ route('dosen.mahasiswa-bimbingan') }}">
             Mahasiswa Bimbingan
         </flux:navlist.item>
 
-    <flux:navlist.item icon="message-square-more" href="{{ route('dosen.komunikasi') }}">
+        <flux:navlist.item icon="message-square-more" href="{{ route('dosen.komunikasi') }}">
             Komunikasi
         </flux:navlist.item>
 
@@ -23,14 +23,15 @@
     <flux:spacer />
 
     <flux:dropdown position="top" align="start" class="max-lg:hidden">
-        <flux:profile avatar="https://unavatar.io/x/calebporzio" name="{{ auth('dosen')->user()->nama }}" />
+        <flux:profile
+            avatar="{{ auth('dosen')->user()->foto ? asset('foto_dosen/' . auth('dosen')->user()->foto) : asset('img/user/lecturer-man.png') }}"
+            name="{{ auth('dosen')->user()->nama }}" />
 
         <flux:menu class="p-0!">
             <flux:navlist variant="outline" class="w-full">
                 <flux:button variant="ghost" class="flex my-2">
-                    <flux:avatar src="https://unavatar.io/x/calebporzio" class="mx-auto" />
-                    <flux:navlist.item href="{{ route('profile') }}"
-                        class="text-black!">
+                    <flux:avatar src="{{ auth('dosen')->user()->foto ? asset('foto_dosen/' . auth('dosen')->user()->foto) : asset('img/user/lecturer-man.png') }}" class="mx-auto" />
+                    <flux:navlist.item href="{{ route('profile') }}" class="text-black!">
                         <div class="text-base leading-6 font-normal">{{ auth('dosen')->user()->nama }}</div>
                         <div class="text-xs leading-4 font-medium">{{ auth('dosen')->user()->nidn }}</div>
                     </flux:navlist.item>
@@ -39,7 +40,8 @@
 
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
-                <flux:button type="submit" variant="danger" class="w-full rounded-t-none! hover:cursor-pointer" icon="arrow-right-start-on-rectangle">
+                <flux:button type="submit" variant="danger" class="w-full rounded-t-none! hover:cursor-pointer"
+                    icon="arrow-right-start-on-rectangle">
                     {{ __('Log Out') }}
                 </flux:button>
             </form>

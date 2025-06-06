@@ -14,7 +14,7 @@
     </div>
     <div class="navbar-end">
 
-        <flux:button icon="circle-help" size="sm" class=" text-white rounded-full!">Pusat Bantuan</flux:button>
+        <flux:button icon="brain-circuit" size="sm" class=" text-white rounded-full!" href="{{ route('pengembang') }}">Pengembang</flux:button>
 
         
     </div>

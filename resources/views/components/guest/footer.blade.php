@@ -16,8 +16,8 @@
                 <div>
                     <h2 class="font-semibold mb-2">Petunjuk</h2>
                     <ul>
-                        <li><a href="#" class="text-sm hover:text-blue-300">Cara mengajukan magang</a></li>
-                        <li><a href="#" class="text-sm hover:text-blue-300">Tips memilih tempat magang terbaik</a></li>
+                        <li><a href="{{ route('cara-magang') }}" class="text-sm hover:text-blue-300">Cara mengajukan magang</a></li>
+                        <li><a href="{{route('tips-memilih-magang')}}" class="text-sm hover:text-blue-300">Tips memilih tempat magang terbaik</a></li>
                     </ul>
                 </div>
                 
@@ -25,7 +25,7 @@
                 <div>
                     <h2 class="font-semibold mb-2">Tata Tertib</h2>
                     <ul>
-                        <li><a href="#" class="text-sm hover:text-blue-300">Informasi resmi tata tertib magang</a></li>
+                        <li><a href="{{ route('tatatertib') }}" class="text-sm hover:text-blue-300">Informasi resmi tata tertib magang</a></li>
                     </ul>
                 </div>
                 
