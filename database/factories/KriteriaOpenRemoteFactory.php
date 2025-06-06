@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\DecisionMakingEnum;
 use App\Helpers\DecisionMaking\ROC;
 use App\Models\KriteriaOpenRemote;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,12 +21,12 @@ class KriteriaOpenRemoteFactory extends Factory
      */
     public function definition(): array
     {
-        $rank = $this->faker->numberBetween(1, 6);
+        $rank = $this->faker->numberBetween(1, DecisionMakingEnum::totalCriteria->value);
 
         return [
             'open_remote' => $this->faker->randomElement(['ya', 'tidak']),
             'rank' => $rank,
-            'bobot' => ROC::getWeight($rank, 6)
+            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value)
         ];
     }
 }

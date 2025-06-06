@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\DecisionMakingEnum;
 use App\Helpers\DecisionMaking\ROC;
 use App\Models\KriteriaPekerjaan;
 use App\Models\Pekerjaan;
@@ -21,12 +22,12 @@ class KriteriaPekerjaanFactory extends Factory
      */
     public function definition(): array
     {
-        $rank = $this->faker->numberBetween(1, 6);
+        $rank = $this->faker->numberBetween(1, DecisionMakingEnum::totalCriteria->value);
 
         return [
             'pekerjaan_id' => fn() => Pekerjaan::inRandomOrder()->value('id'),
             'rank' => $rank,
-            'bobot' => ROC::getWeight($rank, 6)
+            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value)
         ];
     }
 }

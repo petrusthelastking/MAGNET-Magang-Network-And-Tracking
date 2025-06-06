@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\DecisionMakingEnum;
 use App\Helpers\DecisionMaking\ROC;
 use App\Models\KriteriaJenisMagang;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,12 +21,12 @@ class KriteriaJenisMagangFactory extends Factory
      */
     public function definition(): array
     {
-        $rank = $this->faker->numberBetween(1, 6);
+        $rank = $this->faker->numberBetween(1, DecisionMakingEnum::totalCriteria->value);
 
         return [
             'jenis_magang' => $this->faker->randomElement(['berbayar', 'tidak berbayar']),
             'rank' => $rank,
-            'bobot' => ROC::getWeight($rank, 6)
+            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value)
         ];
     }
 }
