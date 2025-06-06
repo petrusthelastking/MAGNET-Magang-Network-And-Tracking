@@ -12,7 +12,6 @@ class MultiMOORA
     private array $criterias;
     private array $alternatives;
     private PreferensiMahasiswa $preferensiMahasiswa;
-    private array $euclideanNorms;
 
 
     public function __construct(array $criterias, array $alternatives, PreferensiMahasiswa $preferensiMahasiswa)
@@ -22,6 +21,10 @@ class MultiMOORA
         $this->preferensiMahasiswa = $preferensiMahasiswa;
     }
 
+    /**
+     * Compute data categorization from raw alternatives data
+     * @return void
+     */
     private function dataCategorization(): void {
         // convert raw data to json file
         $jsonDataRaw = json_encode($this->alternatives, JSON_PRETTY_PRINT);
@@ -59,7 +62,11 @@ class MultiMOORA
         Storage::put('lowongan_categorized.json', $jsonDataCategorized);
     }
 
-    private function dataEncoding(): void {
+    /**
+     * Compute data encoding based from to all alternatives data based on user preference
+     * @return array<int, array<string, int>>
+     */
+    private function dataEncoding(): array {
         $pekerjaan = $this->preferensiMahasiswa->kriteriaPekerjaan->pekerjaan->nama;
         $bidang_industri = $this->preferensiMahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
         $jenis_magang = $this->preferensiMahasiswa->kriteriaJenisMagang->jenis_magang;
@@ -80,23 +87,28 @@ class MultiMOORA
         // encoded alternatives for current user
         $dataCategorizedEncoded = json_encode($dataCategorizedDecoded, JSON_PRETTY_PRINT);
         Storage::put('preference_internship_mahasiswa_1.json', $dataCategorizedEncoded);
+
+        return $dataCategorizedDecoded;
     }
 
     public function computeMultiMOORA()
     {
         $this->dataCategorization();
-        $this->dataEncoding();
+        $dataEncodingResult = $this->dataEncoding();
 
         // start multimoora decision making
-        $this->euclideanNormalization();
-        $this->vectorNormalization();
+        $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
+        $vectorNormalizationResult = $this->vectorNormalization($euclideanNormalizationResult);
+        $this->computeRatioSystem();
+
     }
 
-    private function euclideanNormalization(): void
+    /**
+     * Compute euclidean normalization
+     * @return array<string, int[]>
+     */
+    private function euclideanNormalization(array $encodedAlternatives): array
     {
-        $encodedAlternatives = Storage::read('preference_internship_mahasiswa_1.json');
-        $encodedAlternatives = json_decode($encodedAlternatives, true);
-
         $pekerjaanList = collect($encodedAlternatives)->pluck('pekerjaan')->all();
         $bidangIndustriList = collect($encodedAlternatives)->pluck('bidang_industri')->all();
         $jenisMagangList = collect($encodedAlternatives)->pluck('jenis_magang')->all();
@@ -129,9 +141,11 @@ class MultiMOORA
 
         $euclideanNormalizationEncoded = json_encode($euclideanNormalizationList, JSON_PRETTY_PRINT);
         Storage::put('euclidean_normalization_mahasiswa_1.json', $euclideanNormalizationEncoded);
+
+        return $euclideanNormalizationList;
     }
 
-    private function vectorNormalization(): void
+    private function vectorNormalization(array $euclideanNormalization): array
     {
         $preferenceInternship = Storage::read('preference_internship_mahasiswa_1.json');
         $preferenceInternship = json_decode($preferenceInternship, true);
@@ -182,6 +196,8 @@ class MultiMOORA
 
         $finalResultEncoded = json_encode($finalResult, JSON_PRETTY_PRINT);
         Storage::put('vector_normalization_mahasiswa_1.json', $finalResultEncoded);
+
+        return $finalResult;
     }
 
     private function computeRatioSystem() {}
