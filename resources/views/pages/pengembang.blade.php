@@ -1,7 +1,8 @@
 <x-layouts.guest.main>
 
   <!-- Hero Section -->
-  <div class="min-h-screen bg-gradient-to-br from-magnet-deep-ocean-blue via-blue-900 to-magnet-deep-ocean-blue relative overflow-hidden">
+  <div
+    class="min-h-screen bg-gradient-to-br from-magnet-deep-ocean-blue via-blue-900 to-magnet-deep-ocean-blue relative overflow-hidden">
 
     <!-- Background particles -->
     <div class="absolute inset-0 overflow-hidden">
@@ -36,8 +37,9 @@
           class="developer-card team-leader bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-2xl p-8 border-2 border-cyan-400/60 hover:border-cyan-400/80 transition-all duration-500 transform hover:-translate-y-6 hover:shadow-2xl hover:shadow-cyan-400/30 group max-w-sm">
           <div class="relative mb-6">
             <div
-              class="w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full mx-auto flex items-center justify-center text-3xl font-bold text-white shadow-lg group-hover:scale-110 transition-transform duration-300 border-4 border-white/20">
-              FA
+              class="w-24 h-24 rounded-full mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300 border-4 border-white/20 overflow-hidden">
+              <img src="https://avatars.githubusercontent.com/u/140877757?v=4?s=100" alt="Farrel"
+                class="w-full h-full object-cover">
             </div>
             <div
               class="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center shadow-lg">
@@ -69,8 +71,9 @@
             class="developer-card bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 hover:border-pink-400/50 transition-all duration-500 transform hover:-translate-y-3 hover:shadow-xl hover:shadow-pink-400/20 group">
             <div class="relative mb-4">
               <div
-                class="w-16 h-16 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full mx-auto flex items-center justify-center text-xl font-bold text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                AN
+                class="w-16 h-16 rounded-full mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                <img src="https://avatars.githubusercontent.com/u/144090093?v=4?s=100" alt="Aaisyah Nursalsabil"
+                  class="w-full h-full object-cover">
               </div>
               <div
                 class="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
@@ -86,7 +89,9 @@
               <span
                 class="px-2 py-1 bg-pink-400/20 text-pink-300 rounded-full text-xs border border-pink-400/30">UI/UX</span>
               <span
-                class="px-2 py-1 bg-purple-400/20 text-purple-300 rounded-full text-xs border border-purple-400/30">Figma</span>
+                class="px-2 py-1 bg-pink-400/20 text-pink-300 rounded-full text-xs border border-pink-400/30">Figma</span>
+              <span
+                class="px-2 py-1 bg-pink-400/20 text-pink-300 rounded-full text-xs border border-pink-400/30">Tailwind</span>
             </div>
           </div>
 
@@ -95,8 +100,9 @@
             class="developer-card bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 hover:border-green-400/50 transition-all duration-500 transform hover:-translate-y-3 hover:shadow-xl hover:shadow-green-400/20 group">
             <div class="relative mb-4">
               <div
-                class="w-16 h-16 bg-gradient-to-br from-green-400 to-teal-500 rounded-full mx-auto flex items-center justify-center text-xl font-bold text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                AI
+                class="w-16 h-16 rounded-full mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                <img src="https://avatars.githubusercontent.com/u/144084394?v=4?s=100" alt="Aril"
+                  class="w-full h-full object-cover">
               </div>
               <div
                 class="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
@@ -112,7 +118,10 @@
               <span
                 class="px-2 py-1 bg-green-400/20 text-green-300 rounded-full text-xs border border-green-400/30">Tailwind</span>
               <span
-                class="px-2 py-1 bg-teal-400/20 text-teal-300 rounded-full text-xs border border-teal-400/30">DaisyUI</span>
+                class="px-2 py-1 bg-green-400/20 text-green-300 rounded-full text-xs border border-green-400/30">FluxUI</span>
+              <span
+                class="px-2 py-1 bg-green-400/20 text-green-300 rounded-full text-xs border border-green-400/30">DaisyUI</span>
+
             </div>
           </div>
 
@@ -121,8 +130,9 @@
             class="developer-card bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 hover:border-orange-400/50 transition-all duration-500 transform hover:-translate-y-3 hover:shadow-xl hover:shadow-orange-400/20 group">
             <div class="relative mb-4">
               <div
-                class="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-full mx-auto flex items-center justify-center text-xl font-bold text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                MI
+                class="w-16 h-16 rounded-full mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                <img src="https://avatars.githubusercontent.com/u/143877889?v=4?s=100" alt="Dimas"
+                  class="w-full h-full object-cover">
               </div>
               <div
                 class="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
@@ -130,7 +140,7 @@
               </div>
             </div>
             <h3 class="text-lg font-bold text-white mb-1 group-hover:text-orange-400 transition-colors text-center">
-              Muhammad Irsyad Dimas</h3>
+              M.Irsyad Dimas</h3>
             <p class="text-orange-400 font-semibold mb-2 text-center text-sm">Backend & Database</p>
             <p class="text-gray-400 mb-3 leading-relaxed text-xs text-center">Ahli dalam sistem backend dan manajemen
               database.</p>
@@ -138,7 +148,7 @@
               <span
                 class="px-2 py-1 bg-orange-400/20 text-orange-300 rounded-full text-xs border border-orange-400/30">PHP</span>
               <span
-                class="px-2 py-1 bg-red-400/20 text-red-300 rounded-full text-xs border border-red-400/30">MySQL</span>
+                class="px-2 py-1 bg-orange-400/20 text-orange-300 rounded-full text-xs border border-orange-400/30">PHP</span>
             </div>
           </div>
 
@@ -147,8 +157,9 @@
             class="developer-card bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 hover:border-indigo-400/50 transition-all duration-500 transform hover:-translate-y-3 hover:shadow-xl hover:shadow-indigo-400/20 group">
             <div class="relative mb-4">
               <div
-                class="w-16 h-16 bg-gradient-to-br from-indigo-400 to-violet-500 rounded-full mx-auto flex items-center justify-center text-xl font-bold text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                SZ
+                class="w-16 h-16 rounded-full mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                <img src="https://avatars.githubusercontent.com/u/143470195?v=4?s=100" alt="Stevan"
+                  class="w-full h-full object-cover">
               </div>
               <div
                 class="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
@@ -156,15 +167,17 @@
               </div>
             </div>
             <h3 class="text-lg font-bold text-white mb-1 group-hover:text-indigo-400 transition-colors text-center">
-              Stevan Zaky Setyanto</h3>
+              Stevan Zaky S.</h3>
             <p class="text-indigo-400 font-semibold mb-2 text-center text-sm">Frontend Admin</p>
             <p class="text-gray-400 mb-3 leading-relaxed text-xs text-center">Spesialis panel admin dan halaman utama
               yang user-friendly.</p>
             <div class="flex flex-wrap gap-1 justify-center">
               <span
-                class="px-2 py-1 bg-indigo-400/20 text-indigo-300 rounded-full text-xs border border-indigo-400/30">JavaScript</span>
+                class="px-2 py-1 bg-indigo-400/20 text-indigo-300 rounded-full text-xs border border-indigo-400/30">FluxUI</span>
               <span
-                class="px-2 py-1 bg-violet-400/20 text-violet-300 rounded-full text-xs border border-violet-400/30">ChartJs</span>
+                class="px-2 py-1 bg-indigo-400/20 text-indigo-300 rounded-full text-xs border border-indigo-400/30">DaisyUI</span>
+              <span
+                class="px-2 py-1 bg-indigo-400/20 text-indigo-300 rounded-full text-xs border border-indigo-400/30">JavaScript</span>
             </div>
           </div>
         </div>
