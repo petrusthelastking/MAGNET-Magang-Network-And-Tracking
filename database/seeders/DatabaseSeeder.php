@@ -30,7 +30,6 @@ class DatabaseSeeder extends Seeder
             UmpanBalikMagangSeeder::class,
             BerkasPengajuanMagangSeeder::class,
             FormPengajuanMagangSeeder::class,
-            PreferensiMahasiswaSeeder::class,
         ]);
     }
 }
