@@ -5,6 +5,7 @@ use App\Helpers\DecisionMaking\MultiMOORA;
 use App\Models\LowonganMagang;
 
 state([
+    'mahasiswa',
     'bidang_industri',
     'jenis_magang',
     'lokasi_magang',
@@ -15,6 +16,18 @@ state([
 ]);
 
 mount(function () {
+    $this->mahasiswa = auth('mahasiswa')->user();
+
+    $this->bidang_industri = $this->mahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
+    $this->jenis_magang = $this->mahasiswa->kriteriaJenisMagang->jenis_magang;
+    $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
+    $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan->nama;
+    $this->open_remote = $this->mahasiswa->kriteriaOpenRemote->open_remote;
+});
+
+$updatePreference = function () {
+    $this->isUpdatePreference = true;
+
     $lowonganMagangList = LowonganMagang::with([
         'pekerjaan:id,nama',
         'lokasiMagang:id,lokasi',
@@ -29,13 +42,6 @@ mount(function () {
             'lokasi_magang' => $item->lokasiMagang->lokasi ?? null,
         ];
     })->toArray();
-    $preferensiMahasiswa = auth('mahasiswa')->user()->preferensiMahasiswa()->first();
-
-    $this->bidang_industri = $preferensiMahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
-    $this->jenis_magang = $preferensiMahasiswa->kriteriaJenisMagang->jenis_magang;
-    $this->lokasi_magang = $preferensiMahasiswa->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
-    $this->pekerjaan = $preferensiMahasiswa->kriteriaPekerjaan->pekerjaan->nama;
-    $this->open_remote = $preferensiMahasiswa->kriteriaOpenRemote->open_remote;
 
     $criterias = [
         $this->bidang_industri,
@@ -45,12 +51,8 @@ mount(function () {
         $this->open_remote
     ];
 
-    $multimoora = new MultiMOORA($criterias, $lowonganMagangList, $preferensiMahasiswa);
+    $multimoora = new MultiMOORA($criterias, $lowonganMagangList, $this->mahasiswa);
     $multimoora->computeMultiMOORA();
-});
-
-$updatePreference = function () {
-    $this->isUpdatePreference = true;
 };
 
 $cancelUpdatePreference = function () {

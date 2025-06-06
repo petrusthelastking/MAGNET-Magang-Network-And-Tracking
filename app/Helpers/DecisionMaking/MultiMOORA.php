@@ -10,13 +10,13 @@ use App\Models\KriteriaPekerjaan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Models\LokasiMagang;
-use App\Models\PreferensiMahasiswa;
+use App\Models\Mahasiswa;
 
 class MultiMOORA
 {
     private array $criterias;
     private array $alternatives;
-    private PreferensiMahasiswa $preferensiMahasiswa;
+    private Mahasiswa $mahasiswa;
     private KriteriaPekerjaan $kriteriaPekerjaan;
     private KriteriaOpenRemote $kriteriaOpenRemote;
     private KriteriaBidangIndustri $kriteriaBidangIndustri;
@@ -77,17 +77,17 @@ class MultiMOORA
     private array $finalRanks;
 
 
-    public function __construct(array $criterias, array $alternatives, PreferensiMahasiswa $preferensiMahasiswa)
+    public function __construct(array $criterias, array $alternatives, Mahasiswa $mahasiswa)
     {
         $this->criterias = $criterias;
         $this->alternatives = $alternatives;
-        $this->preferensiMahasiswa = $preferensiMahasiswa;
+        $this->mahasiswa = $mahasiswa;
 
-        $this->kriteriaPekerjaan = $this->preferensiMahasiswa->kriteriaPekerjaan;
-        $this->kriteriaOpenRemote = $this->preferensiMahasiswa->kriteriaOpenRemote;
-        $this->kriteriaBidangIndustri = $this->preferensiMahasiswa->kriteriaBidangIndustri;
-        $this->kriteriaJenisMagang = $this->preferensiMahasiswa->kriteriaJenisMagang;
-        $this->kriteriaLokasiMagang = $this->preferensiMahasiswa->kriteriaLokasiMagang;
+        $this->kriteriaPekerjaan = $this->mahasiswa->kriteriaPekerjaan;
+        $this->kriteriaOpenRemote = $this->mahasiswa->kriteriaOpenRemote;
+        $this->kriteriaBidangIndustri = $this->mahasiswa->kriteriaBidangIndustri;
+        $this->kriteriaJenisMagang = $this->mahasiswa->kriteriaJenisMagang;
+        $this->kriteriaLokasiMagang = $this->mahasiswa->kriteriaLokasiMagang;
     }
 
     public function computeMultiMOORA(): void
@@ -110,21 +110,13 @@ class MultiMOORA
      */
     private function dataCategorization(): void
     {
-        // convert raw data to json file
-        $jsonDataRaw = json_encode($this->alternatives, JSON_PRETTY_PRINT);
-        Storage::put('raw_lowongan_magang.json', $jsonDataRaw);
-
-        // data categorization
         $lokasiDataFromDB = LokasiMagang::all()
             ->groupBy('kategori_lokasi')
             ->map(function ($group) {
                 return $group->pluck('lokasi');
             })
             ->toArray();
-        $lokasiJson = json_encode($lokasiDataFromDB, JSON_PRETTY_PRINT);
-        Storage::put('lokasi.json', $lokasiJson);
 
-        // encoding
         $locationMap = [];
         foreach ($lokasiDataFromDB as $category => $locations) {
             foreach ($locations as $location) {
@@ -140,10 +132,9 @@ class MultiMOORA
             }
         }
 
-        unset($internship);
-
         $jsonDataCategorized = json_encode($this->alternatives, JSON_PRETTY_PRINT);
-        Storage::put('lowongan_categorized.json', $jsonDataCategorized);
+        $file_path = 'lowongan_magang/alternatives_categorized.json';
+        Storage::put($file_path, $jsonDataCategorized);
     }
 
     /**
@@ -158,7 +149,7 @@ class MultiMOORA
         $lokasi_magang = $this->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
         $open_remote = $this->kriteriaOpenRemote->open_remote;
 
-        $dataCategorized = Storage::read('lowongan_categorized.json');
+        $dataCategorized = Storage::read('lowongan_magang/alternatives_categorized.json');
         $dataCategorizedDecoded = json_decode($dataCategorized, true);
 
         foreach ($dataCategorizedDecoded as &$item) {
@@ -171,7 +162,8 @@ class MultiMOORA
 
         // encoded alternatives for current user
         $dataCategorizedEncoded = json_encode($dataCategorizedDecoded, JSON_PRETTY_PRINT);
-        Storage::put('preference_internship_mahasiswa_1.json', $dataCategorizedEncoded);
+        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/alternatives_encoded.json';
+        Storage::put($file_path, $dataCategorizedEncoded);
 
         return $dataCategorizedDecoded;
     }
@@ -213,7 +205,8 @@ class MultiMOORA
         }
 
         $euclideanNormalizationEncoded = json_encode($euclideanNormalizationList, JSON_PRETTY_PRINT);
-        Storage::put('euclidean_normalization_mahasiswa_1.json', $euclideanNormalizationEncoded);
+        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/euclidean_normalization.json';
+        Storage::put($file_path, $euclideanNormalizationEncoded);
 
         return $euclideanNormalizationList;
     }
@@ -225,9 +218,12 @@ class MultiMOORA
      */
     private function vectorNormalization(array $euclideanNormalization): void
     {
-        $preferenceInternship = Storage::read('preference_internship_mahasiswa_1.json');
+        $preferenceInternshipFilePath = 'preferensi_magang/' . $this->mahasiswa->id . '/alternatives_encoded.json';
+        $preferenceInternship = Storage::read($preferenceInternshipFilePath);
         $preferenceInternship = json_decode($preferenceInternship, true);
-        $euclideanNormalization = Storage::read('euclidean_normalization_mahasiswa_1.json');
+
+        $euclidean_file_path = 'preferensi_magang/' . $this->mahasiswa->id .  '/euclidean_normalization.json';
+        $euclideanNormalization = Storage::read($euclidean_file_path);
         $euclideanNormalizationD = json_decode($euclideanNormalization, true);
 
         $pekerjaanList = collect($preferenceInternship)->pluck('pekerjaan')->all();
@@ -271,7 +267,8 @@ class MultiMOORA
         }
 
         $finalResultEncoded = json_encode($finalResult, JSON_PRETTY_PRINT);
-        Storage::put('vector_normalization_mahasiswa_1.json', $finalResultEncoded);
+        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/vector_normalization.json';
+        Storage::put($file_path, $finalResultEncoded);
 
         $this->vectorNormalizationResult = $finalResult;
     }
@@ -320,7 +317,8 @@ class MultiMOORA
         $this->ratioSystemResult = $ratioSystemRank;
 
         $ratioSystemResultJSON = json_encode($ratioSystemRank, JSON_PRETTY_PRINT);
-        Storage::put('ratio_system_mahasiswa_1.json', $ratioSystemResultJSON);
+        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/ratio_system.json';
+        Storage::put($file_path, $ratioSystemResultJSON);
     }
 
     /**
@@ -366,7 +364,8 @@ class MultiMOORA
         }, $this->vectorNormalizationResult);
 
         $referencePointResultJSON = json_encode($deviationScores, JSON_PRETTY_PRINT);
-        Storage::put('deviation_scores_mahasiswa_1.json', $referencePointResultJSON);
+        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/deviation_scores.json';
+        Storage::put($file_path, $referencePointResultJSON);
 
 
         // ranking process (descending)
@@ -392,7 +391,8 @@ class MultiMOORA
         $this->referencePointResult = $referencePointFinalResult;
 
         $referenceFinalPointResultJSON = json_encode($referencePointFinalResult, JSON_PRETTY_PRINT);
-        Storage::put('reference_point_final_mahasiswa_1.json', $referenceFinalPointResultJSON);
+        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/reference_point.json';
+        Storage::put($file_path, $referenceFinalPointResultJSON);
     }
 
     /**
@@ -445,7 +445,8 @@ class MultiMOORA
         $this->fmfResult = $fmfFinalRanks;
 
         $fmfFinalRanksJSON = json_encode($fmfFinalRanks, JSON_PRETTY_PRINT);
-        Storage::put('fmf_ranks_mahasiswa_1.json', $fmfFinalRanksJSON);
+        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/fmf_ranks.json';
+        Storage::put($file_path, $fmfFinalRanksJSON);
     }
 
     /**
@@ -488,6 +489,7 @@ class MultiMOORA
         $rank = 1;
         foreach ($combinedArray as $key => $val) {
             $finalRanks[$key] = [
+                'id' => $key,
                 'ratio_system_rank' => $val['ratio_system_rank'],
                 'reference_point_rank' => $val['reference_point_rank'],
                 'fmf_rank' => $val['fmf_rank'],
@@ -499,6 +501,7 @@ class MultiMOORA
         $this->finalRanks = $finalRanks;
 
         $finalRanksJSON = json_encode($finalRanks, JSON_PRETTY_PRINT);
-        Storage::put('final_ranks_mahasiswa_1.json', $finalRanksJSON);
+        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/final_ranks_alternatives.json';
+        Storage::put($file_path, $finalRanksJSON);
     }
 }
