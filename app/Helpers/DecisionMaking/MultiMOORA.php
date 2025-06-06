@@ -22,8 +22,39 @@ class MultiMOORA
     private KriteriaBidangIndustri $kriteriaBidangIndustri;
     private KriteriaJenisMagang $kriteriaJenisMagang;
     private KriteriaLokasiMagang $kriteriaLokasiMagang;
+
+    /**
+     * @var array<array{
+     *  id: int,
+     *  pekerjaan: float,
+     *  open_remote: float,
+     *  jenis_magang: float,
+     *  bidang_industri: float,
+     *  lokasi_magang: float
+     * }>
+     */
     private array $vectorNormalizationResult;
+
+    /**
+     * @var array<array{
+     *  id: int,
+     *  score: float,
+     *  rank: int
+     * }>
+     */
     private array $ratioSystemResult;
+
+    /**
+     * @var array<array{
+     *  id: int,
+     *  pekerjaan: float,
+     *  open_remote: float,
+     *  jenis_magang: float,
+     *  bidang_industri: float,
+     *  lokasi_magang: float
+     * }>
+     */
+    private array $referencePointResult;
 
 
     public function __construct(array $criterias, array $alternatives, PreferensiMahasiswa $preferensiMahasiswa)
@@ -120,6 +151,7 @@ class MultiMOORA
         $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
         $this->vectorNormalization($euclideanNormalizationResult);
         $this->computeRatioSystem();
+        $this->computeReferencePoint();
     }
 
     /**
@@ -271,11 +303,74 @@ class MultiMOORA
         Storage::put('ratio_system_mahasiswa_1.json', $ratioSystemResultJSON);
     }
 
+    /**
+     * Compute reference point. The result of this computation will be place in the MultiMOORA object attribute
+     * @return void
+     */
     private function computeReferencePoint(): void
     {
-        $computeDeviation = function () : array {
-            return [];
-        };
+        $weights = [
+            'pekerjaan' => $this->kriteriaPekerjaan->bobot,
+            'open_remote' => $this->kriteriaOpenRemote->bobot,
+            'bidang_industri' => $this->kriteriaBidangIndustri->bobot,
+            'jenis_magang' => $this->kriteriaJenisMagang->bobot,
+            'lokasi_magang' => $this->kriteriaLokasiMagang->bobot
+        ];
+
+        $referencePointList = [];
+        foreach ($this->vectorNormalizationResult as $item) {
+            $maxVal = array_reduce($item, function (float $carry, float $curr) : float{
+                return $curr > $carry ? $curr : $carry;
+            }, PHP_FLOAT_MIN);
+
+            $referencePointList[$item['id']] = $maxVal;
+        }
+
+        $deviationScores = array_map(function (array $alt) use ($referencePointList, $weights) {
+            $pekerjaanScore = abs($referencePointList[$alt['id']] - $alt['pekerjaan'] * $weights['pekerjaan']);
+            $openRemoteScore = abs($referencePointList[$alt['id']] - $alt['open_remote'] * $weights['open_remote']);
+            $jenisMagangScore = abs($referencePointList[$alt['id']] - $alt['jenis_magang'] * $weights['jenis_magang']);
+            $bidangIndustriScore = abs($referencePointList[$alt['id']] - $alt['bidang_industri'] * $weights['bidang_industri']);
+            $lokasiMagangScore = abs($referencePointList[$alt['id']] - $alt['lokasi_magang'] * $weights['lokasi_magang']);
+
+            $maxScore = max($pekerjaanScore, $openRemoteScore, $jenisMagangScore, $bidangIndustriScore, $lokasiMagangScore);
+            return [
+                'id' => $alt['id'],
+                'pekerjaan' => $pekerjaanScore,
+                'open_remote' => $openRemoteScore,
+                'jenis_magang' => $jenisMagangScore,
+                'bidang_industri' => $bidangIndustriScore,
+                'lokasi_magang' => $lokasiMagangScore,
+                'max_score' => $maxScore
+            ];
+        }, $this->vectorNormalizationResult);
+
+        $referencePointResultJSON = json_encode($deviationScores, JSON_PRETTY_PRINT);
+        Storage::put('deviation_scores_mahasiswa_1.json', $referencePointResultJSON);
+
+        usort($deviationScores, function ($a, $b) {
+            return $b['max_score'] <=> $a['max_score'];
+        });
+
+        $referencePointFinalResult = [];
+        $rank = 1;
+        foreach ($deviationScores as $item) {
+            $referencePointFinalResult[] = [
+                'id' => $item['id'],
+                'pekerjaan' => $item['pekerjaan'],
+                'open_remote' => $item['open_remote'],
+                'jenis_magang' => $item['jenis_magang'],
+                'bidang_industri' => $item['bidang_industri'],
+                'lokasi_magang' => $item['lokasi_magang'],
+                'max_score' => $item['max_score'],
+                'rank' => $rank++
+            ];
+        }
+
+        $this->ratioSystemResult = $referencePointFinalResult;
+
+        $referenceFinalPointResultJSON = json_encode($referencePointFinalResult, JSON_PRETTY_PRINT);
+        Storage::put('reference_point_final_mahasiswa_1.json', $referenceFinalPointResultJSON);
     }
 
     private function computeFullMultiplicativeForm() {}
