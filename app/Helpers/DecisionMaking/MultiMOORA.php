@@ -224,6 +224,10 @@ class MultiMOORA
         $this->vectorNormalizationResult = $finalResult;
     }
 
+    /**
+     * Compute ratio system. The result of this computation will be place in the MultiMOORA object attribute
+     * @return void
+     */
     private function computeRatioSystem(): void
     {
         $weights = [
@@ -267,7 +271,12 @@ class MultiMOORA
         Storage::put('ratio_system_mahasiswa_1.json', $ratioSystemResultJSON);
     }
 
-    private function computeReferencePoint() {}
+    private function computeReferencePoint(): void
+    {
+        $computeDeviation = function () : array {
+            return [];
+        };
+    }
 
     private function computeFullMultiplicativeForm() {}
 
