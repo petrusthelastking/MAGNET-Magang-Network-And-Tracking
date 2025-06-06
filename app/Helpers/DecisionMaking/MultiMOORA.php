@@ -51,10 +51,21 @@ class MultiMOORA
      *  open_remote: float,
      *  jenis_magang: float,
      *  bidang_industri: float,
-     *  lokasi_magang: float
+     *  lokasi_magang: float,
+     *  max_score: float,
+     *  rank: int
      * }>
      */
     private array $referencePointResult;
+
+    /**
+     * @var array<array{
+     *  id: int,
+     *  score: float,
+     *  rank: int
+     * }>
+     */
+    private array $fmfResult;
 
 
     public function __construct(array $criterias, array $alternatives, PreferensiMahasiswa $preferensiMahasiswa)
@@ -152,6 +163,7 @@ class MultiMOORA
         $this->vectorNormalization($euclideanNormalizationResult);
         $this->computeRatioSystem();
         $this->computeReferencePoint();
+        $this->computeFullMultiplicativeForm();
     }
 
     /**
@@ -348,6 +360,8 @@ class MultiMOORA
         $referencePointResultJSON = json_encode($deviationScores, JSON_PRETTY_PRINT);
         Storage::put('deviation_scores_mahasiswa_1.json', $referencePointResultJSON);
 
+
+        // ranking process (descending)
         usort($deviationScores, function ($a, $b) {
             return $b['max_score'] <=> $a['max_score'];
         });
@@ -373,7 +387,58 @@ class MultiMOORA
         Storage::put('reference_point_final_mahasiswa_1.json', $referenceFinalPointResultJSON);
     }
 
-    private function computeFullMultiplicativeForm() {}
+    /**
+     * Compute Full Multiplicative Form (FMF). The result of this computation will be place in the MultiMOORA object attribute
+     * @return void
+     */
+    private function computeFullMultiplicativeForm(): void
+    {
+        $weights = [
+            'pekerjaan' => $this->kriteriaPekerjaan->bobot,
+            'open_remote' => $this->kriteriaOpenRemote->bobot,
+            'bidang_industri' => $this->kriteriaBidangIndustri->bobot,
+            'jenis_magang' => $this->kriteriaJenisMagang->bobot,
+            'lokasi_magang' => $this->kriteriaLokasiMagang->bobot
+        ];
+
+        $fmfScores = array_map(function (array $alt) use ($weights) : array{
+            $scores = [
+                pow($alt['pekerjaan'], $weights['pekerjaan']),
+                pow($alt['open_remote'], $weights['open_remote']),
+                pow($alt['bidang_industri'], $weights['bidang_industri']),
+                pow($alt['jenis_magang'], $weights['jenis_magang']),
+                pow($alt['lokasi_magang'], $weights['lokasi_magang'])
+            ];
+
+            return [
+                'id' => $alt['id'],
+                'score' => array_reduce($scores, function (float $carry, float $item) : float {
+                    return $carry * $item;
+                }, 1),
+            ];
+        }, $this->vectorNormalizationResult);
+
+
+        // ranking process (descending)
+        usort($fmfScores, function ($a, $b) {
+            return $b['score'] <=> $a['score'];
+        });
+
+        $fmfFinalRanks = [];
+        $rank = 1;
+        foreach ($fmfScores as $item) {
+            $fmfFinalRanks[] = [
+                'id' => $item['id'],
+                'score' => $item['score'],
+                'rank' => $rank++
+            ];
+        }
+
+        $this->fmfResult = $fmfFinalRanks;
+
+        $fmfFinalRanksJSON = json_encode($fmfFinalRanks, JSON_PRETTY_PRINT);
+        Storage::put('fmf_ranks_mahasiswa_1.json', $fmfFinalRanksJSON);
+    }
 
     private function computeFinalRank() {}
 }
