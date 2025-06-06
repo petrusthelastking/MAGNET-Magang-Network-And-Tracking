@@ -326,7 +326,8 @@ $redirectToDashboard = fn() => redirect()->route('dashboard');
                 <div>
                     <div class="mb-6">
                         <h2 class="text-xl font-semibold text-gray-900 mb-2">Seret untuk Mengurutkan</h2>
-                        <p class="text-sm text-gray-600">Urutkan kriteria dari yang paling prioritas (atas) hingga prioritas terakhir (bawah)</p>
+                        <p class="text-sm text-gray-600">Urutkan kriteria dari yang paling prioritas (atas) hingga
+                            prioritas terakhir (bawah)</p>
                     </div>
 
                     <!-- Sortable Criteria List -->
@@ -411,7 +412,8 @@ $redirectToDashboard = fn() => redirect()->route('dashboard');
                             if (badge) badge.textContent = index + 1;
                             if (priorityLabel) {
                                 priorityLabel.textContent = index === 0 ? 'Paling Penting' :
-                                    (index === 4 ? 'prioritas terakhir' : 'Prioritas ' + (index +
+                                    (index === 4 ? 'prioritas terakhir' : 'Prioritas ' + (
+                                        index +
                                         1));
                                 priorityLabel.className = `text-xs font-medium ${
                                     index === 0 ? 'text-green-600' :
@@ -429,29 +431,7 @@ $redirectToDashboard = fn() => redirect()->route('dashboard');
     </script>
 
     <!-- Custom CSS for sortable styling -->
-    <style>
-        .sortable-ghost {
-            opacity: 0.4;
-            transform: rotate(2deg);
-        }
-
-        .sortable-chosen {
-            cursor: grabbing !important;
-        }
-
-        .sortable-drag {
-            transform: rotate(5deg);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .sortable-item:hover {
-            transform: translateY(-1px);
-        }
-
-        .sortable-item.sortable-chosen:hover {
-            transform: none;
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <flux:modal name="response-modal" class="min-w-[24rem]">
         <div class="space-y-6">
