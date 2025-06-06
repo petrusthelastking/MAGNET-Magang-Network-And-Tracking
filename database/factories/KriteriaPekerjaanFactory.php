@@ -5,7 +5,9 @@ namespace Database\Factories;
 use App\Enums\DecisionMakingEnum;
 use App\Helpers\DecisionMaking\ROC;
 use App\Models\KriteriaPekerjaan;
+use App\Models\Mahasiswa;
 use App\Models\Pekerjaan;
+use App\Traits\BaseKriteriaFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -13,6 +15,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class KriteriaPekerjaanFactory extends Factory
 {
+    use BaseKriteriaFactory;
+
     protected $model = KriteriaPekerjaan::class;
 
     /**
@@ -26,6 +30,7 @@ class KriteriaPekerjaanFactory extends Factory
 
         return [
             'pekerjaan_id' => fn() => Pekerjaan::inRandomOrder()->value('id'),
+            'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
             'rank' => $rank,
             'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value)
         ];

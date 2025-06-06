@@ -5,6 +5,8 @@ namespace Database\Factories;
 use App\Enums\DecisionMakingEnum;
 use App\Helpers\DecisionMaking\ROC;
 use App\Models\KriteriaOpenRemote;
+use App\Models\Mahasiswa;
+use App\Traits\BaseKriteriaFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -12,6 +14,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class KriteriaOpenRemoteFactory extends Factory
 {
+    use BaseKriteriaFactory;
+
     protected $model = KriteriaOpenRemote::class;
 
     /**
@@ -25,6 +29,7 @@ class KriteriaOpenRemoteFactory extends Factory
 
         return [
             'open_remote' => $this->faker->randomElement(['ya', 'tidak']),
+            'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
             'rank' => $rank,
             'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value)
         ];
