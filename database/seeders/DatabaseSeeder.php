@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Faker\Factory as FakerFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -11,6 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $faker = FakerFactory::create();
+        $faker->seed(123);
+
         $this->call([
             MahasiswaSeeder::class,
             DosenPembimbingSeeder::class,
