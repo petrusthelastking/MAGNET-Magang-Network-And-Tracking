@@ -5,6 +5,7 @@ use App\Helpers\DecisionMaking\MultiMOORA;
 use App\Models\LowonganMagang;
 
 state([
+    'mahasiswa',
     'bidang_industri',
     'jenis_magang',
     'lokasi_magang',
@@ -15,33 +16,43 @@ state([
 ]);
 
 mount(function () {
+    $this->mahasiswa = auth('mahasiswa')->user();
+
+    $this->bidang_industri = $this->mahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
+    $this->jenis_magang = $this->mahasiswa->kriteriaJenisMagang->jenis_magang;
+    $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
+    $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan->nama;
+    $this->open_remote = $this->mahasiswa->kriteriaOpenRemote->open_remote;
+});
+
+$updatePreference = function () {
+    $this->isUpdatePreference = true;
+
     $lowonganMagangList = LowonganMagang::with([
-        'pekerjaan',
-        'perusahaan.bidangIndustri'
-        ])
-        ->get()
-        ->toArray();
-    $preferensiMahasiswa = auth('mahasiswa')->user()->preferensiMahasiswa()->first();
+        'pekerjaan:id,nama',
+        'lokasiMagang:id,lokasi',
+        'perusahaan.bidangIndustri:id,nama'
+    ])->get()->map(function ($item) {
+        return [
+            'id' => $item->id,
+            'pekerjaan' => $item->pekerjaan->nama ?? null,
+            'open_remote' => $item->open_remote,
+            'jenis_magang' => $item->jenis_magang,
+            'bidang_industri' => $item->perusahaan->bidangIndustri->nama ?? null,
+            'lokasi_magang' => $item->lokasiMagang->lokasi ?? null,
+        ];
+    })->toArray();
 
-    $this->bidang_industri = $preferensiMahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
-    $this->jenis_magang = $preferensiMahasiswa->kriteriaJenisMagang->jenis_magang;
-    $this->lokasi_magang = $preferensiMahasiswa->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
-    $this->pekerjaan = $preferensiMahasiswa->kriteriaPekerjaan->pekerjaan->nama;
-    $this->open_remote = $preferensiMahasiswa->kriteriaOpenRemote->open_remote;
-
-    $multimoora = new MultiMOORA([
+    $criterias = [
         $this->bidang_industri,
         $this->jenis_magang,
         $this->lokasi_magang,
         $this->pekerjaan,
         $this->open_remote
-    ], $lowonganMagangList);
+    ];
 
+    $multimoora = new MultiMOORA($criterias, $lowonganMagangList, $this->mahasiswa);
     $multimoora->computeMultiMOORA();
-});
-
-$updatePreference = function () {
-    $this->isUpdatePreference = true;
 };
 
 $cancelUpdatePreference = function () {

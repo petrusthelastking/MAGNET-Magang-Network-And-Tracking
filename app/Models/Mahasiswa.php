@@ -49,8 +49,28 @@ class Mahasiswa extends UserBase
         return $this->hasMany(KontrakMagang::class);
     }
 
-    public function preferensiMahasiswa()
+    public function kriteriaPekerjaan()
     {
-        return $this->hasOne(PreferensiMahasiswa::class);
+        return $this->hasOne(KriteriaPekerjaan::class);
+    }
+
+    public function kriteriaBidangIndustri()
+    {
+        return $this->hasOne(KriteriaBidangIndustri::class);
+    }
+
+    public function kriteriaLokasiMagang()
+    {
+        return $this->hasOne(KriteriaLokasiMagang::class);
+    }
+
+    public function kriteriaJenisMagang()
+    {
+        return $this->hasOne(KriteriaJenisMagang::class);
+    }
+
+    public function kriteriaOpenRemote()
+    {
+        return $this->hasOne(KriteriaOpenRemote::class);
     }
 }
