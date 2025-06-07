@@ -1,0 +1,21 @@
+@startuml
+
+node "Perangkat client" {
+  [Web Browser]
+}
+
+node "Web Server" {
+  component "HTTP server" <<Apache HTTP Server>>
+  component "Application" <<Laravel>>
+}
+
+node "Database Server" {
+    database "DB Magnet" <<MySQL>>
+}
+
+[Web Browser] --> "HTTP server" : HTTP Request
+"HTTP server" --> "Application" : Handle request
+"Application" --> "HTTP server" : Menyajikan konten
+"Application" --> "DB Magnet" : SQL Queries
+
+@enduml
