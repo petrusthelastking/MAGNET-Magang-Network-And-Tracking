@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\BerkasPengajuanMagang;
-use App\Models\PreferensiMahasiswa;
 use App\Models\KontrakMagang;
 use App\Models\UserBase;
 
@@ -72,5 +71,10 @@ class Mahasiswa extends UserBase
     public function kriteriaOpenRemote()
     {
         return $this->hasOne(KriteriaOpenRemote::class);
+    }
+
+    public function encodedAlternatives()
+    {
+        return $this->hasMany(EncodedAlternatives::class);
     }
 }

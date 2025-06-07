@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('vector_normalization', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
+            $table->foreignId('lowongan_magang_id')->constrained('lowongan_magang')->onDelete('cascade');
             $table->float('pekerjaan');
             $table->float('open_remote');
             $table->float('jenis_magang');
             $table->float('bidang_industri');
             $table->float('lokasi_magang');
-            $table->integer('rank');
             $table->timestamps();
         });
     }
