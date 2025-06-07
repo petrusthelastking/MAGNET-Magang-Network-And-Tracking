@@ -281,8 +281,6 @@ class MultiMOORA
         $rank = 1;
         foreach ($ratioSystemResult as $item) {
             $ratioSystemRank[] = [
-                'mahasiswa_id' => $this->mahasiswa->id,
-                'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'score' => $item['score'],
                 'rank' => $rank++,
                 'created_at' => now(),
@@ -353,8 +351,6 @@ class MultiMOORA
         $rank = 1;
         foreach ($deviationScores as $item) {
             $referencePointFinalResult[] = [
-                'mahasiswa_id' => $this->mahasiswa->id,
-                'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'pekerjaan' => $item['pekerjaan'],
                 'open_remote' => $item['open_remote'],
                 'jenis_magang' => $item['jenis_magang'],
@@ -413,8 +409,6 @@ class MultiMOORA
         $rank = 1;
         foreach ($fmfScores as $item) {
             $fmfFinalRanks[] = [
-                'mahasiswa_id' => $this->mahasiswa->id,
-                'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'score' => $item['score'],
                 'rank' => $rank++,
                 'created_at' => now(),
@@ -479,9 +473,5 @@ class MultiMOORA
         }
 
         $this->finalRanks = $finalRanks;
-
-        $finalRanksJSON = json_encode($finalRanks, JSON_PRETTY_PRINT);
-        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/final_ranks_alternatives.json';
-        Storage::put($file_path, $finalRanksJSON);
     }
 }
