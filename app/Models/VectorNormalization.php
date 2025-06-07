@@ -13,8 +13,7 @@ class VectorNormalization extends Model
     protected $table = 'vector_normalization';
 
     protected $fillable = [
-        'mahasiswa_id',
-        'lowongan_magang_id',
+        'final_rank_recommendation_id',
         'pekerjaan',
         'open_remote',
         'jenis_magang',

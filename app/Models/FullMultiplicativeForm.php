@@ -2,19 +2,17 @@
 
 namespace App\Models;
 
-use App\Traits\HasMultiMOORAProcess;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FullMultiplicativeForm extends Model
 {
-    use HasFactory, HasMultiMOORAProcess;
+    use HasFactory;
 
     protected $table = 'full_multiplicative_form';
 
     protected $fillable = [
-        'mahasiswa_id',
-        'lowongan_magang_id',
+        'final_rank_recommendation_id',
         'score',
         'rank'
     ];
