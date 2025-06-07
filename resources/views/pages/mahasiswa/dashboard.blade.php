@@ -1,20 +1,17 @@
 <?php
 
 use function Livewire\Volt\{state, mount};
-use App\Models\LowonganMagang;
+use App\Models\FinalRankRecommendation;
 
-state([
-    'ranking_results',
-    'recommendations'
-]);
+state(['ranking_results', 'recommendations']);
 
 mount(function () {
-    $recommendationInternshipsPath = 'preferensi_magang/' . auth('mahasiswa')->user()->id .'/final_ranks_alternatives.json';
-
-    if (Storage::exists($recommendationInternshipsPath)) {
-        $recommendationInternships = Storage::read($recommendationInternshipsPath);
-        $this->recommendations = json_decode($recommendationInternships, true);
-    }
+    $this->recommendations = FinalRankRecommendation::with(['lowonganMagang.perusahaan', 'lowonganMagang.pekerjaan'])
+        ->where('mahasiswa_id', auth('mahasiswa')->user()->id)
+        ->orderBy('rank', 'asc')
+        ->limit(20)
+        ->get()
+        ->toArray();
 });
 
 ?>
@@ -41,26 +38,21 @@ mount(function () {
 
         <div class="grid grid-cols-1 gap-3">
             @if ($recommendations && count($recommendations) > 0)
-                @for ($i=0; $i < count($recommendations); $i++)
+                @foreach ($recommendations as $item)
                     <div onclick="window.location='{{ route('mahasiswa.detail-perusahaan') }}'" role="button"
                         class="card shadow-lg hover:cursor-pointer">
                         <div class="card-body bg-white hover:bg-gray-100 transition-colors rounded-md">
                             <div class="flex align-middle items-center gap-4">
                                 <img src="{{ asset('img/company/company-kimia-farma.png') }}" alt="Logo Perusahaan"
                                     class="w-10 h-10 object-contain">
-                                <p>Lowongan #{{ $recommendation['lowongan_id'] ?? 'N/A' }}</p>
-                                <span class="ml-auto text-xs bg-green-100 px-2 py-1 rounded">
-                                    Score: {{ $recommendation['total_score'] ?? 'N/A' }}
-                                </span>
+                                <p>{{ $item['lowongan_magang']['perusahaan']['nama'] }}</p>
                             </div>
                             <div>
-                                <p class="font-bold text-base">Recommended Position</p>
-                                <p class="text-sm text-gray-600">Based on your preferences</p>
-                                <p class="text-xs text-gray-500">Rank: {{ $i + 1 }}</p>
+                                <p class="font-bold text-base">{{ $item['lowongan_magang']['pekerjaan']['nama'] }}</p>
                             </div>
                         </div>
                     </div>
-                @endfor
+                @endforeach
             @endif
         </div>
     </div>

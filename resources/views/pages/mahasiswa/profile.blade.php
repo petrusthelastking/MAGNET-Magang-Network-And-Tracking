@@ -1,8 +1,8 @@
 <?php
 
+use Flux\Flux;
 use function Livewire\Volt\{state, mount};
-use App\Helpers\DecisionMaking\MultiMOORA;
-use App\Models\LowonganMagang;
+use App\Helpers\DecisionMaking\RecommendationSystem;
 
 state([
     'mahasiswa',
@@ -27,32 +27,14 @@ mount(function () {
 
 $updatePreference = function () {
     $this->isUpdatePreference = true;
+};
 
-    $lowonganMagangList = LowonganMagang::with([
-        'pekerjaan:id,nama',
-        'lokasiMagang:id,lokasi',
-        'perusahaan.bidangIndustri:id,nama'
-    ])->get()->map(function ($item) {
-        return [
-            'id' => $item->id,
-            'pekerjaan' => $item->pekerjaan->nama ?? null,
-            'open_remote' => $item->open_remote,
-            'jenis_magang' => $item->jenis_magang,
-            'bidang_industri' => $item->perusahaan->bidangIndustri->nama ?? null,
-            'lokasi_magang' => $item->lokasiMagang->lokasi ?? null,
-        ];
-    })->toArray();
+$saveNewPreference = function () {
+    $recommendationSystem = new RecommendationSystem($this->mahasiswa);
+    $recommendationSystem->runRecommendationSystem();
 
-    $criterias = [
-        $this->bidang_industri,
-        $this->jenis_magang,
-        $this->lokasi_magang,
-        $this->pekerjaan,
-        $this->open_remote
-    ];
-
-    $multimoora = new MultiMOORA($criterias, $lowonganMagangList, $this->mahasiswa);
-    $multimoora->computeMultiMOORA();
+    Flux::modal('response-modal')->show();
+    $this->isUpdatePreference = false;
 };
 
 $cancelUpdatePreference = function () {
@@ -106,16 +88,42 @@ $cancelUpdatePreference = function () {
             </div>
 
             <div class="card-actions flex justify-end p-5">
-                @if (!$isUpdatePreference)
+                <div wire:show="!isUpdatePreference">
                     <flux:button wire:click="updatePreference" class="bg-magnet-sky-teal! text-white! hover:bg-emerald-400!" icon="pencil">
                         Edit data preferensi magang
                     </flux:button>
-                @else
+                </div>
+                <div wire:show="isUpdatePreference">
                     <flux:button wire:click="cancelUpdatePreference" class="bg-gray-700! text-white! hover:bg-gray-400!" icon="x">
                         Batalkan pembaruan
                     </flux:button>
-                @endif
+                    <flux:button wire:click="saveNewPreference" class="bg-magnet-sky-teal! text-white! hover:bg-emerald-400!" icon="pencil">
+                        Perbarui preferensi magang
+                    </flux:button>
+                </div>
             </div>
         </div>
     </div>
+
+
+        <flux:modal name="response-modal" class="min-w-[24rem]">
+        <div class="space-y-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <flux:icon.check class="w-8 h-8 text-green-600" />
+                </div>
+                <flux:heading size="lg">Memperbarui data preferensi magang</flux:heading>
+                <flux:text class="mt-2 text-gray-600">
+                    <p>Data preferensi magang sukses diperbarui</p>
+                </flux:text>
+            </div>
+            <div class="flex gap-2 justify-center">
+                <flux:modal.close>
+                    <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal px-8 py-2">
+                        Oke
+                    </flux:button>
+                </flux:modal.close>
+            </div>
+        </div>
+    </flux:modal>
 </div>

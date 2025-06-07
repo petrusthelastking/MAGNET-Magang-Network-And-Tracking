@@ -11,17 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reference_point', function (Blueprint $table) {
+        Schema::create('encoded_alternatives', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
             $table->foreignId('lowongan_magang_id')->constrained('lowongan_magang')->onDelete('cascade');
-            $table->float('pekerjaan');
-            $table->float('open_remote');
-            $table->float('jenis_magang');
-            $table->float('bidang_industri');
-            $table->float('lokasi_magang');
-            $table->float('max_score');
-            $table->integer('rank');
+            $table->integer('pekerjaan');
+            $table->integer('open_remote');
+            $table->integer('jenis_magang');
+            $table->integer('bidang_industri');
+            $table->integer('lokasi_magang');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reference_point');
+        Schema::dropIfExists('encoded_alternatives');
     }
 };
