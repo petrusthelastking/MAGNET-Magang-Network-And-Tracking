@@ -20,6 +20,7 @@ return new class extends Migration
             $table->float('jenis_magang');
             $table->float('bidang_industri');
             $table->float('lokasi_magang');
+            $table->float('max_score');
             $table->integer('rank');
             $table->timestamps();
         });

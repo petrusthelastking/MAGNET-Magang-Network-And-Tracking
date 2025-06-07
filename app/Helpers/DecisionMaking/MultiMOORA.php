@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Mahasiswa;
 use App\Models\RatioSystem;
+use App\Models\ReferencePoint;
 use App\Models\VectorNormalization;
 use Illuminate\Support\Facades\DB;
 
@@ -96,8 +97,9 @@ class MultiMOORA
         // start multimoora decision making
         $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
         $this->vectorNormalization($dataEncodingResult, $euclideanNormalizationResult);
+
         $this->computeRatioSystem();
-        // $this->computeReferencePoint();
+        $this->computeReferencePoint();
         // $this->computeFullMultiplicativeForm();
         // $this->computeFinalRank();
     }
@@ -320,19 +322,19 @@ class MultiMOORA
                 return $curr > $carry ? $curr : $carry;
             }, PHP_FLOAT_MIN);
 
-            $referencePointList[$item['id']] = $maxVal;
+            $referencePointList[$item['lowongan_magang_id']] = $maxVal;
         }
 
         $deviationScores = array_map(function (array $alt) use ($referencePointList, $weights) {
-            $pekerjaanScore = abs($referencePointList[$alt['id']] - $alt['pekerjaan'] * $weights['pekerjaan']);
-            $openRemoteScore = abs($referencePointList[$alt['id']] - $alt['open_remote'] * $weights['open_remote']);
-            $jenisMagangScore = abs($referencePointList[$alt['id']] - $alt['jenis_magang'] * $weights['jenis_magang']);
-            $bidangIndustriScore = abs($referencePointList[$alt['id']] - $alt['bidang_industri'] * $weights['bidang_industri']);
-            $lokasiMagangScore = abs($referencePointList[$alt['id']] - $alt['lokasi_magang'] * $weights['lokasi_magang']);
+            $pekerjaanScore = abs($referencePointList[$alt['lowongan_magang_id']] - $alt['pekerjaan'] * $weights['pekerjaan']);
+            $openRemoteScore = abs($referencePointList[$alt['lowongan_magang_id']] - $alt['open_remote'] * $weights['open_remote']);
+            $jenisMagangScore = abs($referencePointList[$alt['lowongan_magang_id']] - $alt['jenis_magang'] * $weights['jenis_magang']);
+            $bidangIndustriScore = abs($referencePointList[$alt['lowongan_magang_id']] - $alt['bidang_industri'] * $weights['bidang_industri']);
+            $lokasiMagangScore = abs($referencePointList[$alt['lowongan_magang_id']] - $alt['lokasi_magang'] * $weights['lokasi_magang']);
 
             $maxScore = max($pekerjaanScore, $openRemoteScore, $jenisMagangScore, $bidangIndustriScore, $lokasiMagangScore);
             return [
-                'id' => $alt['id'],
+                'lowongan_magang_id' => $alt['lowongan_magang_id'],
                 'pekerjaan' => $pekerjaanScore,
                 'open_remote' => $openRemoteScore,
                 'jenis_magang' => $jenisMagangScore,
@@ -341,11 +343,6 @@ class MultiMOORA
                 'max_score' => $maxScore
             ];
         }, $this->vectorNormalizationResult);
-
-        $referencePointResultJSON = json_encode($deviationScores, JSON_PRETTY_PRINT);
-        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/deviation_scores.json';
-        Storage::put($file_path, $referencePointResultJSON);
-
 
         // ranking process (descending)
         usort($deviationScores, function ($a, $b) {
@@ -356,22 +353,25 @@ class MultiMOORA
         $rank = 1;
         foreach ($deviationScores as $item) {
             $referencePointFinalResult[] = [
-                'id' => $item['id'],
+                'mahasiswa_id' => $this->mahasiswa->id,
+                'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'pekerjaan' => $item['pekerjaan'],
                 'open_remote' => $item['open_remote'],
                 'jenis_magang' => $item['jenis_magang'],
                 'bidang_industri' => $item['bidang_industri'],
                 'lokasi_magang' => $item['lokasi_magang'],
                 'max_score' => $item['max_score'],
-                'rank' => $rank++
+                'rank' => $rank++,
+                'created_at' => now(),
+                'updated_at' => now()
             ];
         }
 
-        $this->referencePointResult = $referencePointFinalResult;
+        DB::transaction(function () use ($referencePointFinalResult) {
+            ReferencePoint::insert($referencePointFinalResult);
+        });
 
-        $referenceFinalPointResultJSON = json_encode($referencePointFinalResult, JSON_PRETTY_PRINT);
-        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/reference_point.json';
-        Storage::put($file_path, $referenceFinalPointResultJSON);
+        $this->referencePointResult = $referencePointFinalResult;
     }
 
     /**
