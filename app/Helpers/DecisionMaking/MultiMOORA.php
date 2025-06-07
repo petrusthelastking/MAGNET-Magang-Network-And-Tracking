@@ -2,6 +2,7 @@
 
 namespace App\Helpers\DecisionMaking;
 
+use App\Models\EncodedAlternatives;
 use App\Models\KriteriaBidangIndustri;
 use App\Models\KriteriaJenisMagang;
 use App\Models\KriteriaLokasiMagang;
@@ -9,13 +10,11 @@ use App\Models\KriteriaOpenRemote;
 use App\Models\KriteriaPekerjaan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use App\Models\LokasiMagang;
 use App\Models\Mahasiswa;
+use Illuminate\Support\Facades\DB;
 
 class MultiMOORA
 {
-    private array $criterias;
-    private array $alternatives;
     private Mahasiswa $mahasiswa;
     private KriteriaPekerjaan $kriteriaPekerjaan;
     private KriteriaOpenRemote $kriteriaOpenRemote;
@@ -77,10 +76,8 @@ class MultiMOORA
     private array $finalRanks;
 
 
-    public function __construct(array $criterias, array $alternatives, Mahasiswa $mahasiswa)
+    public function __construct(Mahasiswa $mahasiswa)
     {
-        $this->criterias = $criterias;
-        $this->alternatives = $alternatives;
         $this->mahasiswa = $mahasiswa;
 
         $this->kriteriaPekerjaan = $this->mahasiswa->kriteriaPekerjaan;
@@ -92,7 +89,6 @@ class MultiMOORA
 
     public function computeMultiMOORA(): void
     {
-        $this->dataCategorization();
         $dataEncodingResult = $this->dataEncoding();
 
         // start multimoora decision making
@@ -105,67 +101,37 @@ class MultiMOORA
     }
 
     /**
-     * Compute data categorization from raw alternatives data
-     * @return void
-     */
-    private function dataCategorization(): void
-    {
-        $lokasiDataFromDB = LokasiMagang::all()
-            ->groupBy('kategori_lokasi')
-            ->map(function ($group) {
-                return $group->pluck('lokasi');
-            })
-            ->toArray();
-
-        $locationMap = [];
-        foreach ($lokasiDataFromDB as $category => $locations) {
-            foreach ($locations as $location) {
-                $locationMap[$location] = $category;
-            }
-        }
-
-        foreach ($this->alternatives as &$alt) {
-            $lokasi = $alt['lokasi_magang'];
-
-            if (isset($locationMap[$lokasi])) {
-                $alt['lokasi_magang'] = $locationMap[$lokasi];
-            }
-        }
-
-        $jsonDataCategorized = json_encode($this->alternatives, JSON_PRETTY_PRINT);
-        $file_path = 'lowongan_magang/alternatives_categorized.json';
-        Storage::put($file_path, $jsonDataCategorized);
-    }
-
-    /**
      * Compute data encoding based from to all alternatives data based on user preference
      * @return array<int, array<string, int>>
      */
-    private function dataEncoding(): array
+    private function dataEncoding(): void
     {
-        $pekerjaan = $this->kriteriaPekerjaan->pekerjaan->nama;
-        $bidang_industri = $this->kriteriaBidangIndustri->bidangIndustri->nama;
-        $jenis_magang = $this->kriteriaJenisMagang->jenis_magang;
-        $lokasi_magang = $this->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
-        $open_remote = $this->kriteriaOpenRemote->open_remote;
+        $preference = [
+            'pekerjaan' => $this->kriteriaPekerjaan->pekerjaan->nama,
+            'bidang_industri' => $this->kriteriaBidangIndustri->bidangIndustri->nama,
+            'jenis_magang' => $this->kriteriaJenisMagang->jenis_magang,
+            'lokasi_magang' => $this->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi,
+            'open_remote' => $this->kriteriaOpenRemote->open_remote
+        ];
 
         $dataCategorized = Storage::read('lowongan_magang/alternatives_categorized.json');
         $dataCategorizedDecoded = json_decode($dataCategorized, true);
 
-        foreach ($dataCategorizedDecoded as &$item) {
-            $item['pekerjaan'] = $item['pekerjaan'] == $pekerjaan ? 2 : 1;
-            $item['bidang_industri'] = $item['bidang_industri'] == $bidang_industri ? 2 : 1;
-            $item['jenis_magang'] = $item['jenis_magang'] == $jenis_magang ? 2 : 1;
-            $item['lokasi_magang'] = $item['lokasi_magang'] == $lokasi_magang ? 2 : 1;
-            $item['open_remote'] = $item['open_remote'] == $open_remote ? 2 : 1;
-        }
+        $insertData = array_map(function (array $item) use ($preference) : array {
+            return [
+                'mahasiswa_id' => $this->mahasiswa->id,
+                'lowongan_magang_id' => $item['id'],
+                'pekerjaan' => $item['pekerjaan'] == $preference['pekerjaan'] ? 2 : 1 ,
+                'open_remote' => $item['open_remote'] == $preference['open_remote'] ? 2 : 1,
+                'jenis_magang' => $item['jenis_magang'] == $preference['jenis_magang'] ? 2 : 1,
+                'bidang_industri' => $item['bidang_industri'] == $preference['bidang_industri'] ? 2 : 1,
+                'lokasi_magang' => $item['lokasi_magang'] == $preference['lokasi_magang'] ? 2 : 1
+            ];
+        }, $dataCategorizedDecoded);
 
-        // encoded alternatives for current user
-        $dataCategorizedEncoded = json_encode($dataCategorizedDecoded, JSON_PRETTY_PRINT);
-        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/alternatives_encoded.json';
-        Storage::put($file_path, $dataCategorizedEncoded);
-
-        return $dataCategorizedDecoded;
+        DB::transaction(function () use ($insertData) {
+            EncodedAlternatives::insert($insertData);
+        });
     }
 
     /**
