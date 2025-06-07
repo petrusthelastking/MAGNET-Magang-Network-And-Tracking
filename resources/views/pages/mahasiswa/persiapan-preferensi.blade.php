@@ -61,50 +61,43 @@ $updateCriteriaOrder = function ($orderedKeys) {
 
 $storePreferensiMahasiswa = function () {
     DB::transaction(function () {
+        $mhs_id = auth('mahasiswa')->user()->id;
         $kriteria_pekerjaan = KriteriaPekerjaan::create([
             'pekerjaan_id' => $this->pekerjaan,
+            'mahasiswa_id' => $mhs_id,
             'rank' => $this->pekerjaan_rank,
             'bobot' => ROC::getWeight($this->pekerjaan_rank, 5),
         ]);
 
         $kriteria_bidang_industri = KriteriaBidangIndustri::create([
             'bidang_industri_id' => $this->bidang_industri,
+            'mahasiswa_id' => $mhs_id,
             'rank' => $this->bidang_industri_rank,
             'bobot' => ROC::getWeight($this->bidang_industri_rank, 5),
         ]);
 
         $kriteria_lokasi_magang = KriteriaLokasiMagang::create([
             'lokasi_magang_id' => $this->lokasi_magang,
+            'mahasiswa_id' => $mhs_id,
             'rank' => $this->lokasi_magang_rank,
             'bobot' => ROC::getWeight($this->lokasi_magang_rank, 5),
         ]);
 
         $kriteria_jenis_magang = KriteriaJenisMagang::create([
             'jenis_magang' => $this->jenis_magang,
+            'mahasiswa_id' => $mhs_id,
             'rank' => $this->jenis_magang_rank,
             'bobot' => ROC::getWeight($this->jenis_magang_rank, 5),
         ]);
 
         $kriteria_open_remote = KriteriaOpenRemote::create([
             'open_remote' => $this->open_remote,
+            'mahasiswa_id' => $mhs_id,
             'rank' => $this->open_remote_rank,
             'bobot' => ROC::getWeight($this->open_remote_rank, 5),
         ]);
 
-        $preferensi_mahasiswa = PreferensiMahasiswa::create([
-            'mahasiswa_id' => auth('mahasiswa')->user()->id,
-            'kriteria_pekerjaan_id' => $kriteria_pekerjaan->id,
-            'kriteria_bidang_industri_id' => $kriteria_bidang_industri->id,
-            'kriteria_lokasi_magang_id' => $kriteria_lokasi_magang->id,
-            'kriteria_jenis_magang_id' => $kriteria_jenis_magang->id,
-            'kriteria_open_remote_id' => $kriteria_open_remote->id,
-        ]);
-
-        if ($preferensi_mahasiswa) {
-            $message = 'Data preferensi magang berhasil dibuat';
-        } else {
-            $message = 'Data preferensi magang gagal dibuat!';
-        }
+        $message = 'Data preferensi magang berhasil dibuat';
 
         session()->flash('task', 'Membuat data preferensi magang');
         session()->flash('message', $message);
@@ -429,9 +422,6 @@ $redirectToDashboard = fn() => redirect()->route('dashboard');
             }
         });
     </script>
-
-    <!-- Custom CSS for sortable styling -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <flux:modal name="response-modal" class="min-w-[24rem]">
         <div class="space-y-6">
