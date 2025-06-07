@@ -3,12 +3,12 @@
 namespace App\Helpers\DecisionMaking;
 
 use App\Models\EncodedAlternatives;
+use App\Models\FullMultiplicativeForm;
 use App\Models\KriteriaBidangIndustri;
 use App\Models\KriteriaJenisMagang;
 use App\Models\KriteriaLokasiMagang;
 use App\Models\KriteriaOpenRemote;
 use App\Models\KriteriaPekerjaan;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Mahasiswa;
 use App\Models\RatioSystem;
@@ -100,7 +100,7 @@ class MultiMOORA
 
         $this->computeRatioSystem();
         $this->computeReferencePoint();
-        // $this->computeFullMultiplicativeForm();
+        $this->computeFullMultiplicativeForm();
         // $this->computeFinalRank();
     }
 
@@ -398,10 +398,8 @@ class MultiMOORA
             ];
 
             return [
-                'id' => $alt['id'],
-                'score' => array_reduce($scores, function (float $carry, float $item): float {
-                    return $carry * $item;
-                }, 1),
+                'lowongan_magang_id' => $alt['lowongan_magang_id'],
+                'score' => array_reduce($scores, fn($carry, $item) => $carry * $item, 1),
             ];
         }, $this->vectorNormalizationResult);
 
@@ -415,17 +413,20 @@ class MultiMOORA
         $rank = 1;
         foreach ($fmfScores as $item) {
             $fmfFinalRanks[] = [
-                'id' => $item['id'],
+                'mahasiswa_id' => $this->mahasiswa->id,
+                'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'score' => $item['score'],
-                'rank' => $rank++
+                'rank' => $rank++,
+                'created_at' => now(),
+                'updated_at' => now()
             ];
         }
 
-        $this->fmfResult = $fmfFinalRanks;
+        DB::transaction(function () use ($fmfFinalRanks) {
+            FullMultiplicativeForm::insert($fmfFinalRanks);
+        });
 
-        $fmfFinalRanksJSON = json_encode($fmfFinalRanks, JSON_PRETTY_PRINT);
-        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/fmf_ranks.json';
-        Storage::put($file_path, $fmfFinalRanksJSON);
+        $this->fmfResult = $fmfFinalRanks;
     }
 
     /**
