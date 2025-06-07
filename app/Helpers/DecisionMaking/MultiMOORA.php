@@ -11,6 +11,7 @@ use App\Models\KriteriaPekerjaan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Mahasiswa;
+use App\Models\RatioSystem;
 use App\Models\VectorNormalization;
 use Illuminate\Support\Facades\DB;
 
@@ -95,7 +96,7 @@ class MultiMOORA
         // start multimoora decision making
         $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
         $this->vectorNormalization($dataEncodingResult, $euclideanNormalizationResult);
-        // $this->computeRatioSystem();
+        $this->computeRatioSystem();
         // $this->computeReferencePoint();
         // $this->computeFullMultiplicativeForm();
         // $this->computeFinalRank();
@@ -259,7 +260,7 @@ class MultiMOORA
 
         $ratioSystemResult = array_map(function (array $alt) use ($weights) {
             return [
-                'id' => $alt['id'],
+                'lowongan_magang_id' => $alt['lowongan_magang_id'],
                 'score' => array_sum([
                     $alt['pekerjaan'] * $weights['pekerjaan'],
                     $alt['open_remote'] * $weights['open_remote'],
@@ -278,17 +279,25 @@ class MultiMOORA
         $rank = 1;
         foreach ($ratioSystemResult as $item) {
             $ratioSystemRank[] = [
-                'id' => $item['id'],
+                'mahasiswa_id' => $this->mahasiswa->id,
+                'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'score' => $item['score'],
-                'rank' => $rank++
+                'rank' => $rank++,
+                'created_at' => now(),
+                'updated_at' => now()
             ];
         }
 
-        $this->ratioSystemResult = $ratioSystemRank;
+        DB::transaction(function () use ($ratioSystemRank) {
+            // RatioSystem::upsert(
+            //     $ratioSystemRank,
+            //     ['mahasiswa_id', 'lowongan_magang_id'],
+            //     ['score', 'rank']
+            // );
+            RatioSystem::insert($ratioSystemRank);
+        });
 
-        $ratioSystemResultJSON = json_encode($ratioSystemRank, JSON_PRETTY_PRINT);
-        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/ratio_system.json';
-        Storage::put($file_path, $ratioSystemResultJSON);
+        $this->ratioSystemResult = $ratioSystemRank;
     }
 
     /**
