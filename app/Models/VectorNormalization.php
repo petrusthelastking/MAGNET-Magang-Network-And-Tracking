@@ -6,11 +6,11 @@ use App\Traits\HasMultiMOORAProcess;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EncodedAlternatives extends Model
+class VectorNormalization extends Model
 {
     use HasFactory, HasMultiMOORAProcess;
 
-    protected $model = 'encoded_alternatives';
+    protected $table = 'vector_normalization';
 
     protected $fillable = [
         'mahasiswa_id',

@@ -11,6 +11,7 @@ use App\Models\KriteriaPekerjaan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Mahasiswa;
+use App\Models\VectorNormalization;
 use Illuminate\Support\Facades\DB;
 
 class MultiMOORA
@@ -93,18 +94,18 @@ class MultiMOORA
 
         // start multimoora decision making
         $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
-        $this->vectorNormalization($euclideanNormalizationResult);
-        $this->computeRatioSystem();
-        $this->computeReferencePoint();
-        $this->computeFullMultiplicativeForm();
-        $this->computeFinalRank();
+        $this->vectorNormalization($dataEncodingResult, $euclideanNormalizationResult);
+        // $this->computeRatioSystem();
+        // $this->computeReferencePoint();
+        // $this->computeFullMultiplicativeForm();
+        // $this->computeFinalRank();
     }
 
     /**
      * Compute data encoding based from to all alternatives data based on user preference
      * @return array<int, array<string, int>>
      */
-    private function dataEncoding(): void
+    private function dataEncoding(): array
     {
         $preference = [
             'pekerjaan' => $this->kriteriaPekerjaan->pekerjaan->nama,
@@ -132,6 +133,8 @@ class MultiMOORA
         DB::transaction(function () use ($insertData) {
             EncodedAlternatives::insert($insertData);
         });
+
+        return $insertData;
     }
 
     /**
@@ -170,33 +173,22 @@ class MultiMOORA
             $euclideanNormalizationList[$criteria] = $computeEuclidean($list);
         }
 
-        $euclideanNormalizationEncoded = json_encode($euclideanNormalizationList, JSON_PRETTY_PRINT);
-        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/euclidean_normalization.json';
-        Storage::put($file_path, $euclideanNormalizationEncoded);
-
         return $euclideanNormalizationList;
     }
 
     /**
      * Compute vector normalization for all alternatives data
+     * @param array $encodedAlternatives
      * @param array $euclideanNormalization
      * @return void
      */
-    private function vectorNormalization(array $euclideanNormalization): void
+    private function vectorNormalization(array $encodedAlternatives, array $euclideanNormalization): void
     {
-        $preferenceInternshipFilePath = 'preferensi_magang/' . $this->mahasiswa->id . '/alternatives_encoded.json';
-        $preferenceInternship = Storage::read($preferenceInternshipFilePath);
-        $preferenceInternship = json_decode($preferenceInternship, true);
-
-        $euclidean_file_path = 'preferensi_magang/' . $this->mahasiswa->id .  '/euclidean_normalization.json';
-        $euclideanNormalization = Storage::read($euclidean_file_path);
-        $euclideanNormalizationD = json_decode($euclideanNormalization, true);
-
-        $pekerjaanList = collect($preferenceInternship)->pluck('pekerjaan')->all();
-        $bidangIndustriList = collect($preferenceInternship)->pluck('bidang_industri')->all();
-        $jenisMagangList = collect($preferenceInternship)->pluck('jenis_magang')->all();
-        $lokasiMagangList = collect($preferenceInternship)->pluck('lokasi_magang')->all();
-        $openRemoteList = collect($preferenceInternship)->pluck('open_remote')->all();
+        $pekerjaanList = collect($encodedAlternatives)->pluck('pekerjaan')->all();
+        $bidangIndustriList = collect($encodedAlternatives)->pluck('bidang_industri')->all();
+        $jenisMagangList = collect($encodedAlternatives)->pluck('jenis_magang')->all();
+        $lokasiMagangList = collect($encodedAlternatives)->pluck('lokasi_magang')->all();
+        $openRemoteList = collect($encodedAlternatives)->pluck('open_remote')->all();
 
         $listOfCriterias = [
             'pekerjaan' => $pekerjaanList,
@@ -206,10 +198,21 @@ class MultiMOORA
             'jenis_magang' => $jenisMagangList
         ];
 
-        $computeVectorNormalization = function (string $criteria, array $list) use ($euclideanNormalizationD): array {
+
+        /**
+         * Computes the vector normalization for a given criteria using Euclidean normalization.
+         *
+         * This function takes a specific criteria and a list of values, then normalizes each value
+         * by dividing it with the corresponding Euclidean normalization value for that criteria.
+         *
+         * @param string $criteria The key used to access the corresponding normalization value.
+         * @param array $list An array of numeric values to normalize.
+         * @return array An array of normalized values.
+         */
+        $computeVectorNormalization = function (string $criteria, array $list) use ($euclideanNormalization): array {
             $result = [];
             foreach ($list as $item) {
-                $result[] = $item / $euclideanNormalizationD[$criteria];
+                $result[] = $item / $euclideanNormalization[$criteria];
             }
 
             return $result;
@@ -220,10 +223,11 @@ class MultiMOORA
             $tempResult[$criteria] = $computeVectorNormalization($criteria, $list);
         }
 
-        $finalResult = [];
-        for ($i = 0; $i < count($preferenceInternship); $i++) {
-            $finalResult[] = [
-                'id' => $preferenceInternship[$i]['id'],
+        $finalVectorNormalization = [];
+        for ($i = 0; $i < count($encodedAlternatives); $i++) {
+            $finalVectorNormalization[] = [
+                'mahasiswa_id' => $this->mahasiswa->id,
+                'lowongan_magang_id' => $encodedAlternatives[$i]['lowongan_magang_id'],
                 'pekerjaan' => $tempResult['pekerjaan'][$i],
                 'open_remote' => $tempResult['open_remote'][$i],
                 'jenis_magang' => $tempResult['jenis_magang'][$i],
@@ -232,11 +236,11 @@ class MultiMOORA
             ];
         }
 
-        $finalResultEncoded = json_encode($finalResult, JSON_PRETTY_PRINT);
-        $file_path = 'preferensi_magang/' . $this->mahasiswa->id . '/vector_normalization.json';
-        Storage::put($file_path, $finalResultEncoded);
+        DB::transaction(function () use ($finalVectorNormalization) {
+            VectorNormalization::insert($finalVectorNormalization);
+        });
 
-        $this->vectorNormalizationResult = $finalResult;
+        $this->vectorNormalizationResult = $finalVectorNormalization;
     }
 
     /**
