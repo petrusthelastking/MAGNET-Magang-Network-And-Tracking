@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
+use App\Traits\HasMultiMOORAProcess;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ReferencePoint extends Model
 {
-    use HasFactory;
+    use HasFactory, HasMultiMOORAProcess;
 
     protected $table = 'reference_point';
 
     protected $fillable = [
-        'final_rank_recommendation_id',
+        'mahasiswa_id',
+        'lowongan_magang_id',
         'pekerjaan',
         'open_remote',
         'jenis_magang',
