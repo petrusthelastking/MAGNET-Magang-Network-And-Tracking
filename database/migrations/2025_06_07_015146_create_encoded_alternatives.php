@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('encoded_alternatives', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
+            $table->foreignId('lowongan_magang_id')->constrained('lowongan_magang')->onDelete('cascade');
             $table->integer('pekerjaan');
             $table->integer('open_remote');
             $table->integer('jenis_magang');
