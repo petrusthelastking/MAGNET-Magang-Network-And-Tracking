@@ -33,7 +33,7 @@ class RecommendationSystem
     {
         $this->dataCategorization();
 
-        $multiMoora = new MultiMOORA($this->mahasiswa);
+        $multiMoora = new MultiMOORA($this->mahasiswa, count($this->alternatives));
         $multiMoora->computeMultiMOORA();
     }
 

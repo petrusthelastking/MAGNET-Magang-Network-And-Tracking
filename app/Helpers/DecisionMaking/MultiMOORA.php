@@ -3,6 +3,7 @@
 namespace App\Helpers\DecisionMaking;
 
 use App\Models\EncodedAlternatives;
+use App\Models\FinalRankRecommendation;
 use App\Models\FullMultiplicativeForm;
 use App\Models\KriteriaBidangIndustri;
 use App\Models\KriteriaJenisMagang;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 
 class MultiMOORA
 {
+    private int $totalAlternatives;
     private Mahasiswa $mahasiswa;
     private KriteriaPekerjaan $kriteriaPekerjaan;
     private KriteriaOpenRemote $kriteriaOpenRemote;
@@ -69,19 +71,11 @@ class MultiMOORA
      */
     private array $fmfResult;
 
-    /**
-     * @var array<array{
-     *  id: int,
-     *  avg_rank: float,
-     *  rank: int
-     * }>
-     */
-    private array $finalRanks;
 
-
-    public function __construct(Mahasiswa $mahasiswa)
+    public function __construct(Mahasiswa $mahasiswa, int $totalAlternatives)
     {
         $this->mahasiswa = $mahasiswa;
+        $this->totalAlternatives = $totalAlternatives;
 
         $this->kriteriaPekerjaan = $this->mahasiswa->kriteriaPekerjaan;
         $this->kriteriaOpenRemote = $this->mahasiswa->kriteriaOpenRemote;
@@ -101,7 +95,7 @@ class MultiMOORA
         $this->computeRatioSystem();
         $this->computeReferencePoint();
         $this->computeFullMultiplicativeForm();
-        // $this->computeFinalRank();
+        $this->computeFinalRank();
     }
 
     /**
@@ -129,7 +123,9 @@ class MultiMOORA
                 'open_remote' => $item['open_remote'] == $preference['open_remote'] ? 2 : 1,
                 'jenis_magang' => $item['jenis_magang'] == $preference['jenis_magang'] ? 2 : 1,
                 'bidang_industri' => $item['bidang_industri'] == $preference['bidang_industri'] ? 2 : 1,
-                'lokasi_magang' => $item['lokasi_magang'] == $preference['lokasi_magang'] ? 2 : 1
+                'lokasi_magang' => $item['lokasi_magang'] == $preference['lokasi_magang'] ? 2 : 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ];
         }, $dataCategorizedDecoded);
 
@@ -235,7 +231,7 @@ class MultiMOORA
                 'open_remote' => $tempResult['open_remote'][$i],
                 'jenis_magang' => $tempResult['jenis_magang'][$i],
                 'bidang_industri' => $tempResult['bidang_industri'][$i],
-                'lokasi_magang' => $tempResult['lokasi_magang'][$i]
+                'lokasi_magang' => $tempResult['lokasi_magang'][$i],
             ];
         }
 
@@ -281,6 +277,8 @@ class MultiMOORA
         $rank = 1;
         foreach ($ratioSystemResult as $item) {
             $ratioSystemRank[] = [
+                'mahasiswa_id' => $this->mahasiswa->id,
+                'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'score' => $item['score'],
                 'rank' => $rank++,
                 'created_at' => now(),
@@ -351,6 +349,8 @@ class MultiMOORA
         $rank = 1;
         foreach ($deviationScores as $item) {
             $referencePointFinalResult[] = [
+                'mahasiswa_id' => $this->mahasiswa->id,
+                'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'pekerjaan' => $item['pekerjaan'],
                 'open_remote' => $item['open_remote'],
                 'jenis_magang' => $item['jenis_magang'],
@@ -409,6 +409,8 @@ class MultiMOORA
         $rank = 1;
         foreach ($fmfScores as $item) {
             $fmfFinalRanks[] = [
+                'mahasiswa_id' => $this->mahasiswa->id,
+                'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'score' => $item['score'],
                 'rank' => $rank++,
                 'created_at' => now(),
@@ -429,9 +431,9 @@ class MultiMOORA
      */
     private function computeFinalRank()
     {
-        $ratioSystemRanks = array_column($this->ratioSystemResult, 'rank', 'id');
-        $referencePointRanks = array_column($this->referencePointResult, 'rank', 'id');
-        $fmfRanks = array_column($this->fmfResult, 'rank', 'id');
+        $ratioSystemRanks = array_column($this->ratioSystemResult, 'rank', 'lowongan_magang_id');
+        $referencePointRanks = array_column($this->referencePointResult, 'rank', 'lowongan_magang_id');
+        $fmfRanks = array_column($this->fmfResult, 'rank', 'lowongan_magang_id');
 
         // collect all IDs
         $allIDs = array_unique(
@@ -446,7 +448,8 @@ class MultiMOORA
         $combinedArray = [];
         foreach ($allIDs as $id) {
             $avgRank = array_sum([$ratioSystemRanks[$id], $referencePointRanks[$id], $fmfRanks[$id]]) / 3;
-            $combinedArray[$id] = [
+            $combinedArray[] = [
+                'lowongan_magang_id' => $id,
                 'ratio_system_rank' => $ratioSystemRanks[$id] ?? null,
                 'reference_point_rank' => $referencePointRanks[$id] ?? null,
                 'fmf_rank' => $fmfRanks[$id] ?? null,
@@ -459,19 +462,45 @@ class MultiMOORA
             return $a['avg_rank'] <=> $b['avg_rank'];
         });
 
+        $ratioSystemIDs = RatioSystem::select('id')
+            ->where('mahasiswa_id', $this->mahasiswa->id)
+            ->orderBy('updated_at', 'desc')
+            ->limit($this->totalAlternatives)
+            ->get()
+            ->toArray();
+
+        $referencePointIDs = ReferencePoint::select('id')
+            ->where('mahasiswa_id', $this->mahasiswa->id)
+            ->orderBy('updated_at', 'desc')
+            ->limit($this->totalAlternatives)
+            ->get()
+            ->toArray();
+
+        $fmfIDs = FullMultiplicativeForm::select('id')
+            ->where('mahasiswa_id', $this->mahasiswa->id)
+            ->orderBy('updated_at', 'desc')
+            ->limit($this->totalAlternatives)
+            ->get()
+            ->toArray();
+
         $finalRanks = [];
         $rank = 1;
-        foreach ($combinedArray as $key => $val) {
-            $finalRanks[$key] = [
-                'id' => $key,
-                'ratio_system_rank' => $val['ratio_system_rank'],
-                'reference_point_rank' => $val['reference_point_rank'],
-                'fmf_rank' => $val['fmf_rank'],
-                'avg_rank' => $val['avg_rank'],
-                'final_rank' => $rank++
+        foreach ($combinedArray as $key => $item) {
+            $finalRanks[] = [
+                'mahasiswa_id' => $this->mahasiswa->id,
+                'lowongan_magang_id' => $item['lowongan_magang_id'],
+                'ratio_system_id' => $ratioSystemIDs[$key]['id'],
+                'reference_point_id' => $referencePointIDs[$key]['id'],
+                'fmf_id' => $fmfIDs[$key]['id'],
+                'avg_rank' => $item['avg_rank'],
+                'rank' => $rank++,
+                'created_at' => now(),
+                'updated_at' => now()
             ];
         }
 
-        $this->finalRanks = $finalRanks;
+        DB::transaction(function () use ($finalRanks) {
+            FinalRankRecommendation::insert($finalRanks);
+        });
     }
 }
