@@ -24,7 +24,7 @@ class LowonganMagang extends Model
         'perusahaan_id',
     ];
 
-    public function lokasiMagang() {
+    public function lokasi_magang() {
         return $this->belongsTo(LokasiMagang::class);
     }
 
