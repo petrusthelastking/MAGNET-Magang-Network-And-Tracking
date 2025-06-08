@@ -7,16 +7,17 @@ use App\Models\Mahasiswa;
 layout('components.layouts.user.main');
 
 state([
-    'mahasiswa' => null,
-    'nama' => '',
-    'nim' => '',
-    'jenis_kelamin' => null,
-    'umur' => null,
-    'angkatan' => null,
-    'jurusan' => null,
-    'program_studi' => null,
-    'status_magang' => null,
-    'alamat' => null,
+    'mahasiswa',
+    'nama',
+    'nim',
+    'jenis_kelamin',
+    'tanggal_lahir',
+    'angkatan',
+    'jurusan',
+    'program_studi',
+    'status_magang',
+    'alamat',
+    'foto_profil',
 
     'isEditing' => false,
 
@@ -28,7 +29,7 @@ mount(function (int $id) {
     $this->nama = $this->mahasiswa->nama;
     $this->nim = $this->mahasiswa->nim;
     $this->jenis_kelamin = $this->mahasiswa->jenis_kelamin;
-    $this->umur = $this->mahasiswa->umur;
+    $this->tanggal_lahir = $this->mahasiswa->tanggal_lahir;
     $this->angkatan = $this->mahasiswa->angkatan;
     $this->jurusan = $this->mahasiswa->jurusan;
     $this->program_studi = $this->mahasiswa->program_studi;
@@ -42,7 +43,7 @@ $updateData = function () {
     $this->mahasiswa->nama = $this->nama;
     $this->mahasiswa->nim = $this->nim;
     $this->mahasiswa->jenis_kelamin = $this->jenis_kelamin;
-    $this->mahasiswa->umur = $this->umur;
+    $this->mahasiswa->tanggal_lahir = $this->tanggal_lahir;
     $this->mahasiswa->angkatan = $this->angkatan;
     $this->mahasiswa->jurusan = $this->jurusan;
     $this->mahasiswa->program_studi = $this->program_studi;
@@ -101,7 +102,7 @@ $deleteData = function () {
     @if (!$isDataDeleted)
         <div class="min-h-full flex gap-8 items-start">
             <div class="flex flex-col items-center bg-white p-4 rounded-xl shadow-md w-96 max-w-96">
-                <img src="{{ asset('img/user/student-girl.png') }}" alt="Foto Mahasiswa"
+                <img src="{{ $foto_profil ?? asset('img/user/unknown.jpeg') }}" alt="Foto Mahasiswa"
                     class="w-64 object-cover rounded-md mb-4" />
                 <div class="flex flex-col gap-4 w-full">
                     @if ($isEditing)
@@ -221,12 +222,11 @@ $deleteData = function () {
                         </flux:field>
 
                         <flux:field>
-                            <flux:label>Umur</flux:label>
+                            <flux:label>Tanggal lahir</flux:label>
                             @if ($isEditing)
-                                <flux:input value="{{ $umur }} tahun" wire:model="umur" />
+                                <flux:input type="date" value="{{ $tanggal_lahir }}" wire:model="tanggal_lahir" />
                             @else
-                                <flux:input value="{{ $umur }} tahun" wire:model="umur" readonly
-                                    class="caret-transparent" />
+                                <flux:input type="date" value="{{ $tanggal_lahir }}" readonly wire:model="tanggal_lahir" class="caret-transparent" />
                             @endif
                             <flux:error name="umur" />
                         </flux:field>
@@ -255,9 +255,18 @@ $deleteData = function () {
             </div>
         </div>
     @else
-        <div class="card min-h-full flex items-center justify-center text-center text-black">
-            <div class="card-body h-full bg-white rounded-xl">
-                <h1 class="text-4xl font-bold">Data telah terhapus!</h1>
+        <div class="card h-fit w-full flex items-center justify-center text-center text-black">
+            <div class="card-body flex flex-row gap-6 items-center h-full w-full bg-white rounded-xl">
+                <div>
+                    <flux:icon.triangle-alert />
+                </div>
+                <div class="text-left flex flex-col gap-6">
+                    <div>
+                        <h1 class="text-lg font-bold">Data tidak dapat ditemukan!</h1>
+                        <flux:text>Data yang anda lihat sudah terhapus</flux:text>
+                    </div>
+                    <flux:button variant="primary" class="bg-magnet-sky-teal w-fit" href="{{ route('admin.data-mahasiswa') }}">Kembali ke halaman kelola data mahasiswa</flux:button>
+                </div>
             </div>
         </div>
     @endif
