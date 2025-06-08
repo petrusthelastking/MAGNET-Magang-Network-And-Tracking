@@ -76,7 +76,7 @@ mount(function () {
 });
 ?>
 
-<div>
+<div class="flex flex-col gap-5">
     <x-slot:user>mahasiswa</x-slot:user>
 
     @if ($status === 'Belum Magang')

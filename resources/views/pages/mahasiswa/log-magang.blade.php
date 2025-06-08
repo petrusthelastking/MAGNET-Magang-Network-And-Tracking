@@ -138,10 +138,8 @@ $toggleDebug = function () {
 
 ?>
 
-<x-slot:user>mahasiswa</x-slot:user>
-
-<div class="min-h-screen">
-
+<div class="flex flex-col gap-5">
+    <x-slot:user>mahasiswa</x-slot:user>
 
     @if ($logMagang)
         <!-- Header with Back Button -->
@@ -217,7 +215,7 @@ $toggleDebug = function () {
             </div>
         </div>
     @else
-        <div class="bg-white rounded-lg shadow-md p-5 mx-auto text-center">
+        <div class="bg-white rounded-lg shadow-md p-5 text-center">
             <p class="text-gray-600">Log magang tidak ditemukan.</p>
             <flux:button wire:click="goBack" variant="outline" class="mt-4">
                 Kembali ke Daftar Log
