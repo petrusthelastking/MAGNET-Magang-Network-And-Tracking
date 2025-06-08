@@ -17,6 +17,7 @@ class Perusahaan extends Model
         'lokasi',
         'kategori',
         'rating',
+        'logo'
     ];
 
     protected $casts = [

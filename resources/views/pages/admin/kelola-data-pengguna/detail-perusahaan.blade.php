@@ -7,12 +7,13 @@ use App\Models\Perusahaan;
 layout('components.layouts.user.main');
 
 state([
-    'perusahaan' => null,
-    'nama' => null,
-    'lokasi' => null,
-    'bidang_industri' => null,
-    'kategori' => null,
-    'rating' => null,
+    'perusahaan',
+    'nama',
+    'lokasi',
+    'bidang_industri',
+    'kategori',
+    'rating',
+    'logo',
 
     'isEditing' => false,
 
@@ -26,6 +27,7 @@ mount(function (int $id) {
     $this->bidang_industri = $this->perusahaan->bidang_industri;
     $this->kategori = $this->perusahaan->kategori;
     $this->rating = $this->perusahaan->rating;
+    $this->logo = $this->perusahaan->logo;
 });
 
 $editData = fn() => ($this->isEditing = !$this->isEditing);
@@ -89,7 +91,7 @@ $deleteData = function () {
     @if (!$isDataDeleted)
         <div class="min-h-screen flex gap-8 items-start">
             <div class="flex flex-col items-center bg-white p-4 rounded-xl shadow-md w-96 max-w-96">
-                <img src="{{ asset('img/company-cisco.png') }}" alt="Foto Dosen"
+                <img src="{{ asset($logo ?? 'img/user/unknown.jpeg') }}" alt="Foto perusahaan"
                     class="w-64 object-cover rounded-md mb-4" />
                 <div class="flex flex-col gap-4 w-full">
                     @if ($isEditing)
@@ -187,11 +189,7 @@ $deleteData = function () {
             </div>
         </div>
     @else
-        <div class="card min-h-full flex items-center justify-center text-center text-black">
-            <div class="card-body h-full bg-white rounded-xl">
-                <h1 class="text-4xl font-bold">Data telah terhapus!</h1>
-            </div>
-        </div>
+        <x-user.card.data-is-deleted backRoute="{{ route('admin.data-perusahaan') }}" />
     @endif
 
 
