@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\LowonganMultiMooraController;
 
 require_once __DIR__ . '/auth.php';
 
