@@ -30,14 +30,18 @@ Route::middleware('role:admin,mahasiswa,dosen')
 Route::name('admin.')
     ->middleware('role:admin')
     ->group(function () {
-        Volt::route('data-mahasiswa', 'pages.admin.kelola-data.data-mahasiswa')->name('data-mahasiswa');
-        Volt::route('detail-mahasiswa/{id}', 'pages.admin.kelola-data.detail-mahasiswa')->name('detail-mahasiswa');
 
-        Volt::route('data-dosen', 'pages.admin.kelola-data.data-dosen')->name('data-dosen');
-        Volt::route('detail-dosen/{id}', 'pages.admin.kelola-data.detail-dosen')->name('detail-dosen');
+        Route::prefix('kelola-data-pengguna')
+            ->group(function ()  {
+                Volt::route('data-mahasiswa', 'pages.admin.kelola-data-pengguna.data-mahasiswa')->name('data-mahasiswa');
+                Volt::route('detail-mahasiswa/{id}', 'pages.admin.kelola-data-pengguna.detail-mahasiswa')->name('detail-mahasiswa');
 
-        Volt::route('data-perusahaan', 'pages.admin.kelola-data.data-perusahaan')->name('data-perusahaan');
-        Volt::route('detail-perusahaan/{id}', 'pages.admin.kelola-data.detail-perusahaan')->name('detail-perusahaan');
+                Volt::route('data-dosen', 'pages.admin.kelola-data-pengguna.data-dosen')->name('data-dosen');
+                Volt::route('detail-dosen/{id}', 'pages.admin.kelola-data-pengguna.detail-dosen')->name('detail-dosen');
+
+                Volt::route('data-perusahaan', 'pages.admin.kelola-data-pengguna.data-perusahaan')->name('data-perusahaan');
+                Volt::route('detail-perusahaan/{id}', 'pages.admin.kelola-data-pengguna.detail-perusahaan')->name('detail-perusahaan');
+        });
 
         Volt::route('data-lowongan', 'pages.admin.magang.data-lowongan')->name('data-lowongan');
         Volt::route('detail-lowongan/{id}', 'pages.admin.magang.detail-lowongan')->name('detail-lowongan');
