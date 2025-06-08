@@ -41,7 +41,7 @@ class RecommendationSystem
      * Load all alternatives data (lowongan_magang table) from database
      * @return array
      */
-    private function loadAlternatives() : array
+    private function loadAlternatives(): array
     {
         return LowonganMagang::with([
             'pekerjaan:id,nama',
@@ -63,7 +63,7 @@ class RecommendationSystem
      * Load all internship location from table lokasi_magang in database
      * @return array
      */
-    private function loadLokasiMagang() : array
+    private function loadLokasiMagang(): array
     {
         return LokasiMagang::all()
             ->groupBy('kategori_lokasi')
