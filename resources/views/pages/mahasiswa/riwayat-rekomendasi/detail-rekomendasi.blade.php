@@ -1,5 +1,9 @@
 <x-layouts.user.main user="mahasiswa">
 
+    @section('script')
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    @endsection
+
     <div class="card bg-white shadow-md">
         <div class="card-body">
             <h2 class="text-base font-semibold">Kriteria yang anda pilih</h2>
@@ -393,7 +397,7 @@
                             </thead>
                             <tbody class="bg-white text-black">
                                 <tr>
-                                    <td class="px-6 py-3">V2(x_j^i)</td>
+                                    <td class="px-6 py-3">\( \sqrt{\sum_{j=1}^{n} x_j^2} \)</td>
                                     <td class="px-6 py-3 text-right">4.69041576</td>
                                     <td class="px-6 py-3 text-right">4.582575695</td>
                                     <td class="px-6 py-3 text-right">5.291502622</td>
