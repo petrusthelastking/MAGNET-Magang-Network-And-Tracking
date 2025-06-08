@@ -99,7 +99,12 @@ table>tbody>tr {
     @apply hover:cursor-pointer hover:bg-gray-100;
 }
 
-input:read-only {
+input:read-only,
+textarea:read-only,
+input:disabled,
+select:disabled,
+textarea:disabled,
+button:disabled {
     @apply bg-gray-100;
 }
 
