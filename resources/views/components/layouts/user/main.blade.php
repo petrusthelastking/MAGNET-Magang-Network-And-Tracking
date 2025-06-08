@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="bg-magnet-frost-mist flex min-h-screen text-black">
+<body class="bg-magnet-frost-mist flex h-screen text-black">
     @if ($user == 'admin')
         <x-admin.sidebar />
     @elseif ($user == 'dosen')
@@ -16,9 +16,9 @@
         <x-mahasiswa.sidebar />
     @endif
 
-    <div class="w-full">
+    <div class="w-full h-full overflow-auto">
         <livewire:components.user.topbar />
-        <div class="{{ $isFullPage??'p-8 flex flex-col gap-5'}}">
+        <div class="{{ $customContainerClass ?? 'p-8 flex flex-col gap-5'}}">
 
             {{ $slot }}
         </div>
