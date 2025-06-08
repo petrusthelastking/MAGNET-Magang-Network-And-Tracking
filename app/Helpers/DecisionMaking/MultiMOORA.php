@@ -71,6 +71,7 @@ class MultiMOORA
      */
     private array $fmfResult;
 
+    private string $baseStoragePath;
 
     public function __construct(Mahasiswa $mahasiswa, int $totalAlternatives)
     {
@@ -82,20 +83,89 @@ class MultiMOORA
         $this->kriteriaBidangIndustri = $this->mahasiswa->kriteriaBidangIndustri;
         $this->kriteriaJenisMagang = $this->mahasiswa->kriteriaJenisMagang;
         $this->kriteriaLokasiMagang = $this->mahasiswa->kriteriaLokasiMagang;
+
+        // Set base path for JSON storage
+        $this->baseStoragePath = "multimoora/mahasiswa_{$this->mahasiswa->id}";
+
+        // Ensure directory exists
+        if (!Storage::exists($this->baseStoragePath)) {
+            Storage::makeDirectory($this->baseStoragePath);
+        }
     }
 
     public function computeMultiMOORA(): void
     {
+        // Save user preferences
+        $this->saveUserPreferences();
+
         $dataEncodingResult = $this->dataEncoding();
+        $this->saveJsonData('01_data_encoding.json', $dataEncodingResult);
 
         // start multimoora decision making
         $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
+        $this->saveJsonData('02_euclidean_normalization.json', $euclideanNormalizationResult);
+
         $this->vectorNormalization($dataEncodingResult, $euclideanNormalizationResult);
+        $this->saveJsonData('03_vector_normalization.json', $this->vectorNormalizationResult);
 
         $this->computeRatioSystem();
+        $this->saveJsonData('04_ratio_system.json', $this->ratioSystemResult);
+
         $this->computeReferencePoint();
+        $this->saveJsonData('05_reference_point.json', $this->referencePointResult);
+
         $this->computeFullMultiplicativeForm();
-        $this->computeFinalRank();
+        $this->saveJsonData('06_fmf_results.json', $this->fmfResult);
+
+        $finalResult = $this->computeFinalRank();
+        $this->saveJsonData('07_final_ranking.json', $finalResult);
+    }
+
+    /**
+     * Save user preferences to JSON
+     */
+    private function saveUserPreferences(): void
+    {
+        $preferences = [
+            'mahasiswa_id' => $this->mahasiswa->id,
+            'mahasiswa_name' => $this->mahasiswa->nama ?? 'Unknown',
+            'preferences' => [
+                'pekerjaan' => [
+                    'value' => $this->kriteriaPekerjaan->pekerjaan->nama,
+                    'weight' => $this->kriteriaPekerjaan->bobot
+                ],
+                'bidang_industri' => [
+                    'value' => $this->kriteriaBidangIndustri->bidangIndustri->nama,
+                    'weight' => $this->kriteriaBidangIndustri->bobot
+                ],
+                'jenis_magang' => [
+                    'value' => $this->kriteriaJenisMagang->jenis_magang,
+                    'weight' => $this->kriteriaJenisMagang->bobot
+                ],
+                'lokasi_magang' => [
+                    'value' => $this->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi,
+                    'weight' => $this->kriteriaLokasiMagang->bobot
+                ],
+                'open_remote' => [
+                    'value' => $this->kriteriaOpenRemote->open_remote,
+                    'weight' => $this->kriteriaOpenRemote->bobot
+                ]
+            ],
+            'total_alternatives' => $this->totalAlternatives,
+            'computation_timestamp' => now()->toISOString()
+        ];
+
+        $this->saveJsonData('00_user_preferences.json', $preferences);
+    }
+
+    /**
+     * Save data to JSON file
+     */
+    private function saveJsonData(string $filename, array $data): void
+    {
+        $filePath = $this->baseStoragePath . '/' . $filename;
+        $jsonData = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        Storage::put($filePath, $jsonData);
     }
 
     /**
@@ -115,11 +185,11 @@ class MultiMOORA
         $dataCategorized = Storage::read('lowongan_magang/alternatives_categorized.json');
         $dataCategorizedDecoded = json_decode($dataCategorized, true);
 
-        $insertData = array_map(function (array $item) use ($preference) : array {
+        $insertData = array_map(function (array $item) use ($preference): array {
             return [
                 'mahasiswa_id' => $this->mahasiswa->id,
                 'lowongan_magang_id' => $item['id'],
-                'pekerjaan' => $item['pekerjaan'] == $preference['pekerjaan'] ? 2 : 1 ,
+                'pekerjaan' => $item['pekerjaan'] == $preference['pekerjaan'] ? 2 : 1,
                 'open_remote' => $item['open_remote'] == $preference['open_remote'] ? 2 : 1,
                 'jenis_magang' => $item['jenis_magang'] == $preference['jenis_magang'] ? 2 : 1,
                 'bidang_industri' => $item['bidang_industri'] == $preference['bidang_industri'] ? 2 : 1,
@@ -147,7 +217,6 @@ class MultiMOORA
         $jenisMagangList = collect($encodedAlternatives)->pluck('jenis_magang')->all();
         $lokasiMagangList = collect($encodedAlternatives)->pluck('lokasi_magang')->all();
         $openRemoteList = collect($encodedAlternatives)->pluck('open_remote')->all();
-
 
         $computeEuclidean = function (array $list) {
             $sumSquares = 0.0;
@@ -196,7 +265,6 @@ class MultiMOORA
             'open_remote' => $openRemoteList,
             'jenis_magang' => $jenisMagangList
         ];
-
 
         /**
          * Computes the vector normalization for a given criteria using Euclidean normalization.
@@ -287,11 +355,6 @@ class MultiMOORA
         }
 
         DB::transaction(function () use ($ratioSystemRank) {
-            // RatioSystem::upsert(
-            //     $ratioSystemRank,
-            //     ['mahasiswa_id', 'lowongan_magang_id'],
-            //     ['score', 'rank']
-            // );
             RatioSystem::insert($ratioSystemRank);
         });
 
@@ -399,7 +462,6 @@ class MultiMOORA
             ];
         }, $this->vectorNormalizationResult);
 
-
         // ranking process (descending)
         usort($fmfScores, function ($a, $b) {
             return $b['score'] <=> $a['score'];
@@ -427,9 +489,9 @@ class MultiMOORA
 
     /**
      * Compute final rank of alternatives with MultiMOORA method
-     * @return void
+     * @return array
      */
-    private function computeFinalRank()
+    private function computeFinalRank(): array
     {
         $ratioSystemRanks = array_column($this->ratioSystemResult, 'rank', 'lowongan_magang_id');
         $referencePointRanks = array_column($this->referencePointResult, 'rank', 'lowongan_magang_id');
@@ -502,5 +564,7 @@ class MultiMOORA
         DB::transaction(function () use ($finalRanks) {
             FinalRankRecommendation::insert($finalRanks);
         });
+
+        return $finalRanks;
     }
 }
