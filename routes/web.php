@@ -80,8 +80,8 @@ Route::name('mahasiswa.')
         Route::view('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
 
         Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
-        Route::view('riwayat-rekomendasi', 'pages.mahasiswa.riwayat-rekomendasi')->name('riwayat-rekomendasi');
-        Route::view('riwayat-rekomendasi/detail', 'pages.mahasiswa.detail-rekomendasi')->name('detail-rekomendasi');
+        Route::view('riwayat-rekomendasi', 'pages.mahasiswa.riwayat-rekomendasi.index')->name('riwayat-rekomendasi');
+        Route::view('riwayat-rekomendasi/detail', 'pages.mahasiswa.riwayat-rekomendasi.detail-rekomendasi')->name('detail-rekomendasi');
     });
 
 Route::name('dosen.')

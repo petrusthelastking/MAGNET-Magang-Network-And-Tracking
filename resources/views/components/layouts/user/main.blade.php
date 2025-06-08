@@ -24,6 +24,7 @@
         </div>
     </div>
 
+    @yield('script')
     @fluxScripts
 </body>
 
