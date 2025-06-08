@@ -22,7 +22,7 @@ with(function () {
                     $query->select('id', 'lokasi');
                 }
             ])
-            ->withCount(['kontrakMagang as jumlah_pendaftar'])
+            ->withCount(['kontrak_magang as jumlah_pendaftar'])
             ->orderBy('created_at', 'desc')
             ->paginate($this->totalRowsPerPage),
     ];

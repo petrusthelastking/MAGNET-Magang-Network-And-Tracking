@@ -20,7 +20,7 @@ class LowonganMagang extends Model
         'jenis_magang',
         'open_remote',
         'status',
-        'lokasi_id',
+        'lokasi_magang_id',
         'perusahaan_id',
     ];
 
@@ -38,7 +38,7 @@ class LowonganMagang extends Model
         return $this->belongsTo(Perusahaan::class);
     }
 
-    public function kontrakMagang()
+    public function kontrak_magang()
     {
         return $this->hasMany(KontrakMagang::class);
     }
