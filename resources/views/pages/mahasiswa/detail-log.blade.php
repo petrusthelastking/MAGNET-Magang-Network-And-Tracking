@@ -163,7 +163,7 @@ layout('components.layouts.user.main');
                                     </svg>
                                     <span>{{ $tanggal->translatedFormat('d F Y') }}</span>
                                 </div>
-                                <div class="mrounded-b-xl border-t flex justify-end">
+                                <div class="rounded-b-xl border-t flex justify-end">
                                     <button wire:click="redirectToLogMagang({{ $log->id }})"
                                         class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-magnet-sky-teal hover:text-white hover:bg-magnet-sky-teal border border-magnet-sky-teal rounded-lg transition-colors duration-200">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
