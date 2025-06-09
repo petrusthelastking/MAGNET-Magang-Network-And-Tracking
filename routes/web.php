@@ -7,6 +7,12 @@ use App\Http\Controllers\UserController;
 
 require_once __DIR__ . '/auth.php';
 
+Route::get('test', function() {
+    return view('templates.pdf.curriculum-vitae');
+});
+Route::get('test2', function() {
+    return view('templates.pdf.surat-izin-magang');
+});
 Route::view('/', 'pages.landing-page')->name('landing-page');
 Route::view('/pengembang', 'pages.pengembang')->name('pengembang');
 Route::view('/tata-tertib', 'pages.tatatertib')->name('tatatertib');
