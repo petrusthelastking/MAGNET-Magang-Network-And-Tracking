@@ -3,16 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\PengajuanMagangController;
+use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UserController;
 
 require_once __DIR__ . '/auth.php';
 
-Route::get('test', function () {
-    return view('templates.pdf.curriculum-vitae');
-});
-Route::get('test2', function () {
-    return view('templates.pdf.surat-izin-magang');
-});
 Route::view('/', 'pages.landing-page')->name('landing-page');
 Route::view('/pengembang', 'pages.pengembang')->name('pengembang');
 Route::view('/tata-tertib', 'pages.tatatertib')->name('tatatertib');
@@ -30,6 +25,8 @@ Route::middleware('role:admin,mahasiswa,dosen')
         Route::get('profile/edit', [UserController::class, 'showEditProfile'])->name('profile.edit');
         Route::put('profile', [UserController::class, 'updateProfile'])->name('profile.update');
         Route::delete('profile/photo', [UserController::class, 'deletePhoto'])->name('profile.delete-photo');
+
+        Route::get('template/pdf/{file_name}', [TemplateController::class, 'previewFile'])->name('template-view');
     });
 
 Route::name('admin.')
@@ -37,7 +34,7 @@ Route::name('admin.')
     ->group(function () {
 
         Route::prefix('kelola-data-pengguna')
-            ->group(function () {
+            ->group(function ()  {
                 Volt::route('data-mahasiswa', 'pages.admin.kelola-data-pengguna.data-mahasiswa')->name('data-mahasiswa');
                 Volt::route('detail-mahasiswa/{id}', 'pages.admin.kelola-data-pengguna.detail-mahasiswa')->name('detail-mahasiswa');
 
@@ -46,7 +43,7 @@ Route::name('admin.')
 
                 Volt::route('data-perusahaan', 'pages.admin.kelola-data-pengguna.data-perusahaan')->name('data-perusahaan');
                 Volt::route('detail-perusahaan/{id}', 'pages.admin.kelola-data-pengguna.detail-perusahaan')->name('detail-perusahaan');
-            });
+        });
 
 
         Route::prefix('magang')
@@ -61,7 +58,9 @@ Route::name('admin.')
                 Route::view('perusahaan-terpopuler', 'pages.admin.magang.perusahaan-terpopuler')->name('perusahaan-terpopuler');
 
                 Route::view('aturan-magang', 'pages.admin.magang.aturan-magang')->name('aturan-magang');
-            });
+                Volt::route('data-lowongan-diperbarui', 'pages.admin.magang.data-pengajuan-diperbarui')->name('data-pengajuan-diperbarui');
+                Volt::route('detail-pengajuan-diperbarui/{id}', 'pages.admin.magang.detail-pengajuan-diperbarui')->name('detail-pengajuan-diperbarui');
+        });
 
 
         Route::view('laporan-statistik-magang', 'pages.admin.laporan-statistik-magang')->name('laporan-statistik-magang');

@@ -30,8 +30,13 @@ class KriteriaOpenRemoteFactory extends Factory
         return [
             'open_remote' => $this->faker->randomElement(['ya', 'tidak']),
             'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
-            'rank' => $rank,
-            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value)
+            'rank' => 1,
+            'bobot' => ROC::getWeight(1, DecisionMakingEnum::totalCriteria->value)
         ];
+    }
+
+    public function configure()
+    {
+        return $this->withBobotCalculation();
     }
 }

@@ -31,8 +31,14 @@ class KriteriaBidangIndustriFactory extends Factory
         return [
             'bidang_industri_id' => fn() => BidangIndustri::inRandomOrder()->value('id'),
             'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
-            'rank' => $rank,
-            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value)
+            'rank' => 1,
+            'bobot' => ROC::getWeight(1, DecisionMakingEnum::totalCriteria->value)
         ];
     }
+
+    public function configure()
+    {
+        return $this->withBobotCalculation();
+    }
+
 }
