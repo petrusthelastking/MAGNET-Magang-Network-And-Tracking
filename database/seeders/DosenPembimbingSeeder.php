@@ -12,6 +12,6 @@ class DosenPembimbingSeeder extends Seeder
      */
     public function run(): void
     {
-        DosenPembimbing::factory()->count(30)->create();
+        DosenPembimbing::factory()->count(20)->create();
     }
 }

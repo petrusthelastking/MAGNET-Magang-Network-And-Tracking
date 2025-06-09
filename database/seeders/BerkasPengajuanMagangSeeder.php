@@ -12,7 +12,7 @@ class BerkasPengajuanMagangSeeder extends Seeder
      */
     public function run(): void
     {
-        BerkasPengajuanMagang::factory()->count(10)->create();
+        BerkasPengajuanMagang::factory()->count(15)->create();
     }
 }
 

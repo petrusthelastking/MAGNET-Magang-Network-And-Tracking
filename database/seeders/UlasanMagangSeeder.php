@@ -14,6 +14,6 @@ class UlasanMagangSeeder extends Seeder
      */
     public function run(): void
     {
-        UlasanMagang::factory()->count(200)->create();
+        UlasanMagang::factory()->count(100)->create();
     }
 }

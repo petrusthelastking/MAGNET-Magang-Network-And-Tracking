@@ -14,6 +14,6 @@ class KontrakMagangSeeder extends Seeder
      */
     public function run(): void
     {
-        KontrakMagang::factory()->count(50)->create();
+        KontrakMagang::factory()->count(12)->create();
     }
 }

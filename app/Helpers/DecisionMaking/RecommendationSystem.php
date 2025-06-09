@@ -45,7 +45,7 @@ class RecommendationSystem
     {
         return LowonganMagang::with([
             'pekerjaan:id,nama',
-            'lokasiMagang:id,lokasi',
+            'lokasi_magang:id,lokasi',
             'perusahaan.bidangIndustri:id,nama'
         ])->get()->map(function ($item) {
             return [
@@ -54,7 +54,7 @@ class RecommendationSystem
                 'open_remote' => $item->open_remote,
                 'jenis_magang' => $item->jenis_magang,
                 'bidang_industri' => $item->perusahaan->bidangIndustri->nama ?? null,
-                'lokasi_magang' => $item->lokasiMagang->lokasi ?? null,
+                'lokasi_magang' => $item->lokasi_magang->lokasi ?? null,
             ];
         })->toArray();
     }

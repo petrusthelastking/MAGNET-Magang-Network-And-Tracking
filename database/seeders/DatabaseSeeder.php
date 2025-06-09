@@ -30,7 +30,8 @@ class DatabaseSeeder extends Seeder
             UmpanBalikMagangSeeder::class,
             BerkasPengajuanMagangSeeder::class,
             FormPengajuanMagangSeeder::class,
-            KriteriaPreferensiSeeder::class
+            KriteriaPreferensiSeeder::class,
+            MultiMOORASeeder::class
         ]);
     }
 }
