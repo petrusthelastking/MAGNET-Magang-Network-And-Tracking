@@ -71,7 +71,7 @@ mount(function () {
     // Load preference data
     $this->bidang_industri = $this->mahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
     $this->jenis_magang = $this->mahasiswa->kriteriaJenisMagang->jenis_magang;
-    $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
+    $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi;
     $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan->nama;
     $this->open_remote = $this->mahasiswa->kriteriaOpenRemote->open_remote;
 
@@ -180,7 +180,7 @@ $cancelUpdatePreference = function () {
     // Reset ke nilai asli
     $this->bidang_industri = $this->mahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
     $this->jenis_magang = $this->mahasiswa->kriteriaJenisMagang->jenis_magang;
-    $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi;
+    $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi;
     $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan->nama;
     $this->open_remote = $this->mahasiswa->kriteriaOpenRemote->open_remote;
 

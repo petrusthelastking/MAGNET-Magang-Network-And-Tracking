@@ -14,6 +14,6 @@ class FormPengajuanMagangSeeder extends Seeder
      */
     public function run(): void
     {
-        FormPengajuanMagang::factory()->count(10)->create();
+        FormPengajuanMagang::factory()->count(15)->create();
     }
 }

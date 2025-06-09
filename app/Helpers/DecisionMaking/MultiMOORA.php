@@ -143,7 +143,7 @@ class MultiMOORA
                     'weight' => $this->kriteriaJenisMagang->bobot
                 ],
                 'lokasi_magang' => [
-                    'value' => $this->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi,
+                    'value' => $this->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi,
                     'weight' => $this->kriteriaLokasiMagang->bobot
                 ],
                 'open_remote' => [
@@ -178,7 +178,7 @@ class MultiMOORA
             'pekerjaan' => $this->kriteriaPekerjaan->pekerjaan->nama,
             'bidang_industri' => $this->kriteriaBidangIndustri->bidangIndustri->nama,
             'jenis_magang' => $this->kriteriaJenisMagang->jenis_magang,
-            'lokasi_magang' => $this->kriteriaLokasiMagang->lokasiMagang->kategori_lokasi,
+            'lokasi_magang' => $this->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi,
             'open_remote' => $this->kriteriaOpenRemote->open_remote
         ];
 

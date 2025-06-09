@@ -12,6 +12,6 @@ class LowonganMagangSeeder extends Seeder
      */
     public function run(): void
     {
-        LowonganMagang::factory()->count(200)->create();
+        LowonganMagang::factory()->count(20)->create();
     }
 }
