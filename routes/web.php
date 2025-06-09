@@ -7,10 +7,10 @@ use App\Http\Controllers\UserController;
 
 require_once __DIR__ . '/auth.php';
 
-Route::get('test', function() {
+Route::get('test', function () {
     return view('templates.pdf.curriculum-vitae');
 });
-Route::get('test2', function() {
+Route::get('test2', function () {
     return view('templates.pdf.surat-izin-magang');
 });
 Route::view('/', 'pages.landing-page')->name('landing-page');
@@ -37,7 +37,7 @@ Route::name('admin.')
     ->group(function () {
 
         Route::prefix('kelola-data-pengguna')
-            ->group(function ()  {
+            ->group(function () {
                 Volt::route('data-mahasiswa', 'pages.admin.kelola-data-pengguna.data-mahasiswa')->name('data-mahasiswa');
                 Volt::route('detail-mahasiswa/{id}', 'pages.admin.kelola-data-pengguna.detail-mahasiswa')->name('detail-mahasiswa');
 
@@ -46,7 +46,7 @@ Route::name('admin.')
 
                 Volt::route('data-perusahaan', 'pages.admin.kelola-data-pengguna.data-perusahaan')->name('data-perusahaan');
                 Volt::route('detail-perusahaan/{id}', 'pages.admin.kelola-data-pengguna.detail-perusahaan')->name('detail-perusahaan');
-        });
+            });
 
 
         Route::prefix('magang')
@@ -61,7 +61,7 @@ Route::name('admin.')
                 Route::view('perusahaan-terpopuler', 'pages.admin.magang.perusahaan-terpopuler')->name('perusahaan-terpopuler');
 
                 Route::view('aturan-magang', 'pages.admin.magang.aturan-magang')->name('aturan-magang');
-        });
+            });
 
 
         Route::view('laporan-statistik-magang', 'pages.admin.laporan-statistik-magang')->name('laporan-statistik-magang');
