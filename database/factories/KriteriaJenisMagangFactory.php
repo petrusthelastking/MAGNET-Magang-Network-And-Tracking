@@ -25,13 +25,16 @@ class KriteriaJenisMagangFactory extends Factory
      */
     public function definition(): array
     {
-        $rank = $this->faker->numberBetween(1, DecisionMakingEnum::totalCriteria->value);
-
         return [
             'jenis_magang' => $this->faker->randomElement(['berbayar', 'tidak berbayar']),
             'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
-            'rank' => $rank,
-            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value)
+            'rank' => 1,
+            'bobot' => ROC::getWeight(1, DecisionMakingEnum::totalCriteria->value)
         ];
+    }
+
+    public function configure()
+    {
+        return $this->withBobotCalculation();
     }
 }
