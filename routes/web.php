@@ -91,6 +91,7 @@ Route::name('mahasiswa.')
         Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
         Route::view('riwayat-rekomendasi', 'pages.mahasiswa.riwayat-rekomendasi.index')->name('riwayat-rekomendasi');
         Route::view('riwayat-rekomendasi/detail', 'pages.mahasiswa.riwayat-rekomendasi.detail-rekomendasi')->name('detail-rekomendasi');
+        Volt::route('saran-dari-dosen', 'pages.mahasiswa.saran-dari-dosen')->name('saran-dari-dosen');
     });
 
 Route::name('dosen.')
