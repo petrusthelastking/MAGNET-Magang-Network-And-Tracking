@@ -7,10 +7,11 @@ use App\Models\DosenPembimbing;
 layout('components.layouts.user.main');
 
 state([
-    'dosen' => null,
-    'nama' => '',
-    'nidn' => '',
-    'jenis_kelamin' => null,
+    'dosen',
+    'nama',
+    'nidn',
+    'jenis_kelamin',
+    'foto',
 
     'isEditing' => false,
 
@@ -22,6 +23,7 @@ mount(function (int $id) {
     $this->nama = $this->dosen->nama;
     $this->nidn = $this->dosen->nidn;
     $this->jenis_kelamin = $this->dosen->jenis_kelamin;
+    $this->foto = $this->dosen->foto;
 });
 
 $editData = fn() => ($this->isEditing = !$this->isEditing);
@@ -83,7 +85,7 @@ $deleteData = function () {
     @if (!$isDataDeleted)
         <div class="min-h-full flex gap-8 items-start">
             <div class="flex flex-col items-center bg-white p-4 rounded-xl shadow-md w-96 max-w-96">
-                <img src="{{ asset('img/user/lecturer-man.png') }}" alt="Foto Dosen"
+                <img src="{{ asset($foto ?? 'img/user/unknown.jpeg') }}" alt="Foto Dosen"
                     class="w-64 object-cover rounded-md mb-4" />
                 <div class="flex flex-col gap-4 w-full">
                     @if ($isEditing)
@@ -160,11 +162,7 @@ $deleteData = function () {
             </div>
         </div>
     @else
-        <div class="card min-h-full flex items-center justify-center text-center text-black">
-            <div class="card-body h-full bg-white rounded-xl">
-                <h1 class="text-4xl font-bold">Data telah terhapus!</h1>
-            </div>
-        </div>
+        <x-user.card.data-is-deleted backRoute="{{ route('admin.data-dosen') }}" />
     @endif
 
 

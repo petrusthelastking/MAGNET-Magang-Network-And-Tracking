@@ -34,7 +34,7 @@ class KontrakMagang extends Model
         return $this->belongsTo(DosenPembimbing::class);
     }
 
-    public function lowonganMagang()
+    public function lowongan_magang()
     {
         return $this->belongsTo(LowonganMagang::class);
     }

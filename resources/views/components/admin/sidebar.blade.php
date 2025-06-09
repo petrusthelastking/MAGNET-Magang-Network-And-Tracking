@@ -1,7 +1,7 @@
 <flux:sidebar sticky stashable class="bg-zinc-50 border-r rtl:border-r-0 rtl:border-l border-zinc-200 ">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-    <a href="#">
+    <a href="{{ route('landing-page') }}">
         <h1 class="text-3xl font-black ps-2 mx-4 text-center text-magnet-sky-teal">MAGNET</h1>
     </a>
 
@@ -12,30 +12,27 @@
 
 
         @php
-            $isRequestToKelolaData = request()->is('data-mahasiswa') || request()->is('data-perusahaan') || request()->is('data-dosen');
+            $isRequestToKelolaData = request()->is('kelola-data-pengguna/*');
         @endphp
-
         <flux:navlist.group expandable heading="Kelola Data" :expanded="$isRequestToKelolaData">
-
-            <flux:navlist.item icon="user" :current="request()->is('data-mahasiswa')"
+            <flux:navlist.item icon="user" :current="request()->fullUrlIs(route('admin.data-mahasiswa'))"
                 href="{{ route('admin.data-mahasiswa') }}" class="text-magnet-deep-ocean-blue!">
                 Data Mahasiswa
             </flux:navlist.item>
-            <flux:navlist.item icon="user" :current="request()->is('data-dosen')" href="{{ route('admin.data-dosen') }}"
+            <flux:navlist.item icon="user" :current="request()->fullUrlIs(route('admin.data-dosen'))" href="{{ route('admin.data-dosen') }}"
                 class="text-magnet-deep-ocean-blue!">
                 Data Dosen
             </flux:navlist.item>
             <flux:navlist.item icon="building-2" href="{{ route('admin.data-perusahaan') }}"
-                :current="request()->is('data-perusahaan')" class="text-magnet-deep-ocean-blue!">
+                :current="request()->fullUrlIs(route('admin.data-perusahaan'))" class="text-magnet-deep-ocean-blue!">
                 Data Perusahaan
             </flux:navlist.item>
         </flux:navlist.group>
 
         @php
-            $isRequestToMagang = request()->is('data-lowongan') || request()->is('data-pengajuan-magang') || request()->is('tren-magang') || request()->is('aturan-magang');
+            $isRequestToMagang = request()->is('magang/*');
         @endphp
         <flux:navlist.group expandable heading="Magang" :expanded="$isRequestToMagang">
-
             <flux:navlist.item icon="briefcase-business" href="{{ route('admin.data-lowongan') }}"
                 :current="request()->is('data-lowongan')" class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
@@ -54,13 +51,13 @@
             </flux:navlist.item>
         </flux:navlist.group>
 
-        <flux:navlist.group expandable heading="Laporan" :expanded="false" class="text-magnet-deep-ocean-blue!">
+        <flux:navlist.group expandable heading="Laporan" :expanded="request()->fullUrlIs(route('admin.laporan-statistik-magang'))" class="text-magnet-deep-ocean-blue!">
             <flux:navlist.item icon="file-text" href="{{ route('admin.laporan-statistik-magang') }}" class="text-magnet-deep-ocean-blue!">
                 Laporan Statistik<br>Magang
             </flux:navlist.item>
         </flux:navlist.group>
 
-        <flux:navlist.group expandable heading="Sistem" :expanded="false" class="text-magnet-deep-ocean-blue!">
+        <flux:navlist.group expandable heading="Sistem" :expanded="request()->fullUrlIs(route('admin.evaluasi-sistem-rekomendasi'))" class="text-magnet-deep-ocean-blue!">
             <flux:navlist.item icon="file-cog" href="{{ route('admin.evaluasi-sistem-rekomendasi') }}" class="text-magnet-deep-ocean-blue!">
                 Evaluasi Sistem<br>Rekomendasi
             </flux:navlist.item>

@@ -1,7 +1,7 @@
 <?php
 
 use function Livewire\Volt\{layout, state, with, usesPagination};
-use App\Models\Magang;
+use App\Models\LowonganMagang;
 
 layout('components.layouts.user.main');
 
@@ -13,13 +13,16 @@ usesPagination();
 
 with(function () {
     return [
-        'dataLowonganMagang' => Magang::select('id', 'nama', 'perusahaan_id', 'lokasi', 'status')
+        'dataLowonganMagang' => LowonganMagang::select('id', 'nama', 'perusahaan_id', 'lokasi_magang_id', 'status')
             ->with([
                 'perusahaan' => function ($query) {
                     $query->select('id', 'nama');
                 },
+                'lokasi_magang' => function ($query) {
+                    $query->select('id', 'lokasi');
+                }
             ])
-            ->withCount(['kontrakMagang as jumlah_pendaftar'])
+            ->withCount(['kontrak_magang as jumlah_pendaftar'])
             ->orderBy('created_at', 'desc')
             ->paginate($this->totalRowsPerPage),
     ];
@@ -77,7 +80,7 @@ $goToNextPage = fn() => $this->nextPage();
                             {{ $loop->iteration + ($dataLowonganMagang->firstItem() - 1) }}</td>
                         <td class="px-6 py-3">{{ $lowongan['nama'] }}</td>
                         <td class="px-6 py-3">{{ $lowongan['perusahaan']['nama'] }}</td>
-                        <td class="px-6 py-3">{{ $lowongan['lokasi'] }}</td>
+                        <td class="px-6 py-3">{{ $lowongan['lokasi_magang']['lokasi'] }}</td>
                         <td class="px-6 py-3">
                             @php
                                 $badgeColor = match ($lowongan['status']) {

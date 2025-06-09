@@ -33,8 +33,8 @@ with(function () {
         )
             ->leftJoin('bidang_industri', 'perusahaan.bidang_industri_id', '=', 'bidang_industri.id')
             ->withCount([
-                'magang as jumlah_mahasiswa_magang' => function (Builder $query) {
-                    $query->join('kontrak_magang', 'magang.id', '=', 'kontrak_magang.magang_id');
+                'lowongan_magang as jumlah_mahasiswa_magang' => function (Builder $query) {
+                    $query->join('kontrak_magang', 'lowongan_magang.id', '=', 'kontrak_magang.lowongan_magang_id');
                 },
             ])
             ->orderBy('jumlah_mahasiswa_magang', 'desc')
