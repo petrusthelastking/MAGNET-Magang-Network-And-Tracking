@@ -3,16 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\PengajuanMagangController;
+use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UserController;
 
 require_once __DIR__ . '/auth.php';
 
-Route::get('test', function() {
-    return view('templates.pdf.curriculum-vitae');
-});
-Route::get('test2', function() {
-    return view('templates.pdf.surat-izin-magang');
-});
 Route::view('/', 'pages.landing-page')->name('landing-page');
 Route::view('/pengembang', 'pages.pengembang')->name('pengembang');
 Route::view('/tata-tertib', 'pages.tatatertib')->name('tatatertib');
@@ -30,6 +25,8 @@ Route::middleware('role:admin,mahasiswa,dosen')
         Route::get('profile/edit', [UserController::class, 'showEditProfile'])->name('profile.edit');
         Route::put('profile', [UserController::class, 'updateProfile'])->name('profile.update');
         Route::delete('profile/photo', [UserController::class, 'deletePhoto'])->name('profile.delete-photo');
+
+        Route::get('template/pdf/{file_name}', [TemplateController::class, 'previewFile'])->name('template-view');
     });
 
 Route::name('admin.')
