@@ -96,7 +96,7 @@ class MultiMOORA
     public function computeMultiMOORA(): void
     {
         // Save user preferences
-        $this->saveUserPreferences();
+        // $this->saveUserPreferences();
 
         $dataEncodingResult = $this->dataEncoding();
         $this->saveJsonData('01_data_encoding.json', $dataEncodingResult);

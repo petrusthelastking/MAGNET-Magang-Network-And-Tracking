@@ -2,6 +2,9 @@
 
 namespace App\Traits;
 
+use App\Enums\DecisionMakingEnum;
+use App\Helpers\DecisionMaking\ROC;
+
 trait BaseKriteriaFactory
 {
     public function forUser(int $mhs_id)
@@ -16,4 +19,15 @@ trait BaseKriteriaFactory
             'rank' => $rank,
         ]);
     }
+
+    public function withBobotCalculation()
+    {
+        return $this->afterMaking(function ($model) {
+            $model->bobot = ROC::getWeight(
+                $model->rank,
+                DecisionMakingEnum::totalCriteria->value
+            );
+        });
+    }
+
 }
