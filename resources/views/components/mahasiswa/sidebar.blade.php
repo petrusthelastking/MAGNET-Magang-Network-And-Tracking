@@ -33,6 +33,11 @@
             Log Magang
         </flux:navlist.item>
 
+        <flux:navlist.item icon="message-circle" href="{{ route('mahasiswa.saran-dari-dosen') }}"
+            :current="request()->is('saran-dari-dosen')">
+            Saran dari<br>
+            Dosen
+        </flux:navlist.item>
         <flux:navlist.item icon="history" href="{{ route('mahasiswa.riwayat-rekomendasi') }}"
             :current="request()->is('riwayat-rekomendasi')">
             Riwayat Rekomendasi <br>
