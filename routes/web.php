@@ -58,6 +58,8 @@ Route::name('admin.')
                 Route::view('perusahaan-terpopuler', 'pages.admin.magang.perusahaan-terpopuler')->name('perusahaan-terpopuler');
 
                 Route::view('aturan-magang', 'pages.admin.magang.aturan-magang')->name('aturan-magang');
+                Volt::route('data-lowongan-diperbarui', 'pages.admin.magang.data-pengajuan-diperbarui')->name('data-pengajuan-diperbarui');
+                Volt::route('detail-pengajuan-diperbarui/{id}', 'pages.admin.magang.detail-pengajuan-diperbarui')->name('detail-pengajuan-diperbarui');
         });
 
 

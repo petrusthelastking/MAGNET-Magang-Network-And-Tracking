@@ -19,8 +19,8 @@
                 href="{{ route('admin.data-mahasiswa') }}" class="text-magnet-deep-ocean-blue!">
                 Data Mahasiswa
             </flux:navlist.item>
-            <flux:navlist.item icon="user" :current="request()->fullUrlIs(route('admin.data-dosen'))" href="{{ route('admin.data-dosen') }}"
-                class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="user" :current="request()->fullUrlIs(route('admin.data-dosen'))"
+                href="{{ route('admin.data-dosen') }}" class="text-magnet-deep-ocean-blue!">
                 Data Dosen
             </flux:navlist.item>
             <flux:navlist.item icon="building-2" href="{{ route('admin.data-perusahaan') }}"
@@ -37,28 +37,38 @@
                 :current="request()->is('data-lowongan')" class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="flask-conical" href="{{ route('admin.data-pengajuan-magang') }}" :current="request()->is('data-pengajuan-magang')"
-                class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="flask-conical" href="{{ route('admin.data-pengajuan-magang') }}"
+                :current="request()->is('data-pengajuan-magang')" class="text-magnet-deep-ocean-blue!">
                 Pengajuan Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="chart-no-axes-combined" href="{{ route('admin.statistik-magang') }}" :current="request()->is('tren-magang')"
-                class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="flask-conical" href="{{ route('admin.data-pengajuan-diperbarui') }}"
+                :current="request()->is('data-pengajuan-diperbarui')" class="text-magnet-deep-ocean-blue!">
+                Pengajuan Magang<br>Diperbarui
+            </flux:navlist.item>
+            <flux:navlist.item icon="chart-no-axes-combined" href="{{ route('admin.statistik-magang') }}"
+                :current="request()->is('tren-magang')" class="text-magnet-deep-ocean-blue!">
                 Statistik Magang
             </flux:navlist.item>
-            <flux:navlist.item icon="crown" href="{{ route('admin.aturan-magang') }}" :current="request()->is('aturan-magang')"
-                class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="crown" href="{{ route('admin.aturan-magang') }}"
+                :current="request()->is('aturan-magang')" class="text-magnet-deep-ocean-blue!">
                 Aturan Magang
             </flux:navlist.item>
         </flux:navlist.group>
 
-        <flux:navlist.group expandable heading="Laporan" :expanded="request()->fullUrlIs(route('admin.laporan-statistik-magang'))" class="text-magnet-deep-ocean-blue!">
-            <flux:navlist.item icon="file-text" href="{{ route('admin.laporan-statistik-magang') }}" class="text-magnet-deep-ocean-blue!">
+        <flux:navlist.group expandable heading="Laporan"
+            :expanded="request()->fullUrlIs(route('admin.laporan-statistik-magang'))"
+            class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="file-text" href="{{ route('admin.laporan-statistik-magang') }}"
+                class="text-magnet-deep-ocean-blue!">
                 Laporan Statistik<br>Magang
             </flux:navlist.item>
         </flux:navlist.group>
 
-        <flux:navlist.group expandable heading="Sistem" :expanded="request()->fullUrlIs(route('admin.evaluasi-sistem-rekomendasi'))" class="text-magnet-deep-ocean-blue!">
-            <flux:navlist.item icon="file-cog" href="{{ route('admin.evaluasi-sistem-rekomendasi') }}" class="text-magnet-deep-ocean-blue!">
+        <flux:navlist.group expandable heading="Sistem"
+            :expanded="request()->fullUrlIs(route('admin.evaluasi-sistem-rekomendasi'))"
+            class="text-magnet-deep-ocean-blue!">
+            <flux:navlist.item icon="file-cog" href="{{ route('admin.evaluasi-sistem-rekomendasi') }}"
+                class="text-magnet-deep-ocean-blue!">
                 Evaluasi Sistem<br>Rekomendasi
             </flux:navlist.item>
         </flux:navlist.group>
@@ -73,8 +83,7 @@
             <flux:navlist variant="outline" class="w-full">
                 <flux:button variant="ghost" class="flex my-2">
                     <flux:avatar src="https://unavatar.io/x/calebporzio" class="mx-auto" />
-                    <flux:navlist.item href="{{ route('profile') }}"
-                        class="text-black!">
+                    <flux:navlist.item href="{{ route('profile') }}" class="text-black!">
                         <div class="text-base leading-6 font-normal">{{ auth('admin')->user()->nama }}</div>
                         <div class="text-xs leading-4 font-medium">{{ auth('admin')->user()->nip }}</div>
                     </flux:navlist.item>
@@ -83,7 +92,8 @@
 
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
-                <flux:button type="submit" variant="danger" class="w-full rounded-t-none! hover:cursor-pointer" icon="arrow-right-start-on-rectangle">
+                <flux:button type="submit" variant="danger" class="w-full rounded-t-none! hover:cursor-pointer"
+                    icon="arrow-right-start-on-rectangle">
                     {{ __('Log Out') }}
                 </flux:button>
             </form>
