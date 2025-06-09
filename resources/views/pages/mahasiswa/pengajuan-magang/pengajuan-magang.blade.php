@@ -39,23 +39,33 @@ state([
             </div>
             <x-mahasiswa.pengajuan-magang.belum-diajukan />
         @endif
-    @elseif ($status == 'sedang magang')
-        {{-- Sedang magang, tidak perlu ajukan lagi --}}
-        <div class="card bg-white shadow-md p-5 text-black flex flex-col gap-5">
-            <p>Status magang Anda: Sedang Magang</p>
-            <flux:text>Anda sedang menjalani magang. Tidak perlu mengajukan lagi.</flux:text>
-        </div>
-    @elseif ($status == 'selesai magang')
-        {{-- Sudah selesai magang, tidak perlu ajukan lagi --}}
-        <div class="card bg-white shadow-md p-5 text-black flex flex-col gap-5">
-            <p>Status magang Anda: Selesai Magang</p>
-            <flux:text>Anda sudah menyelesaikan magang. Tidak perlu mengajukan lagi.</flux:text>
-        </div>
-    @else
-        {{-- Status magang tidak dikenali --}}
-        <div class="card bg-white shadow-md p-5 text-black flex flex-col gap-5">
-            <p>Status magang Anda tidak dikenali.</p>
-            <flux:text>Silakan hubungi admin untuk informasi lebih lanjut.</flux:text>
+    @elseif (
+        $status == 'sedang magang' ||
+            $status == 'selesai magang' ||
+            !in_array($status, ['belum magang', 'sedang magang', 'selesai magang']))
+        <div class="card bg-white shadow-md p-6 text-black rounded-2xl border border-gray-200">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-briefcase"></i>
+                </div>
+                <div class="flex flex-col">
+                    <p class="text-sm text-gray-500 font-medium">Status Magang</p>
+                    <p class="text-lg font-semibold capitalize">
+                        {{ match ($status) {
+                            'sedang magang' => 'Sedang Menjalani Magang',
+                            'selesai magang' => 'Magang Telah Selesai',
+                            default => 'Status Tidak Dikenali',
+                        } }}
+                    </p>
+                </div>
+            </div>
+            <div class="text-sm text-gray-600 leading-relaxed">
+                {{ match ($status) {
+                    'sedang magang' => 'Anda sedang menjalani magang saat ini. Tidak perlu mengajukan kembali.',
+                    'selesai magang' => 'Anda telah menyelesaikan magang. Terima kasih atas partisipasi Anda.',
+                    default => 'Silakan hubungi admin jika informasi status magang Anda tidak sesuai.',
+                } }}
+            </div>
         </div>
     @endif
 </div>

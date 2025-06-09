@@ -13,7 +13,7 @@ class Perusahaan extends Model
 
     protected $fillable = [
         'nama',
-        'bidang_industri',
+        'bidang_industri_id',
         'lokasi',
         'kategori',
         'rating',
@@ -30,7 +30,8 @@ class Perusahaan extends Model
         return $this->hasMany(LowonganMagang::class);
     }
 
-    public function bidangIndustri() {
+    public function bidangIndustri()
+    {
         return $this->belongsTo(BidangIndustri::class);
     }
 }
