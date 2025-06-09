@@ -3,8 +3,9 @@
 use Flux\Flux;
 use function Livewire\Volt\{layout, state, on};
 use Illuminate\Support\Facades\DB;
-use App\Models\{BidangIndustri, Pekerjaan, LokasiMagang, KriteriaPekerjaan, KriteriaBidangIndustri, KriteriaJenisMagang, KriteriaLokasiMagang, KriteriaOpenRemote};
+use App\Models\{BidangIndustri, Pekerjaan, LokasiMagang, KriteriaPekerjaan, KriteriaBidangIndustri, KriteriaJenisMagang, KriteriaLokasiMagang, KriteriaOpenRemote, Mahasiswa};
 use App\Helpers\DecisionMaking\ROC;
+use App\Helpers\DecisionMaking\RecommendationSystem;
 
 layout('components.layouts.guest.with-navbar');
 
@@ -93,6 +94,10 @@ $storePreferensiMahasiswa = function () {
                 'rank' => $this->open_remote_rank,
                 'bobot' => ROC::getWeight($this->open_remote_rank, 5),
             ]);
+            $mahasiswa = Mahasiswa::find(auth('mahasiswa')->user()->id);
+            // Run the recommendation system
+            $recommendationSystem = new RecommendationSystem($mahasiswa);
+            $recommendationSystem->runRecommendationSystem();
         });
     } catch (Exception $e) {
         $status = 'failed';
@@ -139,7 +144,8 @@ $resetPage = fn() => redirect()->back();
                             Lanjut ke Dashboard
                         </flux:button>
                     @else
-                        <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal px-8 py-2" wire:click="resetPage">
+                        <flux:button type="submit" variant="primary" class="bg-magnet-sky-teal px-8 py-2"
+                            wire:click="resetPage">
                             Kembali isi ulang data preferensi
                         </flux:button>
                     @endif
@@ -148,3 +154,5 @@ $resetPage = fn() => redirect()->back();
         </div>
     </flux:modal>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>

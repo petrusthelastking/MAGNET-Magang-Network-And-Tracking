@@ -326,10 +326,10 @@ $hasCompletedInternship = function () {
                             <h4 class="text-lg font-semibold text-gray-700 mb-4">Dokumen Selesai Magang</h4>
 
                             <flux:field>
-                                <flux:label>Bukti Surat Selesai Magang (PDF)</flux:label>
+                                <flux:label>Laporan Akhir Magang (PDF)</flux:label>
                                 <flux:input type="file" wire:model="bukti_surat_selesai_magang" accept=".pdf" />
                                 <flux:description>
-                                    Upload surat keterangan selesai magang dalam format PDF (maksimal 2MB)
+                                    Upload Laporan Akhir Magang dalam format PDF (maksimal 2MB)
                                 </flux:description>
 
                                 @if ($bukti_surat_selesai_magang && !$errors->has('bukti_surat_selesai_magang'))

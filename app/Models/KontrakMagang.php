@@ -16,41 +16,59 @@ class KontrakMagang extends Model
         'dosen_id',
         'lowongan_magang_id',
         'waktu_awal',
-        'waktu_akhir',
+        'waktu_akhir'
     ];
 
     protected $casts = [
         'waktu_awal' => 'datetime',
-        'waktu_akhir' => 'datetime',
+        'waktu_akhir' => 'datetime'
     ];
 
+    /**
+     * Relationship dengan Mahasiswa
+     */
     public function mahasiswa()
     {
-        return $this->belongsTo(Mahasiswa::class);
+        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
     }
 
+    /**
+     * Relationship dengan Dosen Pembimbing
+     */
     public function dosenPembimbing()
     {
-        return $this->belongsTo(DosenPembimbing::class);
+        return $this->belongsTo(DosenPembimbing::class, 'dosen_id');
     }
 
-    public function lowongan_magang()
+    /**
+     * Relationship dengan Lowongan Magang
+     */
+    public function lowonganMagang()
     {
-        return $this->belongsTo(LowonganMagang::class);
+        return $this->belongsTo(LowonganMagang::class, 'lowongan_magang_id');
     }
 
+    /**
+     * Relationship dengan Log Magang
+     */
     public function logMagang()
     {
-        return $this->hasMany(LogMagang::class);
+        return $this->hasMany(LogMagang::class, 'kontrak_magang_id');
     }
 
-    public function ulasanMagang()
-    {
-        return $this->hasOne(UlasanMagang::class);
-    }
-
+    /**
+     * Relationship dengan Umpan Balik Magang
+     */
     public function umpanBalikMagang()
     {
-        return $this->hasMany(UmpanBalikMagang::class);
+        return $this->hasMany(UmpanBalikMagang::class, 'kontrak_magang_id');
+    }
+
+    /**
+     * Relationship dengan Ulasan Magang
+     */
+    public function ulasanMagang()
+    {
+        return $this->hasOne(UlasanMagang::class, 'kontrak_magang_id');
     }
 }
