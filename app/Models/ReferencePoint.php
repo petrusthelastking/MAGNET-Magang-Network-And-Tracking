@@ -22,4 +22,13 @@ class ReferencePoint extends Model
         'lokasi_magang',
         'rank'
     ];
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
+    }
+    public function lowonganMagang()
+    {
+        return $this->belongsTo(LowonganMagang::class, 'lowongan_magang_id');
+    }
 }
