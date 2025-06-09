@@ -1,7 +1,13 @@
-<x-layouts.user.main user="mahasiswa">
+<?php
+use function Livewire\Volt\{computed, layout, state, mount};
 
+layout('components.layouts.user.main');
+?>
+
+<div>
+    <x-slot:user>mahasiswa</x-slot:user>
     @section('script')
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     @endsection
 
     <div class="card bg-white shadow-md">
@@ -818,72 +824,71 @@
             </div>
         </div>
 
-    <div class="pt-7">
-        <h2 class="text-base font-semibold">Top 10 Perusahaan Hasil Rekomendasi Magang</h2>
-        <div class="pb-3">
-            <p>Pemilihan Rekomendasi menggunakan metode Multimoora</p>
+        <div class="pt-7">
+            <h2 class="text-base font-semibold">Top 10 Perusahaan Hasil Rekomendasi Magang</h2>
+            <div class="pb-3">
+                <p>Pemilihan Rekomendasi menggunakan metode Multimoora</p>
+            </div>
+            <table class="table-auto w-full ">
+                <thead class="bg-white text-black">
+                    <tr class="border-b bg-yellow-200">
+                        <th class="text-center px-6 py-3">Rank</th>
+                        <th class="text-center px-6 py-3">Lowongan</th>
+                        <th class="text-center px-6 py-3">Rata-Rata Rangking</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white text-black">
+                    <tr>
+                        <td class="px-6 py-3 text-right">1</td>
+                        <td class="px-6 py-3">Backend Developer Internship</td>
+                        <td class="px-6 py-3 text-right">1.666666667</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-right">2</td>
+                        <td class="px-6 py-3">Frontend Web Developer Intern</td>
+                        <td class="px-6 py-3 text-right">2.333333333</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-right">2</td>
+                        <td class="px-6 py-3">Security Analyst Intern</td>
+                        <td class="px-6 py-3 text-right">2.333333333</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-right">3</td>
+                        <td class="px-6 py-3">Security Analyst Internship</td>
+                        <td class="px-6 py-3 text-right">3</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-right">4</td>
+                        <td class="px-6 py-3">Machine Learning Intern</td>
+                        <td class="px-6 py-3 text-right">4.333333333</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-right">5</td>
+                        <td class="px-6 py-3">Mobile Developer Intern</td>
+                        <td class="px-6 py-3 text-right">4.666666667</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-right">6</td>
+                        <td class="px-6 py-3">Machine Learning Intern</td>
+                        <td class="px-6 py-3 text-right">6.333333333</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-right">7</td>
+                        <td class="px-6 py-3">Data Engineer Internship</td>
+                        <td class="px-6 py-3 text-right">7.333333333</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-right">8</td>
+                        <td class="px-6 py-3">Mobile App Developer Intern</td>
+                        <td class="px-6 py-3 text-right">8</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-right">9</td>
+                        <td class="px-6 py-3">Data Scientist Internship</td>
+                        <td class="px-6 py-3 text-right">8.666666667</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <table class="table-auto w-full ">
-            <thead class="bg-white text-black">
-                <tr class="border-b bg-yellow-200">
-                    <th class="text-center px-6 py-3">Rank</th>
-                    <th class="text-center px-6 py-3">Lowongan</th>
-                    <th class="text-center px-6 py-3">Rata-Rata Rangking</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white text-black">
-                <tr>
-                    <td class="px-6 py-3 text-right">1</td>
-                    <td class="px-6 py-3">Backend Developer Internship</td>
-                    <td class="px-6 py-3 text-right">1.666666667</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">2</td>
-                    <td class="px-6 py-3">Frontend Web Developer Intern</td>
-                    <td class="px-6 py-3 text-right">2.333333333</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">2</td>
-                    <td class="px-6 py-3">Security Analyst Intern</td>
-                    <td class="px-6 py-3 text-right">2.333333333</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">3</td>
-                    <td class="px-6 py-3">Security Analyst Internship</td>
-                    <td class="px-6 py-3 text-right">3</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">4</td>
-                    <td class="px-6 py-3">Machine Learning Intern</td>
-                    <td class="px-6 py-3 text-right">4.333333333</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">5</td>
-                    <td class="px-6 py-3">Mobile Developer Intern</td>
-                    <td class="px-6 py-3 text-right">4.666666667</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">6</td>
-                    <td class="px-6 py-3">Machine Learning Intern</td>
-                    <td class="px-6 py-3 text-right">6.333333333</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">7</td>
-                    <td class="px-6 py-3">Data Engineer Internship</td>
-                    <td class="px-6 py-3 text-right">7.333333333</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">8</td>
-                    <td class="px-6 py-3">Mobile App Developer Intern</td>
-                    <td class="px-6 py-3 text-right">8</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">9</td>
-                    <td class="px-6 py-3">Data Scientist Internship</td>
-                    <td class="px-6 py-3 text-right">8.666666667</td>
-                </tr>
-            </tbody>
-        </table>
     </div>
-
-</x-layouts.user.main>

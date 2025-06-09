@@ -34,7 +34,7 @@ Route::name('admin.')
     ->group(function () {
 
         Route::prefix('kelola-data-pengguna')
-            ->group(function ()  {
+            ->group(function () {
                 Volt::route('data-mahasiswa', 'pages.admin.kelola-data-pengguna.data-mahasiswa')->name('data-mahasiswa');
                 Volt::route('detail-mahasiswa/{id}', 'pages.admin.kelola-data-pengguna.detail-mahasiswa')->name('detail-mahasiswa');
 
@@ -43,7 +43,7 @@ Route::name('admin.')
 
                 Volt::route('data-perusahaan', 'pages.admin.kelola-data-pengguna.data-perusahaan')->name('data-perusahaan');
                 Volt::route('detail-perusahaan/{id}', 'pages.admin.kelola-data-pengguna.detail-perusahaan')->name('detail-perusahaan');
-        });
+            });
 
 
         Route::prefix('magang')
@@ -60,7 +60,7 @@ Route::name('admin.')
                 Route::view('aturan-magang', 'pages.admin.magang.aturan-magang')->name('aturan-magang');
                 Volt::route('data-lowongan-diperbarui', 'pages.admin.magang.data-pengajuan-diperbarui')->name('data-pengajuan-diperbarui');
                 Volt::route('detail-pengajuan-diperbarui/{id}', 'pages.admin.magang.detail-pengajuan-diperbarui')->name('detail-pengajuan-diperbarui');
-        });
+            });
 
 
         Route::view('laporan-statistik-magang', 'pages.admin.laporan-statistik-magang')->name('laporan-statistik-magang');
@@ -94,8 +94,8 @@ Route::name('mahasiswa.')
         Route::view('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
 
         Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
-        Route::view('riwayat-rekomendasi', 'pages.mahasiswa.riwayat-rekomendasi.index')->name('riwayat-rekomendasi');
-        Route::view('riwayat-rekomendasi/detail', 'pages.mahasiswa.riwayat-rekomendasi.detail-rekomendasi')->name('detail-rekomendasi');
+        Volt::route('riwayat-rekomendasi', 'pages.mahasiswa.riwayat-rekomendasi.index')->name('riwayat-rekomendasi');
+        Volt::route('riwayat-rekomendasi/detail', 'pages.mahasiswa.riwayat-rekomendasi.detail-rekomendasi')->name('detail-rekomendasi');
         Volt::route('saran-dari-dosen', 'pages.mahasiswa.saran-dari-dosen')->name('saran-dari-dosen');
     });
 
