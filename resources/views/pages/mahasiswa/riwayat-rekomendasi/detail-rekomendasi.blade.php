@@ -291,31 +291,6 @@ $getTopRekomendasi = function () {
 
                     <div>
                         <div class="font-bold text-lg mt-10">
-                            <h2>Pembobotan Kriteria {{ $mahasiswa->nama ?? 'Mahasiswa' }}</h2>
-                        </div>
-                        <table class="table-auto w-full">
-                            <thead class="bg-white text-black">
-                                <tr class="border-b bg-green-400">
-                                    <th class="text-left px-6 py-3">Nama</th>
-                                    <th class="text-center px-6 py-3">Nilai bobot</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white text-black">
-                                @foreach (collect($rankingKriteria)->sortByDesc('bobot') as $kriteria)
-                                    @if (!is_null($kriteria['bobot']))
-                                        <tr>
-                                            <td class="px-6 py-3">{{ $kriteria['nama'] }}</td>
-                                            <td class="px-6 py-3 text-right">{{ number_format($kriteria['bobot'], 10) }}
-                                            </td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div>
-                        <div class="font-bold text-lg mt-10">
                             <h2>Preferensi Mahasiswa {{ $mahasiswa->nama ?? 'Mahasiswa' }}</h2>
                         </div>
                         <table class="table-auto w-full">
