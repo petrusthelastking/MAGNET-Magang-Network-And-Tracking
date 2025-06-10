@@ -230,14 +230,6 @@ $statistikRekomendasi = computed(function () {
                 Belum ada rekomendasi magang yang tersedia untuk ditampilkan. Mulai pencarian untuk mendapatkan
                 rekomendasi berbasis algoritma MULTIMOORA.
             </p>
-            <a href="{{ route('mahasiswa.cari-magang') }}"
-                class="inline-flex items-center px-4 py-2 bg-magnet-sky-teal text-white text-sm font-medium rounded-lg hover:bg-teal-600 transition-all duration-300">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                Cari Rekomendasi Magang
-            </a>
         </div>
     @endif
 </div>

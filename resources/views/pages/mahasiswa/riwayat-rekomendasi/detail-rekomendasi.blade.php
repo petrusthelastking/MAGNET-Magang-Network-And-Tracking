@@ -178,7 +178,8 @@ $getRankingGlobal = function () {
             return $query->whereDate('created_at', now()->toDateString());
         })
         ->orderBy('rank', 'asc') // Urutkan berdasarkan rank
-        ->get();
+        ->get()
+        ->toArray();
 };
 
 $getTopRekomendasi = function () {
@@ -680,13 +681,14 @@ $getTopRekomendasi = function () {
                             @foreach ($finalRanking as $index => $ranking)
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="px-6 py-4">
-                                        <div class="font-medium">{{ $ranking['mahasiswa']->nama ?? 'N/A' }}</div>
                                         <div class="text-sm text-gray-600">
-                                            {{ $ranking['lowonganMagang']->nama ?? 'N/A' }}</div>
+                                            {{ $ranking['lowongan_magang']['nama'] ?? 'N/A' }}</div>
                                     </td>
-                                    <td class="text-center px-6 py-4">{{ $ranking['ratioSystem']->score }}</td>
-                                    <td class="text-center px-6 py-4">{{ $ranking['referencePoint']->score }}</td>
-                                    <td class="text-center px-6 py-4">{{ $ranking['fullMultiplicativeForm']->score }}
+                                    <td class="text-center px-6 py-4">
+                                        {{ $ranking['ratio_system']['rank'] }}</td>
+                                    <td class="text-center px-6 py-4">{{ $ranking['reference_point']['rank'] }}</td>
+                                    <td class="text-center px-6 py-4">
+                                        {{ $ranking['full_multiplicative_form']['rank'] }}
                                     </td>
                                     <td class="text-center px-6 py-4">{{ $ranking['avg_rank'] }}</td>
                                     <td class="text-center px-6 py-4">{{ $ranking['rank'] }}</td>

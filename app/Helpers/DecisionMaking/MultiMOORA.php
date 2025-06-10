@@ -375,37 +375,52 @@ class MultiMOORA
             'lokasi_magang' => $this->kriteriaLokasiMagang->bobot
         ];
 
-        $referencePointList = [];
-        foreach ($this->vectorNormalizationResult as $item) {
-            $maxVal = array_reduce($item, function (float $carry, float $curr): float {
-                return $curr > $carry ? $curr : $carry;
-            }, PHP_FLOAT_MIN);
+        // Step 1: Determine the reference point vector (r_j).
+        // Since all criteria are beneficial (higher is better), the reference point is the max value in each column.
+        $referencePointVector = [
+            'pekerjaan' => 0.0,
+            'open_remote' => 0.0,
+            'bidang_industri' => 0.0,
+            'jenis_magang' => 0.0,
+            'lokasi_magang' => 0.0
+        ];
 
-            $referencePointList[$item['lowongan_magang_id']] = $maxVal;
+        // Find the maximum value for each criterion across all alternatives.
+        foreach ($this->vectorNormalizationResult as $alt) {
+            foreach (array_keys($referencePointVector) as $criteria) {
+                if ($alt[$criteria] > $referencePointVector[$criteria]) {
+                    $referencePointVector[$criteria] = $alt[$criteria];
+                }
+            }
         }
 
-        $deviationScores = array_map(function (array $alt) use ($referencePointList, $weights) {
-            $pekerjaanScore = abs($referencePointList[$alt['lowongan_magang_id']] - $alt['pekerjaan'] * $weights['pekerjaan']);
-            $openRemoteScore = abs($referencePointList[$alt['lowongan_magang_id']] - $alt['open_remote'] * $weights['open_remote']);
-            $jenisMagangScore = abs($referencePointList[$alt['lowongan_magang_id']] - $alt['jenis_magang'] * $weights['jenis_magang']);
-            $bidangIndustriScore = abs($referencePointList[$alt['lowongan_magang_id']] - $alt['bidang_industri'] * $weights['bidang_industri']);
-            $lokasiMagangScore = abs($referencePointList[$alt['lowongan_magang_id']] - $alt['lokasi_magang'] * $weights['lokasi_magang']);
+        // Step 2 & 3: Calculate the maximum deviation for each alternative using the Tchebycheff Min-Max method.
+        $deviationScores = array_map(function (array $alt) use ($referencePointVector, $weights) {
+            // Calculate the weighted deviation from the reference point for each criterion.
+            $pekerjaanDev = $weights['pekerjaan'] * abs($referencePointVector['pekerjaan'] - $alt['pekerjaan']);
+            $openRemoteDev = $weights['open_remote'] * abs($referencePointVector['open_remote'] - $alt['open_remote']);
+            $jenisMagangDev = $weights['jenis_magang'] * abs($referencePointVector['jenis_magang'] - $alt['jenis_magang']);
+            $bidangIndustriDev = $weights['bidang_industri'] * abs($referencePointVector['bidang_industri'] - $alt['bidang_industri']);
+            $lokasiMagangDev = $weights['lokasi_magang'] * abs($referencePointVector['lokasi_magang'] - $alt['lokasi_magang']);
 
-            $maxScore = max($pekerjaanScore, $openRemoteScore, $jenisMagangScore, $bidangIndustriScore, $lokasiMagangScore);
+            // Find the maximal deviation (regret) for the current alternative.
+            $maxDeviation = max($pekerjaanDev, $openRemoteDev, $jenisMagangDev, $bidangIndustriDev, $lokasiMagangDev);
+
             return [
                 'lowongan_magang_id' => $alt['lowongan_magang_id'],
-                'pekerjaan' => $pekerjaanScore,
-                'open_remote' => $openRemoteScore,
-                'jenis_magang' => $jenisMagangScore,
-                'bidang_industri' => $bidangIndustriScore,
-                'lokasi_magang' => $lokasiMagangScore,
-                'max_score' => $maxScore
+                'pekerjaan' => $pekerjaanDev,
+                'open_remote' => $openRemoteDev,
+                'jenis_magang' => $jenisMagangDev,
+                'bidang_industri' => $bidangIndustriDev,
+                'lokasi_magang' => $lokasiMagangDev,
+                'max_score' => $maxDeviation
             ];
         }, $this->vectorNormalizationResult);
 
-        // ranking process (descending)
+        // Step 4: Rank the alternatives based on max_score in ASCENDING order.
+        // The smaller the max_score, the better the rank.
         usort($deviationScores, function ($a, $b) {
-            return $b['max_score'] <=> $a['max_score'];
+            return $a['max_score'] <=> $b['max_score'];
         });
 
         $referencePointFinalResult = [];
