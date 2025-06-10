@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('ratio_system_id')->constrained('ratio_system')->onDelete('cascade');
             $table->foreignId('reference_point_id')->constrained('reference_point')->onDelete('cascade');
             $table->foreignId('fmf_id')->constrained('full_multiplicative_form')->onDelete('cascade');
-            $table->float('avg_rank');
+            $table->decimal('avg_rank', 30, 15);
             $table->integer('rank');
             $table->timestamps();
         });
