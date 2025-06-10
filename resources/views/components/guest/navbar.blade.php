@@ -2,15 +2,7 @@
     <flux:navbar.item href="{{ route('landing-page') }}">
         <flux:text class="font-black text-white text-2xl">{{ config('app.name') }}</flux:text>
     </flux:navbar.item>
-    <div class="flex">
-        <flux:navbar.item href="#alur">
-            <flux:text class=" text-white">Pedoman Magang</flux:text>
-        </flux:navbar.item>
-        <flux:navbar.item href="#tata-tertib">
-            <flux:text class=" text-white">Tata Tertib</flux:text>
-        </flux:navbar.item>
-        <flux:navbar.item href="#kendala">
-            <flux:text class=" text-white">Pusat Bantuan</flux:text>
-        </flux:navbar.item>
+    <div>
+        <img src="{{ asset('JTI.png') }}" alt="" class="w-10">
     </div>
 </flux:navbar>
