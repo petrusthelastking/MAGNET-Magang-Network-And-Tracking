@@ -21,7 +21,13 @@ class LogMagangFactory extends Factory
      */
     public function definition(): array
     {
-        $kontrak = KontrakMagang::inRandomOrder()->first();
+        static $kontrakMagangData = null;
+
+        if (!$kontrakMagangData) {
+            $kontrakMagangData = KontrakMagang::orderBy('id')->get(['id', 'waktu_awal', 'waktu_akhir'])->toArray();
+        }
+
+        $kontrak = $this->faker->randomElement($kontrakMagangData);
 
         $start = Carbon::today()->addHours(7);
         $end = Carbon::today()->addHours(17);
@@ -30,14 +36,14 @@ class LogMagangFactory extends Factory
         $endTime = $this->faker->dateTimeBetween($startTime, $end);
 
         return [
-            'kontrak_magang_id' => $kontrak->value('id'),
+            'kontrak_magang_id' => $kontrak['id'],
             'kegiatan' => $this->faker->sentence(),
             'tanggal' => $this->faker->dateTimeBetween(
-                $kontrak->value('waktu_awal'),
-                $kontrak->value('waktu_akhir')
+                $kontrak['waktu_awal'],
+                $kontrak['waktu_akhir']
             ),
             'jam_masuk' => $startTime->format('H:i:s'),
-            'jam_keluar' => $endTime->format('H:i:s')
+            'jam_keluar' => $endTime->format('H:i:s'),
         ];
     }
 }

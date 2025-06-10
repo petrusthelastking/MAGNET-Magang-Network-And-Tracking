@@ -20,9 +20,13 @@ class UmpanBalikMagangFactory extends Factory
      */
     public function definition(): array
     {
+        static $kontrakMagangIds = null;
+
+        $kontrakMagangIds ??= KontrakMagang::orderBy('id')->pluck('id')->toArray();
+
         return [
-            'kontrak_magang_id' => fn() => KontrakMagang::inRandomOrder()->value('id'),
-            'komentar' => $this->faker->sentence(3),
+            'kontrak_magang_id' => $this->faker->randomElement($kontrakMagangIds),
+            'komentar' => $this->faker->sentence(2),
             'tanggal' => $this->faker->dateTimeBetween('-1 years', '+1 years')->format('Y-m-d'),
         ];
     }

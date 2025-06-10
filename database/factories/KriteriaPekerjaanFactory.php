@@ -26,15 +26,22 @@ class KriteriaPekerjaanFactory extends Factory
      */
     public function definition(): array
     {
+        static $pekerjaanIds = null;
+        static $mahasiswaIds = null;
+
+        $pekerjaanIds ??= Pekerjaan::orderBy('id')->pluck('id')->toArray();
+        $mahasiswaIds ??= Mahasiswa::orderBy('id')->pluck('id')->toArray();
+
         $rank = $this->faker->numberBetween(1, DecisionMakingEnum::totalCriteria->value);
 
         return [
-            'pekerjaan_id' => fn() => Pekerjaan::inRandomOrder()->value('id'),
-            'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
-            'rank' => 1,
-            'bobot' => ROC::getWeight(1, DecisionMakingEnum::totalCriteria->value)
+            'pekerjaan_id' => $this->faker->randomElement($pekerjaanIds),
+            'mahasiswa_id' => $this->faker->randomElement($mahasiswaIds),
+            'rank' => $rank,
+            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
         ];
     }
+
 
     public function configure()
     {

@@ -25,15 +25,19 @@ class KriteriaOpenRemoteFactory extends Factory
      */
     public function definition(): array
     {
+        static $mahasiswaIds = null;
+        $mahasiswaIds ??= Mahasiswa::orderBy('id')->pluck('id')->toArray();
+
         $rank = $this->faker->numberBetween(1, DecisionMakingEnum::totalCriteria->value);
 
         return [
             'open_remote' => $this->faker->randomElement(['ya', 'tidak']),
-            'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
-            'rank' => 1,
-            'bobot' => ROC::getWeight(1, DecisionMakingEnum::totalCriteria->value)
+            'mahasiswa_id' => $this->faker->randomElement($mahasiswaIds),
+            'rank' => $rank,
+            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
         ];
     }
+
 
     public function configure()
     {

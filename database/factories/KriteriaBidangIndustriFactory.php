@@ -26,19 +26,25 @@ class KriteriaBidangIndustriFactory extends Factory
      */
     public function definition(): array
     {
+        static $bidangIds = null;
+        static $mahasiswaIds = null;
+
+        $bidangIds ??= BidangIndustri::orderBy('id')->pluck('id')->toArray();
+        $mahasiswaIds ??= Mahasiswa::orderBy('id')->pluck('id')->toArray();
+
         $rank = $this->faker->numberBetween(1, DecisionMakingEnum::totalCriteria->value);
 
         return [
-            'bidang_industri_id' => fn() => BidangIndustri::inRandomOrder()->value('id'),
-            'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
-            'rank' => 1,
-            'bobot' => ROC::getWeight(1, DecisionMakingEnum::totalCriteria->value)
+            'bidang_industri_id' => $this->faker->randomElement($bidangIds),
+            'mahasiswa_id' => $this->faker->randomElement($mahasiswaIds),
+            'rank' => $rank,
+            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
         ];
     }
+
 
     public function configure()
     {
         return $this->withBobotCalculation();
     }
-
 }

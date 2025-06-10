@@ -20,9 +20,12 @@ class PerusahaanFactory extends Factory
      */
     public function definition(): array
     {
+        static $bidangIndustriIds = null;
+        $bidangIndustriIds ??= BidangIndustri::orderBy('id')->pluck('id')->toArray();
+
         return [
             'nama' => $this->faker->company(),
-            'bidang_industri_id' => fn() => BidangIndustri::inRandomOrder()->value('id'),
+            'bidang_industri_id' => $this->faker->randomElement($bidangIndustriIds),
             'lokasi' => $this->faker->address(),
             'kategori' => $this->faker->randomElement(['mitra', 'non_mitra']),
             'rating' => $this->faker->optional()->randomFloat(1, 0, 5)

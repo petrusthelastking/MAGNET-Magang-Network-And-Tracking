@@ -26,15 +26,22 @@ class KriteriaLokasiMagangFactory extends Factory
      */
     public function definition(): array
     {
+        static $lokasiIds = null;
+        static $mahasiswaIds = null;
+
+        $lokasiIds ??= LokasiMagang::orderBy('id')->pluck('id')->toArray();
+        $mahasiswaIds ??= Mahasiswa::orderBy('id')->pluck('id')->toArray();
+
         $rank = $this->faker->numberBetween(1, DecisionMakingEnum::totalCriteria->value);
 
         return [
-            'lokasi_magang_id' => fn() => LokasiMagang::inRandomOrder()->value('id'),
-            'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
-            'rank' => 1,
-            'bobot' => ROC::getWeight(1, DecisionMakingEnum::totalCriteria->value)
+            'lokasi_magang_id' => $this->faker->randomElement($lokasiIds),
+            'mahasiswa_id' => $this->faker->randomElement($mahasiswaIds),
+            'rank' => $rank,
+            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
         ];
     }
+
 
     public function configure()
     {

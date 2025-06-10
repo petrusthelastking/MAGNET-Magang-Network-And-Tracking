@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class UlasanMagangFactory extends Factory
 {
     protected $model = UlasanMagang::class;
-    
+
     /**
      * Define the model's default state.
      *
@@ -20,10 +20,14 @@ class UlasanMagangFactory extends Factory
      */
     public function definition(): array
     {
+        static $kontrakMagangIds = null;
+
+        $kontrakMagangIds ??= KontrakMagang::orderBy('id')->pluck('id')->toArray();
+
         return [
-            'kontrak_magang_id' => fn() => KontrakMagang::inRandomOrder()->value('id'),
+            'kontrak_magang_id' => $this->faker->randomElement($kontrakMagangIds),
             'rating' => $this->faker->numberBetween(1, 5),
-            'komentar' => $this->faker->sentence()
+            'komentar' => $this->faker->sentence(),
         ];
     }
 }
