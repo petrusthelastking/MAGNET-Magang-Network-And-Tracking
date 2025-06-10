@@ -168,18 +168,12 @@ $getRankingFMF = function () {
 
 $getRankingGlobal = function () {
     $tanggal = request('tanggal');
-    return FinalRankRecommendation::with(['mahasiswa', 'lowonganMagang', 'ratioSystem', 'referencePoint', 'fullMultiplicativeForm'])
-        ->when($tanggal, function ($query) use ($tanggal) {
-            // Pastikan format tanggal dan filter berdasarkan DATE saja
-            return $query->whereDate('created_at', $tanggal);
-        })
-        ->when(!$tanggal, function ($query) {
-            // Jika tidak ada parameter tanggal, ambil data hari ini
-            return $query->whereDate('created_at', now()->toDateString());
-        })
-        ->orderBy('rank', 'asc') // Urutkan berdasarkan rank
-        ->get()
-        ->toArray();
+
+    return FinalRankRecommendation::with(['mahasiswa', 'lowonganMagang.perusahaan', 'ratioSystem', 'referencePoint', 'fullMultiplicativeForm'])
+        ->when($tanggal, fn($query) => $query->whereDate('created_at', $tanggal))
+        ->when(!$tanggal, fn($query) => $query->whereDate('created_at', now()->toDateString()))
+        ->orderBy('rank', 'asc')
+        ->get();
 };
 
 $getTopRekomendasi = function () {
@@ -666,10 +660,16 @@ $getTopRekomendasi = function () {
                     <div class="font-bold text-lg mt-5">
                         <h2>Tabel Hasil Perankingan Global</h2>
                     </div>
+
+                    <div class="font-bold text-lg mt-5">
+                        <h2>Tabel Hasil Perankingan Global</h2>
+                    </div>
+
                     <table class="table-auto w-full">
                         <thead class="bg-white text-black">
                             <tr class="border-b bg-orange-400">
                                 <th class="text-left px-6 py-3">Alternatif</th>
+                                <th class="text-left px-6 py-3">Perusahaan</th>
                                 <th class="text-center px-6 py-3">RS</th>
                                 <th class="text-center px-6 py-3">RP</th>
                                 <th class="text-center px-6 py-3">FMF</th>
@@ -678,20 +678,49 @@ $getTopRekomendasi = function () {
                             </tr>
                         </thead>
                         <tbody class="bg-white text-black">
-                            @foreach ($finalRanking as $index => $ranking)
+                            @foreach ($finalRanking as $ranking)
+                                @php
+                                    // Cari rank dari masing-masing method berdasarkan mahasiswa dan lowongan yang sama
+                                    $rsRank =
+                                        $rankingRS
+                                            ->where('mahasiswa_id', $ranking->mahasiswa_id)
+                                            ->where('lowongan_magang_id', $ranking->lowongan_magang_id)
+                                            ->first()->rank ?? '-';
+
+                                    $rpRank =
+                                        $rankingRP
+                                            ->where('mahasiswa_id', $ranking->mahasiswa_id)
+                                            ->where('lowongan_magang_id', $ranking->lowongan_magang_id)
+                                            ->first()->rank ?? '-';
+
+                                    $fmfRank =
+                                        $rankingFMF
+                                            ->where('mahasiswa_id', $ranking->mahasiswa_id)
+                                            ->where('lowongan_magang_id', $ranking->lowongan_magang_id)
+                                            ->first()->rank ?? '-';
+                                @endphp
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="px-6 py-4">
-                                        <div class="text-sm text-gray-600">
-                                            {{ $ranking['lowongan_magang']['nama'] ?? 'N/A' }}</div>
+                                        {{ $ranking->mahasiswa->nama ?? 'N/A' }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {{ $ranking->lowonganMagang->perusahaan->nama ?? '-' }}
                                     </td>
                                     <td class="text-center px-6 py-4">
-                                        {{ $ranking['ratio_system']['rank'] }}</td>
-                                    <td class="text-center px-6 py-4">{{ $ranking['reference_point']['rank'] }}</td>
-                                    <td class="text-center px-6 py-4">
-                                        {{ $ranking['full_multiplicative_form']['rank'] }}
+                                        {{ $rsRank }}
                                     </td>
-                                    <td class="text-center px-6 py-4">{{ $ranking['avg_rank'] }}</td>
-                                    <td class="text-center px-6 py-4">{{ $ranking['rank'] }}</td>
+                                    <td class="text-center px-6 py-4">
+                                        {{ $rpRank }}
+                                    </td>
+                                    <td class="text-center px-6 py-4">
+                                        {{ $fmfRank }}
+                                    </td>
+                                    <td class="text-center px-6 py-4">
+                                        {{ number_format($ranking->avg_rank, 6) }}
+                                    </td>
+                                    <td class="text-center px-6 py-4 font-bold text-green-600">
+                                        {{ $ranking->rank }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
