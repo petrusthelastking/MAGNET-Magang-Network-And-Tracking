@@ -13,11 +13,17 @@ class MultiMOORASeeder extends Seeder
      */
     public function run(): void
     {
-        $dataMahasiswa = Mahasiswa::all();
-        foreach ($dataMahasiswa as $mahasiswa) {
-            $multiMooraObj = new RecommendationSystem($mahasiswa);
-            $multiMooraObj->runRecommendationSystem();
-            echo $mahasiswa->nama . " success to get recommendation system" . PHP_EOL;
-        }
+        // $dataMahasiswa = Mahasiswa::all();
+        // foreach ($dataMahasiswa as $mahasiswa) {
+        //     $multiMooraObj = new RecommendationSystem($mahasiswa);
+        //     $multiMooraObj->runRecommendationSystem();
+        //     echo $mahasiswa->nama . " success to get recommendation system" . PHP_EOL;
+        // }
+
+        $mahasiswa = Mahasiswa::first();
+
+        $multiMooraObj = new RecommendationSystem($mahasiswa);
+        $multiMooraObj->runRecommendationSystem();
+        echo $mahasiswa->nama . " success to get recommendation system" . PHP_EOL;
     }
 }
