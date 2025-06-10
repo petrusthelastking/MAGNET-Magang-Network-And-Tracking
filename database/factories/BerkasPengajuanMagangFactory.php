@@ -20,8 +20,11 @@ class BerkasPengajuanMagangFactory extends Factory
      */
     public function definition(): array
     {
+        static $mahasiswaIds = null;
+        $mahasiswaIds ??= Mahasiswa::orderBy('id')->pluck('id')->toArray();
+
         return [
-            'mahasiswa_id' => fn() => Mahasiswa::inRandomOrder()->value('id'),
+            'mahasiswa_id' => $this->faker->randomElement($mahasiswaIds),
             'cv' => $this->faker->unique()->lexify('cv_?????') . '.pdf',
             'transkrip_nilai' => $this->faker->unique()->lexify('transkrip_nilai_cv_?????') . '.pdf',
             'portfolio' => $this->faker->unique()->optional()->lexify('portfolio_?????') . '.pdf'

@@ -20,8 +20,11 @@ class FormPengajuanMagangFactory extends Factory
      */
     public function definition(): array
     {
+        static $pengajuanIds = null;
+        $pengajuanIds ??= BerkasPengajuanMagang::orderBy('id')->pluck('id')->toArray();
+
         return [
-            'pengajuan_id' => fn() => BerkasPengajuanMagang::inRandomOrder()->value('id'),
+            'pengajuan_id' => $this->faker->randomElement($pengajuanIds),
             'status' => $this->faker->randomElement(['diproses', 'diterima', 'ditolak']),
             'keterangan' => $this->faker->sentence()
         ];

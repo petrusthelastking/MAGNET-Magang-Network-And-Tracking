@@ -22,17 +22,25 @@ class LowonganMagangFactory extends Factory
      */
     public function definition(): array
     {
+        static $pekerjaanIds = null;
+        static $lokasiIds = null;
+        static $perusahaanIds = null;
+
+        $pekerjaanIds ??= Pekerjaan::pluck('id')->toArray();
+        $lokasiIds ??= LokasiMagang::pluck('id')->toArray();
+        $perusahaanIds ??= Perusahaan::pluck('id')->toArray();
+
         return [
             'nama' => $this->faker->jobTitle(),
             'kuota' => $this->faker->numberBetween(1, 50),
-            'pekerjaan_id' => fn() => Pekerjaan::inRandomOrder()->value('id'),
+            'pekerjaan_id' => $this->faker->randomElement($pekerjaanIds),
             'deskripsi' => $this->faker->paragraph(),
             'persyaratan' => $this->faker->paragraph(),
             'jenis_magang' => $this->faker->randomElement(['berbayar', 'tidak berbayar']),
             'open_remote' => $this->faker->randomElement(['ya', 'tidak']),
             'status' => $this->faker->randomElement(['buka', 'tutup']),
-            'lokasi_magang_id' => fn() => LokasiMagang::inRandomOrder()->value('id'),
-            'perusahaan_id' => fn() => Perusahaan::inRandomOrder()->value('id')
+            'lokasi_magang_id' => $this->faker->randomElement($lokasiIds),
+            'perusahaan_id' => $this->faker->randomElement($perusahaanIds)
         ];
     }
 }
