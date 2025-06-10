@@ -10,7 +10,7 @@ class EncodedAlternatives extends Model
 {
     use HasFactory, HasMultiMOORAProcess;
 
-    protected $model = 'encoded_alternatives';
+    protected $table = 'encoded_alternatives'; // Fixed: should be $table, not $model
 
     protected $fillable = [
         'mahasiswa_id',
@@ -21,4 +21,15 @@ class EncodedAlternatives extends Model
         'bidang_industri',
         'lokasi_magang'
     ];
+
+    // Define relationships
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
+    }
+
+    public function lowonganMagang()
+    {
+        return $this->belongsTo(LowonganMagang::class, 'lowongan_magang_id');
+    }
 }

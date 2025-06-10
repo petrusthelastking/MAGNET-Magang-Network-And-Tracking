@@ -20,4 +20,14 @@ class VectorNormalization extends Model
         'bidang_industri',
         'lokasi_magang'
     ];
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
+    }
+
+    public function lowonganMagang()
+    {
+        return $this->belongsTo(LowonganMagang::class, 'lowongan_magang_id');
+    }
 }

@@ -18,4 +18,13 @@ class FullMultiplicativeForm extends Model
         'score',
         'rank'
     ];
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
+    }
+    public function lowonganMagang()
+    {
+        return $this->belongsTo(LowonganMagang::class, 'lowongan_magang_id');
+    }
 }

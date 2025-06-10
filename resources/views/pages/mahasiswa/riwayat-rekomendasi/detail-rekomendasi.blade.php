@@ -1,53 +1,255 @@
-<x-layouts.user.main user="mahasiswa">
+<?php
 
+use function Livewire\Volt\{state, mount, layout};
+use App\Models\{Mahasiswa, LowonganMagang, EncodedAlternatives, VectorNormalization, RatioSystem, ReferencePoint, FullMultiplicativeForm, FinalRankRecommendation};
+
+layout('components.layouts.user.main');
+
+state([
+    'mahasiswa' => null,
+    'rankingKriteria' => [],
+    'alternatifLowongan' => [],
+    'numericTable' => [],
+    'normalisasiEuclidean' => [],
+    'normalisasiVektor' => [],
+    'rankingRS' => [],
+    'rankingRP' => [],
+    'rankingFMF' => [],
+    'finalRanking' => [],
+    'rekomendasi' => [],
+]);
+
+mount(function () {
+    $this->mahasiswa = Auth::guard('mahasiswa')->user();
+    $this->rankingKriteria = $this->getRankingKriteria();
+    $this->alternatifLowongan = $this->getAlternatifLowongan();
+    $this->numericTable = $this->getNumericTable();
+    $this->normalisasiEuclidean = $this->getNormalisasiEuclidean();
+    $this->normalisasiVektor = VectorNormalization::with(['mahasiswa', 'lowonganMagang'])->get();
+    $this->rankingRS = $this->getRankingRS();
+    $this->rankingRP = $this->getRankingRP();
+    $this->rankingFMF = $this->getRankingFMF();
+    $this->finalRanking = $this->getRankingGlobal();
+    $this->rekomendasi = $this->getTopRekomendasi();
+});
+
+$getRankingKriteria = function () {
+    if (!$this->mahasiswa) {
+        return [];
+    }
+    return [
+        [
+            'nama' => 'Lokasi',
+            'ranking' => optional($this->mahasiswa->kriteriaLokasiMagang)->rank,
+            'bobot' => optional($this->mahasiswa->kriteriaLokasiMagang)->bobot,
+        ],
+        [
+            'nama' => 'Pekerjaan',
+            'ranking' => optional($this->mahasiswa->kriteriaPekerjaan)->rank,
+            'bobot' => optional($this->mahasiswa->kriteriaPekerjaan)->bobot,
+        ],
+        [
+            'nama' => 'Bidang Industri',
+            'ranking' => optional($this->mahasiswa->kriteriaBidangIndustri)->rank,
+            'bobot' => optional($this->mahasiswa->kriteriaBidangIndustri)->bobot,
+        ],
+        [
+            'nama' => 'Open Remote',
+            'ranking' => optional($this->mahasiswa->kriteriaOpenRemote)->rank,
+            'bobot' => optional($this->mahasiswa->kriteriaOpenRemote)->bobot,
+        ],
+        [
+            'nama' => 'Jenis Magang',
+            'ranking' => optional($this->mahasiswa->kriteriaJenisMagang)->rank,
+            'bobot' => optional($this->mahasiswa->kriteriaJenisMagang)->bobot,
+        ],
+    ];
+};
+
+$getAlternatifLowongan = function () {
+    return LowonganMagang::with(['lokasi_magang', 'perusahaan.bidangIndustri', 'pekerjaan'])->get();
+};
+
+$getNumericTable = function () {
+    return EncodedAlternatives::with(['mahasiswa', 'lowonganMagang'])->get();
+};
+
+$getNormalisasiEuclidean = function () use ($getNumericTable) {
+    $encodedAlternatives = $getNumericTable();
+
+    // Return empty array if no data
+    if ($encodedAlternatives->isEmpty()) {
+        return [
+            'lokasi_magang' => 0,
+            'open_remote' => 0,
+            'jenis_magang' => 0,
+            'bidang_industri' => 0,
+            'pekerjaan' => 0,
+        ];
+    }
+
+    // Daftar kolom kriteria numerik yang akan dihitung
+    $criteriaColumns = ['pekerjaan', 'bidang_industri', 'lokasi_magang', 'open_remote', 'jenis_magang'];
+
+    $euclideanNormalizationList = [];
+
+    // Hitung Euclidean norm untuk masing-masing kolom
+    foreach ($criteriaColumns as $column) {
+        // Ambil semua nilai untuk kolom ini dan filter yang valid
+        $values = $encodedAlternatives
+            ->pluck($column)
+            ->filter(function ($value) {
+                return !is_null($value) && is_numeric($value);
+            })
+            ->map(function ($value) {
+                return (float) $value;
+            });
+
+        // Hitung sum of squares
+        $sumOfSquares = $values->sum(function ($value) {
+            return pow($value, 2);
+        });
+
+        // Hitung euclidean norm
+        $euclideanNorm = $sumOfSquares > 0 ? sqrt($sumOfSquares) : 0;
+        $euclideanNormalizationList[$column] = $euclideanNorm;
+    }
+
+    return $euclideanNormalizationList;
+};
+
+$getRankingRS = function () {
+    $tanggal = request('tanggal');
+
+    return RatioSystem::with(['mahasiswa', 'lowonganMagang'])
+        ->when($tanggal, function ($query) use ($tanggal) {
+            // Pastikan format tanggal dan filter berdasarkan DATE saja
+            return $query->whereDate('created_at', $tanggal);
+        })
+        ->when(!$tanggal, function ($query) {
+            // Jika tidak ada parameter tanggal, ambil data hari ini
+            return $query->whereDate('created_at', now()->toDateString());
+        })
+        ->orderBy('rank', 'asc') // Urutkan berdasarkan rank
+        ->get();
+};
+
+$getRankingRP = function () {
+    $tanggal = request('tanggal');
+
+    return ReferencePoint::with(['mahasiswa', 'lowonganMagang'])
+        ->when($tanggal, function ($query) use ($tanggal) {
+            // Pastikan format tanggal dan filter berdasarkan DATE saja
+            return $query->whereDate('created_at', $tanggal);
+        })
+        ->when(!$tanggal, function ($query) {
+            // Jika tidak ada parameter tanggal, ambil data hari ini
+            return $query->whereDate('created_at', now()->toDateString());
+        })
+        ->orderBy('rank', 'asc') // Urutkan berdasarkan rank
+        ->get();
+};
+
+$getRankingFMF = function () {
+    $tanggal = request('tanggal');
+
+    return FullMultiplicativeForm::with(['mahasiswa', 'lowonganMagang'])
+        ->when($tanggal, function ($query) use ($tanggal) {
+            // Pastikan format tanggal dan filter berdasarkan DATE saja
+            return $query->whereDate('created_at', $tanggal);
+        })
+        ->when(!$tanggal, function ($query) {
+            // Jika tidak ada parameter tanggal, ambil data hari ini
+            return $query->whereDate('created_at', now()->toDateString());
+        })
+        ->orderBy('rank', 'asc') // Urutkan berdasarkan rank
+        ->get();
+};
+
+$getRankingGlobal = function () {
+    $tanggal = request('tanggal');
+    return FinalRankRecommendation::with(['mahasiswa', 'lowonganMagang', 'ratioSystem', 'referencePoint', 'fullMultiplicativeForm'])
+        ->when($tanggal, function ($query) use ($tanggal) {
+            // Pastikan format tanggal dan filter berdasarkan DATE saja
+            return $query->whereDate('created_at', $tanggal);
+        })
+        ->when(!$tanggal, function ($query) {
+            // Jika tidak ada parameter tanggal, ambil data hari ini
+            return $query->whereDate('created_at', now()->toDateString());
+        })
+        ->orderBy('rank', 'asc') // Urutkan berdasarkan rank
+        ->get();
+};
+
+$getTopRekomendasi = function () {
+    $tanggal = request('tanggal');
+
+    // Ambil data final ranking dengan relasi
+    $finalRankings = FinalRankRecommendation::with(['mahasiswa', 'lowonganMagang', 'ratioSystem', 'referencePoint', 'fullMultiplicativeForm'])
+        ->when($tanggal, function ($query) use ($tanggal) {
+            return $query->whereDate('created_at', $tanggal);
+        })
+        ->when(!$tanggal, function ($query) {
+            return $query->whereDate('created_at', now()->toDateString());
+        })
+        ->orderBy('avg_rank', 'asc') // Urutkan berdasarkan avg_rank terbaik
+        ->get();
+
+    // Kelompokkan berdasarkan lowongan_magang_id dan ambil yang terbaik dari setiap grup
+    $uniqueRecommendations = collect();
+    $usedLowonganIds = [];
+
+    foreach ($finalRankings as $ranking) {
+        $lowonganId = $ranking->lowongan_magang_id;
+
+        // Jika lowongan belum ada dalam hasil, tambahkan
+        if (!in_array($lowonganId, $usedLowonganIds)) {
+            $uniqueRecommendations->push($ranking);
+            $usedLowonganIds[] = $lowonganId;
+        }
+
+        // Batasi hanya 10 data
+        if ($uniqueRecommendations->count() >= 10) {
+            break;
+        }
+    }
+
+    // Re-rank berdasarkan urutan
+    return $uniqueRecommendations->values()->map(function ($item, $index) {
+        $item->display_rank = $index + 1;
+        return $item;
+    });
+};
+?>
+
+<div>
+    <x-slot:user>mahasiswa</x-slot:user>
     @section('script')
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     @endsection
 
-    <div class="card bg-white shadow-md">
+    <div class="card bg-white shadow-md mb-3">
         <div class="card-body">
             <h2 class="text-base font-semibold">Kriteria yang anda pilih</h2>
             <p>Pemilihan kriteria menggunakan metode ROC</p>
             <table class="table-auto w-full ">
-                <thead class="bg-white text-black">
-                    <tr class="border-b bg-cyan-200">
-                        <th class="text-center px-6 py-3">No</th>
-                        <th class="text-center px-6 py-3">Kriteria</th>
-                        <th class="text-center px-6 py-3">Rangking</th>
-                        <th class="text-center px-6 py-3">Bobot</th>
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border px-4 py-2">No</th>
+                        <th class="border px-4 py-2">Kriteria</th>
+                        <th class="border px-4 py-2">Ranking</th>
+                        <th class="border px-4 py-2">Bobot</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white text-black">
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-3 text-center">1</td>
-                        <td class="px-6 py-3 text-center">Lokasi</td>
-                        <td class="px-6 py-3 text-right">1</td>
-                        <td class="px-6 py-3 text-right">0.4083333333</td>
-                    </tr>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-3 text-center">2</td>
-                        <td class="px-6 py-3 text-center">Pekerjaan</td>
-                        <td class="px-6 py-3 text-right">2</td>
-                        <td class="px-6 py-3 text-right">0.06111111111</td>
-                    </tr>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-3 text-center">3</td>
-                        <td class="px-6 py-3 text-center">Bidang industri</td>
-                        <td class="px-6 py-3 text-right">3</td>
-                        <td class="px-6 py-3 text-right">0.1027777778</td>
-                    </tr>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-3 text-center">5</td>
-                        <td class="px-6 py-3 text-center">Open remote</td>
-                        <td class="px-6 py-3 text-right">5</td>
-                        <td class="px-6 py-3 text-right">0.2416666667</td>
-                    </tr>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-3 text-center">6</td>
-                        <td class="px-6 py-3 text-center">Jenis magang</td>
-                        <td class="px-6 py-3 text-right">6</td>
-                        <td class="px-6 py-3 text-right">0.1583333333</td>
-                    </tr>
+                <tbody>
+                    @foreach ($rankingKriteria as $index => $kriteria)
+                        <tr>
+                            <td class="border px-4 py-2">{{ $index + 1 }}</td>
+                            <td class="border px-4 py-2">{{ $kriteria['nama'] }}</td>
+                            <td class="border px-4 py-2">{{ $kriteria['ranking'] ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $kriteria['bobot'] ?? '-' }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -65,7 +267,7 @@
                 <div class="collapse-content text-sm">
                     <div class="pb-3">
                         <div class="font-bold text-lg mt-5">
-                            <h2>Urutan Tabel DM 1</h2>
+                            <h2>Urutan Tabel Kriteria menurut {{ $mahasiswa->nama ?? 'Mahasiswa' }}</h2>
                         </div>
                         <table class="table-auto w-full">
                             <thead class="bg-white text-black">
@@ -75,33 +277,21 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white text-black">
-                                <tr>
-                                    <td class="px-6 py-3">Lokasi</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Pekerjaan</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Bidang industri</td>
-                                    <td class="px-6 py-3 text-right">3</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Open remote</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Jenis magang</td>
-                                    <td class="px-6 py-3 text-right">6</td>
-                                </tr>
+                                @foreach (collect($rankingKriteria)->sortBy('ranking') as $kriteria)
+                                    @if (!is_null($kriteria['ranking']))
+                                        <tr>
+                                            <td class="px-6 py-3">{{ $kriteria['nama'] }}</td>
+                                            <td class="px-6 py-3 text-right">{{ $kriteria['ranking'] }}</td>
+                                        </tr>
+                                    @endif
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
 
                     <div>
                         <div class="font-bold text-lg mt-10">
-                            <h2>Pembobotan Kriteria DM 1</h2>
+                            <h2>Pembobotan Kriteria {{ $mahasiswa->nama ?? 'Mahasiswa' }}</h2>
                         </div>
                         <table class="table-auto w-full">
                             <thead class="bg-white text-black">
@@ -111,32 +301,22 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white text-black">
-                                <tr>
-                                    <td class="px-6 py-3">Lokasi</td>
-                                    <td class="px-6 py-3 text-right">0.4083333333</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Open remote</td>
-                                    <td class="px-6 py-3 text-right">0.2416666667</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Jenis magang</td>
-                                    <td class="px-6 py-3 text-right">0.1583333333</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Bidang industri</td>
-                                    <td class="px-6 py-3 text-right">0.1027777778</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Pekerjaan</td>
-                                    <td class="px-6 py-3 text-right">0.06111111111</td>
-                                </tr>
+                                @foreach (collect($rankingKriteria)->sortByDesc('bobot') as $kriteria)
+                                    @if (!is_null($kriteria['bobot']))
+                                        <tr>
+                                            <td class="px-6 py-3">{{ $kriteria['nama'] }}</td>
+                                            <td class="px-6 py-3 text-right">{{ number_format($kriteria['bobot'], 10) }}
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
+
                     <div>
                         <div class="font-bold text-lg mt-10">
-                            <h2>Preferensi Mahasiswa</h2>
+                            <h2>Preferensi Mahasiswa {{ $mahasiswa->nama ?? 'Mahasiswa' }}</h2>
                         </div>
                         <table class="table-auto w-full">
                             <thead class="bg-white text-black">
@@ -147,28 +327,47 @@
                             </thead>
                             <tbody class="bg-white text-black">
                                 <tr>
-                                    <td class="px-6 py-3">Pekerjaan</td>
-                                    <td class="px-6 py-3">Data engineer</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Bidang industri</td>
-                                    <td class="px-6 py-3">Pariwisata</td>
-                                </tr>
-                                <tr>
                                     <td class="px-6 py-3">Lokasi</td>
-                                    <td class="px-6 py-3">Area Malang raya</td>
+                                    <td class="px-6 py-3">
+                                        {{ $mahasiswa->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi ?? '-' }}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-3">Jenis magang</td>
-                                    <td class="px-6 py-3">Berbayar</td>
+                                    <td class="px-6 py-3">Pekerjaan</td>
+                                    <td class="px-6 py-3">{{ $mahasiswa->kriteriaPekerjaan->pekerjaan->nama ?? '-' }}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-3">Open remote</td>
-                                    <td class="px-6 py-3">Ya</td>
+                                    <td class="px-6 py-3">Bidang Industri</td>
+                                    <td class="px-6 py-3">
+                                        {{ $mahasiswa->kriteriaBidangIndustri->bidangIndustri->nama ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-3">Open Remote</td>
+                                    <td class="px-6 py-3">{{ $mahasiswa->preferensi_open_remote ? 'Ya' : 'Tidak' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-3">Jenis Magang</td>
+                                    <td class="px-6 py-3">
+                                        @if ($mahasiswa->kriteriaJenisMagang->jenis_magang ?? null)
+                                            @if ($mahasiswa->kriteriaJenisMagang->jenis_magang === 'berbayar')
+                                                Dibayar (Paid Internship)
+                                            @elseif($mahasiswa->kriteriaJenisMagang->jenis_magang === 'tidak berbayar')
+                                                Tidak Dibayar (Unpaid Internship)
+                                            @else
+                                                {{ $mahasiswa->kriteriaJenisMagang->jenis_magang }}
+                                            @endif
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
                     <div>
                         <div class="font-bold text-lg mt-10">
                             <h2>Tabel Awal</h2>
@@ -187,196 +386,63 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white text-black">
-                                    <tr>
-                                        <td class="px-6 py-3">Frontend Web Developer Intern</td>
-                                        <td class="px-6 py-3">Area Malang</td>
-                                        <td class="px-6 py-3">PT Digital Aksara</td>
-                                        <td class="px-6 py-3">Ya</td>
-                                        <td class="px-6 py-3">Berbayar</td>
-                                        <td class="px-6 py-3">Pariwisata</td>
-                                        <td class="px-6 py-3">Frontend web developer</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-3">Machine Learning Intern</td>
-                                        <td class="px-6 py-3">Luar provinsi Jawa Timur</td>
-                                        <td class="px-6 py-3">PT VisionAI</td>
-                                        <td class="px-6 py-3">Tidak</td>
-                                        <td class="px-6 py-3">Berbayar</td>
-                                        <td class="px-6 py-3">Teknologi</td>
-                                        <td class="px-6 py-3">Machine learning engineer</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-3">Security Analyst Internship</td>
-                                        <td class="px-6 py-3">Area Malang</td>
-                                        <td class="px-6 py-3">CV Cipta Aman</td>
-                                        <td class="px-6 py-3">Tidak</td>
-                                        <td class="px-6 py-3">Non berbayar</td>
-                                        <td class="px-6 py-3">Transportasi</td>
-                                        <td class="px-6 py-3">Security analyst</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-3">Mobile Developer Intern</td>
-                                        <td class="px-6 py-3">Luar negeri</td>
-                                        <td class="px-6 py-3">PT Mobile Kreasi</td>
-                                        <td class="px-6 py-3">Ya</td>
-                                        <td class="px-6 py-3">Berbayar</td>
-                                        <td class="px-6 py-3">Telekomunikasi</td>
-                                        <td class="px-6 py-3">Mobile developer</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-3">Data Scientist Internship</td>
-                                        <td class="px-6 py-3">Luar area Malang raya (dulu PT Data Kreasi Mandiri)</td>
-                                        <td class="px-6 py-3">PT Data Kreasi Mandiri</td>
-                                        <td class="px-6 py-3">Tidak</td>
-                                        <td class="px-6 py-3">Non berbayar</td>
-                                        <td class="px-6 py-3">Kesehatan</td>
-                                        <td class="px-6 py-3">Data scientist</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-3">Backend Developer Internship</td>
-                                        <td class="px-6 py-3">Area Malang</td>
-                                        <td class="px-6 py-3">PT Kode Nusantara</td>
-                                        <td class="px-6 py-3">Ya</td>
-                                        <td class="px-6 py-3">Berbayar</td>
-                                        <td class="px-6 py-3">Perbankan</td>
-                                        <td class="px-6 py-3">Backend developer</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-3">Data Engineer Internship</td>
-                                        <td class="px-6 py-3">Luar provinsi Jawa Timur</td>
-                                        <td class="px-6 py-3">CV Teknologi Sejahtera</td>
-                                        <td class="px-6 py-3">Tidak</td>
-                                        <td class="px-6 py-3">Berbayar</td>
-                                        <td class="px-6 py-3">Energi</td>
-                                        <td class="px-6 py-3">Data engineer</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-3">Security Analyst Intern</td>
-                                        <td class="px-6 py-3">Area Malang</td>
-                                        <td class="px-6 py-3">PT Sandi Digital</td>
-                                        <td class="px-6 py-3">Ya</td>
-                                        <td class="px-6 py-3">Non berbayar</td>
-                                        <td class="px-6 py-3">Teknologi inform</td>
-                                        <td class="px-6 py-3">Security analyst</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-3">Machine Learning Intern</td>
-                                        <td class="px-6 py-3">Luar negeri</td>
-                                        <td class="px-6 py-3">PT Inovasi AI Global</td>
-                                        <td class="px-6 py-3">Ya</td>
-                                        <td class="px-6 py-3">Berbayar</td>
-                                        <td class="px-6 py-3">Edukasi</td>
-                                        <td class="px-6 py-3">Machine learning engineer</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-3">Mobile App Developer Intern</td>
-                                        <td class="px-6 py-3">Luar area Malang raya (dulu PT Kreatif Apps)</td>
-                                        <td class="px-6 py-3">PT Kreatif Apps</td>
-                                        <td class="px-6 py-3">Tidak</td>
-                                        <td class="px-6 py-3">Non berbayar</td>
-                                        <td class="px-6 py-3">Pariwisata</td>
-                                        <td class="px-6 py-3">Mobile developer</td>
-                                    </tr>
+                                    @foreach ($alternatifLowongan as $lowongan)
+                                        <tr>
+                                            <td class="px-6 py-3">{{ $lowongan->nama }}</td>
+                                            <td class="px-6 py-3">
+                                                {{ $lowongan->lokasi_magang->kategori_lokasi ?? '-' }}</td>
+                                            <td class="px-6 py-3">{{ $lowongan->perusahaan->nama ?? '-' }}</td>
+                                            <td class="px-6 py-3">
+                                                {{ ucfirst($lowongan->open_remote) ? 'Ya' : 'Tidak' }}</td>
+                                            <td class="px-6 py-3">{{ ucfirst($lowongan->jenis_magang) }}</td>
+                                            <td class="px-6 py-3">
+                                                {{ $lowongan->perusahaan->bidangIndustri->nama ?? '-' }}
+                                            </td>
+                                            <td class="px-6 py-3">{{ $lowongan->pekerjaan->nama ?? '-' }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div>
                         <div class="font-bold text-lg mt-10">
-                            <h2>Tabel Numerik DM 1</h2>
+                            <h2>Tabel Numerik {{ $mahasiswa->nama ?? 'Mahasiswa' }}</h2>
                         </div>
                         <table class="table-auto w-full">
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
-                                    <th class="text-left px-6 py-3">Nama</th>
-                                    <th class="text-center px-6 py-3">Lokasi</th>
-                                    <th class="text-center px-6 py-3">Open remote</th>
-                                    <th class="text-center px-6 py-3">Jenis magang</th>
-                                    <th class="text-center px-6 py-3">Bidang industri</th>
+                                    <th class="text-left px-6 py-3">Nama Lowongan</th>
+                                    <th class="text-center px-6 py-3">Lokasi Magang</th>
+                                    <th class="text-center px-6 py-3">Open Remote</th>
+                                    <th class="text-center px-6 py-3">Jenis Magang</th>
+                                    <th class="text-center px-6 py-3">Bidang Industri</th>
                                     <th class="text-center px-6 py-3">Pekerjaan</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white text-black">
-                                <tr>
-                                    <td class="px-6 py-3">Frontend Web Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Internship</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Scientist Internship</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Backend Developer Internship</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Engineer Internship</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Intern</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile App Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
+                                @foreach ($numericTable as $encoded)
+                                    <tr>
+                                        <td class="px-6 py-3">
+                                            {{ $encoded->lowonganMagang->nama ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            {{ $encoded->lokasi_magang ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            {{ $encoded->open_remote ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            {{ $encoded->jenis_magang ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            {{ $encoded->bidang_industri ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            {{ $encoded->pekerjaan ?? '-' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -384,12 +450,13 @@
                         <div class="font-bold text-lg mt-5">
                             <h2>Normalisasi Euclidean</h2>
                         </div>
+
                         <table class="table-auto w-full">
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
                                     <th class="text-left px-6 py-3">Nilai</th>
                                     <th class="text-left px-6 py-3">Lokasi</th>
-                                    <th class="text-left px-6 py-3">Open Remot</th>
+                                    <th class="text-left px-6 py-3">Open Remote</th>
                                     <th class="text-left px-6 py-3">Jenis Magang</th>
                                     <th class="text-left px-6 py-3">Bidang Industri</th>
                                     <th class="text-left px-6 py-3">Pekerjaan</th>
@@ -398,11 +465,16 @@
                             <tbody class="bg-white text-black">
                                 <tr>
                                     <td class="px-6 py-3">\( \sqrt{\sum_{j=1}^{n} x_j^2} \)</td>
-                                    <td class="px-6 py-3 text-right">4.69041576</td>
-                                    <td class="px-6 py-3 text-right">4.582575695</td>
-                                    <td class="px-6 py-3 text-right">5.291502622</td>
-                                    <td class="px-6 py-3 text-right">4</td>
-                                    <td class="px-6 py-3 text-right">3.605551275</td>
+                                    <td class="px-6 py-3 text-right">
+                                        {{ number_format($normalisasiEuclidean['lokasi_magang'] ?? 0, 6) }}</td>
+                                    <td class="px-6 py-3 text-right">
+                                        {{ number_format($normalisasiEuclidean['open_remote'] ?? 0, 6) }}</td>
+                                    <td class="px-6 py-3 text-right">
+                                        {{ number_format($normalisasiEuclidean['jenis_magang'] ?? 0, 6) }}</td>
+                                    <td class="px-6 py-3 text-right">
+                                        {{ number_format($normalisasiEuclidean['bidang_industri'] ?? 0, 6) }}</td>
+                                    <td class="px-6 py-3 text-right">
+                                        {{ number_format($normalisasiEuclidean['pekerjaan'] ?? 0, 6) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -411,98 +483,41 @@
                         <div class="font-bold text-lg mt-5">
                             <h2>Normalisasi Vektor</h2>
                         </div>
+
                         <table class="table-auto w-full">
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
                                     <th class="text-left px-6 py-3">Nama</th>
                                     <th class="text-center px-6 py-3">Lokasi</th>
-                                    <th class="text-center px-6 py-3">Open remote</th>
-                                    <th class="text-center px-6 py-3">Jenis magang</th>
-                                    <th class="text-center px-6 py-3">Bidang industri</th>
+                                    <th class="text-center px-6 py-3">Open Remote</th>
+                                    <th class="text-center px-6 py-3">Jenis Magang</th>
+                                    <th class="text-center px-6 py-3">Bidang Industri</th>
                                     <th class="text-center px-6 py-3">Pekerjaan</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white text-black">
-                                <tr>
-                                    <td class="px-6 py-3">Frontend Web Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.4264014327</td>
-                                    <td class="px-6 py-3 text-right">0.4</td>
-                                    <td class="px-6 py-3 text-right">0.377964473</td>
-                                    <td class="px-6 py-3 text-right">0.5</td>
-                                    <td class="px-6 py-3 text-right">0.2773500981</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2132007164</td>
-                                    <td class="px-6 py-3 text-right">0.2</td>
-                                    <td class="px-6 py-3 text-right">0.377964473</td>
-                                    <td class="px-6 py-3 text-right">0.25</td>
-                                    <td class="px-6 py-3 text-right">0.2773500981</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Internship</td>
-                                    <td class="px-6 py-3 text-right">0.4264014327</td>
-                                    <td class="px-6 py-3 text-right">0.2</td>
-                                    <td class="px-6 py-3 text-right">0.1889822365</td>
-                                    <td class="px-6 py-3 text-right">0.25</td>
-                                    <td class="px-6 py-3 text-right">0.2773500981</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2132007164</td>
-                                    <td class="px-6 py-3 text-right">0.4</td>
-                                    <td class="px-6 py-3 text-right">0.377964473</td>
-                                    <td class="px-6 py-3 text-right">0.25</td>
-                                    <td class="px-6 py-3 text-right">0.2773500981</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Scientist Internship</td>
-                                    <td class="px-6 py-3 text-right">0.2132007164</td>
-                                    <td class="px-6 py-3 text-right">0.2</td>
-                                    <td class="px-6 py-3 text-right">0.1889822365</td>
-                                    <td class="px-6 py-3 text-right">0.25</td>
-                                    <td class="px-6 py-3 text-right">0.2773500981</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Backend Developer Internship</td>
-                                    <td class="px-6 py-3 text-right">0.4264014327</td>
-                                    <td class="px-6 py-3 text-right">0.4</td>
-                                    <td class="px-6 py-3 text-right">0.377964473</td>
-                                    <td class="px-6 py-3 text-right">0.25</td>
-                                    <td class="px-6 py-3 text-right">0.2773500981</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Engineer Internship</td>
-                                    <td class="px-6 py-3 text-right">0.2132007164</td>
-                                    <td class="px-6 py-3 text-right">0.2</td>
-                                    <td class="px-6 py-3 text-right">0.377964473</td>
-                                    <td class="px-6 py-3 text-right">0.25</td>
-                                    <td class="px-6 py-3 text-right">0.5547001962</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Intern</td>
-                                    <td class="px-6 py-3 text-right">0.4264014327</td>
-                                    <td class="px-6 py-3 text-right">0.4</td>
-                                    <td class="px-6 py-3 text-right">0.1889822365</td>
-                                    <td class="px-6 py-3 text-right">0.25</td>
-                                    <td class="px-6 py-3 text-right">0.2773500981</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2132007164</td>
-                                    <td class="px-6 py-3 text-right">0.4</td>
-                                    <td class="px-6 py-3 text-right">0.377964473</td>
-                                    <td class="px-6 py-3 text-right">0.25</td>
-                                    <td class="px-6 py-3 text-right">0.2773500981</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile App Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2132007164</td>
-                                    <td class="px-6 py-3 text-right">0.2</td>
-                                    <td class="px-6 py-3 text-right">0.1889822365</td>
-                                    <td class="px-6 py-3 text-right">0.5</td>
-                                    <td class="px-6 py-3 text-right">0.2773500981</td>
-                                </tr>
+                                @foreach ($normalisasiVektor as $item)
+                                    <tr>
+                                        <td class="px-6 py-3 text-left">
+                                            {{ $item->lowonganMagang->nama ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            {{ number_format($item->lokasi_magang ?? 0, 10) }}
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            {{ number_format($item->open_remote ?? 0, 10) }}
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            {{ number_format($item->jenis_magang ?? 0, 10) }}
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            {{ number_format($item->bidang_industri ?? 0, 10) }}
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            {{ number_format($item->pekerjaan ?? 0, 10) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -518,67 +533,46 @@
                 <div class="collapse-content text-sm">
                     <div>
                         <div class="font-bold text-lg mt-5">
-                            <h2>Tabel Hasil Metode Ratio System (RS)</h3>
+                            <h2>Tabel Hasil Metode Ratio System (RS)</h2>
                         </div>
-                        <table class="table-auto w-full">
+                        <table class="table-auto w-
                             <thead class="bg-white text-black">
-                                <tr class="border-b bg-green-400">
-                                    <th class="text-left px-6 py-3">Alternatif</th>
-                                    <th class="text-center px-6 py-3">Nilai</th>
-                                    <th class="text-center px-6 py-3">Rank</th>
-                                </tr>
+                            <tr class="border-b bg-green-400">
+                                <th class="text-left px-6 py-3">Alternatif</th>
+                                <th class="text-center px-6 py-3">Nilai</th>
+                                <th class="text-center px-6 py-3">Rank</th>
+                            </tr>
                             </thead>
                             <tbody class="bg-white text-black">
-                                <tr>
-                                    <td class="px-6 py-3">Frontend Web Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.4048852636</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2438005266</td>
-                                    <td class="px-6 py-3 text-right">9</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Internship</td>
-                                    <td class="px-6 py-3 text-right">0.3068575405</td>
-                                    <td class="px-6 py-3 text-right">4</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.29213386</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Scientist Internship</td>
-                                    <td class="px-6 py-3 text-right">0.2198005813</td>
-                                    <td class="px-6 py-3 text-right">10</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Backend Developer Internship</td>
-                                    <td class="px-6 py-3 text-right">0.3791908191</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Engineer Internship</td>
-                                    <td class="px-6 py-3 text-right">0.2666719414</td>
-                                    <td class="px-6 py-3 text-right">7</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Intern</td>
-                                    <td class="px-6 py-3 text-right">0.3492686317</td>
-                                    <td class="px-6 py-3 text-right">3</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">0.29213386</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile App Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2454950258</td>
-                                    <td class="px-6 py-3 text-right">8</td>
-                                </tr>
+                                @forelse($rankingRS->sortBy('rank') as $item)
+                                    <tr>
+                                        <td class="px-6 py-3">
+                                            {{ $item->lowonganMagang->nama ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ number_format($item->score ?? 0, 10) }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ $item->rank ?? '-' }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-8 text-center text-gray-500">
+                                            <div class="flex flex-col items-center">
+                                                <svg class="w-12 h-12 mb-4 text-gray-300" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 00-2 2H9z" />
+                                                </svg>
+                                                <p class="text-lg font-medium">Tidak ada data ranking RS</p>
+                                                <p class="text-sm">Pastikan proses perhitungan Ratio System sudah
+                                                    dijalankan</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -591,299 +585,174 @@
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
                                     <th class="text-left px-6 py-3">Alternatif</th>
-                                    <th class="text-center px-6 py-3">Nilai</th>
-                                    <th class="text-center px-6 py-3">Rank (asc)</th>
+                                    <th class="text-center px-6 py-3">Pekerjaan</th>
+                                    <th class="text-center px-6 py-3">Open Remote</th>
+                                    <th class="text-center px-6 py-3">Jenis Magang</th>
+                                    <th class="text-center px-6 py-3">Bidang Industri</th>
+                                    <th class="text-center px-6 py-3">Lokasi Magang</th>
+                                    <th class="text-center px-6 py-3">Max Score</th>
+                                    <th class="text-center px-6 py-3">Rank</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white text-black">
-                                <tr>
-                                    <td class="px-6 py-3">Frontend Web Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.3258860816</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2909075138</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Internship</td>
-                                    <td class="px-6 py-3 text-right">0.2522875144</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.3129430408</td>
-                                    <td class="px-6 py-3 text-right">4</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Scientist Internship</td>
-                                    <td class="px-6 py-3 text-right">0.3393444735</td>
-                                    <td class="px-6 py-3 text-right">6</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Backend Developer Internship</td>
-                                    <td class="px-6 py-3 text-right">0.2522875144</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Engineer Internship</td>
-                                    <td class="px-6 py-3 text-right">0.467643237</td>
-                                    <td class="px-6 py-3 text-right">8</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2522875144</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">0.3129430408</td>
-                                    <td class="px-6 py-3 text-right">3</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile App Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.4129430408</td>
-                                    <td class="px-6 py-3 text-right">7</td>
-                                </tr>
+                                @forelse($rankingRP->sortBy('rank') as $item)
+                                    <tr>
+                                        <td class="px-6 py-3">
+                                            {{ $item->lowonganMagang->nama ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ number_format($item->pekerjaan ?? 0, 10) }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ $item->open_remote ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ $item->jenis_magang ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ $item->bidang_industri ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ $item->lokasi_magang ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ number_format($item->max_score ?? 0, 10) }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ $item->rank ?? '-' }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-8 text-center text-gray-500">
+                                            <div class="flex flex-col items-center">
+                                                <svg class="w-12 h-12 mb-4 text-gray-300" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 00-2 2H9z" />
+                                                </svg>
+                                                <p class="text-lg font-medium">Tidak ada data ranking RP</p>
+                                                <p class="text-sm">Pastikan proses perhitungan Reference Point sudah
+                                                    dijalankan</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
                     <div>
                         <div class="font-bold text-lg mt-5">
-                            <h2>Tabel Hasil Metode Full Multiplicative Form (FMF)</h3>
+                            <h2>Tabel Hasil Metode Full Multiplicative Form (FMF)</h2>
                         </div>
                         <table class="table-auto w-full">
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
                                     <th class="text-left px-6 py-3">Alternatif</th>
-                                    <th class="text-center px-6 py-3">Nilai</th>
+                                    <th class="text-center px-6 py-3">Score</th>
                                     <th class="text-center px-6 py-3">Rank</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white text-black">
-                                <tr>
-                                    <td class="px-6 py-3">Frontend Web Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.4000820583</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2374326199</td>
-                                    <td class="px-6 py-3 text-right">8</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Internship</td>
-                                    <td class="px-6 py-3 text-right">0.2878457542</td>
-                                    <td class="px-6 py-3 text-right">4</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2807303068</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Scientist Internship</td>
-                                    <td class="px-6 py-3 text-right">0.216889859</td>
-                                    <td class="px-6 py-3 text-right">10</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Backend Developer Internship</td>
-                                    <td class="px-6 py-3 text-right">0.3725717158</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Engineer Internship</td>
-                                    <td class="px-6 py-3 text-right">0.2525216431</td>
-                                    <td class="px-6 py-3 text-right">7</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Intern</td>
-                                    <td class="px-6 py-3 text-right">0.3338464782</td>
-                                    <td class="px-6 py-3 text-right">3</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2807303068</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile App Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">0.2329048007</td>
-                                    <td class="px-6 py-3 text-right">9</td>
-                                </tr>
+                                @forelse($rankingFMF->sortBy('rank') as $item)
+                                    <tr>
+                                        <td class="px-6 py-3">
+                                            {{ $item->lowonganMagang->nama ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ number_format($item->score ?? 0, 10) }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            {{ $item->rank ?? '-' }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-8 text-center text-gray-500">
+                                            <div class="flex flex-col items-center">
+                                                <svg class="w-12 h-12 mb-4 text-gray-300" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 00-2 2H9z" />
+                                                </svg>
+                                                <p class="text-lg font-medium">Tidak ada data ranking RP</p>
+                                                <p class="text-sm">Pastikan proses perhitungan Reference Point sudah
+                                                    dijalankan</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
-                    <div>
-                        <div class="font-bold text-lg mt-5">
-                            <h2>Tabel Hasil Perankingan Global</h3>
-                        </div>
-                        <table class="table-auto w-full">
-                            <thead class="bg-white text-black">
-                                <tr class="border-b bg-orange-400">
-                                    <th class="text-left px-6 py-3">Alternatif</th>
-                                    <th class="text-center px-6 py-3">RS</th>
-                                    <th class="text-center px-6 py-3">RP</th>
-                                    <th class="text-center px-6 py-3">FMF</th>
-                                    <th class="text-center px-6 py-3">Rata-Rata Ranking</th>
-                                    <th class="text-center px-6 py-3">Final Ranking</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white text-black">
-                                <tr>
-                                    <td class="px-6 py-3">Frontend Web Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">2.333333333</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">9</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">8</td>
-                                    <td class="px-6 py-3 text-right">6.333333333</td>
-                                    <td class="px-6 py-3 text-right">6</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Internship</td>
-                                    <td class="px-6 py-3 text-right">4</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">4</td>
-                                    <td class="px-6 py-3 text-right">3</td>
-                                    <td class="px-6 py-3 text-right">3</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                    <td class="px-6 py-3 text-right">4</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                    <td class="px-6 py-3 text-right">4.666666667</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Scientist Internship</td>
-                                    <td class="px-6 py-3 text-right">10</td>
-                                    <td class="px-6 py-3 text-right">6</td>
-                                    <td class="px-6 py-3 text-right">10</td>
-                                    <td class="px-6 py-3 text-right">8.666666667</td>
-                                    <td class="px-6 py-3 text-right">9</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Backend Developer Internship</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                    <td class="px-6 py-3 text-right">1.666666667</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Data Engineer Internship</td>
-                                    <td class="px-6 py-3 text-right">7</td>
-                                    <td class="px-6 py-3 text-right">8</td>
-                                    <td class="px-6 py-3 text-right">7</td>
-                                    <td class="px-6 py-3 text-right">7.333333333</td>
-                                    <td class="px-6 py-3 text-right">7</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Security Analyst Intern</td>
-                                    <td class="px-6 py-3 text-right">3</td>
-                                    <td class="px-6 py-3 text-right">1</td>
-                                    <td class="px-6 py-3 text-right">3</td>
-                                    <td class="px-6 py-3 text-right">2.333333333</td>
-                                    <td class="px-6 py-3 text-right">2</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Machine Learning Intern</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                    <td class="px-6 py-3 text-right">3</td>
-                                    <td class="px-6 py-3 text-right">5</td>
-                                    <td class="px-6 py-3 text-right">4.333333333</td>
-                                    <td class="px-6 py-3 text-right">4</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3">Mobile App Developer Intern</td>
-                                    <td class="px-6 py-3 text-right">8</td>
-                                    <td class="px-6 py-3 text-right">7</td>
-                                    <td class="px-6 py-3 text-right">9</td>
-                                    <td class="px-6 py-3 text-right">8</td>
-                                    <td class="px-6 py-3 text-right">8</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="font-bold text-lg mt-5">
+                        <h2>Tabel Hasil Perankingan Global</h2>
                     </div>
+                    <table class="table-auto w-full">
+                        <thead class="bg-white text-black">
+                            <tr class="border-b bg-orange-400">
+                                <th class="text-left px-6 py-3">Alternatif</th>
+                                <th class="text-center px-6 py-3">RS</th>
+                                <th class="text-center px-6 py-3">RP</th>
+                                <th class="text-center px-6 py-3">FMF</th>
+                                <th class="text-center px-6 py-3">Rata-Rata Ranking</th>
+                                <th class="text-center px-6 py-3">Final Ranking</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white text-black">
+                            @foreach ($finalRanking as $index => $ranking)
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-6 py-4">
+                                        <div class="font-medium">{{ $ranking['mahasiswa']->nama ?? 'N/A' }}</div>
+                                        <div class="text-sm text-gray-600">
+                                            {{ $ranking['lowonganMagang']->nama ?? 'N/A' }}</div>
+                                    </td>
+                                    <td class="text-center px-6 py-4">{{ $ranking['ratioSystem']->score }}</td>
+                                    <td class="text-center px-6 py-4">{{ $ranking['referencePoint']->score }}</td>
+                                    <td class="text-center px-6 py-4">{{ $ranking['fullMultiplicativeForm']->score }}
+                                    </td>
+                                    <td class="text-center px-6 py-4">{{ $ranking['avg_rank'] }}</td>
+                                    <td class="text-center px-6 py-4">{{ $ranking['rank'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-    <div class="pt-7">
-        <h2 class="text-base font-semibold">Top 10 Perusahaan Hasil Rekomendasi Magang</h2>
-        <div class="pb-3">
-            <p>Pemilihan Rekomendasi menggunakan metode Multimoora</p>
+        <div class="pt-7">
+            <h2 class="text-base font-semibold">Top 10 Perusahaan Hasil Rekomendasi Magang</h2>
+            <div class="pb-3">
+                <p>Pemilihan Rekomendasi menggunakan metode Multimoora</p>
+            </div>
+            <table class="table-auto w-full">
+                <thead class="bg-white text-black">
+                    <tr class="border-b bg-yellow-200">
+                        <th class="text-center px-6 py-3">Rank</th>
+                        <th class="text-center px-6 py-3">Lowongan</th>
+                        <th class="text-center px-6 py-3">Perusahaan</th>
+                        <th class="text-center px-6 py-3">Rata-Rata Rangking</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white text-black">
+                    @foreach ($rekomendasi as $item)
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-6 py-3 text-center font-medium">{{ $item->display_rank }}</td>
+                            <td class="px-6 py-3">
+                                <div class="font-medium">{{ $item->lowonganMagang->nama ?? 'N/A' }}</div>
+                            </td>
+                            <td class="px-6 py-3">
+                                <div class="font-medium">{{ $item->lowonganMagang->perusahaan->nama ?? 'N/A' }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-3 text-center">
+                                {{ number_format($item->avg_rank, 9) }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-        <table class="table-auto w-full ">
-            <thead class="bg-white text-black">
-                <tr class="border-b bg-yellow-200">
-                    <th class="text-center px-6 py-3">Rank</th>
-                    <th class="text-center px-6 py-3">Lowongan</th>
-                    <th class="text-center px-6 py-3">Rata-Rata Rangking</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white text-black">
-                <tr>
-                    <td class="px-6 py-3 text-right">1</td>
-                    <td class="px-6 py-3">Backend Developer Internship</td>
-                    <td class="px-6 py-3 text-right">1.666666667</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">2</td>
-                    <td class="px-6 py-3">Frontend Web Developer Intern</td>
-                    <td class="px-6 py-3 text-right">2.333333333</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">2</td>
-                    <td class="px-6 py-3">Security Analyst Intern</td>
-                    <td class="px-6 py-3 text-right">2.333333333</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">3</td>
-                    <td class="px-6 py-3">Security Analyst Internship</td>
-                    <td class="px-6 py-3 text-right">3</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">4</td>
-                    <td class="px-6 py-3">Machine Learning Intern</td>
-                    <td class="px-6 py-3 text-right">4.333333333</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">5</td>
-                    <td class="px-6 py-3">Mobile Developer Intern</td>
-                    <td class="px-6 py-3 text-right">4.666666667</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">6</td>
-                    <td class="px-6 py-3">Machine Learning Intern</td>
-                    <td class="px-6 py-3 text-right">6.333333333</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">7</td>
-                    <td class="px-6 py-3">Data Engineer Internship</td>
-                    <td class="px-6 py-3 text-right">7.333333333</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">8</td>
-                    <td class="px-6 py-3">Mobile App Developer Intern</td>
-                    <td class="px-6 py-3 text-right">8</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-3 text-right">9</td>
-                    <td class="px-6 py-3">Data Scientist Internship</td>
-                    <td class="px-6 py-3 text-right">8.666666667</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-</x-layouts.user.main>
