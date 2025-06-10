@@ -72,67 +72,7 @@
             </main>
         </div>
     </section>
-    <section class="min-h-screen p-4 sm:p-6 lg:p-10 pb-8 flex flex-col items-center justify-center" id="partner">
-        <h1 class="text-center text-2xl font-bold mb-8">Apa kata mereka tentang MAGNET?</h1>
-
-        <!-- Baris 1: ke kanan -->
-        <div class="overflow-hidden w-full mb-6">
-            <div class="flex"
-                style="width: max-content; animation: scroll-horizontal 20s linear infinite; display: flex;">
-                <!-- Set 1 -->
-                <div class="flex gap-4">
-                    <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
-                        <div class="flex items-center gap-4">
-                            <img src="https://i.pravatar.cc/60" class="rounded-full w-12 h-12">
-                            <div>
-                                <p class="font-bold">Putri Gracia</p>
-                                <p class="text-sm italic text-gray-500">Pernah magang sebagai Frontend developer di PT
-                                    AQUA</p>
-                            </div>
-                        </div>
-                        <p class="mt-3 text-sm">Sangat mudah, cepat, dan dapat diandalkan</p>
-                    </div>
-                    <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">[...]</div>
-                    <div class="mr-2 bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">[...]</div>
-                </div>
-                <!-- Set 2 (duplikat) -->
-                <div class="flex gap-4">
-                    <div class="ml-2 bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">[...]</div>
-                    <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">[...]</div>
-                    <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">[...]</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Baris 2: ke kiri -->
-        <div class="overflow-hidden w-full">
-            <div class="flex "
-                style="width: max-content; animation: scroll-horizontal-reverse 20s linear infinite; display: flex;">
-                <!-- Set 1 -->
-                <div class="flex gap-4">
-                    <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
-                        <div class="flex items-center gap-4">
-                            <img src="https://i.pravatar.cc/60" class="rounded-full w-12 h-12">
-                            <div>
-                                <p class="font-bold">Putri Gracia</p>
-                                <p class="text-sm italic text-gray-500">Pernah magang sebagai Frontend developer di PT
-                                    AQUA</p>
-                            </div>
-                        </div>
-                        <p class="mt-3 text-sm">Sangat mudah, cepat, dan dapat diandalkan</p>
-                    </div>
-                    <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">[...]</div>
-                    <div class="mr-2 bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">[...]</div>
-                </div>
-                <!-- Set 2 -->
-                <div class="flex gap-4">
-                    <div class="ml-2 bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">[...]</div>
-                    <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">[...]</div>
-                    <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">[...]</div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <x-guest.bergeser />
 
     <!-- Process Flow Section -->
     <section class="min-h-screen px-4 sm:px-8 lg:px-16 pt-8 sm:pt-12 lg:pt-16 pb-8 flex items-center justify-center"
