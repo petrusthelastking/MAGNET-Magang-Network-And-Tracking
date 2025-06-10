@@ -90,8 +90,8 @@ Route::name('mahasiswa.')
         Volt::route('tambah-log', 'pages.mahasiswa.tambah-log')->name('tambah-log');
 
         Volt::route('pencarian', 'pages.mahasiswa.hasil-pencarian')->name('hasil-pencarian');
-        Route::view('detail-perusahaan', 'pages.mahasiswa.detail-perusahaan')->name('detail-perusahaan');
-        Route::view('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
+        Volt::route('detail-perusahaan', 'pages.mahasiswa.detail-perusahaan')->name('detail-perusahaan');
+        Volt::route('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
 
         Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
         Volt::route('riwayat-rekomendasi', 'pages.mahasiswa.riwayat-rekomendasi.index')->name('riwayat-rekomendasi');
