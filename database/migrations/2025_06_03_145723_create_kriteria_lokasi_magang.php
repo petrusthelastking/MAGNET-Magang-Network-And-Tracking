@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('lokasi_magang_id')->constrained('lokasi_magang')->onDelete('cascade');
             $table->integer('rank');
-            $table->float('bobot');
+            $table->decimal('bobot', 30, 15);
 
             $table->timestamps();
         });

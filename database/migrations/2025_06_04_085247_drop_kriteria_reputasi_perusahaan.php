@@ -28,7 +28,7 @@ return new class extends Migration
             $table->id();
             $table->enum('reputasi_perusahaan', ['<1', '1<= x <2', '2<= x <3', '3<= x <4', '4<= x <5']);
             $table->integer('rank');
-            $table->float('bobot');
+            $table->decimal('bobot', 30, 15);
 
             $table->timestamps();
         });

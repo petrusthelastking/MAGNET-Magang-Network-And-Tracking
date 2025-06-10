@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
             $table->foreignId('lowongan_magang_id')->constrained('lowongan_magang')->onDelete('cascade');
-            $table->float('score');
+            $table->decimal('score', 30, 15);
             $table->integer('rank');
             $table->timestamps();
         });

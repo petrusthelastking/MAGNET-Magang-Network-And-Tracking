@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
             $table->foreignId('lowongan_magang_id')->constrained('lowongan_magang')->onDelete('cascade');
-            $table->float('pekerjaan');
-            $table->float('open_remote');
-            $table->float('jenis_magang');
-            $table->float('bidang_industri');
-            $table->float('lokasi_magang');
+            $table->decimal('pekerjaan', 30, 15);
+            $table->decimal('open_remote', 30, 15);
+            $table->decimal('jenis_magang', 30, 15);
+            $table->decimal('bidang_industri', 30, 15);
+            $table->decimal('lokasi_magang', 30, 15);
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum('jenis_magang', ['berbayar', 'tidak berbayar']);
             $table->integer('rank');
-            $table->float('bobot');
+            $table->decimal('bobot', 30, 15);
 
             $table->timestamps();
         });
