@@ -25,12 +25,12 @@ state([
 rules([
     'password' => ['required', 'string', 'confirmed', Password::default()],
 ])->messages([
-    'nim.required' => 'NIM tidak boleh kosong.',
-    'nim.min' => 'NIM/NIP/NIDN harus terdiri dari minimal 10 karakter.',
-    'nim.regex' => 'NIM/NIP/NIDN hanya boleh terdiri dari angka.',
-    'password.required' => 'Password tidak boleh kosong.',
-    'password.min' => 'Password harus terdiri dari minimal 8 karakter.',
-]);
+            'nim.required' => 'NIM tidak boleh kosong.',
+            'nim.min' => 'NIM/NIP/NIDN harus terdiri dari minimal 10 karakter.',
+            'nim.regex' => 'NIM/NIP/NIDN hanya boleh terdiri dari angka.',
+            'password.required' => 'Password tidak boleh kosong.',
+            'password.min' => 'Password harus terdiri dari minimal 8 karakter.',
+        ]);
 
 $register = function (): void {
     event(
@@ -94,15 +94,17 @@ $register = function (): void {
 
             <flux:field>
                 <flux:label>Program Studi</flux:label>
-                <flux:select wire:model.live="program_studi" placeholder="Pilih program studi anda">
+                <flux:select wire:model.live="program_studi" >
+                    <flux:select.option value="">-- Pilih program studi anda --</flux:select.option>
                     <flux:select.option value="D4 Teknik Informatika">D4 Teknik Informatika</flux:select.option>
                     <flux:select.option value="D4 Sistem Informasi Bisnis">D4 Sistem Informasi Bisnis
                     </flux:select.option>
-                    <flux:select.option value="D2 Pengembangan Piranti Lunak Situs">D2 Pengembangan Piranti Lunak
-                        Situs</flux:select.option>
+                    <flux:select.option value="D2 Pengembangan Piranti Lunak Situs">D2 Pengembangan Piranti Lunak Situs
+                    </flux:select.option>
                 </flux:select>
                 <flux:error name="program_studi" />
             </flux:field>
+
 
             <flux:field>
                 <flux:label>Angkatan</flux:label>
@@ -114,6 +116,7 @@ $register = function (): void {
             <flux:field>
                 <flux:label>Jenis Kelamin</flux:label>
                 <flux:select placeholder="Jenis kelamin" wire:model="jenis_kelamin">
+                    <flux:select.option value="">Pilih jenis Kelamin</flux:select.option>
                     <flux:select.option value="L">Laki-laki</flux:select.option>
                     <flux:select.option value="P">Perempuan</flux:select.option>
                 </flux:select>
