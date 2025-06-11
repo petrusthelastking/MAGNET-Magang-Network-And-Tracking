@@ -2,8 +2,10 @@
     <div class="container mx-auto px-6 py-8">
         <div class="flex flex-col md:flex-row items-start justify-between">
             <div class="mb-6 md:mb-0">
-                <h1 class="text-2xl font-bold">MAGNET</h1>
-                <p class="text-sm">Magang Network and Tracking</p>
+                <a href="{{ route('guest.landing-page') }}">
+                    <h1 class="text-2xl font-bold">MAGNET</h1>
+                    <p class="text-sm">Magang Network and Tracking</p>
+                </a>
                 <div class="mt-4 text-xs text-gray-300">
                     <p>Jurusan Teknologi</p>
                     <p>Informasi Politeknik Negeri</p>
@@ -25,7 +27,7 @@
                 <div class="flex flex-col gap-2">
                     <h2 class="font-semibold">Tata Tertib</h2>
                     <ul>
-                        <li><a href="{{ route('guest.tatatertib') }}" class="text-sm hover:text-blue-300">Informasi
+                        <li><a href="{{ route('guest.tata-tertib') }}" class="text-sm hover:text-blue-300">Informasi
                                 resmi tata tertib magang</a></li>
                     </ul>
                 </div>

@@ -12,7 +12,7 @@ Route::name('guest.')
     ->group(function () {
         Route::view('/', 'pages.guest.landing-page')->name('landing-page');
         Route::view('pengembang', 'pages.guest.pengembang')->name('pengembang');
-        Route::view('tata-tertib', 'pages.guest.tatatertib')->name('tatatertib');
+        Route::view('tata-tertib', 'pages.guest.tata-tertib')->name('tata-tertib');
 
         Route::view('cara-magang', 'pages.guest.cara-magang')->name('cara-magang');
 
