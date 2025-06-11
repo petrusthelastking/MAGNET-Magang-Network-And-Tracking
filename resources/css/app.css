@@ -1,13 +1,11 @@
 @import "tailwindcss";
-@import '../../vendor/livewire/flux/dist/flux.css';
+@import "../../vendor/livewire/flux/dist/flux.css";
 
 @source "../views";
 
 @plugin "daisyui";
 
-
 @custom-variant dark (&:where(.dark, .dark *));
-
 
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/600.css";
@@ -32,27 +30,48 @@
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
 
-    --color-dark-cyan-blue: #124E78;
-    --color-pale-yellow: #F0F0C9;
-    --color-golden-yellow: #F2BB05;
-    --color-burnt-orange: #D74E09;
-    --color-dark-maroon: #6E0E0A;
+    --color-dark-cyan-blue: #124e78;
+    --color-pale-yellow: #f0f0c9;
+    --color-golden-yellow: #f2bb05;
+    --color-burnt-orange: #d74e09;
+    --color-dark-maroon: #6e0e0a;
 
     --color-magnet-deep-ocean-blue: #023047;
-    --color-magnet-abyssal-blue: #011D2B;
-    --color-magnet-sky-teal: #219EBC;
-    --color-magnet-icy-blue: #8ECAE6;
-    --color-magnet-frost-mist: #E0F7FA;
-    --color-magnet-sunbeam-yellow: #FB8500;
-    --color-magnet-vibrant-orange: #FFB703;
-    --color-magnet-def-grey-400: #9CA3AF;
-    --color-magnet-def-grey-500: #6B7280;
-    --color-magnet-def-red-300: #FCA5A5;
-    --color-magnet-def-yellow-300: #FCD34D;
-    --color-magnet-def-green-300: #6EE7B7;
-    --color-magnet-def-purple-300: #C4B5FD;
-    --color-magnet-def-indigo-300: #A5B4FC;
+    --color-magnet-abyssal-blue: #011d2b;
+    --color-magnet-sky-teal: #219ebc;
+    --color-magnet-icy-blue: #8ecae6;
+    --color-magnet-frost-mist: #e0f7fa;
+    --color-magnet-sunbeam-yellow: #fb8500;
+    --color-magnet-vibrant-orange: #ffb703;
+    --color-magnet-def-grey-400: #9ca3af;
+    --color-magnet-def-grey-500: #6b7280;
+    --color-magnet-def-red-300: #fca5a5;
+    --color-magnet-def-yellow-300: #fcd34d;
+    --color-magnet-def-green-300: #6ee7b7;
+    --color-magnet-def-purple-300: #c4b5fd;
+    --color-magnet-def-indigo-300: #a5b4fc;
 
+    --animate-scroll-horizontal: scroll-horizontal 60s linear infinite;
+    --animate-scroll-horizontal-reverse: scroll-horizontal-reverse 60s linear
+        infinite;
+}
+
+@keyframes scroll-horizontal {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes scroll-horizontal-reverse {
+    0% {
+        transform: translateX(-50%);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
 
 @layer theme {
@@ -64,7 +83,6 @@
 }
 
 @layer base {
-
     *,
     ::after,
     ::before,
@@ -89,14 +107,14 @@ select:focus[data-flux-control] {
 }
 
 button {
-    @apply hover:cursor-pointer
+    @apply hover:cursor-pointer;
 }
 
-table>tbody>tr:nth-child(even) {
+table > tbody > tr:nth-child(even) {
     @apply bg-gray-100;
 }
 
-table>tbody>tr {
+table > tbody > tr {
     @apply hover:cursor-pointer hover:bg-gray-100;
 }
 
