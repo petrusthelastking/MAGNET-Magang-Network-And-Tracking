@@ -3,8 +3,8 @@
 
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-    <a href="#">
-        <h1 class="text-3xl font-black ps-2 mx-4 text-center text-[#219EBC]">MAGNET</h1>
+    <a href="{{ route('guest.landing-page') }}">
+        <h1 class="text-3xl font-black ps-2 mx-4 text-center text-magnet-sky-teal">MAGNET</h1>
     </a>
 
     <flux:navlist variant="outline">
