@@ -1,9 +1,9 @@
 <x-layouts.guest.main>
-    <div class="min-h-screen px-10 pt-5 ">
+    <div class="min-h-screen px-6 pt-6 flex flex-col gap-6 mb-12">
         <!-- Header -->
         <header
             class="bg-gradient-to-br from-magnet-deep-ocean-blue via-blue-900 to-magnet-deep-ocean-blue text-white py-8 rounded-2xl flex items-center">
-            <flux:button variant="primary" class="bg-white text-black ml-4" href="{{ route('landing-page') }}"
+            <flux:button variant="primary" class="bg-white text-black ml-4" href="{{ route('guest.landing-page') }}"
                 icon="arrow-big-left-dash" size="sm" />
             <div class="container mx-auto px-4 flex flex-col items-center justify-center">
                 <h1 class="text-2xl font-bold mb-2">Cara Mengajukan Magang</h1>
@@ -200,15 +200,7 @@
                 </div>
             </section>
         </main>
-
-        <!-- Footer -->
-
     </div>
-    <footer class="bg-magnet-deep-ocean-blue text-white py-8">
-        <div class="container mx-auto px-6 text-center">
-            <p class="mb-2">&copy; 2025 Jurusan Teknologi Informasi - Politeknik Negeri Malang</p>
-            <p class="text-gray-400 text-sm">Sistem Rekomendasi Magang Berbasis Web</p>
-        </div>
-    </footer>
 
+    <x-guest.footer />
 </x-layouts.guest.main>

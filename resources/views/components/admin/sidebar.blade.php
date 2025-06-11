@@ -1,7 +1,7 @@
 <flux:sidebar sticky stashable class="bg-zinc-50 border-r rtl:border-r-0 rtl:border-l border-zinc-200 ">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-    <a href="{{ route('landing-page') }}">
+    <a href="{{ route('guest.landing-page') }}">
         <h1 class="text-3xl font-black ps-2 mx-4 text-center text-magnet-sky-teal">MAGNET</h1>
     </a>
 
