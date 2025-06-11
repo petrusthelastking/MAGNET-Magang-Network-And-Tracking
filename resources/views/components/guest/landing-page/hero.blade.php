@@ -31,7 +31,7 @@
                 </p>
                 <flux:button
                     class="text-black! bg-white! rounded-full! hover:bg-gray-200 border-0 text-xs sm:text-sm px-4 py-2 sm:px-6 sm:py-3"
-                    href="{{ route('login') }}">
+                    href="{{ route('login') }}" wire:navigate>
                     <span class="hidden sm:inline">Cari tempat magang impianmu Sekarang</span>
                     <span class="sm:hidden">Cari Magang Sekarang</span>
                 </flux:button>

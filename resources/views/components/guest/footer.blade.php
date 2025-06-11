@@ -2,7 +2,7 @@
     <div class="container mx-auto px-6 py-8">
         <div class="flex flex-col md:flex-row items-start justify-between">
             <div class="mb-6 md:mb-0">
-                <a href="{{ route('guest.landing-page') }}">
+                <a href="{{ route('guest.landing-page') }}" wire:navigate>
                     <h1 class="text-2xl font-bold">MAGNET</h1>
                     <p class="text-sm">Magang Network and Tracking</p>
                 </a>
@@ -17,25 +17,49 @@
                 <div class="flex flex-col gap-2">
                     <h2 class="font-semibold">Petunjuk</h2>
                     <ul>
-                        <li><a href="{{ route('guest.cara-magang') }}" class="text-sm hover:text-blue-300">Cara
-                                mengajukan magang</a></li>
-                        <li><a href="{{ route('guest.tips-memilih-magang') }}" class="text-sm hover:text-blue-300">Tips
-                                memilih tempat magang terbaik</a></li>
+                        <li>
+                            <a
+                                href="{{ route('guest.cara-magang') }}"
+                                wire:navigate
+                                class="text-sm hover:text-blue-300">
+                                Cara mengajukan magang
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="{{ route('guest.tips-memilih-magang') }}"
+                                wire:navigate
+                                class="text-sm hover:text-blue-300">
+                                Tips memilih tempat magang terbaik
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <h2 class="font-semibold">Tata Tertib</h2>
                     <ul>
-                        <li><a href="{{ route('guest.tata-tertib') }}" class="text-sm hover:text-blue-300">Informasi
-                                resmi tata tertib magang</a></li>
+                        <li>
+                            <a
+                                href="{{ route('guest.tata-tertib') }}"
+                                wire:navigate
+                                class="text-sm hover:text-blue-300">Informasi
+                                resmi tata tertib magang
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <h2 class="font-semibold">Pusat Bantuan</h2>
                     <ul>
-                        <li><a href="#" class="text-sm hover:text-blue-300">Aduan pengguna</a></li>
+                        <li>
+                            <a href="#"
+                                wire:navigate
+                                class="text-sm hover:text-blue-300">
+                                Aduan pengguna
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
@@ -43,7 +67,12 @@
                     <h2 class="font-semibold">Tim Pengembang</h2>
                     <ul>
                         <li>
-                            <a href="{{ route('guest.pengembang') }}" class="text-sm hover:text-blue-300">Informasi pengembang</a>
+                            <a
+                                href="{{ route('guest.pengembang') }}"
+                                wire:navigate
+                                class="text-sm hover:text-blue-300">
+                                Informasi pengembang
+                            </a>
                         </li>
                     </ul>
                 </div>
