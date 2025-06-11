@@ -505,10 +505,10 @@ $getTopRekomendasi = function () {
                         <div class="font-bold text-lg mt-5">
                             <h2>Tabel Hasil Metode Ratio System (RS)</h2>
                         </div>
-                        <table class="table-auto w-
+                        <table class="table-auto w-full">
                             <thead class="bg-white text-black">
                             <tr class="border-b bg-green-400">
-                                <th class="text-left px-6 py-3">Alternatif</th>
+                                <th class="text-center px-6 py-3">Alternatif</th>
                                 <th class="text-center px-6 py-3">Nilai</th>
                                 <th class="text-center px-6 py-3">Rank</th>
                             </tr>
