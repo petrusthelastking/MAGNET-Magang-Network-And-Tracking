@@ -287,7 +287,7 @@ $getFilterOptions = computed(function () {
                                             <div class="flex-1">
                                                 <h3
                                                     class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
-                                                    {{ $job->nama }}
+                                                    {{ $job->pekerjaan->nama ?? $job->nama }}
                                                 </h3>
                                                 <p class="text-sm text-gray-600 mt-1">{{ $job->perusahaan->nama }}</p>
 
