@@ -1,32 +1,34 @@
 @startuml
 
 node "Perangkat client" {
-  [Web Browser]
+    [Web Browser]
 }
 
 node "Web Server" {
-  component "HTTP server" <<Apache HTTP Server>>
+    component "HTTP server" <<Apache HTTP Server>>
 
-  node "Laravel Application" {
-    component "Route"
-    component "Controller"
-    component "Model"
-    component "View"
-  }
+    node "Laravel Application" {
+        component "Route"
+        component "Middleware"
+        component "Controller"
+        component "Model"
+        component "View"
+    }
+
+    node "File Storage Server" {
+        storage "File Storage" <<Storage>>
+    }
 }
 
 node "Database Server" {
-  database "DB Magnet" <<MySQL>>
-}
-
-node "File Storage Server" {
-  storage "File Storage" <<Storage>>
+    database "DB Magnet" <<MySQL>>
 }
 
 ' Connections
 [Web Browser] --> "HTTP server" : HTTP Request
 "HTTP server" --> "Route" : Mengirimkan request
-"Route" --> "Controller" : Memanggil method controller
+"Route" --> "Middleware" : Pengecekan request
+"Middleware" --> "Controller" : Memproses request
 "Controller" --> "Model" : Akses data
 "Controller" --> "View" : Mengirimkan tampilan web
 "Model" --> "DB Magnet" : Kueri SQL
