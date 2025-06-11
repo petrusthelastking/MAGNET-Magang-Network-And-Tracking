@@ -110,26 +110,57 @@ $getRemoteLabel = function ($remote) {
 
 ?>
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/20">
+<div class="min-h-screen">
     <x-slot:user>mahasiswa</x-slot:user>
 
-    <div class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <div class="max-w-6xl mx-auto px-4 py-6 space-y-6">
         @if ($this->lowongan)
-            <!-- Header with Breadcrumb -->
-            <div class="flex items-center gap-2 text-sm text-gray-600 mb-6">
-                <button onclick="history.back()" class="hover:text-blue-600 transition-colors cursor-pointer">
-                    Kembali
-                </button>
-                <flux:icon.chevron-right class="size-4 text-gray-400" />
-                <span
-                    class="text-gray-800 font-medium">{{ Str::limit($this->lowongan->nama ?? 'Detail Lowongan', 40) }}</span>
+            <!-- Enhanced Breadcrumb Navigation -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 px-6 py-4">
+                <nav class="flex items-center space-x-2 text-sm" aria-label="Breadcrumb">
+                    <button onclick="history.back()"
+                        class="text-gray-500 hover:text-blue-600 transition-colors font-medium">
+                        Dashboard
+                    </button>
+                    <flux:icon.chevron-right class="size-4 text-gray-400" />
+                    <button onclick="history.back()"
+                        class="text-gray-500 hover:text-blue-600 transition-colors font-medium">
+                        Lowongan Magang
+                    </button>
+                    <flux:icon.chevron-right class="size-4 text-gray-400" />
+                    <span class="text-gray-900 font-semibold truncate max-w-xs">
+                        {{ Str::limit($lowongan->pekerjaan->nama ?? 'Detail Lowongan', 30) }}
+                    </span>
+                </nav>
+
+                <!-- Quick Actions -->
+                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                    <button onclick="history.back()"
+                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 transition-colors">
+                        <flux:icon.arrow-left class="size-4 mr-2" />
+                        Kembali
+                    </button>
+
+                    <div class="flex items-center space-x-3">
+                        <button
+                            class="inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+                            <flux:icon.share class="size-4 mr-1" />
+                            Bagikan
+                        </button>
+                        <button
+                            class="inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+                            <flux:icon.flag class="size-4 mr-1" />
+                            Laporkan
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Main Content -->
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Job Header Card -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                         <div class="p-6">
                             <div class="flex items-start gap-4">
                                 @php
@@ -139,14 +170,23 @@ $getRemoteLabel = function ($remote) {
                                 @endphp
 
                                 <div class="flex-shrink-0">
-                                    <img src="{{ $logoUrl }}"
-                                        alt="Logo {{ $this->lowongan->perusahaan->nama ?? 'Perusahaan' }}"
-                                        class="w-20 h-20 object-contain rounded-xl border border-gray-100 bg-white p-2">
+                                    @if ($this->lowongan->perusahaan->logo)
+                                        <img src="{{ asset('storage/' . $this->lowongan->perusahaan->logo) }}"
+                                            alt="Logo {{ $this->lowongan->perusahaan->nama ?? 'Perusahaan' }}"
+                                            class="w-20 h-20 object-contain rounded-lg border border-gray-200 bg-white p-2">
+                                    @else
+                                        <div
+                                            class="w-20 h-20 rounded-lg border border-gray-200 bg-gray-100 flex items-center justify-center">
+                                            <span class="text-gray-600 font-bold text-lg">
+                                                {{ substr($this->lowongan->perusahaan->nama ?? 'P', 0, 1) }}
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <div class="flex-1 min-w-0">
                                     <h1 class="text-2xl font-bold text-gray-900 mb-3">
-                                        {{ $this->lowongan->nama ?? 'Nama lowongan tidak tersedia' }}
+                                        {{ $this->lowongan->pekerjaan->nama ?? 'Nama lowongan tidak tersedia' }}
                                     </h1>
 
                                     <div class="space-y-2">
@@ -184,14 +224,38 @@ $getRemoteLabel = function ($remote) {
                                                     <flux:icon.wifi class="size-4" />
                                                     Remote tersedia
                                                 </div>
+                                            @else
+                                                <div
+                                                    class="flex items-center bg-gray-50 text-gray-700 px-3 py-1 rounded-full text-sm font-medium gap-2">
+                                                    <flux:icon.map-pin class="size-4" />
+                                                    On-site
+                                                </div>
                                             @endif
                                         </div>
                                     </div>
 
                                     @if (isset($this->lowongan->perusahaan->id))
-                                        <div class="mt-4">
+                                        @if (isset($this->lowongan->perusahaan->rating) && $this->lowongan->perusahaan->rating > 0)
+                                            <div class="mt-4 flex items-center gap-2">
+                                                <flux:icon.star class="size-5 text-yellow-400" />
+                                                <span class="text-sm font-medium text-gray-800">
+                                                    {{ number_format($this->lowongan->perusahaan->rating, 1) }}
+                                                </span>
+                                                <span class="text-xs text-gray-500">
+                                                    ({{ $this->lowongan->perusahaan->total_rating ?? 0 }} ulasan)
+                                                </span>
+                                            </div>
+                                        @else
+                                            <div class="mt-4 flex items-center gap-2">
+                                                <flux:icon.star class="size-5 text-gray-400" />
+                                                <span class="text-sm text-gray-500">
+                                                    Belum ada ulasan
+                                                </span>
+                                            </div>
+                                        @endif
+                                        <div class="mt-3">
                                             <flux:link
-                                                href="{{ route('mahasiswa.profil-perusahaan', $this->lowongan->perusahaan->id) }}"
+                                                href="{{ route('mahasiswa.profil-perusahaan', ['id' => $this->lowongan->id]) }}"
                                                 class="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">
                                                 Lihat profil perusahaan
                                                 <flux:icon.arrow-top-right-on-square class="ml-1 size-4" />
@@ -204,7 +268,7 @@ $getRemoteLabel = function ($remote) {
                     </div>
 
                     <!-- Job Description -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                         <div class="p-6">
                             <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                                 <flux:icon.document-text class="size-6 text-blue-600" />
@@ -231,7 +295,7 @@ $getRemoteLabel = function ($remote) {
                     </div>
 
                     <!-- Reviews Section -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                         <div class="p-6">
                             <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                                 <flux:icon.star class="size-6 text-yellow-500" />
@@ -248,7 +312,7 @@ $getRemoteLabel = function ($remote) {
                                                     urlencode($ulasan->kontrakMagang->mahasiswa->nama ?? 'Unknown');
                                         @endphp
 
-                                        <div class="bg-gray-50 rounded-lg p-4">
+                                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
                                             <div class="flex gap-4">
                                                 <img src="{{ $fotoUrl }}"
                                                     class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
@@ -299,7 +363,7 @@ $getRemoteLabel = function ($remote) {
                 <!-- Sidebar -->
                 <div class="space-y-6">
                     <!-- Action Card -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 sticky top-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-6">
                         <div class="p-6">
                             <div class="space-y-4">
                                 <flux:button wire:click="saveJob" :disabled="$isLoading" variant="ghost"
@@ -347,7 +411,7 @@ $getRemoteLabel = function ($remote) {
 
                     <!-- Similar Jobs -->
                     @if ($this->lowonganSerupa->count() > 0)
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="p-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                                     <flux:icon.squares-2x2 class="size-5 text-blue-600" />
@@ -358,37 +422,47 @@ $getRemoteLabel = function ($remote) {
                                         @php
                                             $itemLogoUrl = $item->perusahaan->logo
                                                 ? asset('storage/' . $item->perusahaan->logo)
-                                                : asset('img/company-default.png');
+                                                : null;
                                         @endphp
 
-                                        {{-- <a href="{{ route('mahasiswa.lowongan.detail', $item->id) }}"
-                                            class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"> --}}
-                                        <img src="{{ $itemLogoUrl }}"
-                                            alt="Logo {{ $item->perusahaan->nama ?? 'Perusahaan' }}"
-                                            class="w-12 h-12 object-contain rounded-lg border border-gray-100 bg-white p-1">
+                                        <div onclick="window.location='{{ route('mahasiswa.detail-perusahaan', ['id' => $item->id]) }}'"
+                                            role="button"
+                                            class="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 hover:border-blue-200 transition-all duration-200 hover:cursor-pointer hover:shadow-sm border border-gray-100">
 
-                                        <div class="flex-1 min-w-0">
-                                            <h4
-                                                class="font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
-                                                {{ $item->nama ?? 'Nama lowongan tidak tersedia' }}
-                                            </h4>
-                                            <p class="text-sm text-gray-600 line-clamp-1">
-                                                {{ $item->perusahaan->nama ?? 'Nama perusahaan tidak tersedia' }}
-                                            </p>
-                                            <div class="flex items-center justify-between mt-1">
-                                                <span class="text-xs text-gray-500">
-                                                    {{ $item->perusahaan->lokasi ?? 'Lokasi tidak tersedia' }}
-                                                </span>
-                                                @if ($item->perusahaan->rating)
-                                                    <div class="flex items-center gap-1 text-xs">
-                                                        <flux:icon.star class="size-3 text-yellow-400" />
-                                                        <span
-                                                            class="text-gray-600">{{ number_format($item->perusahaan->rating, 1) }}</span>
-                                                    </div>
-                                                @endif
+                                            @if ($itemLogoUrl)
+                                                <img src="{{ $itemLogoUrl }}"
+                                                    alt="Logo {{ $item->perusahaan->nama ?? 'Perusahaan' }}"
+                                                    class="w-12 h-12 object-contain rounded-lg border border-gray-200 bg-white p-1">
+                                            @else
+                                                <div
+                                                    class="w-12 h-12 rounded-lg text-gray-600 flex items-center justify-center bg-gray-100">
+                                                    <span class="text-gray-600 font-bold text-lg">
+                                                        {{ substr($item->perusahaan->nama ?? 'P', 0, 1) }}
+                                                    </span>
+                                                </div>
+                                            @endif
+                                            <div class="flex-1 min-w-0">
+                                                <h4
+                                                    class="font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+                                                    {{ $item->pekerjaan->nama ?? 'Nama lowongan tidak tersedia' }}
+                                                </h4>
+                                                <p class="text-sm text-gray-600 line-clamp-1">
+                                                    {{ $item->perusahaan->nama ?? 'Nama perusahaan tidak tersedia' }}
+                                                </p>
+                                                <div class="flex items-center justify-between mt-1">
+                                                    <span class="text-xs text-gray-500">
+                                                        {{ $item->perusahaan->lokasi ?? 'Lokasi tidak tersedia' }}
+                                                    </span>
+                                                    @if ($item->perusahaan->rating)
+                                                        <div class="flex items-center gap-1 text-xs">
+                                                            <flux:icon.star class="size-3 text-yellow-400" />
+                                                            <span
+                                                                class="text-gray-600">{{ number_format($item->perusahaan->rating, 1) }}</span>
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </div>
-                                        </a>
                                     @endforeach
                                 </div>
                             </div>
@@ -399,7 +473,7 @@ $getRemoteLabel = function ($remote) {
         @else
             <!-- Not Found State -->
             <div class="max-w-2xl mx-auto">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                     <div class="text-center py-16 px-6">
                         <div class="bg-red-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
                             <flux:icon.exclamation-triangle class="size-10 text-red-600" />
