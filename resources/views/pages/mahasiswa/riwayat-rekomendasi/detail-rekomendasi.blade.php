@@ -256,7 +256,7 @@ $getTopRekomendasi = function () {
         </div>
 
         <div class="p-3 pb-4">
-            <div class="collapse border-base-300 border-2">
+            <div class="collapse border-base-300 border-2 overflow-x-auto">
                 <input type="checkbox" />
                 <div class="collapse-title font-semibold">Tabel Detail Perhitungan</div>
                 <div class="collapse-content text-sm">
@@ -497,7 +497,7 @@ $getTopRekomendasi = function () {
 
 
         <div class="p-3 pb-4">
-            <div class="collapse border-base-300 border-2">
+            <div class="collapse border-base-300 border-2 ">
                 <input type="checkbox" />
                 <div class="collapse-title font-semibold">Tabel Perangkingan</div>
                 <div class="collapse-content text-sm">
@@ -505,221 +505,268 @@ $getTopRekomendasi = function () {
                         <div class="font-bold text-lg mt-5">
                             <h2>Tabel Hasil Metode Ratio System (RS)</h2>
                         </div>
-                        <table class="table-auto w-full">
-                            <thead class="bg-white text-black">
-                            <tr class="border-b bg-green-400">
-                                <th class="text-center px-6 py-3">Alternatif</th>
-                                <th class="text-center px-6 py-3">Nilai</th>
-                                <th class="text-center px-6 py-3">Rank</th>
-                            </tr>
-                            </thead>
-                            <tbody class="bg-white text-black">
-                                @forelse($rankingRS->sortBy('rank') as $item)
-                                    <tr>
-                                        <td class="px-6 py-3">
-                                            {{ $item->lowonganMagang->nama ?? 'N/A' }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ number_format($item->score ?? 0, 10) }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ $item->rank ?? '-' }}
-                                        </td>
+                        <div class="overflow-x-auto">
+                            <table class="table-auto w-full">
+                                <thead class="bg-white text-black">
+                                    <tr class="border-b bg-green-400">
+                                        <th class="text-center px-6 py-3">Alternatif</th>
+                                        <th class="text-center px-6 py-3">Nilai</th>
+                                        <th class="text-center px-6 py-3">Rank</th>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="3" class="px-6 py-8 text-center text-gray-500">
-                                            <div class="flex flex-col items-center">
-                                                <svg class="w-12 h-12 mb-4 text-gray-300" fill="none"
-                                                    stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 00-2 2H9z" />
-                                                </svg>
-                                                <p class="text-lg font-medium">Tidak ada data ranking RS</p>
-                                                <p class="text-sm">Pastikan proses perhitungan Ratio System sudah
-                                                    dijalankan</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="bg-white text-black">
+                                    @forelse($rankingRS->sortBy('rank') as $item)
+                                        <tr>
+                                            <td class="px-6 py-3">
+                                                {{ $item->lowonganMagang->nama ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ number_format($item->score ?? 0, 10) }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ $item->rank ?? '-' }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="px-6 py-8 text-center text-gray-500">
+                                                <div class="flex flex-col items-center">
+                                                    <svg class="w-12 h-12 mb-4 text-gray-300" fill="none"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 00-2 2H9z" />
+                                                    </svg>
+                                                    <p class="text-lg font-medium">Tidak ada data ranking RS</p>
+                                                    <p class="text-sm">Pastikan proses perhitungan Ratio System sudah
+                                                        dijalankan</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div>
                         <div class="font-bold text-lg mt-5">
                             <h2>Tabel Hasil Metode Reference Point (RP)</h2>
                         </div>
-                        <table class="table-auto w-full">
-                            <thead class="bg-white text-black">
-                                <tr class="border-b bg-green-400">
-                                    <th class="text-left px-6 py-3">Alternatif</th>
-                                    <th class="text-center px-6 py-3">Pekerjaan</th>
-                                    <th class="text-center px-6 py-3">Open Remote</th>
-                                    <th class="text-center px-6 py-3">Jenis Magang</th>
-                                    <th class="text-center px-6 py-3">Bidang Industri</th>
-                                    <th class="text-center px-6 py-3">Lokasi Magang</th>
-                                    <th class="text-center px-6 py-3">Max Score</th>
-                                    <th class="text-center px-6 py-3">Rank</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white text-black">
-                                @forelse($rankingRP->sortBy('rank') as $item)
-                                    <tr>
-                                        <td class="px-6 py-3">
-                                            {{ $item->lowonganMagang->nama ?? 'N/A' }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ number_format($item->pekerjaan ?? 0, 10) }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ $item->open_remote ?? '-' }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ $item->jenis_magang ?? '-' }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ $item->bidang_industri ?? '-' }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ $item->lokasi_magang ?? '-' }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ number_format($item->max_score ?? 0, 10) }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ $item->rank ?? '-' }}
-                                        </td>
+                        <div class="overflow-x-auto">
+                            <table class="table-fixed w-full">
+                                <thead class="bg-white text-black">
+                                    <tr class="border-b bg-green-400">
+                                        <th class="text-left px-6 py-3">Alternatif</th>
+                                        <th class="text-center px-6 py-3">Pekerjaan</th>
+                                        <th class="text-center px-6 py-3">Open Remote</th>
+                                        <th class="text-center px-6 py-3">Jenis Magang</th>
+                                        <th class="text-center px-6 py-3">Bidang Industri</th>
+                                        <th class="text-center px-6 py-3">Lokasi Magang</th>
+                                        <th class="text-center px-6 py-3">Max Score</th>
+                                        <th class="text-center px-6 py-3">Rank</th>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="3" class="px-6 py-8 text-center text-gray-500">
-                                            <div class="flex flex-col items-center">
-                                                <svg class="w-12 h-12 mb-4 text-gray-300" fill="none"
-                                                    stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 00-2 2H9z" />
-                                                </svg>
-                                                <p class="text-lg font-medium">Tidak ada data ranking RP</p>
-                                                <p class="text-sm">Pastikan proses perhitungan Reference Point sudah
-                                                    dijalankan</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="bg-white text-black">
+                                    @forelse($rankingRP->sortBy('rank') as $item)
+                                        <tr>
+                                            <td class="px-6 py-3">
+                                                {{ $item->lowonganMagang->nama ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ number_format($item->pekerjaan ?? 0, 10) }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ $item->open_remote ?? '-' }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ $item->jenis_magang ?? '-' }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ $item->bidang_industri ?? '-' }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ $item->lokasi_magang ?? '-' }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ number_format($item->max_score ?? 0, 10) }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ $item->rank ?? '-' }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="px-6 py-8 text-center text-gray-500">
+                                                <div class="flex flex-col items-center">
+                                                    <svg class="w-12 h-12 mb-4 text-gray-300" fill="none"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 00-2 2H9z" />
+                                                    </svg>
+                                                    <p class="text-lg font-medium">Tidak ada data ranking RP</p>
+                                                    <p class="text-sm">Pastikan proses perhitungan Reference Point
+                                                        sudah
+                                                        dijalankan</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div>
                         <div class="font-bold text-lg mt-5">
                             <h2>Tabel Hasil Metode Full Multiplicative Form (FMF)</h2>
                         </div>
-                        <table class="table-auto w-full">
-                            <thead class="bg-white text-black">
-                                <tr class="border-b bg-green-400">
-                                    <th class="text-left px-6 py-3">Alternatif</th>
-                                    <th class="text-center px-6 py-3">Score</th>
-                                    <th class="text-center px-6 py-3">Rank</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white text-black">
-                                @forelse($rankingFMF->sortBy('rank') as $item)
-                                    <tr>
-                                        <td class="px-6 py-3">
-                                            {{ $item->lowonganMagang->nama ?? 'N/A' }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ number_format($item->score ?? 0, 10) }}
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            {{ $item->rank ?? '-' }}
-                                        </td>
+                        <div class="overflow-x-auto">
+                            <table class="table-auto w-full">
+                                <thead class="bg-white text-black">
+                                    <tr class="border-b bg-green-400">
+                                        <th class="text-left px-6 py-3">Alternatif</th>
+                                        <th class="text-center px-6 py-3">Score</th>
+                                        <th class="text-center px-6 py-3">Rank</th>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="3" class="px-6 py-8 text-center text-gray-500">
-                                            <div class="flex flex-col items-center">
-                                                <svg class="w-12 h-12 mb-4 text-gray-300" fill="none"
-                                                    stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 00-2 2H9z" />
-                                                </svg>
-                                                <p class="text-lg font-medium">Tidak ada data ranking RP</p>
-                                                <p class="text-sm">Pastikan proses perhitungan Reference Point sudah
-                                                    dijalankan</p>
-                                            </div>
-                                        </td>
+                                </thead>
+                                <tbody class="bg-white text-black">
+                                    @forelse($rankingFMF->sortBy('rank') as $item)
+                                        <tr>
+                                            <td class="px-6 py-3">
+                                                {{ $item->lowonganMagang->nama ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ number_format($item->score ?? 0, 10) }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                {{ $item->rank ?? '-' }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="px-6 py-8 text-center text-gray-500">
+                                                <div class="flex flex-col items-center">
+                                                    <svg class="w-12 h-12 mb-4 text-gray-300" fill="none"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 00-2 2H9z" />
+                                                    </svg>
+                                                    <p class="text-lg font-medium">Tidak ada data ranking RP</p>
+                                                    <p class="text-sm">Pastikan proses perhitungan Reference Point
+                                                        sudah
+                                                        dijalankan</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="font-bold text-lg mt-5">
+                            <h2>Tabel Hasil Perankingan Global</h2>
+                        </div>
+
+                        <div class="font-bold text-lg mt-5">
+                            <h2>Tabel Hasil Perankingan Global</h2>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="table-auto w-full">
+                                <thead class="bg-white text-black">
+                                    <tr class="border-b bg-orange-400">
+                                        <th class="text-left px-6 py-3">Alternatif</th>
+                                        <th class="text-left px-6 py-3">Perusahaan</th>
+                                        <th class="text-center px-6 py-3">RS</th>
+                                        <th class="text-center px-6 py-3">RP</th>
+                                        <th class="text-center px-6 py-3">FMF</th>
+                                        <th class="text-center px-6 py-3">Rata-Rata Ranking</th>
+                                        <th class="text-center px-6 py-3">Final Ranking</th>
                                     </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="font-bold text-lg mt-5">
-                        <h2>Tabel Hasil Perankingan Global</h2>
-                    </div>
+                                </thead>
+                                <tbody class="bg-white text-black">
+                                    @foreach ($finalRanking as $ranking)
+                                        @php
+                                            // Cari rank dari masing-masing method berdasarkan mahasiswa dan lowongan yang sama
+                                            $rsRank =
+                                                $rankingRS
+                                                    ->where('mahasiswa_id', $ranking->mahasiswa_id)
+                                                    ->where('lowongan_magang_id', $ranking->lowongan_magang_id)
+                                                    ->first()->rank ?? '-';
 
-                    <div class="font-bold text-lg mt-5">
-                        <h2>Tabel Hasil Perankingan Global</h2>
-                    </div>
+                                            $rpRank =
+                                                $rankingRP
+                                                    ->where('mahasiswa_id', $ranking->mahasiswa_id)
+                                                    ->where('lowongan_magang_id', $ranking->lowongan_magang_id)
+                                                    ->first()->rank ?? '-';
 
+                                            $fmfRank =
+                                                $rankingFMF
+                                                    ->where('mahasiswa_id', $ranking->mahasiswa_id)
+                                                    ->where('lowongan_magang_id', $ranking->lowongan_magang_id)
+                                                    ->first()->rank ?? '-';
+                                        @endphp
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="px-6 py-4">
+                                                {{ $ranking->mahasiswa->nama ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                {{ $ranking->lowonganMagang->perusahaan->nama ?? '-' }}
+                                            </td>
+                                            <td class="text-center px-6 py-4">
+                                                {{ $rsRank }}
+                                            </td>
+                                            <td class="text-center px-6 py-4">
+                                                {{ $rpRank }}
+                                            </td>
+                                            <td class="text-center px-6 py-4">
+                                                {{ $fmfRank }}
+                                            </td>
+                                            <td class="text-center px-6 py-4">
+                                                {{ number_format($ranking->avg_rank, 6) }}
+                                            </td>
+                                            <td class="text-center px-6 py-4 font-bold text-green-600">
+                                                {{ $ranking->rank }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-7">
+                <h2 class="text-base font-semibold">Top 10 Perusahaan Hasil Rekomendasi Magang</h2>
+                <div class="pb-3">
+                    <p>Pemilihan Rekomendasi menggunakan metode Multimoora</p>
+                </div>
+                <div class="overflow-x-auto">
                     <table class="table-auto w-full">
                         <thead class="bg-white text-black">
-                            <tr class="border-b bg-orange-400">
-                                <th class="text-left px-6 py-3">Alternatif</th>
-                                <th class="text-left px-6 py-3">Perusahaan</th>
-                                <th class="text-center px-6 py-3">RS</th>
-                                <th class="text-center px-6 py-3">RP</th>
-                                <th class="text-center px-6 py-3">FMF</th>
-                                <th class="text-center px-6 py-3">Rata-Rata Ranking</th>
-                                <th class="text-center px-6 py-3">Final Ranking</th>
+                            <tr class="border-b bg-yellow-200">
+                                <th class="text-center px-6 py-3">Rank</th>
+                                <th class="text-center px-6 py-3">Lowongan</th>
+                                <th class="text-center px-6 py-3">Perusahaan</th>
+                                <th class="text-center px-6 py-3">Rata-Rata Rangking</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white text-black">
-                            @foreach ($finalRanking as $ranking)
-                                @php
-                                    // Cari rank dari masing-masing method berdasarkan mahasiswa dan lowongan yang sama
-                                    $rsRank =
-                                        $rankingRS
-                                            ->where('mahasiswa_id', $ranking->mahasiswa_id)
-                                            ->where('lowongan_magang_id', $ranking->lowongan_magang_id)
-                                            ->first()->rank ?? '-';
-
-                                    $rpRank =
-                                        $rankingRP
-                                            ->where('mahasiswa_id', $ranking->mahasiswa_id)
-                                            ->where('lowongan_magang_id', $ranking->lowongan_magang_id)
-                                            ->first()->rank ?? '-';
-
-                                    $fmfRank =
-                                        $rankingFMF
-                                            ->where('mahasiswa_id', $ranking->mahasiswa_id)
-                                            ->where('lowongan_magang_id', $ranking->lowongan_magang_id)
-                                            ->first()->rank ?? '-';
-                                @endphp
+                            @foreach ($rekomendasi as $item)
                                 <tr class="border-b hover:bg-gray-50">
-                                    <td class="px-6 py-4">
-                                        {{ $ranking->mahasiswa->nama ?? 'N/A' }}
+                                    <td class="px-6 py-3 text-center font-medium">{{ $item->display_rank }}</td>
+                                    <td class="px-6 py-3">
+                                        <div class="font-medium">{{ $item->lowonganMagang->nama ?? 'N/A' }}</div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        {{ $ranking->lowonganMagang->perusahaan->nama ?? '-' }}
+                                    <td class="px-6 py-3">
+                                        <div class="font-medium">
+                                            {{ $item->lowonganMagang->perusahaan->nama ?? 'N/A' }}
+                                        </div>
                                     </td>
-                                    <td class="text-center px-6 py-4">
-                                        {{ $rsRank }}
-                                    </td>
-                                    <td class="text-center px-6 py-4">
-                                        {{ $rpRank }}
-                                    </td>
-                                    <td class="text-center px-6 py-4">
-                                        {{ $fmfRank }}
-                                    </td>
-                                    <td class="text-center px-6 py-4">
-                                        {{ number_format($ranking->avg_rank, 6) }}
-                                    </td>
-                                    <td class="text-center px-6 py-4 font-bold text-green-600">
-                                        {{ $ranking->rank }}
+                                    <td class="px-6 py-3 text-center">
+                                        {{ number_format($item->avg_rank, 9) }}
                                     </td>
                                 </tr>
                             @endforeach
@@ -727,38 +774,3 @@ $getTopRekomendasi = function () {
                     </table>
                 </div>
             </div>
-        </div>
-
-        <div class="pt-7">
-            <h2 class="text-base font-semibold">Top 10 Perusahaan Hasil Rekomendasi Magang</h2>
-            <div class="pb-3">
-                <p>Pemilihan Rekomendasi menggunakan metode Multimoora</p>
-            </div>
-            <table class="table-auto w-full">
-                <thead class="bg-white text-black">
-                    <tr class="border-b bg-yellow-200">
-                        <th class="text-center px-6 py-3">Rank</th>
-                        <th class="text-center px-6 py-3">Lowongan</th>
-                        <th class="text-center px-6 py-3">Perusahaan</th>
-                        <th class="text-center px-6 py-3">Rata-Rata Rangking</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white text-black">
-                    @foreach ($rekomendasi as $item)
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="px-6 py-3 text-center font-medium">{{ $item->display_rank }}</td>
-                            <td class="px-6 py-3">
-                                <div class="font-medium">{{ $item->lowonganMagang->nama ?? 'N/A' }}</div>
-                            </td>
-                            <td class="px-6 py-3">
-                                <div class="font-medium">{{ $item->lowonganMagang->perusahaan->nama ?? 'N/A' }}
-                                </div>
-                            </td>
-                            <td class="px-6 py-3 text-center">
-                                {{ number_format($item->avg_rank, 9) }}
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
