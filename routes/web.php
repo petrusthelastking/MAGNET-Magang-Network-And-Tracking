@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\TemplateController;
-use App\Http\Controllers\UserController;
 
 require_once __DIR__ . '/auth.php';
 
@@ -23,11 +22,6 @@ Route::middleware('role:admin,mahasiswa,dosen')
     ->group(function () {
         Volt::route('dashboard', 'pages.user.dashboard')->name('dashboard');
         Volt::route('profile', 'pages.user.profile')->name('profile');
-
-        // Profile management routes
-        Route::get('profile/edit', [UserController::class, 'showEditProfile'])->name('profile.edit');
-        Route::put('profile', [UserController::class, 'updateProfile'])->name('profile.update');
-        Route::delete('profile/photo', [UserController::class, 'deletePhoto'])->name('profile.delete-photo');
 
         Route::get('template/pdf/{file_name}', [TemplateController::class, 'previewFile'])->name('template-view');
     });
