@@ -11,12 +11,68 @@
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
-                @foreach (range(1, 15) as $index)
+                {{-- @foreach (range(1, 15) as $index) --}}
                     <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
                         <img src="{{ asset('img/company/company-bri.png') }}" alt="Partner Logo"
                             class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
                     </div>
-                @endforeach
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-tjiwi-kimia.svg') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-you-i.svg') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-spunindo.png') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-bernofarm.png') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-indoprima.png') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-maxy-academy.png') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-cj.png') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-petrokimia.jpg') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-peruri.webp') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-lintas-jejak.png') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-sanoh.png') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-racer.png') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-alamtri.png') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                    <div class="p-2 sm:p-4 flex items-center justify-center h-20 sm:h-24 lg:h-28">
+                        <img src="{{ asset('img/company/company-karisma.webp') }}" alt="Partner Logo"
+                            class="max-w-full max-h-16 sm:max-h-20 lg:max-h-24 object-contain">
+                    </div>
+                {{-- @endforeach --}}
             </div>
         </main>
     </div>
