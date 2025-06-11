@@ -1,8 +1,8 @@
 <x-layouts.guest.main>
     <!-- Back Button - Responsive -->
-    <flux:button variant="primary" class="bg-magnet-sky-teal m-2 sm:m-4" href="{{ route('landing-page') }}"
+    <flux:button variant="primary" class="bg-magnet-sky-teal m-2 sm:m-4" href="{{ route('guest.landing-page') }}"
         icon="arrow-big-left-dash" size="sm">Kembali</flux:button>
-    
+
     <!-- Main Container - Responsive padding -->
     <div class="space-y-6 px-4 sm:px-8 md:px-16 lg:px-28">
 

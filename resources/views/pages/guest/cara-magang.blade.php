@@ -3,7 +3,7 @@
         <!-- Header -->
         <header
             class="bg-gradient-to-br from-magnet-deep-ocean-blue via-blue-900 to-magnet-deep-ocean-blue text-white py-8 rounded-2xl flex items-center">
-            <flux:button variant="primary" class="bg-white text-black ml-4" href="{{ route('landing-page') }}"
+            <flux:button variant="primary" class="bg-white text-black ml-4" href="{{ route('guest.landing-page') }}"
                 icon="arrow-big-left-dash" size="sm" />
             <div class="container mx-auto px-4 flex flex-col items-center justify-center">
                 <h1 class="text-2xl font-bold mb-2">Cara Mengajukan Magang</h1>

@@ -3,6 +3,7 @@
             0% {
                 transform: translateX(0);
             }
+
             100% {
                 transform: translateX(-50%);
             }
@@ -12,6 +13,7 @@
             0% {
                 transform: translateX(-50%);
             }
+
             100% {
                 transform: translateX(0);
             }
@@ -39,7 +41,8 @@
                             <img src="https://i.pravatar.cc/60?img=1" class="rounded-full w-12 h-12">
                             <div>
                                 <p class="font-bold">Putri Gracia</p>
-                                <p class="text-sm italic text-gray-500">Pernah magang sebagai Frontend developer di PT AQUA</p>
+                                <p class="text-sm italic text-gray-500">Pernah magang sebagai Frontend developer di PT
+                                    AQUA</p>
                             </div>
                         </div>
                         <p class="mt-3 text-sm">Sangat mudah, cepat, dan dapat diandalkan</p>
@@ -52,7 +55,8 @@
                                 <p class="text-sm italic text-gray-500">Software Engineer di Tokopedia</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">MAGNET membantu saya menemukan talent terbaik untuk proyek startup saya. Prosesnya sangat efisien!</p>
+                        <p class="mt-3 text-sm">MAGNET membantu saya menemukan talent terbaik untuk proyek startup saya.
+                            Prosesnya sangat efisien!</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -62,7 +66,8 @@
                                 <p class="text-sm italic text-gray-500">UI/UX Designer di Gojek</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Platform yang user-friendly dengan fitur matching yang akurat. Recommended!</p>
+                        <p class="mt-3 text-sm">Platform yang user-friendly dengan fitur matching yang akurat.
+                            Recommended!</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -72,7 +77,8 @@
                                 <p class="text-sm italic text-gray-500">Product Manager di Shopee</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Dengan MAGNET, saya bisa fokus pada project tanpa khawatir mencari tim yang tepat</p>
+                        <p class="mt-3 text-sm">Dengan MAGNET, saya bisa fokus pada project tanpa khawatir mencari tim
+                            yang tepat</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -82,7 +88,8 @@
                                 <p class="text-sm italic text-gray-500">Data Scientist di Traveloka</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Sistem rating dan review di MAGNET sangat membantu dalam memilih collaborator</p>
+                        <p class="mt-3 text-sm">Sistem rating dan review di MAGNET sangat membantu dalam memilih
+                            collaborator</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -92,7 +99,8 @@
                                 <p class="text-sm italic text-gray-500">Mobile Developer di Bukalapak</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Interface yang clean dan intuitif. Mudah digunakan bahkan untuk pemula</p>
+                        <p class="mt-3 text-sm">Interface yang clean dan intuitif. Mudah digunakan bahkan untuk pemula
+                        </p>
                     </div>
                 </div>
                 <!-- Set 2 (duplikat) -->
@@ -102,7 +110,8 @@
                             <img src="https://i.pravatar.cc/60?img=1" class="rounded-full w-12 h-12">
                             <div>
                                 <p class="font-bold">Putri Gracia</p>
-                                <p class="text-sm italic text-gray-500">Pernah magang sebagai Frontend developer di PT AQUA</p>
+                                <p class="text-sm italic text-gray-500">Pernah magang sebagai Frontend developer di PT
+                                    AQUA</p>
                             </div>
                         </div>
                         <p class="mt-3 text-sm">Sangat mudah, cepat, dan dapat diandalkan</p>
@@ -115,7 +124,8 @@
                                 <p class="text-sm italic text-gray-500">Software Engineer di Tokopedia</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">MAGNET membantu saya menemukan talent terbaik untuk proyek startup saya. Prosesnya sangat efisien!</p>
+                        <p class="mt-3 text-sm">MAGNET membantu saya menemukan talent terbaik untuk proyek startup saya.
+                            Prosesnya sangat efisien!</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -125,7 +135,8 @@
                                 <p class="text-sm italic text-gray-500">UI/UX Designer di Gojek</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Platform yang user-friendly dengan fitur matching yang akurat. Recommended!</p>
+                        <p class="mt-3 text-sm">Platform yang user-friendly dengan fitur matching yang akurat.
+                            Recommended!</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -135,7 +146,8 @@
                                 <p class="text-sm italic text-gray-500">Product Manager di Shopee</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Dengan MAGNET, saya bisa fokus pada project tanpa khawatir mencari tim yang tepat</p>
+                        <p class="mt-3 text-sm">Dengan MAGNET, saya bisa fokus pada project tanpa khawatir mencari tim
+                            yang tepat</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -145,7 +157,8 @@
                                 <p class="text-sm italic text-gray-500">Data Scientist di Traveloka</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Sistem rating dan review di MAGNET sangat membantu dalam memilih collaborator</p>
+                        <p class="mt-3 text-sm">Sistem rating dan review di MAGNET sangat membantu dalam memilih
+                            collaborator</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -155,7 +168,8 @@
                                 <p class="text-sm italic text-gray-500">Mobile Developer di Bukalapak</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Interface yang clean dan intuitif. Mudah digunakan bahkan untuk pemula</p>
+                        <p class="mt-3 text-sm">Interface yang clean dan intuitif. Mudah digunakan bahkan untuk pemula
+                        </p>
                     </div>
                 </div>
             </div>
@@ -174,7 +188,8 @@
                                 <p class="text-sm italic text-gray-500">Digital Marketing Specialist di Blibli</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">MAGNET membuat networking jadi lebih mudah. Saya sudah dapat beberapa project bagus!</p>
+                        <p class="mt-3 text-sm">MAGNET membuat networking jadi lebih mudah. Saya sudah dapat beberapa
+                            project bagus!</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -184,7 +199,8 @@
                                 <p class="text-sm italic text-gray-500">Backend Developer di OVO</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Fitur chat dan video call terintegrasi sangat memudahkan komunikasi dengan klien</p>
+                        <p class="mt-3 text-sm">Fitur chat dan video call terintegrasi sangat memudahkan komunikasi
+                            dengan klien</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -194,7 +210,8 @@
                                 <p class="text-sm italic text-gray-500">Content Writer di Detik.com</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Payment system yang aman dan transparan. Tidak ada lagi khawatir soal pembayaran</p>
+                        <p class="mt-3 text-sm">Payment system yang aman dan transparan. Tidak ada lagi khawatir soal
+                            pembayaran</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -204,7 +221,8 @@
                                 <p class="text-sm italic text-gray-500">DevOps Engineer di Grab</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Algoritma matching-nya sangat akurat. Saya selalu dapat project yang sesuai skill</p>
+                        <p class="mt-3 text-sm">Algoritma matching-nya sangat akurat. Saya selalu dapat project yang
+                            sesuai skill</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -214,7 +232,8 @@
                                 <p class="text-sm italic text-gray-500">Graphic Designer di Zalora</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Dashboard analytics membantu saya track performa dan earnings dengan mudah</p>
+                        <p class="mt-3 text-sm">Dashboard analytics membantu saya track performa dan earnings dengan
+                            mudah</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -224,7 +243,8 @@
                                 <p class="text-sm italic text-gray-500">Full Stack Developer di Dana</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Customer support yang responsif dan helpful. Issue selalu cepat terselesaikan</p>
+                        <p class="mt-3 text-sm">Customer support yang responsif dan helpful. Issue selalu cepat
+                            terselesaikan</p>
                     </div>
                 </div>
                 <!-- Set 2 (duplikat) -->
@@ -237,7 +257,8 @@
                                 <p class="text-sm italic text-gray-500">Digital Marketing Specialist di Blibli</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">MAGNET membuat networking jadi lebih mudah. Saya sudah dapat beberapa project bagus!</p>
+                        <p class="mt-3 text-sm">MAGNET membuat networking jadi lebih mudah. Saya sudah dapat beberapa
+                            project bagus!</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -247,7 +268,8 @@
                                 <p class="text-sm italic text-gray-500">Backend Developer di OVO</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Fitur chat dan video call terintegrasi sangat memudahkan komunikasi dengan klien</p>
+                        <p class="mt-3 text-sm">Fitur chat dan video call terintegrasi sangat memudahkan komunikasi
+                            dengan klien</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -257,7 +279,8 @@
                                 <p class="text-sm italic text-gray-500">Content Writer di Detik.com</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Payment system yang aman dan transparan. Tidak ada lagi khawatir soal pembayaran</p>
+                        <p class="mt-3 text-sm">Payment system yang aman dan transparan. Tidak ada lagi khawatir soal
+                            pembayaran</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -267,7 +290,8 @@
                                 <p class="text-sm italic text-gray-500">DevOps Engineer di Grab</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Algoritma matching-nya sangat akurat. Saya selalu dapat project yang sesuai skill</p>
+                        <p class="mt-3 text-sm">Algoritma matching-nya sangat akurat. Saya selalu dapat project yang
+                            sesuai skill</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -277,7 +301,8 @@
                                 <p class="text-sm italic text-gray-500">Graphic Designer di Zalora</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Dashboard analytics membantu saya track performa dan earnings dengan mudah</p>
+                        <p class="mt-3 text-sm">Dashboard analytics membantu saya track performa dan earnings dengan
+                            mudah</p>
                     </div>
                     <div class="bg-white rounded-xl p-4 w-80 shadow-md flex-shrink-0">
                         <div class="flex items-center gap-4">
@@ -287,7 +312,8 @@
                                 <p class="text-sm italic text-gray-500">Full Stack Developer di Dana</p>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm">Customer support yang responsif dan helpful. Issue selalu cepat terselesaikan</p>
+                        <p class="mt-3 text-sm">Customer support yang responsif dan helpful. Issue selalu cepat
+                            terselesaikan</p>
                     </div>
                 </div>
             </div>
