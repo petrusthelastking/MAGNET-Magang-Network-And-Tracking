@@ -10,14 +10,6 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function showProfile()
-    {
-        $currentRole = UserAuthenticationHelper::getUserRole();
-        return view("pages.user.profile", [
-            "role" => $currentRole
-        ]);
-    }
-
     public function showEditProfile()
     {
         $currentRole = UserAuthenticationHelper::getUserRole();

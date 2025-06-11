@@ -22,7 +22,7 @@ Route::name('guest.')
 Route::middleware('role:admin,mahasiswa,dosen')
     ->group(function () {
         Volt::route('dashboard', 'pages.user.dashboard')->name('dashboard');
-        Route::get('profile', [UserController::class, 'showProfile'])->name('profile');
+        Volt::route('profile', 'pages.user.profile')->name('profile');
 
         // Profile management routes
         Route::get('profile/edit', [UserController::class, 'showEditProfile'])->name('profile.edit');
