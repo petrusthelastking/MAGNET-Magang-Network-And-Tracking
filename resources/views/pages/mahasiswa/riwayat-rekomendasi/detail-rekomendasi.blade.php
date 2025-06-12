@@ -25,7 +25,7 @@ mount(function () {
     $this->alternatifLowongan = $this->getAlternatifLowongan();
     $this->numericTable = $this->getNumericTable();
     $this->normalisasiEuclidean = $this->getNormalisasiEuclidean();
-    $this->normalisasiVektor = VectorNormalization::with(['mahasiswa', 'lowonganMagang'])->get();
+    $this->normalisasiVektor = $this->getUniqueVectorNormalization();
     $this->rankingRS = $this->getRankingRS();
     $this->rankingRP = $this->getRankingRP();
     $this->rankingFMF = $this->getRankingFMF();
@@ -71,14 +71,44 @@ $getAlternatifLowongan = function () {
 };
 
 $getNumericTable = function () {
-    return EncodedAlternatives::with(['mahasiswa', 'lowonganMagang'])->get();
+    $tanggal = request('tanggal');
+
+    $query = EncodedAlternatives::with(['mahasiswa', 'lowonganMagang'])
+        ->when($tanggal, function ($query) use ($tanggal) {
+            return $query->whereDate('created_at', $tanggal);
+        })
+        ->when(!$tanggal, function ($query) {
+            return $query->whereDate('created_at', now()->toDateString());
+        })
+        ->orderBy('created_at', 'desc');
+
+    // Ambil data dan filter untuk mendapatkan data terbaru per lowongan_magang_id
+    $allData = $query->get();
+    return $this->getUniqueByLowonganId($allData);
 };
 
-$getNormalisasiEuclidean = function () use ($getNumericTable) {
-    $encodedAlternatives = $getNumericTable();
+$getUniqueVectorNormalization = function () {
+    $tanggal = request('tanggal');
+
+    $query = VectorNormalization::with(['mahasiswa', 'lowonganMagang'])
+        ->when($tanggal, function ($query) use ($tanggal) {
+            return $query->whereDate('created_at', $tanggal);
+        })
+        ->when(!$tanggal, function ($query) {
+            return $query->whereDate('created_at', now()->toDateString());
+        })
+        ->orderBy('created_at', 'desc');
+
+    // Ambil data dan filter untuk mendapatkan data terbaru per lowongan_magang_id
+    $allData = $query->get();
+    return $this->getUniqueByLowonganId($allData);
+};
+
+$getNormalisasiEuclidean = function () {
+    $numericTable = $this->getNumericTable();
 
     // Return empty array if no data
-    if ($encodedAlternatives->isEmpty()) {
+    if ($numericTable->isEmpty()) {
         return [
             'lokasi_magang' => 0,
             'open_remote' => 0,
@@ -96,7 +126,7 @@ $getNormalisasiEuclidean = function () use ($getNumericTable) {
     // Hitung Euclidean norm untuk masing-masing kolom
     foreach ($criteriaColumns as $column) {
         // Ambil semua nilai untuk kolom ini dan filter yang valid
-        $values = $encodedAlternatives
+        $values = $numericTable
             ->pluck($column)
             ->filter(function ($value) {
                 return !is_null($value) && is_numeric($value);
@@ -121,59 +151,77 @@ $getNormalisasiEuclidean = function () use ($getNumericTable) {
 $getRankingRS = function () {
     $tanggal = request('tanggal');
 
-    return RatioSystem::with(['mahasiswa', 'lowonganMagang'])
+    $query = RatioSystem::with(['mahasiswa', 'lowonganMagang'])
         ->when($tanggal, function ($query) use ($tanggal) {
-            // Pastikan format tanggal dan filter berdasarkan DATE saja
             return $query->whereDate('created_at', $tanggal);
         })
         ->when(!$tanggal, function ($query) {
-            // Jika tidak ada parameter tanggal, ambil data hari ini
             return $query->whereDate('created_at', now()->toDateString());
         })
-        ->orderBy('rank', 'asc') // Urutkan berdasarkan rank
-        ->get();
+        ->orderBy('created_at', 'desc');
+
+    // Ambil data dan filter untuk mendapatkan data terbaru per lowongan_magang_id
+    $allData = $query->get();
+    $uniqueData = $this->getUniqueByLowonganId($allData);
+
+    // Urutkan berdasarkan rank setelah filtering
+    return $uniqueData->sortBy('rank')->values();
 };
 
 $getRankingRP = function () {
     $tanggal = request('tanggal');
 
-    return ReferencePoint::with(['mahasiswa', 'lowonganMagang'])
+    $query = ReferencePoint::with(['mahasiswa', 'lowonganMagang'])
         ->when($tanggal, function ($query) use ($tanggal) {
-            // Pastikan format tanggal dan filter berdasarkan DATE saja
             return $query->whereDate('created_at', $tanggal);
         })
         ->when(!$tanggal, function ($query) {
-            // Jika tidak ada parameter tanggal, ambil data hari ini
             return $query->whereDate('created_at', now()->toDateString());
         })
-        ->orderBy('rank', 'asc') // Urutkan berdasarkan rank
-        ->get();
+        ->orderBy('created_at', 'desc');
+
+    // Ambil data dan filter untuk mendapatkan data terbaru per lowongan_magang_id
+    $allData = $query->get();
+    $uniqueData = $this->getUniqueByLowonganId($allData);
+
+    // Urutkan berdasarkan rank setelah filtering
+    return $uniqueData->sortBy('rank')->values();
 };
 
 $getRankingFMF = function () {
     $tanggal = request('tanggal');
 
-    return FullMultiplicativeForm::with(['mahasiswa', 'lowonganMagang'])
+    $query = FullMultiplicativeForm::with(['mahasiswa', 'lowonganMagang'])
         ->when($tanggal, function ($query) use ($tanggal) {
-            // Pastikan format tanggal dan filter berdasarkan DATE saja
             return $query->whereDate('created_at', $tanggal);
         })
         ->when(!$tanggal, function ($query) {
-            // Jika tidak ada parameter tanggal, ambil data hari ini
             return $query->whereDate('created_at', now()->toDateString());
         })
-        ->orderBy('rank', 'asc') // Urutkan berdasarkan rank
-        ->get();
+        ->orderBy('created_at', 'desc');
+
+    // Ambil data dan filter untuk mendapatkan data terbaru per lowongan_magang_id
+    $allData = $query->get();
+    $uniqueData = $this->getUniqueByLowonganId($allData);
+
+    // Urutkan berdasarkan rank setelah filtering
+    return $uniqueData->sortBy('rank')->values();
 };
 
 $getRankingGlobal = function () {
     $tanggal = request('tanggal');
 
-    return FinalRankRecommendation::with(['mahasiswa', 'lowonganMagang.perusahaan', 'ratioSystem', 'referencePoint', 'fullMultiplicativeForm'])
+    $query = FinalRankRecommendation::with(['mahasiswa', 'lowonganMagang.perusahaan', 'ratioSystem', 'referencePoint', 'fullMultiplicativeForm'])
         ->when($tanggal, fn($query) => $query->whereDate('created_at', $tanggal))
         ->when(!$tanggal, fn($query) => $query->whereDate('created_at', now()->toDateString()))
-        ->orderBy('rank', 'asc')
-        ->get();
+        ->orderBy('created_at', 'desc');
+
+    // Ambil data dan filter untuk mendapatkan data terbaru per lowongan_magang_id
+    $allData = $query->get();
+    $uniqueData = $this->getUniqueByLowonganId($allData);
+
+    // Urutkan berdasarkan rank setelah filtering
+    return $uniqueData->sortBy('rank')->values();
 };
 
 $getTopRekomendasi = function () {
@@ -181,41 +229,47 @@ $getTopRekomendasi = function () {
     $mahasiswa = $this->mahasiswa;
 
     // Ambil data final ranking dengan relasi
-    $finalRankings = FinalRankRecommendation::with(['mahasiswa', 'lowonganMagang', 'ratioSystem', 'referencePoint', 'fullMultiplicativeForm'])
+    $query = FinalRankRecommendation::with(['mahasiswa', 'lowonganMagang', 'ratioSystem', 'referencePoint', 'fullMultiplicativeForm'])
         ->when($tanggal, function ($query) use ($tanggal) {
             return $query->whereDate('created_at', $tanggal);
         })
         ->when(!$tanggal, function ($query) {
             return $query->whereDate('created_at', now()->toDateString());
         })
-        ->where('mahasiswa_id', $mahasiswa->id) // Filter berdasarkan mahasiswa yang login
-        ->orderBy('avg_rank', 'asc') // Urutkan berdasarkan avg_rank terbaik
-        ->get();
+        ->where('mahasiswa_id', $mahasiswa->id)
+        ->orderBy('created_at', 'desc');
 
-    // Kelompokkan berdasarkan lowongan_magang_id dan ambil yang terbaik dari setiap grup
-    $uniqueRecommendations = collect();
-    $usedLowonganIds = [];
+    // Ambil semua data dan filter untuk mendapatkan data terbaru per lowongan_magang_id
+    $allData = $query->get();
+    $uniqueData = $this->getUniqueByLowonganId($allData);
 
-    foreach ($finalRankings as $ranking) {
-        $lowonganId = $ranking->lowongan_magang_id;
-
-        // Jika lowongan belum ada dalam hasil, tambahkan
-        if (!in_array($lowonganId, $usedLowonganIds)) {
-            $uniqueRecommendations->push($ranking);
-            $usedLowonganIds[] = $lowonganId;
-        }
-
-        // Batasi hanya 10 data
-        if ($uniqueRecommendations->count() >= 10) {
-            break;
-        }
-    }
+    // Urutkan berdasarkan avg_rank dan batasi 10 data
+    $topRecommendations = $uniqueData->sortBy('avg_rank')->take(10)->values();
 
     // Re-rank berdasarkan urutan
-    return $uniqueRecommendations->values()->map(function ($item, $index) {
+    return $topRecommendations->map(function ($item, $index) {
         $item->display_rank = $index + 1;
         return $item;
     });
+};
+
+// Helper function untuk mendapatkan data unik berdasarkan lowongan_magang_id
+$getUniqueByLowonganId = function ($collection) {
+    $uniqueData = collect();
+    $usedLowonganIds = [];
+
+    foreach ($collection as $item) {
+        $lowonganId = $item->lowongan_magang_id ?? $item->id;
+
+        // Jika lowongan_magang_id belum ada dalam hasil, tambahkan
+        // Data sudah diurutkan berdasarkan created_at desc, jadi yang pertama adalah yang terbaru
+        if (!in_array($lowonganId, $usedLowonganIds)) {
+            $uniqueData->push($item);
+            $usedLowonganIds[] = $lowonganId;
+        }
+    }
+
+    return $uniqueData;
 };
 
 ?>
@@ -349,6 +403,7 @@ $getTopRekomendasi = function () {
                             <table class="table-auto w-fit">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
+                                        <th class="text-left px-6 py-3">ID Lowongan</th>
                                         <th class="text-left px-6 py-3">Nama</th>
                                         <th class="text-left px-6 py-3">Lokasi</th>
                                         <th class="text-left px-6 py-3">Perusahaan</th>
@@ -359,8 +414,9 @@ $getTopRekomendasi = function () {
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white text-black">
-                                    @foreach ($alternatifLowongan as $lowongan)
+                                    @foreach ($alternatifLowongan->sortBy('id') as $lowongan)
                                         <tr>
+                                            <td class="px-6 py-3">{{ $lowongan->id ?? '-' }}</td>
                                             <td class="px-6 py-3">{{ $lowongan->pekerjaan->nama ?? '-' }}</td>
                                             <td class="px-6 py-3">
                                                 {{ $lowongan->lokasi_magang->kategori_lokasi ?? '-' }}</td>
@@ -385,6 +441,7 @@ $getTopRekomendasi = function () {
                         <table class="table-auto w-fit">
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
+                                    <th class="text-left px-6 py-3">ID Lowongan</th>
                                     <th class="text-left px-6 py-3">Pekerjaan</th>
                                     <th class="text-left px-6 py-3">Nama Perusahaan</th>
                                     <th class="text-center px-6 py-3">Lokasi Magang</th>
@@ -395,8 +452,11 @@ $getTopRekomendasi = function () {
                                 </tr>
                             </thead>
                             <tbody class="bg-white text-black">
-                                @foreach ($numericTable as $encoded)
+                                @foreach ($numericTable->sortBy('lowonganMagang.id') as $encoded)
                                     <tr>
+                                        <td class="px-6 py-3">
+                                            {{ $encoded->lowonganMagang->id ?? '-' }}
+                                        </td>
                                         <td class="px-6 py-3">
                                             {{ $encoded->lowonganMagang->pekerjaan->nama ?? '-' }}
                                         </td>
@@ -464,6 +524,7 @@ $getTopRekomendasi = function () {
                         <table class="table-auto w-fit">
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
+                                    <th class="text-left px-6 py-3">ID Lowongan</th>
                                     <th class="text-left px-6 py-3">Pekerjaan</th>
                                     <th class="text-center px-6 py-3">Nama Perusahaan</th>
                                     <th class="text-center px-6 py-3">Lokasi</th>
@@ -476,6 +537,9 @@ $getTopRekomendasi = function () {
                             <tbody class="bg-white text-black">
                                 @foreach ($normalisasiVektor as $item)
                                     <tr>
+                                        <td class="px-6 py-3">
+                                            {{ $item->lowonganMagang->id ?? 'N/A' }}
+                                        </td>
                                         <td class="px-6 py-3 text-left">
                                             {{ $item->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
                                         </td>
@@ -520,6 +584,7 @@ $getTopRekomendasi = function () {
                             <table class="table-auto w-full  ">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
+                                        <th class="text-center px-6 py-3">ID Lowongan</th>
                                         <th class="text-center px-6 py-3">Alternatif (Pekerjaan)</th>
                                         <th class="text-center px-6 py-3">Nama Perusahaan</th>
                                         <th class="text-center px-6 py-3">Nilai</th>
@@ -529,6 +594,9 @@ $getTopRekomendasi = function () {
                                 <tbody class="bg-white text-black">
                                     @forelse($rankingRS->sortBy('rank') as $item)
                                         <tr>
+                                            <td class="px-6 py-3">
+                                                {{ $item->lowonganMagang->id ?? 'N/A' }}
+                                            </td>
                                             <td class="px-6 py-3">
                                                 {{ $item->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
                                             </td>
@@ -572,6 +640,7 @@ $getTopRekomendasi = function () {
                             <table class="table-fixed w-fit">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
+                                        <th class="text-left px-6 py-3">ID Lowongan</th>
                                         <th class="text-left px-6 py-3">Alternatif (Pekerjaan)</th>
                                         <th class="text-center px-6 py-3">Nama Perusahaan</th>
                                         <th class="text-center px-6 py-3">Open Remote</th>
@@ -585,6 +654,9 @@ $getTopRekomendasi = function () {
                                 <tbody class="bg-white text-black">
                                     @forelse($rankingRP->sortBy('rank') as $item)
                                         <tr>
+                                            <td class="px-6 py-3">
+                                                {{ $item->lowonganMagang->id ?? 'N/A' }}
+                                            </td>
                                             <td class="px-6 py-3">
                                                 {{ $item->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
                                             </td>
@@ -640,6 +712,7 @@ $getTopRekomendasi = function () {
                             <table class="table-auto w-full">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
+                                        <th class="text-left px-6 py-3">ID Lowongan</th>
                                         <th class="text-left px-6 py-3">Alternatif (Pekerjaan)</th>
                                         <th class="text-center px-6 py-3">Nama Perusahaan</th>
                                         <th class="text-center px-6 py-3">Score</th>
@@ -649,6 +722,9 @@ $getTopRekomendasi = function () {
                                 <tbody class="bg-white text-black">
                                     @forelse($rankingFMF->sortBy('rank') as $item)
                                         <tr>
+                                            <td class="px-6 py-3">
+                                                {{ $item->lowonganMagang->id ?? 'N/A' }}
+                                            </td>
                                             <td class="px-6 py-3">
                                                 {{ $item->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
                                             </td>
@@ -691,6 +767,7 @@ $getTopRekomendasi = function () {
                             <table class="table-auto w-fit">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-orange-400">
+                                        <th class="text-left px-6 py-3">ID Lowongan</th>
                                         <th class="text-left px-6 py-3">Alternatif</th>
                                         <th class="text-left px-6 py-3">Perusahaan</th>
                                         <th class="text-center px-6 py-3">RS</th>
@@ -709,6 +786,9 @@ $getTopRekomendasi = function () {
                                         @if ($ranking->mahasiswa_id === $mahasiswaLogin->id)
                                             {{-- Baris Tabel --}}
                                             <tr class="border-b hover:bg-gray-50">
+                                                <td class="px-6 py-4">
+                                                    {{ $ranking->lowonganMagang->id ?? 'N/A' }}
+                                                </td>
                                                 <td class="px-6 py-4">
                                                     {{ $ranking->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
                                                 </td>
@@ -750,6 +830,7 @@ $getTopRekomendasi = function () {
                     <table class="table-auto w-fit">
                         <thead class="bg-white text-black">
                             <tr class="border-b bg-yellow-200">
+                                <th class="text-center px-6 py-3">ID Lowongan</th>
                                 <th class="text-center px-6 py-3">Rank</th>
                                 <th class="text-center px-6 py-3">Lowongan</th>
                                 <th class="text-center px-6 py-3">Perusahaan</th>
@@ -760,6 +841,9 @@ $getTopRekomendasi = function () {
                             @foreach ($rekomendasi as $item)
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="px-6 py-3 text-center font-medium">{{ $item->display_rank }}</td>
+                                    <td class="px-6 py-3">
+                                        <div class="font-medium">{{ $item->lowonganMagang->id ?? 'N/A' }}</div>
+                                    </td>
                                     <td class="px-6 py-3">
                                         <div class="font-medium">{{ $item->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
                                         </div>
