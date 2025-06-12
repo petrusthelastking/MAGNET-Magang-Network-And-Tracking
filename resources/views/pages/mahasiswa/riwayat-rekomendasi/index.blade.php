@@ -14,25 +14,130 @@ layout('components.layouts.user.main');
 $riwayat = computed(function () {
     $mahasiswaId = auth('mahasiswa')->user()->id;
 
-    return FinalRankRecommendation::where('mahasiswa_id', $mahasiswaId)
+    // Get the latest recommendation for each unique lowongan_magang_id per minute
+    $latestRecommendations = FinalRankRecommendation::where('mahasiswa_id', $mahasiswaId)
+        ->select([
+            'id',
+            'lowongan_magang_id',
+            'mahasiswa_id',
+            'avg_rank',
+            'rank',
+            'created_at',
+            DB::raw('DATE(created_at) as tanggal'),
+            DB::raw('TIME(created_at) as waktu_lengkap'),
+            DB::raw('HOUR(created_at) as jam'),
+            DB::raw('MINUTE(created_at) as menit'),
+            DB::raw('CONCAT(LPAD(HOUR(created_at), 2, "0"), ":", LPAD(MINUTE(created_at), 2, "0")) as waktu_formatted'),
+            DB::raw('CASE
+                WHEN HOUR(created_at) >= 6 AND HOUR(created_at) < 12 THEN "Pagi"
+                WHEN HOUR(created_at) >= 12 AND HOUR(created_at) < 17 THEN "Siang"
+                WHEN HOUR(created_at) >= 17 AND HOUR(created_at) < 21 THEN "Sore"
+                ELSE "Malam"
+            END as periode'),
+            // ROW_NUMBER partitioned by lowongan_magang_id AND minute to get latest per minute
+            DB::raw('ROW_NUMBER() OVER (PARTITION BY lowongan_magang_id, DATE(created_at), HOUR(created_at), MINUTE(created_at) ORDER BY created_at DESC) as rn_minute'),
+        ])
         ->with(['lowonganMagang.perusahaan.bidangIndustri', 'lowonganMagang.pekerjaan', 'ratioSystem', 'referencePoint', 'fullMultiplicativeForm'])
-        ->select('id', 'lowongan_magang_id', 'mahasiswa_id', 'avg_rank', 'rank', 'created_at', DB::raw('DATE(created_at) as tanggal'), DB::raw('HOUR(created_at) as jam'), DB::raw('MINUTE(created_at) as menit'))
+        ->havingRaw('rn_minute = 1') // Only get the latest record for each lowongan_magang_id per minute
         ->orderBy('created_at', 'desc')
         ->orderBy('rank', 'asc')
         ->get()
-        ->groupBy('tanggal');
+        ->groupBy(['tanggal', 'waktu_formatted']);
+
+    return $latestRecommendations;
+});
+
+// Alternative approach using subquery for better performance
+$riwayatAlternative = computed(function () {
+    $mahasiswaId = auth('mahasiswa')->user()->id;
+
+    // First, get the latest created_at for each lowongan_magang_id per minute
+    $latestDates = FinalRankRecommendation::where('mahasiswa_id', $mahasiswaId)
+        ->select(['lowongan_magang_id', DB::raw('DATE(created_at) as tanggal'), DB::raw('HOUR(created_at) as jam'), DB::raw('MINUTE(created_at) as menit'), DB::raw('MAX(created_at) as latest_date')])
+        ->groupBy(['lowongan_magang_id', 'tanggal', 'jam', 'menit']);
+
+    // Then get the full records for those latest dates
+    return FinalRankRecommendation::where('mahasiswa_id', $mahasiswaId)
+        ->joinSub($latestDates, 'latest', function ($join) {
+            $join->on('final_rank_recommendation.lowongan_magang_id', '=', 'latest.lowongan_magang_id')->on('final_rank_recommendation.created_at', '=', 'latest.latest_date');
+        })
+        ->with(['lowonganMagang.perusahaan.bidangIndustri', 'lowonganMagang.pekerjaan', 'ratioSystem', 'referencePoint', 'fullMultiplicativeForm'])
+        ->select([
+            'final_rank_recommendation.id',
+            'final_rank_recommendation.lowongan_magang_id',
+            'final_rank_recommendation.mahasiswa_id',
+            'final_rank_recommendation.avg_rank',
+            'final_rank_recommendation.rank',
+            'final_rank_recommendation.created_at',
+            DB::raw('DATE(final_rank_recommendation.created_at) as tanggal'),
+            DB::raw('TIME(final_rank_recommendation.created_at) as waktu_lengkap'),
+            DB::raw('HOUR(final_rank_recommendation.created_at) as jam'),
+            DB::raw('MINUTE(final_rank_recommendation.created_at) as menit'),
+            DB::raw('CONCAT(LPAD(HOUR(final_rank_recommendation.created_at), 2, "0"), ":", LPAD(MINUTE(final_rank_recommendation.created_at), 2, "0")) as waktu_formatted'),
+            DB::raw('CASE
+                WHEN HOUR(final_rank_recommendation.created_at) >= 6 AND HOUR(final_rank_recommendation.created_at) < 12 THEN "Pagi"
+                WHEN HOUR(final_rank_recommendation.created_at) >= 12 AND HOUR(final_rank_recommendation.created_at) < 17 THEN "Siang"
+                WHEN HOUR(final_rank_recommendation.created_at) >= 17 AND HOUR(final_rank_recommendation.created_at) < 21 THEN "Sore"
+                ELSE "Malam"
+            END as periode'),
+        ])
+        ->orderBy('final_rank_recommendation.created_at', 'desc')
+        ->orderBy('final_rank_recommendation.rank', 'asc')
+        ->get()
+        ->groupBy(['tanggal', 'waktu_formatted']);
 });
 
 $statistikRekomendasi = computed(function () {
     $mahasiswaId = auth('mahasiswa')->user()->id;
 
+    // Updated statistics to reflect unique lowongan count per minute
+    $latestDates = FinalRankRecommendation::where('mahasiswa_id', $mahasiswaId)
+        ->select(['lowongan_magang_id', DB::raw('DATE(created_at) as tanggal'), DB::raw('HOUR(created_at) as jam'), DB::raw('MINUTE(created_at) as menit'), DB::raw('MAX(created_at) as latest_date')])
+        ->groupBy(['lowongan_magang_id', 'tanggal', 'jam', 'menit']);
+
+    $uniqueRecommendations = FinalRankRecommendation::where('mahasiswa_id', $mahasiswaId)->joinSub($latestDates, 'latest', function ($join) {
+        $join->on('final_rank_recommendation.lowongan_magang_id', '=', 'latest.lowongan_magang_id')->on('final_rank_recommendation.created_at', '=', 'latest.latest_date');
+    });
+
     return [
-        'total_rekomendasi' => FinalRankRecommendation::where('mahasiswa_id', $mahasiswaId)->count(),
-        'rekomendasi_terbaik' => FinalRankRecommendation::where('mahasiswa_id', $mahasiswaId)->min('rank'),
-        'rata_rata_rank' => FinalRankRecommendation::where('mahasiswa_id', $mahasiswaId)->avg('avg_rank'),
-        'perusahaan_unik' => FinalRankRecommendation::where('mahasiswa_id', $mahasiswaId)->join('lowongan_magang', 'final_rank_recommendation.lowongan_magang_id', '=', 'lowongan_magang.id')->distinct('lowongan_magang.perusahaan_id')->count(),
+        'total_rekomendasi' => $uniqueRecommendations->count(),
+        'rekomendasi_terbaik' => $uniqueRecommendations->min('final_rank_recommendation.rank'),
+        'rata_rata_rank' => round($uniqueRecommendations->avg('final_rank_recommendation.avg_rank'), 1),
+        'perusahaan_unik' => $uniqueRecommendations->join('lowongan_magang', 'final_rank_recommendation.lowongan_magang_id', '=', 'lowongan_magang.id')->distinct('lowongan_magang.perusahaan_id')->count('lowongan_magang.perusahaan_id'),
     ];
 });
+
+// Helper function for time period styling
+function getTimePeriodStyle($periode)
+{
+    switch ($periode) {
+        case 'Pagi':
+            return [
+                'bgColor' => 'bg-amber-50 border-amber-200',
+                'textColor' => 'text-amber-700',
+                'iconColor' => 'text-amber-600',
+            ];
+        case 'Siang':
+            return [
+                'bgColor' => 'bg-orange-50 border-orange-200',
+                'textColor' => 'text-orange-700',
+                'iconColor' => 'text-orange-600',
+            ];
+        case 'Sore':
+            return [
+                'bgColor' => 'bg-purple-50 border-purple-200',
+                'textColor' => 'text-purple-700',
+                'iconColor' => 'text-purple-600',
+            ];
+        default:
+            // Malam
+            return [
+                'bgColor' => 'bg-blue-50 border-blue-200',
+                'textColor' => 'text-blue-700',
+                'iconColor' => 'text-blue-600',
+            ];
+    }
+}
 
 ?>
 
@@ -41,8 +146,8 @@ $statistikRekomendasi = computed(function () {
 
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-800 tracking-tight">Riwayat Rekomendasi Magang</h1>
-        <p class="text-gray-500 mt-1">Daftar riwayat rekomendasi magang yang dikelompokkan berdasarkan tanggal dengan
-            waktu spesifik berdasarkan algoritma MULTIMOORA.</p>
+        <p class="text-gray-500 mt-1">Daftar riwayat rekomendasi magang terbaru untuk setiap lowongan yang dikelompokkan
+            berdasarkan tanggal dan waktu (menit) dengan data terbaru per menit berdasarkan algoritma MULTIMOORA.</p>
     </div>
 
     <!-- Statistics Overview -->
@@ -91,7 +196,7 @@ $statistikRekomendasi = computed(function () {
                 </div>
                 <div>
                     <p class="text-2xl font-bold text-gray-800">
-                        {{ number_format($this->statistikRekomendasi['rata_rata_rank'], 1) }}</p>
+                        {{ $this->statistikRekomendasi['rata_rata_rank'] }}</p>
                     <p class="text-sm text-gray-500">Rata-rata Skor</p>
                 </div>
             </div>
@@ -114,18 +219,13 @@ $statistikRekomendasi = computed(function () {
         </div>
     </div>
 
-    @if ($this->riwayat->count() > 0)
-        <!-- History grouped by date only -->
+    @if ($this->riwayatAlternative->count() > 0)
+        <!-- History grouped by date -->
         <div class="space-y-8">
-            @foreach ($this->riwayat as $tanggal => $itemsPerTanggal)
+            @foreach ($this->riwayatAlternative as $tanggal => $itemsPerTanggal)
                 @php
                     $carbonDate = Carbon::parse($tanggal);
-                    // Group items by distinct time (hour:minute)
-                    $itemsByTime = $itemsPerTanggal->groupBy(function ($item) {
-                        return str_pad($item->jam, 2, '0', STR_PAD_LEFT) .
-                            ':' .
-                            str_pad($item->menit, 2, '0', STR_PAD_LEFT);
-                    });
+                    $totalWaktuCount = $itemsPerTanggal->count();
                 @endphp
 
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -143,7 +243,7 @@ $statistikRekomendasi = computed(function () {
                             <div class="text-right">
                                 <div class="bg-white/20 rounded-lg px-4 py-2">
                                     <p class="text-sm text-teal-100">Total Waktu</p>
-                                    <p class="text-2xl font-bold">{{ $itemsByTime->count() }}</p>
+                                    <p class="text-2xl font-bold">{{ $totalWaktuCount }}</p>
                                 </div>
                             </div>
                         </div>
@@ -152,46 +252,23 @@ $statistikRekomendasi = computed(function () {
                     <!-- Time entries for this date -->
                     <div class="p-6">
                         <div class="space-y-4">
-                            @foreach ($itemsByTime as $waktu => $itemsAtTime)
+                            @foreach ($itemsPerTanggal as $waktu => $itemsAtTime)
                                 @php
                                     $firstItem = $itemsAtTime->first();
-                                    $carbonTime = Carbon::parse($firstItem->created_at);
-                                    $hour = $carbonTime->hour;
-
-                                    // Determine time period
-                                    if ($hour >= 6 && $hour < 12) {
-                                        $periode = 'Pagi';
-                                        $bgColor = 'bg-amber-50 border-amber-200';
-                                        $textColor = 'text-amber-700';
-                                        $iconColor = 'text-amber-600';
-                                    } elseif ($hour >= 12 && $hour < 17) {
-                                        $periode = 'Siang';
-                                        $bgColor = 'bg-orange-50 border-orange-200';
-                                        $textColor = 'text-orange-700';
-                                        $iconColor = 'text-orange-600';
-                                    } elseif ($hour >= 17 && $hour < 21) {
-                                        $periode = 'Sore';
-                                        $bgColor = 'bg-purple-50 border-purple-200';
-                                        $textColor = 'text-purple-700';
-                                        $iconColor = 'text-purple-600';
-                                    } else {
-                                        $periode = 'Malam';
-                                        $bgColor = 'bg-blue-50 border-blue-200';
-                                        $textColor = 'text-blue-700';
-                                        $iconColor = 'text-blue-600';
-                                    }
+                                    $periode = $firstItem->periode;
+                                    $styles = getTimePeriodStyle($periode);
+                                    $actualCount = $itemsAtTime->count();
                                 @endphp
 
                                 <a
                                     href="{{ route('mahasiswa.detail-rekomendasi', ['tanggal' => $tanggal, 'waktu' => $waktu]) }}">
-
                                     <div
                                         class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all duration-300">
                                         <div class="flex items-center justify-between">
                                             <div class="flex items-center gap-4">
                                                 <div
-                                                    class="w-12 h-12 {{ $bgColor }} rounded-lg flex items-center justify-center">
-                                                    <svg class="w-6 h-6 {{ $iconColor }}" fill="none"
+                                                    class="w-12 h-12 {{ $styles['bgColor'] }} rounded-lg flex items-center justify-center">
+                                                    <svg class="w-6 h-6 {{ $styles['iconColor'] }}" fill="none"
                                                         stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             stroke-width="2"
@@ -200,18 +277,39 @@ $statistikRekomendasi = computed(function () {
                                                 </div>
                                                 <div>
                                                     <p class="text-xl font-bold text-gray-800">{{ $waktu }}</p>
-                                                    <p class="text-sm {{ $textColor }} font-medium">
+                                                    <p class="text-sm {{ $styles['textColor'] }} font-medium">
                                                         {{ $periode }}
                                                     </p>
                                                 </div>
                                             </div>
                                             <div class="text-right">
-                                                <p class="text-lg font-bold text-gray-800">{{ $itemsAtTime->count() }}
-                                                </p>
+                                                <p class="text-lg font-bold text-gray-800">{{ $actualCount }}</p>
                                                 <p class="text-sm text-gray-500">rekomendasi</p>
                                             </div>
                                         </div>
+                                        <!-- Show lowongan details preview -->
+                                        <div class="mt-3 pt-3 border-t border-gray-100">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
+                                                @foreach ($itemsAtTime->take(3) as $item)
+                                                    <div class="flex items-center gap-2">
+                                                        <span
+                                                            class="w-2 h-2 bg-{{ $item->rank <= 3 ? 'green' : 'blue' }}-400 rounded-full"></span>
+                                                        <span class="truncate">
+                                                            {{ $item->lowonganMagang->perusahaan->nama ?? 'N/A' }} -
+                                                            {{ $item->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
+                                                            (Rank: {{ $item->rank }})
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                                @if ($itemsAtTime->count() > 3)
+                                                    <div class="text-gray-400 text-xs">
+                                                        +{{ $itemsAtTime->count() - 3 }} rekomendasi lainnya
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
+                                </a>
                             @endforeach
                         </div>
                     </div>
