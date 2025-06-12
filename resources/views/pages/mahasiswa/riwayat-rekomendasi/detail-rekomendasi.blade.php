@@ -403,6 +403,7 @@ $getUniqueByLowonganId = function ($collection) {
                             <table class="table-auto w-fit">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
+                                        <th class="text-left px-6 py-3">ID Lowongan</th>
                                         <th class="text-left px-6 py-3">Nama</th>
                                         <th class="text-left px-6 py-3">Lokasi</th>
                                         <th class="text-left px-6 py-3">Perusahaan</th>
@@ -413,8 +414,9 @@ $getUniqueByLowonganId = function ($collection) {
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white text-black">
-                                    @foreach ($alternatifLowongan as $lowongan)
+                                    @foreach ($alternatifLowongan->sortBy('id') as $lowongan)
                                         <tr>
+                                            <td class="px-6 py-3">{{ $lowongan->id ?? '-' }}</td>
                                             <td class="px-6 py-3">{{ $lowongan->pekerjaan->nama ?? '-' }}</td>
                                             <td class="px-6 py-3">
                                                 {{ $lowongan->lokasi_magang->kategori_lokasi ?? '-' }}</td>
@@ -450,7 +452,7 @@ $getUniqueByLowonganId = function ($collection) {
                                 </tr>
                             </thead>
                             <tbody class="bg-white text-black">
-                                @foreach ($numericTable as $encoded)
+                                @foreach ($numericTable->sortBy('lowonganMagang.id') as $encoded)
                                     <tr>
                                         <td class="px-6 py-3">
                                             {{ $encoded->lowonganMagang->id ?? '-' }}
