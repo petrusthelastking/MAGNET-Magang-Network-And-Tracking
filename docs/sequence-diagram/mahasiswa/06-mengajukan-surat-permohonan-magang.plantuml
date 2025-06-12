@@ -14,12 +14,17 @@ entity DataMahasiswa #SkyBlue
 Mahasiswa -> HalamanLowonganMagang : pilih lowongan
 HalamanLowonganMagang -> FormSuratPermohonan : buka form permohonan
 FormSuratPermohonan -> SuratPermohonanController : submitForm(data)
+activate SuratPermohonanController
 SuratPermohonanController -> DataMahasiswa : validasiMahasiswa()
+activate DataMahasiswa
 DataMahasiswa --> SuratPermohonanController : returnValidasi()
+deactivate DataMahasiswa
 
 alt Validasi berhasil
     SuratPermohonanController -> DataSuratPermohonan : simpanPermohonan()
+    activate DataSuratPermohonan
     DataSuratPermohonan --> SuratPermohonanController : returnSuccess()
+    deactivate DataSuratPermohonan
     SuratPermohonanController -> HalamanKonfirmasi : tampilkanNotifikasiBerhasil()
 else Validasi gagal
     SuratPermohonanController -> FormSuratPermohonan : tampilkanPesanError()

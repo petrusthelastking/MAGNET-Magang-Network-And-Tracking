@@ -12,6 +12,7 @@ entity DataMahasiswa #SkyBlue
 
 Mahasiswa -> HalamanStatusMagang : buka halaman status
 HalamanStatusMagang -> StatusMagangController : updateStatus(data)
+activate StatusMagangController
 StatusMagangController -> DataMahasiswa : validasiMahasiswa()
 DataMahasiswa --> StatusMagangController : returnValidasi()
 
