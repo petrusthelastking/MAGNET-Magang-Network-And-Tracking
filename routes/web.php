@@ -51,7 +51,6 @@ Route::name('admin.')
                 Volt::route('data-pengajuan-magang', 'pages.admin.magang.data-pengajuan')->name('data-pengajuan-magang');
                 Volt::route('detail-pengajuan/{id}', 'pages.admin.magang.detail-pengajuan')->name('detail-pengajuan');
 
-                Route::view('statistik-magang', 'pages.admin.magang.statistik-magang')->name('statistik-magang');
                 Route::view('perusahaan-terpopuler', 'pages.admin.magang.perusahaan-terpopuler')->name('perusahaan-terpopuler');
 
                 Route::view('aturan-magang', 'pages.admin.magang.aturan-magang')->name('aturan-magang');
