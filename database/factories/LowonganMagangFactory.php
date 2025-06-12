@@ -31,7 +31,6 @@ class LowonganMagangFactory extends Factory
         $perusahaanIds ??= Perusahaan::pluck('id')->toArray();
 
         return [
-            'nama' => $this->faker->jobTitle(),
             'kuota' => $this->faker->numberBetween(1, 50),
             'pekerjaan_id' => $this->faker->randomElement($pekerjaanIds),
             'deskripsi' => $this->faker->paragraph(),
