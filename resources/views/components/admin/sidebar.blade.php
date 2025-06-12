@@ -16,9 +16,9 @@
 
 
         @php
-            $isRequestToKelolaData = request()->is('kelola-data-pengguna/*');
+            $isRequestToKelolaData = request()->is('kelola-data-master/*');
         @endphp
-        <flux:navlist.group expandable heading="Kelola Data" :expanded="$isRequestToKelolaData">
+        <flux:navlist.group expandable heading="Kelola Data Master" :expanded="$isRequestToKelolaData">
             <flux:navlist.item
                 icon="user"
                 :current="request()->fullUrlIs(route('admin.data-mahasiswa'))"
