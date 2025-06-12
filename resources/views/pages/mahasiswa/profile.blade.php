@@ -2,8 +2,10 @@
 
 use Flux\Flux;
 use function Livewire\Volt\{state, mount};
-use App\Helpers\DecisionMaking\RecommendationSystem;
 use Illuminate\Support\Facades\Hash;
+use App\Models\{Mahasiswa, BidangIndustri, LokasiMagang, Pekerjaan};
+use App\Helpers\DecisionMaking\ROC;
+use App\Enums\DecisionMakingEnum;
 
 state([
     'mahasiswa',
@@ -33,14 +35,14 @@ state([
     'temp_rankings' => [],
 
     // Options for dropdowns
-    'program_studi_options' => \App\Models\Mahasiswa::distinct('program_studi')->pluck('program_studi', 'program_studi')->toArray(),
-    'bidang_industri_options' => \App\Models\BidangIndustri::pluck('nama', 'id')->toArray(),
+    'program_studi_options' => Mahasiswa::distinct('program_studi')->pluck('program_studi', 'program_studi')->toArray(),
+    'bidang_industri_options' => BidangIndustri::pluck('nama', 'id')->toArray(),
     'jenis_magang_options' => [
         'berbayar' => 'Magang Berbayar (Paid Internship)',
         'tidak berbayar' => 'Magang Tidak Berbayar (Unpaid Internship)',
     ],
-    'lokasi_magang_options' => \App\Models\LokasiMagang::pluck('kategori_lokasi', 'id')->toArray(),
-    'pekerjaan_options' => \App\Models\Pekerjaan::pluck('nama', 'id')->toArray(),
+    'lokasi_magang_options' => LokasiMagang::pluck('kategori_lokasi', 'id')->toArray(),
+    'pekerjaan_options' => Pekerjaan::select('id', 'nama')->get()->toArray(),
     'open_remote_options' => [
         'ya' => 'Ya',
         'tidak' => 'Tidak',
@@ -85,24 +87,11 @@ mount(function () {
     $this->bidang_industri = $this->mahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
     $this->jenis_magang = $this->mahasiswa->kriteriaJenisMagang->jenis_magang;
     $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi;
-    $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan->nama;
+    $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan_id;
     $this->open_remote = $this->mahasiswa->kriteriaOpenRemote->open_remote;
 
     // Load criteria rankings
     $this->loadCriteriaRankings();
-
-    // Load dropdown options
-    $this->bidang_industri_options = \App\Models\BidangIndustri::pluck('nama', 'nama')->toArray();
-    $this->jenis_magang_options = [
-        'berbayar' => 'Magang Berbayar (Paid Internship)',
-        'tidak berbayar' => 'Magang Tidak Berbayar (Unpaid Internship)',
-    ];
-    $this->lokasi_magang_options = \App\Models\LokasiMagang::pluck('kategori_lokasi', 'kategori_lokasi')->toArray();
-    $this->pekerjaan_options = \App\Models\Pekerjaan::pluck('nama', 'nama')->toArray();
-    $this->open_remote_options = [
-        'ya' => 'Ya',
-        'tidak' => 'Tidak',
-    ];
 });
 
 // Section navigation function
@@ -118,44 +107,44 @@ $loadCriteriaRankings = function () {
             'label' => 'Pekerjaan',
             'icon' => 'briefcase',
             'description' => 'Jenis pekerjaan yang diinginkan',
-            'rank' => $this->mahasiswa->kriteriaPekerjaan->rank ?? 1,
-            'bobot' => $this->mahasiswa->kriteriaPekerjaan->bobot ?? 0.2,
+            'rank' => $this->mahasiswa->kriteriaPekerjaan->rank,
+            'bobot' => $this->mahasiswa->kriteriaPekerjaan->bobot,
         ],
         [
             'key' => 'bidang_industri',
             'label' => 'Bidang Industri',
             'icon' => 'building-office',
             'description' => 'Sektor industri yang diminati',
-            'rank' => $this->mahasiswa->kriteriaBidangIndustri->rank ?? 2,
-            'bobot' => $this->mahasiswa->kriteriaBidangIndustri->bobot ?? 0.2,
+            'rank' => $this->mahasiswa->kriteriaBidangIndustri->rank,
+            'bobot' => $this->mahasiswa->kriteriaBidangIndustri->bobot,
         ],
         [
             'key' => 'lokasi_magang',
             'label' => 'Lokasi Magang',
             'icon' => 'map-pin',
             'description' => 'Preferensi lokasi magang',
-            'rank' => $this->mahasiswa->kriteriaLokasiMagang->rank ?? 3,
-            'bobot' => $this->mahasiswa->kriteriaLokasiMagang->bobot ?? 0.2,
+            'rank' => $this->mahasiswa->kriteriaLokasiMagang->rank,
+            'bobot' => $this->mahasiswa->kriteriaLokasiMagang->bobot,
         ],
         [
             'key' => 'jenis_magang',
             'label' => 'Jenis Magang',
             'icon' => 'currency-dollar',
             'description' => 'Berbayar atau tidak berbayar',
-            'rank' => $this->mahasiswa->kriteriaJenisMagang->rank ?? 4,
-            'bobot' => $this->mahasiswa->kriteriaJenisMagang->bobot ?? 0.2,
+            'rank' => $this->mahasiswa->kriteriaJenisMagang->rank,
+            'bobot' => $this->mahasiswa->kriteriaJenisMagang->bobot,
         ],
         [
             'key' => 'open_remote',
             'label' => 'Remote Work',
             'icon' => 'computer-desktop',
             'description' => 'Kesempatan kerja remote',
-            'rank' => $this->mahasiswa->kriteriaOpenRemote->rank ?? 5,
-            'bobot' => $this->mahasiswa->kriteriaOpenRemote->bobot ?? 0.2,
+            'rank' => $this->mahasiswa->kriteriaOpenRemote->rank,
+            'bobot' => $this->mahasiswa->kriteriaOpenRemote->bobot,
         ],
     ];
 
-    // Sort by rank
+    // Sort by rank (ascending)
     usort($this->criteria_rankings, fn($a, $b) => $a['rank'] <=> $b['rank']);
 };
 
@@ -213,31 +202,18 @@ $updatePreference = function () {
 
 $saveNewPreference = function () {
     try {
-        $this->validate([
-            'bidang_industri' => 'required|string',
-            'jenis_magang' => 'required|string',
-            'lokasi_magang' => 'required|string',
-            'pekerjaan' => 'required|string',
-            'open_remote' => 'required|string',
-        ]);
-
-        // Mencari ID berdasarkan nama untuk foreign key
-        $bidangIndustriId = \App\Models\BidangIndustri::where('nama', $this->bidang_industri)->first()?->id;
-        $lokasiMagangId = \App\Models\LokasiMagang::where('kategori_lokasi', $this->lokasi_magang)->first()?->id;
-        $pekerjaanId = \App\Models\Pekerjaan::where('nama', $this->pekerjaan)->first()?->id;
+        $bidangIndustriId = BidangIndustri::where('nama', $this->bidang_industri)->first()?->id;
+        $lokasiMagangId = LokasiMagang::where('kategori_lokasi', $this->lokasi_magang)->first()?->id;
 
         // Update dengan foreign key yang benar
         $this->mahasiswa->kriteriaBidangIndustri()->update(['bidang_industri_id' => $bidangIndustriId]);
         $this->mahasiswa->kriteriaJenisMagang()->update(['jenis_magang' => $this->jenis_magang]);
         $this->mahasiswa->kriteriaLokasiMagang()->update(['lokasi_magang_id' => $lokasiMagangId]);
-        $this->mahasiswa->kriteriaPekerjaan()->update(['pekerjaan_id' => $pekerjaanId]);
+        $this->mahasiswa->kriteriaPekerjaan()->update(['pekerjaan_id' => $this->pekerjaan]);
         $this->mahasiswa->kriteriaOpenRemote()->update(['open_remote' => $this->open_remote]);
 
         // Update timestamp mahasiswa
         $this->mahasiswa->touch();
-
-        $recommendationSystem = new RecommendationSystem($this->mahasiswa);
-        $recommendationSystem->runRecommendationSystem();
 
         $this->showModal('success', 'Preferensi Magang Berhasil Diperbarui', 'Preferensi magang Anda telah berhasil diperbarui dan sistem rekomendasi telah dijalankan ulang.');
         $this->isUpdatePreference = false;
@@ -251,7 +227,7 @@ $cancelUpdatePreference = function () {
     $this->bidang_industri = $this->mahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
     $this->jenis_magang = $this->mahasiswa->kriteriaJenisMagang->jenis_magang;
     $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi;
-    $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan->nama;
+    $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan_id;
     $this->open_remote = $this->mahasiswa->kriteriaOpenRemote->open_remote;
 
     $this->isUpdatePreference = false;
@@ -291,57 +267,46 @@ $moveDown = function ($index) {
 
 $saveRanking = function () {
     try {
-        // Calculate weights based on AHP method (simple implementation)
-        $totalCriteria = count($this->temp_rankings);
-
         foreach ($this->temp_rankings as $index => $criteria) {
             $rank = $index + 1;
-            $weight = ($totalCriteria - $rank + 1) / array_sum(range(1, $totalCriteria));
 
-            // Update in database based on criteria type
             switch ($criteria['key']) {
                 case 'pekerjaan':
                     $this->mahasiswa->kriteriaPekerjaan()->update([
                         'rank' => $rank,
-                        'bobot' => round($weight, 3),
+                        'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
                     ]);
                     break;
                 case 'bidang_industri':
                     $this->mahasiswa->kriteriaBidangIndustri()->update([
                         'rank' => $rank,
-                        'bobot' => round($weight, 3),
+                        'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
                     ]);
                     break;
                 case 'lokasi_magang':
                     $this->mahasiswa->kriteriaLokasiMagang()->update([
                         'rank' => $rank,
-                        'bobot' => round($weight, 3),
+                        'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
                     ]);
                     break;
                 case 'jenis_magang':
                     $this->mahasiswa->kriteriaJenisMagang()->update([
                         'rank' => $rank,
-                        'bobot' => round($weight, 3),
+                        'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
                     ]);
                     break;
                 case 'open_remote':
                     $this->mahasiswa->kriteriaOpenRemote()->update([
                         'rank' => $rank,
-                        'bobot' => round($weight, 3),
+                        'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
                     ]);
                     break;
             }
         }
 
-        // Update timestamp mahasiswa
         $this->mahasiswa->touch();
 
-        // Reload rankings
         $this->loadCriteriaRankings();
-
-        // Run recommendation system
-        $recommendationSystem = new RecommendationSystem($this->mahasiswa);
-        $recommendationSystem->runRecommendationSystem();
 
         $this->showModal('success', 'Prioritas Kriteria Berhasil Diperbarui', 'Urutan prioritas kriteria Anda telah berhasil diperbarui dan sistem rekomendasi telah dijalankan ulang.');
         $this->isUpdateRanking = false;
@@ -417,7 +382,6 @@ $toggleNewPasswordConfirmation = function () {
     $this->show_new_password_confirmation = !$this->show_new_password_confirmation;
 };
 
-// Modal Function
 $showModal = function ($type, $title, $message) {
     $this->modalType = $type;
     $this->modalTitle = $title;
@@ -475,7 +439,7 @@ $showModal = function ($type, $title, $message) {
         <div class="gap-8 flex flex-col max-w-6xl mx-auto px-6 py-8">
 
             <!-- Personal Data Section -->
-            <div class="{{ $activeSection === 'personal-data' ? '' : 'hidden' }}">
+            <section wire:show="activeSection == 'personal-data'" x-transition>
                 <div class="card bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
                     <div class="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-100">
                         <div class="flex items-center gap-3">
@@ -562,11 +526,10 @@ $showModal = function ($type, $title, $message) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- Preferences Section -->
-            <div class="{{ $activeSection === 'preferences' ? 'space-y-8' : 'hidden' }}">
-                <!-- Preference Section -->
+            <section wire:show="activeSection == 'preferences'" x-transition>
                 <div class="card bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
                     <div class="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-100">
                         <div class="flex items-center gap-3">
@@ -584,8 +547,16 @@ $showModal = function ($type, $title, $message) {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @if (!$isUpdatePreference)
                                 <div class="space-y-3">
-                                    <flux:input readonly value="{{ $pekerjaan }}" type="text"
-                                        label="Pekerjaan" class="bg-gray-50" />
+                                    <div>
+                                        <flux:label>Pekerjaan</flux:label>
+                                        <flux:select placeholder="Perusahaan" wire:model="pekerjaan" disabled>
+                                            @foreach ($pekerjaan_options as $pekerjaan)
+                                                <flux:select.option value="{{ $pekerjaan['id'] }}">
+                                                    {{ $pekerjaan['nama'] }}
+                                                </flux:select.option>
+                                            @endforeach
+                                        </flux:select>
+                                    </div>
                                     <flux:input readonly value="{{ $bidang_industri }}" type="text"
                                         label="Bidang Industri" class="bg-gray-50" />
                                 </div>
@@ -601,12 +572,16 @@ $showModal = function ($type, $title, $message) {
                                         label="Remote Work" class="bg-gray-50" />
                                 </div>
                             @else
-                                <flux:select wire:model="pekerjaan" label="Pekerjaan" placeholder="Pilih pekerjaan">
-                                    @foreach ($pekerjaan_options as $value => $label)
-                                        <flux:select.option value="{{ $value }}">{{ $label }}
-                                        </flux:select.option>
-                                    @endforeach
-                                </flux:select>
+                                <div>
+                                    <flux:label>Pekerjaan</flux:label>
+                                    <flux:select placeholder="Perusahaan" wire:model="pekerjaan">
+                                        @foreach ($pekerjaan_options as $pekerjaan)
+                                            <flux:select.option value="{{ $pekerjaan['id'] }}">
+                                                {{ $pekerjaan['nama'] }}
+                                            </flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                </div>
 
                                 <flux:select wire:model="bidang_industri" label="Bidang Industri"
                                     placeholder="Pilih bidang industri">
@@ -787,10 +762,10 @@ $showModal = function ($type, $title, $message) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- Security Section -->
-            <div class="{{ $activeSection === 'security' ? '' : 'hidden' }}">
+            <section wire:show="activeSection == 'security'" x-transition>
                 <div class="card bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
                     <div class="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-100">
                         <div class="flex items-center gap-3">
@@ -898,11 +873,10 @@ $showModal = function ($type, $title, $message) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
     </div>
 
-    <!-- Enhanced Response Modal -->
     <flux:modal name="response-modal" class="min-w-[28rem]">
         <div class="space-y-6">
             <div class="text-center">
