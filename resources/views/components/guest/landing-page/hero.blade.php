@@ -45,20 +45,135 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <!-- Card 1 - Selalu tampil -->
                 <div
-                    class="rounded-lg h-60 w-48 md:h-72 md:w-full flex justify-center items-center overflow-hidden mx-auto">
+                    class="rounded-lg h-60 w-48 md:h-72 md:w-full flex justify-center items-center overflow-hidden mx-auto relative photo-container">
                     <img src="{{ asset('img/card/man-1.png') }}" alt="Mobile Development"
-                        class="object-cover w-full h-full">
+                        class="object-cover w-full h-full photo-card active" data-set="1">
+                    <img src="{{ asset('img/card/man-4.png') }}" alt="Backend Development"
+                        class="object-cover w-full h-full photo-card" data-set="2">
+                    <!-- Job Label -->
+                    <div class="job-label absolute bottom-4 left-4 right-4 text-white p-3 rounded-lg">
+                        <h3 class="font-semibold text-sm job-title">Mobile Developer</h3>
+                        <p class="text-xs opacity-80 job-desc">iOS & Android</p>
+                    </div>
                 </div>
                 <!-- Card 2 - Tampil mulai md -->
-                <div class="rounded-lg h-72 justify-center items-center overflow-hidden hidden md:flex">
-                    <img src="{{ asset('img/card/man-2.png') }}" alt="UI UX" class="object-cover w-full h-full">
+                <div class="rounded-lg h-72 justify-center items-center overflow-hidden hidden md:flex relative photo-container">
+                    <img src="{{ asset('img/card/man-2.png') }}" alt="UI UX" 
+                        class="object-cover w-full h-full photo-card active" data-set="1">
+                    <img src="{{ asset('img/card/man-5.jpg') }}" alt="Frontend Developer"
+                        class="object-cover w-full h-full photo-card" data-set="2">
+                    <!-- Job Label -->
+                    <div class="job-label absolute bottom-4 left-4 right-4 text-white p-3 rounded-lg">
+                        <h3 class="font-semibold text-sm job-title">UI/UX Designer</h3>
+                        <p class="text-xs opacity-80 job-desc">User Experience</p>
+                    </div>
                 </div>
                 <!-- Card 3 - Tampil mulai lg -->
-                <div class="rounded-lg h-72 justify-center items-center overflow-hidden hidden lg:flex">
+                <div class="rounded-lg h-72 justify-center items-center overflow-hidden hidden lg:flex relative photo-container">
                     <img src="{{ asset('img/card/woman-1.png') }}" alt="Security Engineer"
-                        class="object-cover w-full h-full">
+                        class="object-cover w-full h-full photo-card active" data-set="1">
+                    <img src="{{ asset('img/card/woman-2.png') }}" alt="Data Analyst"
+                        class="object-cover w-full h-full photo-card" data-set="2">
+                    <!-- Job Label -->
+                    <div class="job-label absolute bottom-4 left-4 right-4 text-white p-3 rounded-lg">
+                        <h3 class="font-semibold text-sm job-title">Security Engineer</h3>
+                        <p class="text-xs opacity-80 job-desc">Cybersecurity</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Styles untuk transisi foto dan label -->
+<style>
+    .photo-container {
+        position: relative;
+    }
+    
+    .photo-card {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+        transition: opacity 0.8s ease-in-out;
+    }
+    
+    .photo-card.active {
+        opacity: 1;
+    }
+    
+
+    
+    .job-title, .job-desc {
+        transition: all 0.3s ease;
+    }
+</style>
+
+<!-- Script untuk transisi foto otomatis -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Konfigurasi pekerjaan untuk setiap set
+        const jobSets = [
+            {
+                jobs: ['Mobile Developer', 'UI/UX Designer', 'Security Engineer'],
+                descriptions: ['iOS & Android', 'User Experience', 'Cybersecurity']
+            },
+            {
+                jobs: ['Backend Developer', 'Frontend Developer', 'Data Analyst'],
+                descriptions: ['Server & Database', 'User Interface', 'Data Science']
+            }
+        ];
+
+        let currentSet = 1;
+        let isTransitioning = false;
+
+        function switchPhotoSet() {
+            if (isTransitioning) return;
+            
+            isTransitioning = true;
+            
+            // Tentukan set berikutnya
+            const nextSet = currentSet === 1 ? 2 : 1;
+            
+            // Get semua container foto
+            const containers = document.querySelectorAll('.photo-container');
+            
+            containers.forEach((container, index) => {
+                // Fade out foto aktif
+                const activePhoto = container.querySelector('.photo-card.active');
+                if (activePhoto) {
+                    activePhoto.classList.remove('active');
+                }
+                
+                // Fade in foto berikutnya
+                setTimeout(() => {
+                    const nextPhoto = container.querySelector(`[data-set="${nextSet}"]`);
+                    if (nextPhoto) {
+                        nextPhoto.classList.add('active');
+                    }
+                    
+                    // Update label pekerjaan
+                    const jobTitle = container.querySelector('.job-title');
+                    const jobDesc = container.querySelector('.job-desc');
+                    
+                    if (jobTitle && jobDesc && jobSets[nextSet - 1]) {
+                        jobTitle.textContent = jobSets[nextSet - 1].jobs[index];
+                        jobDesc.textContent = jobSets[nextSet - 1].descriptions[index];
+                    }
+                }, 400);
+            });
+            
+            // Update current set
+            setTimeout(() => {
+                currentSet = nextSet;
+                isTransitioning = false;
+            }, 1500);
+        }
+
+        // Mulai rotasi foto setiap 5 detik
+        setInterval(switchPhotoSet, 1500);
+    });
+</script>
