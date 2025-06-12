@@ -227,7 +227,7 @@ $getTopRekomendasi = function () {
         <div class="card-body">
             <h2 class="text-base font-semibold">Kriteria yang anda pilih</h2>
             <p>Pemilihan kriteria menggunakan metode ROC</p>
-            <table class="table-auto w-full ">
+            <table class="table-auto w-fit ">
                 <thead>
                     <tr class="bg-gray-200">
                         <th class="border px-4 py-2">No</th>
@@ -343,7 +343,7 @@ $getTopRekomendasi = function () {
                             <h2>Tabel Awal</h2>
                         </div>
                         <div>
-                            <table class="table-auto w-full">
+                            <table class="table-auto w-fit">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
                                         <th class="text-left px-6 py-3">Nama</th>
@@ -379,7 +379,7 @@ $getTopRekomendasi = function () {
                         <div class="font-bold text-lg mt-10">
                             <h2>Tabel Numerik {{ $mahasiswa->nama ?? 'Mahasiswa' }}</h2>
                         </div>
-                        <table class="table-auto w-full">
+                        <table class="table-auto w-fit">
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
                                     <th class="text-left px-6 py-3">Nama Lowongan</th>
@@ -454,7 +454,7 @@ $getTopRekomendasi = function () {
                             <h2>Normalisasi Vektor</h2>
                         </div>
 
-                        <table class="table-auto w-full">
+                        <table class="table-auto w-fit">
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
                                     <th class="text-left px-6 py-3">Nama</th>
@@ -506,7 +506,7 @@ $getTopRekomendasi = function () {
                             <h2>Tabel Hasil Metode Ratio System (RS)</h2>
                         </div>
                         <div>
-                            <table class="table-auto w-full">
+                            <table class="table-auto w-full  ">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
                                         <th class="text-center px-6 py-3">Alternatif</th>
@@ -554,7 +554,7 @@ $getTopRekomendasi = function () {
                             <h2>Tabel Hasil Metode Reference Point (RP)</h2>
                         </div>
                         <div>
-                            <table class="table-fixed w-full">
+                            <table class="table-fixed w-fit">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
                                         <th class="text-left px-6 py-3">Alternatif</th>
@@ -673,7 +673,7 @@ $getTopRekomendasi = function () {
                             <h2>Tabel Hasil Perankingan Global</h2>
                         </div>
                         <div>
-                            <table class="table-auto w-full">
+                            <table class="table-auto w-fit">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-orange-400">
                                         <th class="text-left px-6 py-3">Alternatif</th>
@@ -744,7 +744,7 @@ $getTopRekomendasi = function () {
                     <p>Pemilihan Rekomendasi menggunakan metode Multimoora</p>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="table-auto w-full">
+                    <table class="table-auto w-fit">
                         <thead class="bg-white text-black">
                             <tr class="border-b bg-yellow-200">
                                 <th class="text-center px-6 py-3">Rank</th>
