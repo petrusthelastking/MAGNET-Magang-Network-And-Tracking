@@ -94,7 +94,7 @@ $throttleKey = protect(function (): string {
 });
 
 ?>
-<div class=" py-4 px-4">
+<div class=" py-14 px-4">
     <div class="max-w-6xl mx-auto">
 
         <div class="text-center">
@@ -106,7 +106,7 @@ $throttleKey = protect(function (): string {
                 </svg>
             </div>
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Masuk Akun</h1>
-            <p class="text-gray-600 text-sm sm:text-lg">Akses platform pembelajaran digital Anda</p>
+            
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 w-full max-w-6xl mt-4">
