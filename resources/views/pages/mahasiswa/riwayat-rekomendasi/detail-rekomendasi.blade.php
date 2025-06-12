@@ -497,7 +497,7 @@ $getTopRekomendasi = function () {
 
 
         <div class="p-3 pb-4">
-            <div class="collapse border-base-300 border-2 ">
+            <div class="collapse border-base-300 border-2 overflow-x-auto">
                 <input type="checkbox" />
                 <div class="collapse-title font-semibold">Tabel Perangkingan</div>
                 <div class="collapse-content text-sm">
@@ -505,7 +505,7 @@ $getTopRekomendasi = function () {
                         <div class="font-bold text-lg mt-5">
                             <h2>Tabel Hasil Metode Ratio System (RS)</h2>
                         </div>
-                        <div class="overflow-x-auto">
+                        <div>
                             <table class="table-auto w-full">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
@@ -553,7 +553,7 @@ $getTopRekomendasi = function () {
                         <div class="font-bold text-lg mt-5">
                             <h2>Tabel Hasil Metode Reference Point (RP)</h2>
                         </div>
-                        <div class="overflow-x-auto">
+                        <div>
                             <table class="table-fixed w-full">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
@@ -621,7 +621,7 @@ $getTopRekomendasi = function () {
                         <div class="font-bold text-lg mt-5">
                             <h2>Tabel Hasil Metode Full Multiplicative Form (FMF)</h2>
                         </div>
-                        <div class="overflow-x-auto">
+                        <div>
                             <table class="table-auto w-full">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
@@ -672,7 +672,7 @@ $getTopRekomendasi = function () {
                         <div class="font-bold text-lg mt-5">
                             <h2>Tabel Hasil Perankingan Global</h2>
                         </div>
-                        <div class="overflow-x-auto">
+                        <div>
                             <table class="table-auto w-full">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-orange-400">
