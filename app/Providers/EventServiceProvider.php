@@ -29,7 +29,7 @@ class EventServiceProvider extends ServiceProvider
             RunMultiMOORA::class
         ],
         LowonganMagangSaved::class => [
-            GenerateNumericValues::class
+            
         ]
     ];
 
