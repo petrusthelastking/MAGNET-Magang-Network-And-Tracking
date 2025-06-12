@@ -43,28 +43,27 @@ state([
         $status == 'sedang magang' ||
             $status == 'selesai magang' ||
             !in_array($status, ['belum magang', 'sedang magang', 'selesai magang']))
-        <div class="card bg-white shadow-md p-6 text-black rounded-2xl border border-gray-200">
-            <div class="flex items-center gap-4 mb-4">
-                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-lg">
-                    <i class="fa-solid fa-briefcase"></i>
-                </div>
-                <div class="flex flex-col">
-                    <p class="text-sm text-gray-500 font-medium">Status Magang</p>
-                    <p class="text-lg font-semibold capitalize">
-                        {{ match ($status) {
-                            'sedang magang' => 'Sedang Menjalani Magang',
-                            'selesai magang' => 'Magang Telah Selesai',
-                            default => 'Status Tidak Dikenali',
-                        } }}
-                    </p>
-                </div>
+        <div
+            class="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-2xl p-6 shadow flex items-center gap-6">
+            <div
+                class="flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-full text-2xl shadow-inner">
+                <i class="fa-solid fa-briefcase"></i>
             </div>
-            <div class="text-sm text-gray-600 leading-relaxed">
-                {{ match ($status) {
-                    'sedang magang' => 'Anda sedang menjalani magang saat ini. Tidak perlu mengajukan kembali.',
-                    'selesai magang' => 'Anda telah menyelesaikan magang. Terima kasih atas partisipasi Anda.',
-                    default => 'Silakan hubungi admin jika informasi status magang Anda tidak sesuai.',
-                } }}
+            <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-800">
+                    {{ match ($status) {
+                        'sedang magang' => 'Sedang Menjalani Magang',
+                        'selesai magang' => 'Magang Telah Selesai',
+                        default => 'Status Tidak Dikenali',
+                    } }}
+                </h3>
+                <p class="text-sm text-gray-600 mt-1">
+                    {{ match ($status) {
+                        'sedang magang' => 'Anda sedang menjalani magang. Tidak perlu mengajukan kembali.',
+                        'selesai magang' => 'Anda telah menyelesaikan magang. Terima kasih atas partisipasi Anda.',
+                        default => 'Silakan hubungi admin jika informasi status magang Anda tidak sesuai.',
+                    } }}
+                </p>
             </div>
         </div>
     @endif

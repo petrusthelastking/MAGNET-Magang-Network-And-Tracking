@@ -60,6 +60,14 @@ state([
     'modalType' => '', // 'success' or 'error'
     'modalTitle' => '',
     'modalMessage' => '',
+
+    // Active section state
+    'activeSection' => 'personal-data',
+
+    // Password visibility states
+    'show_current_password' => false,
+    'show_new_password' => false,
+    'show_new_password_confirmation' => false,
 ]);
 
 mount(function () {
@@ -96,6 +104,11 @@ mount(function () {
         'tidak' => 'Tidak',
     ];
 });
+
+// Section navigation function
+$setActiveSection = function ($section) {
+    $this->activeSection = $section;
+};
 
 // Load criteria rankings
 $loadCriteriaRankings = function () {
@@ -237,7 +250,7 @@ $cancelUpdatePreference = function () {
     // Reset ke nilai asli
     $this->bidang_industri = $this->mahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
     $this->jenis_magang = $this->mahasiswa->kriteriaJenisMagang->jenis_magang;
-    $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasi_marang->kategori_lokasi;
+    $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi;
     $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan->nama;
     $this->open_remote = $this->mahasiswa->kriteriaOpenRemote->open_remote;
 
@@ -391,6 +404,19 @@ $cancelUpdatePassword = function () {
     $this->isUpdatePassword = false;
 };
 
+// Tambahkan functions untuk toggle password visibility
+$toggleCurrentPassword = function () {
+    $this->show_current_password = !$this->show_current_password;
+};
+
+$toggleNewPassword = function () {
+    $this->show_new_password = !$this->show_new_password;
+};
+
+$toggleNewPasswordConfirmation = function () {
+    $this->show_new_password_confirmation = !$this->show_new_password_confirmation;
+};
+
 // Modal Function
 $showModal = function ($type, $title, $message) {
     $this->modalType = $type;
@@ -422,20 +448,20 @@ $showModal = function ($type, $title, $message) {
 
             <!-- Navigation Tabs -->
             <div class="flex flex-wrap gap-2">
-                <button onclick="showSection('personal-data')"
-                    class="nav-tab active flex items-center gap-2 px-4 py-3 bg-white/15 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-all duration-200 font-medium"
+                <button wire:click="setActiveSection('personal-data')"
+                    class="nav-tab {{ $activeSection === 'personal-data' ? 'active bg-white/20' : 'bg-white/8' }} flex items-center gap-2 px-4 py-3 backdrop-blur-sm rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
                     id="tab-personal">
                     <flux:icon.user class="w-4 h-4" />
                     <span>Data Personal</span>
                 </button>
-                <button onclick="showSection('preferences')"
-                    class="nav-tab flex items-center gap-2 px-4 py-3 bg-white/8 backdrop-blur-sm rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
+                <button wire:click="setActiveSection('preferences')"
+                    class="nav-tab {{ $activeSection === 'preferences' ? 'active bg-white/20' : 'bg-white/8' }} flex items-center gap-2 px-4 py-3 backdrop-blur-sm rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
                     id="tab-preferences">
                     <flux:icon.cog-6-tooth class="w-4 h-4" />
                     <span>Preferensi Magang</span>
                 </button>
-                <button onclick="showSection('security')"
-                    class="nav-tab flex items-center gap-2 px-4 py-3 bg-white/8 backdrop-blur-sm rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
+                <button wire:click="setActiveSection('security')"
+                    class="nav-tab {{ $activeSection === 'security' ? 'active bg-white/20' : 'bg-white/8' }} flex items-center gap-2 px-4 py-3 backdrop-blur-sm rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
                     id="tab-security">
                     <flux:icon.lock-closed class="w-4 h-4" />
                     <span>Keamanan</span>
@@ -449,7 +475,7 @@ $showModal = function ($type, $title, $message) {
         <div class="gap-8 flex flex-col max-w-6xl mx-auto px-6 py-8">
 
             <!-- Personal Data Section -->
-            <div id="personal-data" class="section-content">
+            <div class="{{ $activeSection === 'personal-data' ? '' : 'hidden' }}">
                 <div class="card bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
                     <div class="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-100">
                         <div class="flex items-center gap-3">
@@ -539,7 +565,7 @@ $showModal = function ($type, $title, $message) {
             </div>
 
             <!-- Preferences Section -->
-            <div id="preferences" class="section-content hidden space-y-8">
+            <div class="{{ $activeSection === 'preferences' ? 'space-y-8' : 'hidden' }}">
                 <!-- Preference Section -->
                 <div class="card bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
                     <div class="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-100">
@@ -764,7 +790,7 @@ $showModal = function ($type, $title, $message) {
             </div>
 
             <!-- Security Section -->
-            <div id="security" class="section-content hidden">
+            <div class="{{ $activeSection === 'security' ? '' : 'hidden' }}">
                 <div class="card bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
                     <div class="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-100">
                         <div class="flex items-center gap-3">
@@ -778,6 +804,7 @@ $showModal = function ($type, $title, $message) {
                         </div>
                     </div>
 
+                    <!-- Security Section dengan Password Visibility Toggle -->
                     <div class="card-body p-6">
                         @if (!$isUpdatePassword)
                             <div class="space-y-4">
@@ -790,12 +817,50 @@ $showModal = function ($type, $title, $message) {
                             </div>
                         @else
                             <div class="space-y-4">
-                                <flux:input wire:model="current_password" type="password" label="Password Lama"
-                                    placeholder="Masukkan password lama Anda" />
-                                <flux:input wire:model="new_password" type="password" label="Password Baru"
-                                    placeholder="Masukkan password baru (minimal 8 karakter)" />
-                                <flux:input wire:model="new_password_confirmation" type="password"
-                                    label="Konfirmasi Password Baru" placeholder="Ulangi password baru" />
+                                <!-- Password Lama dengan Toggle -->
+                                <div class="relative">
+                                    <flux:input wire:model="current_password"
+                                        type="{{ $show_current_password ? 'text' : 'password' }}"
+                                        label="Password Lama" placeholder="Masukkan password lama Anda" />
+                                    <button type="button" wire:click="toggleCurrentPassword"
+                                        class="absolute right-3 top-9 text-gray-400 hover:text-gray-600 transition-colors">
+                                        @if ($show_current_password)
+                                            <flux:icon.eye-slash class="w-5 h-5" />
+                                        @else
+                                            <flux:icon.eye class="w-5 h-5" />
+                                        @endif
+                                    </button>
+                                </div>
+
+                                <!-- Password Baru dengan Toggle -->
+                                <div class="relative">
+                                    <flux:input wire:model="new_password"
+                                        type="{{ $show_new_password ? 'text' : 'password' }}" label="Password Baru"
+                                        placeholder="Masukkan password baru (minimal 8 karakter)" />
+                                    <button type="button" wire:click="toggleNewPassword"
+                                        class="absolute right-3 top-9 text-gray-400 hover:text-gray-600 transition-colors">
+                                        @if ($show_new_password)
+                                            <flux:icon.eye-slash class="w-5 h-5" />
+                                        @else
+                                            <flux:icon.eye class="w-5 h-5" />
+                                        @endif
+                                    </button>
+                                </div>
+
+                                <!-- Konfirmasi Password Baru dengan Toggle -->
+                                <div class="relative">
+                                    <flux:input wire:model="new_password_confirmation"
+                                        type="{{ $show_new_password_confirmation ? 'text' : 'password' }}"
+                                        label="Konfirmasi Password Baru" placeholder="Ulangi password baru" />
+                                    <button type="button" wire:click="toggleNewPasswordConfirmation"
+                                        class="absolute right-3 top-9 text-gray-400 hover:text-gray-600 transition-colors">
+                                        @if ($show_new_password_confirmation)
+                                            <flux:icon.eye-slash class="w-5 h-5" />
+                                        @else
+                                            <flux:icon.eye class="w-5 h-5" />
+                                        @endif
+                                    </button>
+                                </div>
 
                                 <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
                                     <div class="flex items-start gap-2">
@@ -864,50 +929,4 @@ $showModal = function ($type, $title, $message) {
             </div>
         </div>
     </flux:modal>
-
-    <script>
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section-content').forEach(section => {
-                section.classList.add('hidden');
-            });
-
-            // Show selected section
-            const section = document.getElementById(sectionId);
-            if (section) {
-                section.classList.remove('hidden');
-            }
-
-            // Remove active class from all tabs
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
-                tab.style.background = 'rgba(255, 255, 255, 0.08)';
-            });
-
-            // Add active class to clicked tab
-            const tabMap = {
-                'personal-data': 'tab-personal',
-                'preferences': 'tab-preferences',
-                'security': 'tab-security'
-            };
-
-            const activeTab = document.getElementById(tabMap[sectionId]);
-            if (activeTab) {
-                activeTab.classList.add('active');
-                activeTab.style.background = 'rgba(255, 255, 255, 0.2)';
-            }
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Show only personal data section by default
-            showSection('personal-data');
-
-            // Set initial active tab
-            const personalTab = document.getElementById('tab-personal');
-            if (personalTab) {
-                personalTab.classList.add('active');
-            }
-        });
-    </script>
 </div>

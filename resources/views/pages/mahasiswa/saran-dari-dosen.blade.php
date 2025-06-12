@@ -6,130 +6,495 @@ use App\Models\Mahasiswa;
 
 layout('components.layouts.user.main');
 
-state(['mahasiswa_id' => null]);
+state([
+    'mahasiswa_id' => null,
+    'filter' => 'all', // all, this_week, this_month, older
+    'sort' => 'newest', // newest, oldest
+    'page' => 1,
+    'perPage' => 6,
+    'search' => '',
+]);
 
 mount(function () {
-    // Ambil ID mahasiswa yang sedang login dari session atau auth
-    $this->mahasiswa_id = auth()->user()->mahasiswa->id ?? 1; // fallback untuk testing
+    $this->mahasiswa_id = auth('mahasiswa')->user()->id;
+    $this->page = request('page', 1);
 });
 
 $komentarDosen = computed(function () {
-    return UmpanBalikMagang::with([
-        'kontrakMagang.mahasiswa',
-        'kontrakMagang.dosenPembimbing',
-        'kontrakMagang.lowonganMagang.perusahaan'
-    ])
-    ->whereHas('kontrakMagang.mahasiswa', function($query) {
-        $query->where('id', $this->mahasiswa_id);
-    })
-    ->orderBy('tanggal', 'desc')
-    ->get();
+    $kontrakMagang = KontrakMagang::where('mahasiswa_id', $this->mahasiswa_id)->exists();
+
+    if (!$kontrakMagang) {
+        return collect();
+    }
+
+    $query = UmpanBalikMagang::with(['kontrakMagang.mahasiswa', 'kontrakMagang.dosenPembimbing', 'kontrakMagang.lowonganMagang.perusahaan'])->whereHas('kontrakMagang', function ($query) {
+        $query->where('mahasiswa_id', $this->mahasiswa_id);
+    });
+
+    // Filter by search
+    if ($this->search) {
+        $query->where(function ($q) {
+            $q->where('komentar', 'like', '%' . $this->search . '%')->orWhereHas('kontrakMagang.dosenPembimbing', function ($subQ) {
+                $subQ->where('nama', 'like', '%' . $this->search . '%');
+            });
+        });
+    }
+
+    // Filter by date
+    switch ($this->filter) {
+        case 'this_week':
+            $query->whereBetween('tanggal', [now()->startOfWeek(), now()->endOfWeek()]);
+            break;
+        case 'this_month':
+            $query->whereMonth('tanggal', now()->month)->whereYear('tanggal', now()->year);
+            break;
+        case 'older':
+            $query->where('tanggal', '<', now()->subMonth());
+            break;
+    }
+
+    // Sort
+    $query->orderBy('tanggal', $this->sort === 'newest' ? 'desc' : 'asc');
+
+    return $query->get();
 });
+
+$groupedKomentar = computed(function () {
+    return $this->komentarDosen->groupBy(function ($item) {
+        $date = \Carbon\Carbon::parse($item->tanggal);
+        $now = now();
+
+        if ($date->isToday()) {
+            return 'Hari Ini';
+        } elseif ($date->isYesterday()) {
+            return 'Kemarin';
+        } elseif ($date->isCurrentWeek()) {
+            return 'Minggu Ini';
+        } elseif ($date->isCurrentMonth()) {
+            return 'Bulan Ini';
+        } elseif ($date->isLastMonth()) {
+            return 'Bulan Lalu';
+        } else {
+            return $date->translatedFormat('F Y');
+        }
+    });
+});
+
+$paginatedKomentar = computed(function () {
+    $flattened = collect();
+    foreach ($this->groupedKomentar as $group => $items) {
+        $flattened = $flattened->merge($items);
+    }
+
+    $offset = ($this->page - 1) * $this->perPage;
+    return $flattened->slice($offset, $this->perPage);
+});
+
+$totalPages = computed(function () {
+    return ceil($this->komentarDosen->count() / $this->perPage);
+});
+
+$hasKontrakMagang = computed(function () {
+    return KontrakMagang::where('mahasiswa_id', $this->mahasiswa_id)->exists();
+});
+
+$updateFilter = function ($filter) {
+    $this->filter = $filter;
+    $this->page = 1;
+};
+
+$updateSort = function ($sort) {
+    $this->sort = $sort;
+    $this->page = 1;
+};
+
+$updateSearch = function () {
+    $this->page = 1;
+};
+
+$goToPage = function ($page) {
+    $this->page = $page;
+};
 
 ?>
 
 <div>
     <x-slot:user>mahasiswa</x-slot:user>
-    
-    <div class="container mx-auto px-4 py-6">
-        <div class="bg-white rounded-lg shadow-md">
-            <div class="p-6 border-b border-gray-200">
-                <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                    </svg>
-                    Komentar & Umpan Balik Dosen
-                </h2>
-                <p class="text-gray-600 mt-1">Lihat semua komentar dan umpan balik dari dosen pembimbing</p>
-            </div>
 
-            <div class="p-6">
-                @if($this->komentarDosen->count() > 0)
-                    <div class="space-y-6">
-                        @foreach($this->komentarDosen as $komentar)
-                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border-l-4 border-blue-500">
-                                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-4">
-                                    <div class="flex-1">
-                                        <div class="flex items-center mb-2">
-                                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold mr-3">
-                                                {{ substr($komentar->kontrakMagang->dosenPembimbing->nama, 0, 1) }}
-                                            </div>
-                                            <div>
-                                                <h3 class="text-lg font-semibold text-gray-800">
-                                                    {{ $komentar->kontrakMagang->dosenPembimbing->nama }}
-                                                </h3>
-                                                <p class="text-sm text-gray-600">Dosen Pembimbing</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="ml-13">
-                                            <div class="flex items-center text-sm text-gray-600 mb-2">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h3M9 7h6m-6 4h6m-6 4h6m-6 4h6"></path>
-                                                </svg>
-                                                <span class="font-medium">{{ $komentar->kontrakMagang->lowonganMagang->perusahaan->nama }}</span>
-                                            </div>
-                                            
-                                            <div class="flex items-center text-sm text-gray-600 mb-3">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0V4a2 2 0 012-2h4a2 2 0 012 2v3M8 7v13a2 2 0 002 2h4a2 2 0 002-2V7M8 7H6a2 2 0 00-2 2v9a2 2 0 002 2h1M8 7h8M6 7h-.01M18 7h.01"></path>
-                                                </svg>
-                                                <span>{{ $komentar->kontrakMagang->lowonganMagang->nama }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex items-center text-sm text-gray-500 mt-2 lg:mt-0">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0h8M8 15h8m-8 4h8"></path>
-                                        </svg>
-                                        {{ \Carbon\Carbon::parse($komentar->tanggal)->format('d M Y') }}
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <!-- Header Section -->
+        <div class="relative overflow-hidden bg-gradient-to-r from-sky-500/90 to-cyan-500/90 text-white rounded-2xl">
+            <div class="absolute inset-0 bg-black/10"></div>
+            <div class="relative container mx-auto px-6 py-12">
+                <div class="max-w-4xl">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                            <flux:icon.chat-bubble-left-ellipsis class="w-8 h-8" />
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold">Umpan Balik Dosen</h1>
+                            <p class="text-blue-100 mt-1">Pantau perkembangan dan saran dari dosen pembimbing</p>
+                        </div>
+                    </div>
+
+                    @if ($this->hasKontrakMagang)
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                                <div class="flex items-center gap-3">
+                                    <flux:icon.chat-bubble-left class="w-6 h-6 text-blue-200" />
+                                    <div>
+                                        <div class="text-2xl font-bold">{{ $this->komentarDosen->count() }}</div>
+                                        <div class="text-sm text-blue-200">Total Komentar</div>
                                     </div>
                                 </div>
-                                
-                                <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="flex items-start">
-                                        <svg class="w-5 h-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" />
-                                        </svg>
-                                        <p class="text-gray-700 leading-relaxed">{{ $komentar->komentar }}</p>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                                <div class="flex items-center gap-3">
+                                    <flux:icon.calendar-days class="w-6 h-6 text-blue-200" />
+                                    <div>
+                                        <div class="text-2xl font-bold">
+                                            @php
+                                                $filteredCount = 0;
+                                                $filterLabel = '';
+
+                                                switch ($this->filter) {
+                                                    case 'this_week':
+                                                        $filteredCount = $this->komentarDosen
+                                                            ->where('tanggal', '>=', now()->startOfWeek())
+                                                            ->where('tanggal', '<=', now()->endOfWeek())
+                                                            ->count();
+                                                        $filterLabel = 'Minggu Ini';
+                                                        break;
+                                                    case 'this_month':
+                                                        $filteredCount = $this->komentarDosen
+                                                            ->filter(function ($item) {
+                                                                $date = \Carbon\Carbon::parse($item->tanggal);
+                                                                return $date->month === now()->month &&
+                                                                    $date->year === now()->year;
+                                                            })
+                                                            ->count();
+                                                        $filterLabel = 'Bulan Ini';
+                                                        break;
+                                                    case 'older':
+                                                        $filteredCount = $this->komentarDosen
+                                                            ->where('tanggal', '<', now()->subMonth())
+                                                            ->count();
+                                                        $filterLabel = 'Lama';
+                                                        break;
+                                                    default:
+                                                        $filteredCount = $this->komentarDosen
+                                                            ->where('tanggal', '>=', now()->startOfWeek())
+                                                            ->count();
+                                                        $filterLabel = 'Total';
+                                                        break;
+                                                }
+                                            @endphp
+                                            {{ $filteredCount }}
+                                        </div>
+                                        <div class="text-sm text-blue-200">{{ $filterLabel }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                                <div class="flex items-center gap-3">
+                                    <flux:icon.user-circle class="w-6 h-6 text-blue-200" />
+                                    <div>
+                                        <div class="text-2xl font-bold">
+                                            {{ $this->komentarDosen->pluck('kontrakMagang.dosenPembimbing.nama')->unique()->count() }}
+                                        </div>
+                                        <div class="text-sm text-blue-200">Dosen Pembimbing</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="container mx-auto px-6 py-8">
+            @if (!$this->hasKontrakMagang)
+                <div class="max-w-2xl mx-auto">
+                    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-amber-400 to-orange-500 p-6">
+                            <div class="flex items-center gap-4 text-white">
+                                <div class="p-3 bg-white/20 rounded-xl">
+                                    <flux:icon.exclamation-triangle class="w-8 h-8" />
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold">Belum Ada Kontrak Magang</h3>
+                                    <p class="text-amber-100">Daftar magang untuk mulai menerima umpan balik</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-8 text-center">
+                            <p class="text-gray-600 mb-6">Silakan daftar magang terlebih dahulu untuk mulai menerima
+                                umpan balik dari dosen pembimbing.</p>
+                            <flux:button variant="primary" size="lg">
+                                <flux:icon.plus class="w-5 h-5 mr-2" />
+                                Daftar Magang
+                            </flux:button>
+                        </div>
+                    </div>
+                </div>
+            @elseif(true)
+                <!-- Filters and Search -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
+                    <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                        <!-- Search Bar -->
+                        <div class="flex-1 max-w-md">
+                            <div class="relative">
+                                <flux:icon.magnifying-glass
+                                    class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                                <input type="text" wire:model.live.debounce.300ms="search"
+                                    placeholder="Cari komentar atau nama dosen..."
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                            </div>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="flex flex-wrap gap-3">
+                            <!-- Date Filter -->
+                            <div class="flex bg-gray-50 rounded-xl p-1">
+                                <button wire:click="updateFilter('all')"
+                                    class="px-4 py-2 text-sm font-medium rounded-lg transition-all {{ $this->filter === 'all' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900' }}">
+                                    Semua
+                                </button>
+                                <button wire:click="updateFilter('this_week')"
+                                    class="px-4 py-2 text-sm font-medium rounded-lg transition-all {{ $this->filter === 'this_week' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900' }}">
+                                    Minggu Ini
+                                </button>
+                                <button wire:click="updateFilter('this_month')"
+                                    class="px-4 py-2 text-sm font-medium rounded-lg transition-all {{ $this->filter === 'this_month' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900' }}">
+                                    Bulan Ini
+                                </button>
+                                <button wire:click="updateFilter('older')"
+                                    class="px-4 py-2 text-sm font-medium rounded-lg transition-all {{ $this->filter === 'older' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900' }}">
+                                    Lama
+                                </button>
+                            </div>
+
+                            <!-- Sort -->
+                            <div class="flex bg-gray-50 rounded-xl p-1">
+                                <button wire:click="updateSort('newest')"
+                                    class="px-4 py-2 text-sm font-medium rounded-lg transition-all {{ $this->sort === 'newest' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900' }}">
+                                    <flux:icon.arrow-down class="w-4 h-4 inline mr-1" />
+                                    Terbaru
+                                </button>
+                                <button wire:click="updateSort('oldest')"
+                                    class="px-4 py-2 text-sm font-medium rounded-lg transition-all {{ $this->sort === 'oldest' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900' }}">
+                                    <flux:icon.arrow-up class="w-4 h-4 inline mr-1" />
+                                    Terlama
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grouped Comments -->
+                @if ($this->paginatedKomentar->count() > 0)
+                    @php
+                        $currentGroup = null;
+                        $paginatedItems = $this->paginatedKomentar;
+                    @endphp
+
+                    <div class="space-y-6">
+                        @foreach ($paginatedItems as $komentar)
+                            @php
+                                $date = \Carbon\Carbon::parse($komentar->tanggal);
+                                $now = now();
+
+                                if ($date->isToday()) {
+                                    $group = 'Hari Ini';
+                                } elseif ($date->isYesterday()) {
+                                    $group = 'Kemarin';
+                                } elseif ($date->isCurrentWeek()) {
+                                    $group = 'Minggu Ini';
+                                } elseif ($date->isCurrentMonth()) {
+                                    $group = 'Bulan Ini';
+                                } elseif ($date->isLastMonth()) {
+                                    $group = 'Bulan Lalu';
+                                } else {
+                                    $group = $date->translatedFormat('F Y');
+                                }
+                            @endphp
+
+                            @if ($currentGroup !== $group)
+                                @php $currentGroup = $group; @endphp
+                                <div class="flex items-center gap-4 my-8">
+                                    <div
+                                        class="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1">
+                                    </div>
+                                    <div class="bg-white px-4 py-2 rounded-full border border-gray-200 shadow-sm">
+                                        <span class="text-sm font-semibold text-gray-600">{{ $group }}</span>
+                                    </div>
+                                    <div
+                                        class="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1">
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div
+                                class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 group">
+                                <!-- Header -->
+                                <div
+                                    class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <flux:icon.user-circle class="w-6 h-6 text-white" />
+                                            </div>
+                                            <div>
+                                                <h3 class="font-semibold text-gray-900">
+                                                    {{ $komentar->kontrakMagang->dosenPembimbing->nama }}</h3>
+                                                <p class="text-sm text-gray-600 flex items-center gap-1">
+                                                    <flux:icon.building-office-2 class="w-4 h-4" />
+                                                    {{ $komentar->kontrakMagang->lowonganMagang->perusahaan->nama }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                                <flux:icon.calendar-days class="w-4 h-4" />
+                                                {{ \Carbon\Carbon::parse($komentar->tanggal)->translatedFormat('d M Y') }}
+                                            </div>
+                                            <div class="text-xs text-gray-400 mt-1">
+                                                {{ \Carbon\Carbon::parse($komentar->tanggal)->diffForHumans() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Content -->
+                                <div class="p-6">
+                                    <div class="flex items-start gap-4">
+                                        <div
+                                            class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <flux:icon.chat-bubble-left class="w-5 h-5 text-white" />
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                                <p class="text-gray-700 leading-relaxed">{{ $komentar->komentar }}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
+
+                    <!-- Enhanced Pagination -->
+                    @if ($this->totalPages > 1)
+                        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mt-8">
+                            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div class="text-sm text-gray-600">
+                                    Menampilkan {{ ($this->page - 1) * $this->perPage + 1 }} -
+                                    {{ min($this->page * $this->perPage, $this->komentarDosen->count()) }} dari
+                                    {{ $this->komentarDosen->count() }} komentar
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    @if ($this->page > 1)
+                                        <button wire:click="goToPage({{ $this->page - 1 }})"
+                                            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                            <flux:icon.chevron-left class="w-4 h-4" />
+                                            Previous
+                                        </button>
+                                    @endif
+
+                                    <div class="flex items-center gap-1">
+                                        @for ($i = max(1, $this->page - 2); $i <= min($this->totalPages, $this->page + 2); $i++)
+                                            <button wire:click="goToPage({{ $i }})"
+                                                class="w-10 h-10 text-sm font-medium rounded-lg transition-colors {{ $i === $this->page ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:bg-gray-50' }}">
+                                                {{ $i }}
+                                            </button>
+                                        @endfor
+                                    </div>
+
+                                    @if ($this->page < $this->totalPages)
+                                        <button wire:click="goToPage({{ $this->page + 1 }})"
+                                            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                            Next
+                                            <flux:icon.chevron-right class="w-4 h-4" />
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 @else
-                    <div class="text-center py-12">
-                        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                        </svg>
-                        <h3 class="text-xl font-medium text-gray-900 mb-2">Belum Ada Komentar</h3>
-                        <p class="text-gray-500 mb-6">Belum ada komentar atau umpan balik dari dosen pembimbing Anda.</p>
-                        <div class="bg-blue-50 rounded-lg p-4 max-w-md mx-auto">
-                            <p class="text-sm text-blue-800">
-                                <strong>Tips:</strong> Komentar dari dosen akan muncul setelah Anda menjalani periode magang dan dosen memberikan umpan balik.
+                    <div class="text-center py-16">
+                        @if ($this->search)
+                            <flux:icon.magnifying-glass class="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Tidak ditemukan hasil pencarian</h3>
+                            <p class="text-gray-500 mb-4">Tidak ada komentar yang sesuai dengan kata kunci
+                                "{{ $this->search }}"</p>
+                        @else
+                            <flux:icon.chat-bubble-left-right class="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">
+                                @if ($this->filter === 'this_week')
+                                    Belum ada komentar minggu ini
+                                @elseif($this->filter === 'this_month')
+                                    Belum ada komentar bulan ini
+                                @elseif($this->filter === 'older')
+                                    Belum ada komentar lama
+                                @else
+                                    Belum ada komentar
+                                @endif
+                            </h3>
+                            <p class="text-gray-500">Coba ubah filter atau tunggu umpan balik dari dosen pembimbing</p>
+                        @endif
+                    </div>
+                @endif
+            @else
+                <div class="max-w-2xl mx-auto">
+                    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-gray-400 to-gray-600 p-6">
+                            <div class="flex items-center gap-4 text-white">
+                                <div class="p-3 bg-white/20 rounded-xl">
+                                    <flux:icon.chat-bubble-left-right class="w-8 h-8" />
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold">Belum Ada Komentar</h3>
+                                    <p class="text-gray-100">Tunggu umpan balik dari dosen pembimbing</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-8 text-center">
+                            <p class="text-gray-600 mb-6">Belum ada komentar atau umpan balik dari dosen pembimbing
+                                Anda. Pastikan Anda aktif dalam kegiatan magang.</p>
+                            <div class="flex justify-center gap-4">
+                                <flux:button variant="outline">
+                                    <flux:icon.arrow-path class="w-5 h-5 mr-2" />
+                                    Refresh
+                                </flux:button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Tips Section -->
+            @if ($this->komentarDosen->count() > 0)
+                <div
+                    class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 p-6 mt-8">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <flux:icon.light-bulb class="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-emerald-900 mb-2">Tips Memaksimalkan Umpan Balik</h3>
+                            <p class="text-emerald-700 text-sm leading-relaxed">
+                                Komentar dan umpan balik dari dosen sangat berharga untuk pengembangan Anda.
+                                Gunakan masukan tersebut untuk memperbaiki diri, belajar lebih baik, dan tunjukkan
+                                progress yang konsisten dalam kegiatan magang Anda.
                             </p>
                         </div>
                     </div>
-                @endif
-            </div>
-        </div>
-        
-        @if($this->komentarDosen->count() > 0)
-            <div class="mt-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 border-l-4 border-green-500">
-                <div class="flex items-start">
-                    <svg class="w-6 h-6 text-green-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <div>
-                        <h4 class="text-lg font-semibold text-green-800 mb-2">Informasi Penting</h4>
-                        <p class="text-green-700 text-sm leading-relaxed">
-                            Komentar dan umpan balik dari dosen pembimbing sangat berharga untuk perkembangan Anda. 
-                            Gunakan masukan ini untuk meningkatkan performa dan keterampilan selama periode magang.
-                        </p>
-                    </div>
                 </div>
-            </div>
-        @endif
+            @endif
+        </div>
     </div>
 </div>
