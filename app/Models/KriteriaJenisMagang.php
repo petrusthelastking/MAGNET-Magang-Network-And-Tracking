@@ -2,14 +2,10 @@
 
 namespace App\Models;
 
-use App\Traits\BaseKriteriaModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseKriteriaModel;
 
-class KriteriaJenisMagang extends Model
+class KriteriaJenisMagang extends BaseKriteriaModel
 {
-    use HasFactory, BaseKriteriaModel;
-
     protected $table = 'kriteria_jenis_magang';
 
     protected $fillable = [
