@@ -83,89 +83,20 @@ class MultiMOORA
         $this->kriteriaBidangIndustri = $this->mahasiswa->kriteriaBidangIndustri;
         $this->kriteriaJenisMagang = $this->mahasiswa->kriteriaJenisMagang;
         $this->kriteriaLokasiMagang = $this->mahasiswa->kriteriaLokasiMagang;
-
-        // Set base path for JSON storage
-        $this->baseStoragePath = "multimoora/mahasiswa_{$this->mahasiswa->id}";
-
-        // Ensure directory exists
-        if (!Storage::exists($this->baseStoragePath)) {
-            Storage::makeDirectory($this->baseStoragePath);
-        }
     }
 
     public function computeMultiMOORA(): void
     {
-        // Save user preferences
-        // $this->saveUserPreferences();
-
         $dataEncodingResult = $this->dataEncoding();
-        $this->saveJsonData('01_data_encoding.json', $dataEncodingResult);
 
-        // start multimoora decision making
+        // start multimoora decision makwing
         $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
-        $this->saveJsonData('02_euclidean_normalization.json', $euclideanNormalizationResult);
 
         $this->vectorNormalization($dataEncodingResult, $euclideanNormalizationResult);
-        $this->saveJsonData('03_vector_normalization.json', $this->vectorNormalizationResult);
-
         $this->computeRatioSystem();
-        $this->saveJsonData('04_ratio_system.json', $this->ratioSystemResult);
-
         $this->computeReferencePoint();
-        $this->saveJsonData('05_reference_point.json', $this->referencePointResult);
-
         $this->computeFullMultiplicativeForm();
-        $this->saveJsonData('06_fmf_results.json', $this->fmfResult);
-
         $finalResult = $this->computeFinalRank();
-        $this->saveJsonData('07_final_ranking.json', $finalResult);
-    }
-
-    /**
-     * Save user preferences to JSON
-     */
-    private function saveUserPreferences(): void
-    {
-        $preferences = [
-            'mahasiswa_id' => $this->mahasiswa->id,
-            'mahasiswa_name' => $this->mahasiswa->nama ?? 'Unknown',
-            'preferences' => [
-                'pekerjaan' => [
-                    'value' => $this->kriteriaPekerjaan->pekerjaan->nama,
-                    'weight' => $this->kriteriaPekerjaan->bobot
-                ],
-                'bidang_industri' => [
-                    'value' => $this->kriteriaBidangIndustri->bidangIndustri->nama,
-                    'weight' => $this->kriteriaBidangIndustri->bobot
-                ],
-                'jenis_magang' => [
-                    'value' => $this->kriteriaJenisMagang->jenis_magang,
-                    'weight' => $this->kriteriaJenisMagang->bobot
-                ],
-                'lokasi_magang' => [
-                    'value' => $this->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi,
-                    'weight' => $this->kriteriaLokasiMagang->bobot
-                ],
-                'open_remote' => [
-                    'value' => $this->kriteriaOpenRemote->open_remote,
-                    'weight' => $this->kriteriaOpenRemote->bobot
-                ]
-            ],
-            'total_alternatives' => $this->totalAlternatives,
-            'computation_timestamp' => now()->toISOString()
-        ];
-
-        $this->saveJsonData('00_user_preferences.json', $preferences);
-    }
-
-    /**
-     * Save data to JSON file
-     */
-    private function saveJsonData(string $filename, array $data): void
-    {
-        $filePath = $this->baseStoragePath . '/' . $filename;
-        $jsonData = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        Storage::put($filePath, $jsonData);
     }
 
     /**
@@ -303,8 +234,23 @@ class MultiMOORA
             ];
         }
 
-        DB::transaction(function () use ($finalVectorNormalization) {
-            VectorNormalization::insert($finalVectorNormalization);
+        $resultToSavedDatabase = [];
+        for ($i = 0; $i < count($encodedAlternatives); $i++) {
+            $resultToSavedDatabase[] = [
+                'mahasiswa_id' => $this->mahasiswa->id,
+                'lowongan_magang_id' => $encodedAlternatives[$i]['lowongan_magang_id'],
+                'pekerjaan' => $tempResult['pekerjaan'][$i],
+                'open_remote' => $tempResult['open_remote'][$i],
+                'jenis_magang' => $tempResult['jenis_magang'][$i],
+                'bidang_industri' => $tempResult['bidang_industri'][$i],
+                'lokasi_magang' => $tempResult['lokasi_magang'][$i],
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+        }
+
+        DB::transaction(function () use ($resultToSavedDatabase) {
+            VectorNormalization::insert($resultToSavedDatabase);
         });
 
         $this->vectorNormalizationResult = $finalVectorNormalization;
