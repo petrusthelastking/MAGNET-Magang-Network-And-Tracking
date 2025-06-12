@@ -4,9 +4,7 @@ use Flux\Flux;
 use function Livewire\Volt\{layout, state, mount};
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\FormPengajuanMagang;
-use App\Models\BerkasPengajuanMagang;
 use App\Models\DosenPembimbing;
-use App\Models\KontrakMagang;
 
 layout('components.layouts.user.main');
 
@@ -85,7 +83,7 @@ $verifyFormRequest = function (string $status) {
 
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('admin.data-pengajuan-magang') }}" class="text-black">Kelola data pengajuan
+        <flux:breadcrumbs.item href="{{ route('admin.data-pengajuan-izin-magang') }}" class="text-black">Kelola data pengajuan
             magang
         </flux:breadcrumbs.item>
         <flux:breadcrumbs.item class="text-black">Detail pengajuan magang

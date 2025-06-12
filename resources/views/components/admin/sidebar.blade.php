@@ -49,28 +49,28 @@
             <flux:navlist.item
                 icon="briefcase-business"
                 href="{{ route('admin.data-lowongan') }}"
-                :current="request()->is('data-lowongan')"
+                :current="request()->fullUrlIs(route('admin.data-lowongan'))"
                 class="text-magnet-deep-ocean-blue!">
                 Lowongan Magang
             </flux:navlist.item>
             <flux:navlist.item
                 icon="flask-conical"
-                href="{{ route('admin.data-pengajuan-magang') }}"
-                :current="request()->is('data-pengajuan-magang')"
+                href="{{ route('admin.data-pengajuan-izin-magang') }}"
+                :current="request()->fullUrlIs(route('admin.data-pengajuan-izin-magang'))"
                 class="text-magnet-deep-ocean-blue!">
                 Pengajuan Magang
             </flux:navlist.item>
             <flux:navlist.item
-                icon="flask-conical"
-                href="{{ route('admin.data-pengajuan-diperbarui') }}"
-                :current="request()->is('data-pengajuan-diperbarui')"
+                icon="badge-check"
+                href="{{ route('admin.data-pembaruan-status-magang') }}"
+                :current="request()->fullUrlIs(route('admin.data-pembaruan-status-magang'))"
                 class="text-magnet-deep-ocean-blue!">
-                Pengajuan Magang<br>Diperbarui
+                Pembaruan Status<br>Magang
             </flux:navlist.item>
             <flux:navlist.item
                 icon="crown"
                 href="{{ route('admin.aturan-magang') }}"
-                :current="request()->is('aturan-magang')"
+                :current="request()->fullUrlIs(route('admin.aturan-magang'))"
                 class="text-magnet-deep-ocean-blue!">
                 Aturan Magang
             </flux:navlist.item>

@@ -45,17 +45,17 @@ Route::name('admin.')
 
         Route::prefix('magang')
             ->group(function () {
-                Volt::route('data-lowongan', 'pages.admin.magang.data-lowongan')->name('data-lowongan');
-                Volt::route('detail-lowongan/{id}', 'pages.admin.magang.detail-lowongan')->name('detail-lowongan');
+                Volt::route('lowongan', 'pages.admin.magang.lowongan-magang.index')->name('data-lowongan');
+                Volt::route('detail-lowongan/{id}', 'pages.admin.magang.lowongan-magang.detail')->name('detail-lowongan');
 
-                Volt::route('data-pengajuan-magang', 'pages.admin.magang.data-pengajuan')->name('data-pengajuan-magang');
-                Volt::route('detail-pengajuan/{id}', 'pages.admin.magang.detail-pengajuan')->name('detail-pengajuan');
+                Volt::route('pengajuan-izin-magang', 'pages.admin.magang.pengajuan-izin-magang.index')->name('data-pengajuan-izin-magang');
+                Volt::route('detail-pengajuan/{id}', 'pages.admin.magang.pengajuan-izin-magang.detail')->name('detail-pengajuan-izin-magang');
 
-                Route::view('perusahaan-terpopuler', 'pages.admin.magang.perusahaan-terpopuler')->name('perusahaan-terpopuler');
+                Volt::route('pembaruan-status-magang', 'pages.admin.magang.pembaruan-status-magang.index')->name('data-pembaruan-status-magang');
 
-                Route::view('aturan-magang', 'pages.admin.magang.aturan-magang')->name('aturan-magang');
-                Volt::route('data-lowongan-diperbarui', 'pages.admin.magang.data-pengajuan-diperbarui')->name('data-pengajuan-diperbarui');
-                Volt::route('detail-pengajuan-diperbarui/{id}', 'pages.admin.magang.detail-pengajuan-diperbarui')->name('detail-pengajuan-diperbarui');
+                Volt::route('detail-pembaruan-status-magang/{id}', 'pages.admin.magang.pembaruan-status-magang.detail')->name('detail-pengajuan-pembaruan-status-magang');
+
+                Route::view('aturan-magang', 'pages.admin.magang.aturan-magang.index')->name('aturan-magang');
             });
 
 
