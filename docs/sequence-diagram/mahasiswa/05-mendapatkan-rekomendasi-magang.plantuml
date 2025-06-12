@@ -7,9 +7,13 @@ control MahasiswaController #Pink
 entity DataPreferensiMagang #SkyBlue
 boundary HalamanDashboard #LightGreen
 
+Mahasiswa -> HalamanPreferensiMagang
 HalamanPreferensiMagang -> MahasiswaController : requestToUpdateInternshipPreferences()
+activate MahasiswaController
 MahasiswaController -> DataPreferensiMagang : saveInternshipPreferences()
+activate DataPreferensiMagang
 DataPreferensiMagang --> MahasiswaController : returnSuccess()
+deactivate DataPreferensiMagang
 MahasiswaController -> HalamanDashboard : redirectToDashboard()
 
 

@@ -14,30 +14,54 @@ entity DataMahasiswa #SkyBlue
 boundary HalamanDashboard #LightGreen
 boundary HalamanPreferensiMagang #LightGreen
 
+Mahasiswa -> HalamanLogin
+
 alt Sudah punya akun
     alt Lupa password
+        activate HalamanLogin
         HalamanLogin -> AuthController : requestToForgotPassword()
+        activate AuthController
         AuthController -> HalamanLupaPassword : redirectToForgotPasswordPage()
+        activate HalamanLupaPassword
         HalamanLupaPassword -> AuthController : requestToResetPassword()
+        deactivate HalamanLupaPassword
         AuthController -> DataMahasiswa : validateEmail()
+        activate DataMahasiswa
         DataMahasiswa --> AuthController : returnSuccess()
+        deactivate DataMahasiswa
         AuthController -> HalamanPembaruanPassword : redirectToUpdatePasswordPage()
+        activate HalamanPembaruanPassword
         HalamanPembaruanPassword -> AuthController : requestToUpdatePassword()
+        deactivate HalamanPembaruanPassword
         AuthController -> DataMahasiswa : updatePassword()
+        activate DataMahasiswa
         DataMahasiswa --> AuthController : returnSuccess()
+        deactivate DataMahasiswa
         AuthController -> HalamanLogin : redirectToLoginPage()
+        deactivate AuthController
+        deactivate HalamanLogin
     end
     HalamanLogin -> AuthController : requestToLogin()
+    activate HalamanLogin
+    activate AuthController
     AuthController -> DataMahasiswa : validateLogin()
+    activate DataMahasiswa
     DataMahasiswa --> AuthController : returnSuccess()
+    deactivate DataMahasiswa
     AuthController -> HalamanDashboard : redirectToDashboard()
 else Sudah punya akun
     HalamanLogin -> AuthController : requestToRegisterPage()
+    deactivate HalamanLogin
     AuthController -> HalamanPendaftaran : redirectToRegisterPage()
+    activate HalamanPendaftaran
     HalamanPendaftaran -> AuthController : validateRegistration()
+    deactivate HalamanPendaftaran
     AuthController -> DataMahasiswa : saveData()
+    activate DataMahasiswa
     DataMahasiswa --> AuthController : returnSuccess()
+    deactivate DataMahasiswa
     AuthController -> HalamanPreferensiMagang : redirectToPreferencePage()
+    deactivate AuthController
 end
 
 @enduml

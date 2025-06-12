@@ -7,17 +7,27 @@ control MahasiswaController #Pink
 entity DataMahasiswa #SkyBlue
 entity DataPreferensiMagang #SkyBlue
 
+Mahasiswa -> HalamanProfil
+activate HalamanProfil
 HalamanProfil -> MahasiswaController : requestToUpdateProfile()
+activate MahasiswaController
 MahasiswaController -> DataMahasiswa : getProfileData()
+activate DataMahasiswa
 DataMahasiswa --> MahasiswaController : returnProfileData()
+deactivate DataMahasiswa
 MahasiswaController -> DataPreferensiMagang : getInternshipPreferences()
+activate DataPreferensiMagang
 DataPreferensiMagang --> MahasiswaController : returnInternshipPreferences()
+deactivate DataPreferensiMagang
 MahasiswaController -> HalamanProfil : showProfileData()
 HalamanProfil -> MahasiswaController : requestToUpdateProfileData()
 MahasiswaController -> DataMahasiswa : updateProfileData()
 DataMahasiswa --> MahasiswaController : returnSuccess()
 MahasiswaController -> DataPreferensiMagang : updateInternshipPreferences()
+activate DataPreferensiMagang
 DataPreferensiMagang --> MahasiswaController : returnSuccess()
+deactivate DataPreferensiMagang
 MahasiswaController -> HalamanProfil : showSuccessMessage()
+HalamanProfil -> Mahasiswa
 
 @enduml

@@ -7,13 +7,18 @@ control MagangController #Pink
 entity DataMagang #SkyBlue
 boundary HalamanHasilPencarian #LightGreen
 
+Mahasiswa -> HalamanDashboard
+
 HalamanDashboard -> MagangController : requestToSearchInternship()
+activate MagangController
 
 opt Filter pencarian
     HalamanDashboard -> MagangController : requestToSearchWithFilter()
 end
 MagangController -> DataMagang : getInternshipData()
+activate DataMagang
 DataMagang --> MagangController : returnInternshipData()
+deactivate DataMagang
 MagangController -> HalamanHasilPencarian : redirectToSearchResultsPage()
 
 @enduml

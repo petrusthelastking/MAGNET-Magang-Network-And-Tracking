@@ -5,7 +5,7 @@ use function Livewire\Volt\{layout, state, on};
 use Illuminate\Support\Facades\DB;
 use App\Models\{BidangIndustri, Pekerjaan, LokasiMagang, KriteriaPekerjaan, KriteriaBidangIndustri, KriteriaJenisMagang, KriteriaLokasiMagang, KriteriaOpenRemote, Mahasiswa};
 use App\Helpers\DecisionMaking\ROC;
-use App\Helpers\DecisionMaking\RecommendationSystem;
+use App\Events\UpdatedMahasiswaPreference;
 
 layout('components.layouts.guest.with-navbar');
 
@@ -60,44 +60,45 @@ $storePreferensiMahasiswa = function () {
     try {
         DB::transaction(function () {
             $mhs_id = auth('mahasiswa')->user()->id;
-            $kriteria_pekerjaan = KriteriaPekerjaan::create([
+
+            KriteriaPekerjaan::create([
                 'pekerjaan_id' => $this->pekerjaan,
                 'mahasiswa_id' => $mhs_id,
                 'rank' => $this->pekerjaan_rank,
                 'bobot' => ROC::getWeight($this->pekerjaan_rank, 5),
             ]);
 
-            $kriteria_bidang_industri = KriteriaBidangIndustri::create([
+            KriteriaBidangIndustri::create([
                 'bidang_industri_id' => $this->bidang_industri,
                 'mahasiswa_id' => $mhs_id,
                 'rank' => $this->bidang_industri_rank,
                 'bobot' => ROC::getWeight($this->bidang_industri_rank, 5),
             ]);
 
-            $kriteria_lokasi_magang = KriteriaLokasiMagang::create([
+            KriteriaLokasiMagang::create([
                 'lokasi_magang_id' => $this->lokasi_magang,
                 'mahasiswa_id' => $mhs_id,
                 'rank' => $this->lokasi_magang_rank,
                 'bobot' => ROC::getWeight($this->lokasi_magang_rank, 5),
             ]);
 
-            $kriteria_jenis_magang = KriteriaJenisMagang::create([
+            KriteriaJenisMagang::create([
                 'jenis_magang' => $this->jenis_magang,
                 'mahasiswa_id' => $mhs_id,
                 'rank' => $this->jenis_magang_rank,
                 'bobot' => ROC::getWeight($this->jenis_magang_rank, 5),
             ]);
 
-            $kriteria_open_remote = KriteriaOpenRemote::create([
+            KriteriaOpenRemote::create([
                 'open_remote' => $this->open_remote,
                 'mahasiswa_id' => $mhs_id,
                 'rank' => $this->open_remote_rank,
                 'bobot' => ROC::getWeight($this->open_remote_rank, 5),
             ]);
+
             $mahasiswa = Mahasiswa::find(auth('mahasiswa')->user()->id);
-            // Run the recommendation system
-            $recommendationSystem = new RecommendationSystem($mahasiswa);
-            $recommendationSystem->runRecommendationSystem();
+
+            event(new UpdatedMahasiswaPreference($mahasiswa));
         });
     } catch (Exception $e) {
         $status = 'failed';
@@ -117,12 +118,16 @@ $resetPage = fn() => redirect()->back();
 ?>
 
 <div class="min-h-screen h-full">
+    <x-slot:topScript>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    </x-slot:topScript>
+
     <div wire:show="step == 1" x-transition:leave.duration.400ms>
-        <livewire:pages.mahasiswa.persiapan-preferensi.step-1 />
+        <livewire:components.mahasiswa.persiapan-preferensi.step-1 />
     </div>
 
     <div wire:show="step == 2" x-transition:leave.duration.400ms>
-        <livewire:pages.mahasiswa.persiapan-preferensi.step-2 />
+        <livewire:components.mahasiswa.persiapan-preferensi.step-2 />
     </div>
 
     <flux:modal name="response-modal" class="min-w-[24rem]">
@@ -154,5 +159,3 @@ $resetPage = fn() => redirect()->back();
         </div>
     </flux:modal>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>

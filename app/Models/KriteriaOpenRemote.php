@@ -2,14 +2,10 @@
 
 namespace App\Models;
 
-use App\Traits\BaseKriteriaModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseKriteriaModel;
 
-class KriteriaOpenRemote extends Model
+class KriteriaOpenRemote extends BaseKriteriaModel
 {
-    use HasFactory, BaseKriteriaModel;
-
     protected $table = 'kriteria_open_remote';
 
     protected $fillable = [

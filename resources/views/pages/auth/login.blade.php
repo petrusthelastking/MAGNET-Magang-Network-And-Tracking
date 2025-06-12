@@ -106,7 +106,7 @@ $throttleKey = protect(function (): string {
                 </svg>
             </div>
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Masuk Akun</h1>
-            
+
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 w-full max-w-6xl mt-4">
@@ -184,7 +184,7 @@ $throttleKey = protect(function (): string {
 
                             <div class="pt-4 border-t border-gray-200">
                                 <flux:button type="submit"
-                                    class="w-full bg-magnet-sky-teal! hover:bg-blue-700! mb-3 border-0 text-white! py-3 text-sm sm:text-base font-semibold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105">
+                                    class="w-full bg-magnet-sky-teal! hover:bg-magnet-icy-blue! mb-3 border-0 text-white! py-3 text-sm sm:text-base font-semibold rounded-lg shadow-lg transform transition-all duration-200">
                                     <span class="flex items-center justify-center">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
