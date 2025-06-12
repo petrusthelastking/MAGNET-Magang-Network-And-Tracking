@@ -134,17 +134,17 @@ $getRemoteLabel = function ($remote) {
                 </nav>
 
                 <!-- Quick Actions -->
-                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 w-full">
                     <button onclick="history.back()"
                         class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 transition-colors">
                         <flux:icon.arrow-left class="size-4 mr-2" />
                         Kembali
                     </button>
 
-                    <div class="flex items-center space-x-3">
+                    <div class="flex items-center">
                         <button
                             class="inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
-                            <flux:icon.share class="size-4 mr-1" />
+                            <flux:icon.share class="size-4" />
                             Bagikan
                         </button>
                         <button
@@ -363,7 +363,7 @@ $getRemoteLabel = function ($remote) {
                 <!-- Sidebar -->
                 <div class="space-y-6">
                     <!-- Action Card -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 top-6">
                         <div class="p-6">
                             <div class="space-y-4">
                                 <flux:button wire:click="saveJob" :disabled="$isLoading" variant="ghost"
