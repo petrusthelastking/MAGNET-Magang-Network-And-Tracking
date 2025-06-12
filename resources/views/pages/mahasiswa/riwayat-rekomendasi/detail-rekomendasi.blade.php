@@ -831,16 +831,15 @@ $getUniqueByLowonganId = function ($collection) {
                         <thead class="bg-white text-black">
                             <tr class="border-b bg-yellow-200">
                                 <th class="text-center px-6 py-3">ID Lowongan</th>
-                                <th class="text-center px-6 py-3">Rank</th>
-                                <th class="text-center px-6 py-3">Lowongan</th>
+                                <th class="text-center px-6 py-3">Pekerjaan</th>
                                 <th class="text-center px-6 py-3">Perusahaan</th>
-                                <th class="text-center px-6 py-3">Rata-Rata Rangking</th>
+                                <th class="text-center px-6 py-3">Rata-Rata Ranking</th>
+                                <th class="text-center px-6 py-3">Rank</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white text-black">
                             @foreach ($rekomendasi as $item)
                                 <tr class="border-b hover:bg-gray-50">
-                                    <td class="px-6 py-3 text-center font-medium">{{ $item->display_rank }}</td>
                                     <td class="px-6 py-3">
                                         <div class="font-medium">{{ $item->lowonganMagang->id ?? 'N/A' }}</div>
                                     </td>
@@ -856,6 +855,7 @@ $getUniqueByLowonganId = function ($collection) {
                                     <td class="px-6 py-3 text-center">
                                         {{ number_format($item->avg_rank, 9) }}
                                     </td>
+                                    <td class="px-6 py-3 text-center font-medium">{{ $item->display_rank }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
