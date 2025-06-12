@@ -3,7 +3,6 @@
 use function Livewire\Volt\{state};
 use App\Models\{Pekerjaan, BidangIndustri, LokasiMagang};
 
-
 state([
     'pekerjaan_list' => Pekerjaan::pluck('nama', 'id'),
     'bidang_industri_list' => BidangIndustri::pluck('nama', 'id'),
@@ -65,11 +64,14 @@ $nextStep = function () {
             <flux:field>
                 <div class="flex items-center gap-2 mb-2">
                     <flux:label>Pekerjaan yang Diinginkan</flux:label>
-                    <div class="group relative">
+                    <div class="group relative inline-block">
                         <flux:icon.question-mark-circle class="w-4 h-4 text-gray-400 cursor-help" />
                         <div
-                            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none">
                             Pilih jenis pekerjaan/posisi yang ingin Anda ambil saat magang
+                            <div
+                                class="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -83,11 +85,14 @@ $nextStep = function () {
             <flux:field>
                 <div class="flex items-center gap-2 mb-2">
                     <flux:label>Bidang Industri</flux:label>
-                    <div class="group relative">
+                    <div class="group relative inline-block">
                         <flux:icon.question-mark-circle class="w-4 h-4 text-gray-400 cursor-help" />
                         <div
-                            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none">
                             Pilih bidang industri perusahaan yang Anda minati
+                            <div
+                                class="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -101,11 +106,14 @@ $nextStep = function () {
             <flux:field>
                 <div class="flex items-center gap-2 mb-2">
                     <flux:label>Lokasi Magang</flux:label>
-                    <div class="group relative">
+                    <div class="group relative inline-block">
                         <flux:icon.question-mark-circle class="w-4 h-4 text-gray-400 cursor-help" />
                         <div
-                            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none">
                             Pilih kategori lokasi magang yang diinginkan
+                            <div
+                                class="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -119,11 +127,14 @@ $nextStep = function () {
             <flux:field>
                 <div class="flex items-center gap-2 mb-2">
                     <flux:label>Jenis Magang</flux:label>
-                    <div class="group relative">
+                    <div class="group relative inline-block">
                         <flux:icon.question-mark-circle class="w-4 h-4 text-gray-400 cursor-help" />
                         <div
-                            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none">
                             Pilih apakah Anda mengutamakan magang berbayar atau tidak
+                            <div
+                                class="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -136,11 +147,14 @@ $nextStep = function () {
             <flux:field>
                 <div class="flex items-center gap-2 mb-2">
                     <flux:label>Bersedia Magang Remote?</flux:label>
-                    <div class="group relative">
+                    <div class="group relative inline-block">
                         <flux:icon.question-mark-circle class="w-4 h-4 text-gray-400 cursor-help" />
                         <div
-                            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none">
                             Apakah Anda bersedia melakukan magang secara remote/online?
+                            <div
+                                class="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -151,7 +165,7 @@ $nextStep = function () {
             </flux:field>
         </div>
 
-        <div class="flex justify-between w-full">
+        <div class="flex justify-between w-full mt-4">
             <flux:spacer />
             <flux:button variant="primary" icon="chevron-right" wire:click="nextStep"
                 class="bg-magnet-sky-teal px-6 py-2">
