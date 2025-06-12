@@ -10,22 +10,28 @@ use App\Models\KriteriaJenisMagang;
 use App\Models\KriteriaLokasiMagang;
 use App\Models\KriteriaOpenRemote;
 use App\Models\KriteriaPekerjaan;
-use Illuminate\Support\Facades\Storage;
+use App\Models\LowonganMagang;
 use App\Models\Mahasiswa;
 use App\Models\RatioSystem;
 use App\Models\ReferencePoint;
 use App\Models\VectorNormalization;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class MultiMOORA
 {
-    private int $totalAlternatives;
+    private Carbon $now;
     private Mahasiswa $mahasiswa;
     private KriteriaPekerjaan $kriteriaPekerjaan;
     private KriteriaOpenRemote $kriteriaOpenRemote;
     private KriteriaBidangIndustri $kriteriaBidangIndustri;
     private KriteriaJenisMagang $kriteriaJenisMagang;
     private KriteriaLokasiMagang $kriteriaLokasiMagang;
+
+    /**
+     * @var array
+     */
+    private array $encodedAlternatives;
 
     /**
      * @var array<array{
@@ -71,12 +77,19 @@ class MultiMOORA
      */
     private array $fmfResult;
 
-    private string $baseStoragePath;
-
-    public function __construct(Mahasiswa $mahasiswa, int $totalAlternatives)
+    public function __construct(Mahasiswa $mahasiswa, array $dataEncoding = null)
     {
         $this->mahasiswa = $mahasiswa;
-        $this->totalAlternatives = $totalAlternatives;
+
+        if ($dataEncoding) {
+            $this->encodedAlternatives = $dataEncoding;
+        } else {
+            $this->encodedAlternatives = EncodedAlternatives::where('mahasiswa_id', $this->mahasiswa->id)
+                ->orderBy('updated_at', 'desc')
+                ->limit(LowonganMagang::count())
+                ->get()
+                ->toArray();
+        }
 
         $this->kriteriaPekerjaan = $this->mahasiswa->kriteriaPekerjaan;
         $this->kriteriaOpenRemote = $this->mahasiswa->kriteriaOpenRemote;
@@ -87,54 +100,18 @@ class MultiMOORA
 
     public function computeMultiMOORA(): void
     {
-        $dataEncodingResult = $this->dataEncoding();
+        $this->now = now();
 
-        // start multimoora decision makwing
-        $euclideanNormalizationResult = $this->euclideanNormalization($dataEncodingResult);
+        $euclideanNormalizationResult = $this->euclideanNormalization($this->encodedAlternatives);
 
-        $this->vectorNormalization($dataEncodingResult, $euclideanNormalizationResult);
+        $this->vectorNormalization(
+            encodedAlternatives: $this->encodedAlternatives,
+            euclideanNormalization: $euclideanNormalizationResult
+        );
         $this->computeRatioSystem();
         $this->computeReferencePoint();
         $this->computeFullMultiplicativeForm();
-        $finalResult = $this->computeFinalRank();
-    }
-
-    /**
-     * Compute data encoding based from to all alternatives data based on user preference
-     * @return array<int, array<string, int>>
-     */
-    private function dataEncoding(): array
-    {
-        $preference = [
-            'pekerjaan' => $this->kriteriaPekerjaan->pekerjaan->nama,
-            'bidang_industri' => $this->kriteriaBidangIndustri->bidangIndustri->nama,
-            'jenis_magang' => $this->kriteriaJenisMagang->jenis_magang,
-            'lokasi_magang' => $this->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi,
-            'open_remote' => $this->kriteriaOpenRemote->open_remote
-        ];
-
-        $dataCategorized = Storage::read('lowongan_magang/alternatives_categorized.json');
-        $dataCategorizedDecoded = json_decode($dataCategorized, true);
-
-        $insertData = array_map(function (array $item) use ($preference): array {
-            return [
-                'mahasiswa_id' => $this->mahasiswa->id,
-                'lowongan_magang_id' => $item['id'],
-                'pekerjaan' => $item['pekerjaan'] == $preference['pekerjaan'] ? 2 : 1,
-                'open_remote' => $item['open_remote'] == $preference['open_remote'] ? 2 : 1,
-                'jenis_magang' => $item['jenis_magang'] == $preference['jenis_magang'] ? 2 : 1,
-                'bidang_industri' => $item['bidang_industri'] == $preference['bidang_industri'] ? 2 : 1,
-                'lokasi_magang' => $item['lokasi_magang'] == $preference['lokasi_magang'] ? 2 : 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ];
-        }, $dataCategorizedDecoded);
-
-        DB::transaction(function () use ($insertData) {
-            EncodedAlternatives::insert($insertData);
-        });
-
-        return $insertData;
+        $this->computeFinalRank();
     }
 
     /**
@@ -244,8 +221,8 @@ class MultiMOORA
                 'jenis_magang' => $tempResult['jenis_magang'][$i],
                 'bidang_industri' => $tempResult['bidang_industri'][$i],
                 'lokasi_magang' => $tempResult['lokasi_magang'][$i],
-                'created_at' => now(),
-                'updated_at' => now()
+                'created_at' => $this->now,
+                'updated_at' => $this->now
             ];
         }
 
@@ -295,8 +272,8 @@ class MultiMOORA
                 'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'score' => $item['score'],
                 'rank' => $rank++,
-                'created_at' => now(),
-                'updated_at' => now()
+                'created_at' => $this->now,
+                'updated_at' => $this->now
             ];
         }
 
@@ -321,8 +298,6 @@ class MultiMOORA
             'lokasi_magang' => $this->kriteriaLokasiMagang->bobot
         ];
 
-        // Step 1: Determine the reference point vector (r_j).
-        // Since all criteria are beneficial (higher is better), the reference point is the max value in each column.
         $referencePointVector = [
             'pekerjaan' => 0.0,
             'open_remote' => 0.0,
@@ -382,8 +357,8 @@ class MultiMOORA
                 'lokasi_magang' => $item['lokasi_magang'],
                 'max_score' => $item['max_score'],
                 'rank' => $rank++,
-                'created_at' => now(),
-                'updated_at' => now()
+                'created_at' => $this->now,
+                'updated_at' => $this->now
             ];
         }
 
@@ -436,8 +411,8 @@ class MultiMOORA
                 'lowongan_magang_id' => $item['lowongan_magang_id'],
                 'score' => $item['score'],
                 'rank' => $rank++,
-                'created_at' => now(),
-                'updated_at' => now()
+                'created_at' => $this->now,
+                'updated_at' => $this->now
             ];
         }
 
@@ -452,7 +427,7 @@ class MultiMOORA
      * Compute final rank of alternatives with MultiMOORA method
      * @return array
      */
-    private function computeFinalRank(): array
+    private function computeFinalRank(): void
     {
         $ratioSystemRanks = array_column($this->ratioSystemResult, 'rank', 'lowongan_magang_id');
         $referencePointRanks = array_column($this->referencePointResult, 'rank', 'lowongan_magang_id');
@@ -488,21 +463,21 @@ class MultiMOORA
         $ratioSystemIDs = RatioSystem::select('id')
             ->where('mahasiswa_id', $this->mahasiswa->id)
             ->orderBy('updated_at', 'desc')
-            ->limit($this->totalAlternatives)
+            ->limit(LowonganMagang::count())
             ->get()
             ->toArray();
 
         $referencePointIDs = ReferencePoint::select('id')
             ->where('mahasiswa_id', $this->mahasiswa->id)
             ->orderBy('updated_at', 'desc')
-            ->limit($this->totalAlternatives)
+            ->limit(LowonganMagang::count())
             ->get()
             ->toArray();
 
         $fmfIDs = FullMultiplicativeForm::select('id')
             ->where('mahasiswa_id', $this->mahasiswa->id)
             ->orderBy('updated_at', 'desc')
-            ->limit($this->totalAlternatives)
+            ->limit(LowonganMagang::count())
             ->get()
             ->toArray();
 
@@ -517,15 +492,13 @@ class MultiMOORA
                 'fmf_id' => $fmfIDs[$key]['id'],
                 'avg_rank' => $item['avg_rank'],
                 'rank' => $rank++,
-                'created_at' => now(),
-                'updated_at' => now()
+                'created_at' => $this->now,
+                'updated_at' => $this->now
             ];
         }
 
         DB::transaction(function () use ($finalRanks) {
             FinalRankRecommendation::insert($finalRanks);
         });
-
-        return $finalRanks;
     }
 }
