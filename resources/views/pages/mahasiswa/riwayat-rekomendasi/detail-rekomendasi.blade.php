@@ -385,7 +385,8 @@ $getTopRekomendasi = function () {
                         <table class="table-auto w-full">
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
-                                    <th class="text-left px-6 py-3">Nama Lowongan</th>
+                                    <th class="text-left px-6 py-3">Pekerjaan</th>
+                                    <th class="text-left px-6 py-3">Nama Perusahaan</th>
                                     <th class="text-center px-6 py-3">Lokasi Magang</th>
                                     <th class="text-center px-6 py-3">Open Remote</th>
                                     <th class="text-center px-6 py-3">Jenis Magang</th>
@@ -398,6 +399,9 @@ $getTopRekomendasi = function () {
                                     <tr>
                                         <td class="px-6 py-3">
                                             {{ $encoded->lowonganMagang->pekerjaan->nama ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-3">
+                                            {{ $encoded->lowonganMagang->perusahaan->nama ?? '-' }}
                                         </td>
                                         <td class="px-6 py-3 text-center">
                                             {{ $encoded->lokasi_magang ?? '-' }}
@@ -460,7 +464,8 @@ $getTopRekomendasi = function () {
                         <table class="table-auto w-full">
                             <thead class="bg-white text-black">
                                 <tr class="border-b bg-green-400">
-                                    <th class="text-left px-6 py-3">Nama</th>
+                                    <th class="text-left px-6 py-3">Pekerjaan</th>
+                                    <th class="text-center px-6 py-3">Nama Perusahaan</th>
                                     <th class="text-center px-6 py-3">Lokasi</th>
                                     <th class="text-center px-6 py-3">Open Remote</th>
                                     <th class="text-center px-6 py-3">Jenis Magang</th>
@@ -473,6 +478,9 @@ $getTopRekomendasi = function () {
                                     <tr>
                                         <td class="px-6 py-3 text-left">
                                             {{ $item->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-6 py-3 text-left">
+                                            {{ $item->lowonganMagang->perusahaan->nama ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-3 text-center">
                                             {{ number_format($item->lokasi_magang ?? 0, 10) }}
@@ -512,7 +520,8 @@ $getTopRekomendasi = function () {
                             <table class="table-auto w-full">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
-                                        <th class="text-center px-6 py-3">Alternatif</th>
+                                        <th class="text-center px-6 py-3">Alternatif (Pekerjaan)</th>
+                                        <th class="text-center px-6 py-3">Nama Perusahaan</th>
                                         <th class="text-center px-6 py-3">Nilai</th>
                                         <th class="text-center px-6 py-3">Rank</th>
                                     </tr>
@@ -522,6 +531,9 @@ $getTopRekomendasi = function () {
                                         <tr>
                                             <td class="px-6 py-3">
                                                 {{ $item->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-6 py-3">
+                                                {{ $item->lowonganMagang->perusahaan->nama ?? 'N/A' }}
                                             </td>
                                             <td class="px-6 py-3 text-right">
                                                 {{ number_format($item->score ?? 0, 10) }}
@@ -560,8 +572,8 @@ $getTopRekomendasi = function () {
                             <table class="table-fixed w-full">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
-                                        <th class="text-left px-6 py-3">Alternatif</th>
-                                        <th class="text-center px-6 py-3">Pekerjaan</th>
+                                        <th class="text-left px-6 py-3">Alternatif (Pekerjaan)</th>
+                                        <th class="text-center px-6 py-3">Nama Perusahaan</th>
                                         <th class="text-center px-6 py-3">Open Remote</th>
                                         <th class="text-center px-6 py-3">Jenis Magang</th>
                                         <th class="text-center px-6 py-3">Bidang Industri</th>
@@ -576,8 +588,8 @@ $getTopRekomendasi = function () {
                                             <td class="px-6 py-3">
                                                 {{ $item->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
                                             </td>
-                                            <td class="px-6 py-3 text-right">
-                                                {{ number_format($item->pekerjaan ?? 0, 10) }}
+                                            <td class="px-6 py-3">
+                                                {{ $item->lowonganMagang->perusahaan->nama ?? 'N/A' }}
                                             </td>
                                             <td class="px-6 py-3 text-right">
                                                 {{ $item->open_remote ?? '-' }}
@@ -628,7 +640,8 @@ $getTopRekomendasi = function () {
                             <table class="table-auto w-full">
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
-                                        <th class="text-left px-6 py-3">Alternatif</th>
+                                        <th class="text-left px-6 py-3">Alternatif (Pekerjaan)</th>
+                                        <th class="text-center px-6 py-3">Nama Perusahaan</th>
                                         <th class="text-center px-6 py-3">Score</th>
                                         <th class="text-center px-6 py-3">Rank</th>
                                     </tr>
@@ -639,10 +652,13 @@ $getTopRekomendasi = function () {
                                             <td class="px-6 py-3">
                                                 {{ $item->lowonganMagang->pekerjaan->nama ?? 'N/A' }}
                                             </td>
-                                            <td class="px-6 py-3 text-right">
+                                            <td class="px-6 py-3 text-left">
+                                                {{ $item->lowonganMagang->perusahaan->nama ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-6 py-3 text-left">
                                                 {{ number_format($item->score ?? 0, 10) }}
                                             </td>
-                                            <td class="px-6 py-3 text-right">
+                                            <td class="px-6 py-3 text-left">
                                                 {{ $item->rank ?? '-' }}
                                             </td>
                                         </tr>
