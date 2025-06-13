@@ -6,9 +6,9 @@
     </flux:breadcrumbs>
 
     <div class="space-y-6">
-        <div class="flex justify-between items-center">
+        <div class="flex justify-start items-center">
             <h1 class="text-2xl font-bold text-gray-900">Aturan Magang</h1>
-            <div class="flex gap-3">
+            {{-- <div class="flex gap-3">
                 <flux:button variant="outline" icon="download" onclick="#"
                     class="border-magnet-sky-teal text-magnet-sky-teal hover:bg-magnet-deep-ocean-blue! hover:text-white">
                     Export PDF
@@ -16,7 +16,7 @@
                 <flux:button variant="primary" icon="pencil" class="bg-magnet-sky-teal hover:bg-magnet-sky-teal/90">
                     Perbarui Aturan Magang
                 </flux:button>
-            </div>
+            </div> --}}
         </div>
 
 

@@ -10,7 +10,7 @@ use App\Models\KontrakMagang;
 use App\Models\LowonganMagang;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon; // Add this import
+use Carbon\Carbon;
 
 layout('components.layouts.user.main');
 
@@ -137,9 +137,9 @@ mount(function (int $id) {
         }
 
         // Set document paths
-        $this->cv = $berkas->cv;
-        $this->transkrip_nilai = $berkas->transkrip_nilai;
-        $this->portfolio = $berkas->portfolio;
+        $this->cv = $berkas->cv ?? null;
+        $this->transkrip_nilai = $berkas->transkrip_nilai ?? null;
+        $this->portfolio = $berkas->portfolio ?? null;
 
         // Load dosen pembimbing options
         $this->dosenPembimbingList = DosenPembimbing::select('id', 'nama', 'nidn')
@@ -149,12 +149,14 @@ mount(function (int $id) {
             ->toArray();
 
         // Load available lowongan magang
-        $this->lowonganMagangList = LowonganMagang::with('perusahaan')
+        $this->lowonganMagangList = LowonganMagang::with(['perusahaan', 'pekerjaan'])
             ->where('status', 'buka')
-            ->orderBy('nama')
+            ->orderBy('created_at', 'desc')
             ->get()
             ->mapWithKeys(function ($lowongan) {
-                return [$lowongan->id => $lowongan->nama . ' - ' . $lowongan->perusahaan->nama];
+                $perusahaanNama = $lowongan->perusahaan ? $lowongan->perusahaan->nama : 'Perusahaan tidak tersedia';
+                $pekerjaanNama = $lowongan->pekerjaan ? $lowongan->pekerjaan->nama : 'Pekerjaan tidak tersedia';
+                return [$lowongan->id => $pekerjaanNama . ' - ' . $perusahaanNama];
             })
             ->toArray();
 
@@ -185,8 +187,6 @@ $approve = function () {
             $this->formPengajuanMagang->update([
                 'status' => 'diterima',
                 'keterangan' => $this->keterangan ?: 'Pengajuan disetujui',
-                'reviewed_at' => now(),
-                'reviewed_by' => auth()->id(), // Assuming admin authentication
             ]);
 
             // Create kontrak magang if lowongan selected
@@ -197,7 +197,6 @@ $approve = function () {
                     'lowongan_magang_id' => $this->lowonganMagangSelected,
                     'waktu_awal' => now()->addDays(7), // Start in 7 days
                     'waktu_akhir' => now()->addMonths(3), // 3 months duration
-                    'status' => 'aktif',
                 ]);
 
                 // Only update mahasiswa status if currently 'belum_magang'
@@ -245,8 +244,6 @@ $reject = function () {
         $this->formPengajuanMagang->update([
             'status' => 'ditolak',
             'keterangan' => $this->rejection_reason,
-            'reviewed_at' => now(),
-            'reviewed_by' => auth()->id(),
         ]);
 
         $this->status_pengajuan = 'Ditolak';
@@ -310,18 +307,14 @@ $showApprovalModal = function () {
 
 ?>
 
-<!-- Single Root Element Container -->
-<div>
-    <x-slot:user>admin</x-slot:user>
-
-    <div class="flex flex-col gap-5">
+<div class="flex flex-col gap-5">
     <x-slot:user>admin</x-slot:user>
 
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('admin.data-pengajuan-magang') }}" class="text-black">
+        {{-- <flux:breadcrumbs.item href="{{ route('admin.data-pengajuan-magang') }}" class="text-black">
             Kelola Data Pengajuan Magang
-        </flux:breadcrumbs.item>
+        </flux:breadcrumbs.item> --}}
         <flux:breadcrumbs.item class="text-black">Detail Pengajuan Magang</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
@@ -341,9 +334,9 @@ $showApprovalModal = function () {
                 {{ $status_pengajuan }}
             </flux:badge>
             
-            <flux:button href="{{ route('admin.data-pengajuan-magang') }}" variant="ghost" icon="arrow-left">
+            {{-- <flux:button href="{{ route('admin.data-pengajuan-magang') }}" variant="ghost" icon="arrow-left">
                 Kembali
-            </flux:button>
+            </flux:button> --}}
         </div>
     </div>
 
@@ -381,43 +374,45 @@ $showApprovalModal = function () {
                         <div class="space-y-3">
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Nama Lengkap</label>
-                                <p class="text-gray-900">{{ $nama_lengkap }}</p>
+                                <p class="text-gray-900">{{ $nama_lengkap ?? 'N/A' }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">NIM</label>
-                                <p class="text-gray-900">{{ $nim }}</p>
+                                <p class="text-gray-900">{{ $nim ?? 'N/A' }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Email</label>
-                                <p class="text-gray-900">{{ $email }}</p>
+                                <p class="text-gray-900">{{ $email ?? 'N/A' }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Jenis Kelamin</label>
-                                <p class="text-gray-900">{{ $jenis_kelamin }}</p>
+                                <p class="text-gray-900">{{ $jenis_kelamin ?? 'N/A' }}</p>
                             </div>
                         </div>
                         <div class="space-y-3">
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Jurusan</label>
-                                <p class="text-gray-900">{{ $jurusan }}</p>
+                                <p class="text-gray-900">{{ $jurusan ?? 'N/A' }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Program Studi</label>
-                                <p class="text-gray-900">{{ $program_studi }}</p>
+                                <p class="text-gray-900">{{ $program_studi ?? 'N/A' }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Angkatan</label>
-                                <p class="text-gray-900">{{ $angkatan }}</p>
+                                <p class="text-gray-900">{{ $angkatan ?? 'N/A' }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Status Magang</label>
-                                <p class="text-gray-900">{{ $status_magang }}</p>
+                                <p class="text-gray-900">{{ $status_magang ?? 'N/A' }}</p>
                             </div>
                         </div>
+                        @if($alamat)
                         <div class="md:col-span-2">
                             <label class="text-sm font-medium text-gray-500">Alamat</label>
                             <p class="text-gray-900">{{ $alamat }}</p>
                         </div>
+                        @endif
                         @if($tanggal_lahir)
                         <div class="md:col-span-2">
                             <label class="text-sm font-medium text-gray-500">Tanggal Lahir</label>
@@ -438,7 +433,7 @@ $showApprovalModal = function () {
                             wire:click="downloadDocument('cv')" 
                             variant="outline" 
                             icon="document-arrow-down"
-                            class="justify-center"
+                            class="justify-center {{ !$cv ? 'opacity-50 cursor-not-allowed' : '' }}"
                             :disabled="!$cv"
                         >
                             {{ $cv ? 'Unduh CV' : 'CV Tidak Ada' }}
@@ -447,7 +442,7 @@ $showApprovalModal = function () {
                             wire:click="downloadDocument('transkrip')" 
                             variant="outline" 
                             icon="document-arrow-down"
-                            class="justify-center"
+                            class="justify-center {{ !$transkrip_nilai ? 'opacity-50 cursor-not-allowed' : '' }}"
                             :disabled="!$transkrip_nilai"
                         >
                             {{ $transkrip_nilai ? 'Unduh Transkrip' : 'Transkrip Tidak Ada' }}
@@ -456,7 +451,7 @@ $showApprovalModal = function () {
                             wire:click="downloadDocument('portfolio')" 
                             variant="outline" 
                             icon="document-arrow-down"
-                            class="justify-center"
+                            class="justify-center {{ !$portfolio ? 'opacity-50 cursor-not-allowed' : '' }}"
                             :disabled="!$portfolio"
                         >
                             {{ $portfolio ? 'Unduh Portfolio' : 'Portfolio Tidak Ada' }}
@@ -468,7 +463,7 @@ $showApprovalModal = function () {
             <!-- Right Column - Actions -->
             <div class="space-y-6">
                 <!-- Review Form -->
-                @if($formPengajuanMagang->status === 'diproses')
+                @if($formPengajuanMagang && $formPengajuanMagang->status === 'diproses')
                 <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
                     <h2 class="text-lg font-semibold text-black mb-4 flex items-center gap-2">
                         <flux:icon.clipboard-document-check class="w-5 h-5" />
@@ -538,10 +533,12 @@ $showApprovalModal = function () {
                             <p class="text-gray-900">{{ $keterangan }}</p>
                         </div>
                         @endif
+                        @if($formPengajuanMagang)
                         <div>
                             <label class="text-sm font-medium text-gray-500">Waktu Pengajuan</label>
                             <p class="text-gray-900">{{ $formPengajuanMagang->created_at->format('d M Y H:i') }}</p>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>
