@@ -15,7 +15,6 @@ class LowonganMagang extends Model
     protected $table = 'lowongan_magang';
 
     protected $fillable = [
-        'nama',
         'kuota',
         'pekerjaan_id',
         'deskripsi',

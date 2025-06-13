@@ -95,6 +95,12 @@ $pertumbuhanPerusahaan = computed(function () {
 
 <div class="flex flex-col gap-5">
      <x-slot:user>admin</x-slot:user>
+     
+    <x-slot:topScript>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </x-slot:topScript>
+    
     <flux:breadcrumbs class="mb-5">
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
         <flux:breadcrumbs.item href="{{ route('admin.laporan-statistik-magang') }}" class="text-black">
@@ -333,5 +339,4 @@ $pertumbuhanPerusahaan = computed(function () {
             }
         });
     </script>
-
 <div>

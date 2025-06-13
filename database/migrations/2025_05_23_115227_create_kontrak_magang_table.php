@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->foreignId('lowongan_magang_id')->constrained('lowongan_magang')->onDelete('cascade');
             $table->dateTime('waktu_awal');
             $table->dateTime('waktu_akhir');
+
             $table->timestamps();
         });
     }

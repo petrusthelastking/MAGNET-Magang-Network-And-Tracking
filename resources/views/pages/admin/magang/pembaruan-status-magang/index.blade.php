@@ -2,8 +2,6 @@
 
 use function Livewire\Volt\{layout, state, usesPagination, with, computed};
 use App\Models\FormPengajuanMagang;
-use App\Models\BerkasPengajuanMagang;
-use App\Models\Mahasiswa;
 
 layout('components.layouts.user.main');
 
@@ -17,13 +15,11 @@ state([
 
 usesPagination();
 
-// Computed property untuk filter dan search
 $filteredQuery = computed(function () {
     $query = FormPengajuanMagang::with([
         'berkasPengajuanMagang.mahasiswa:id,nama,nim,program_studi,angkatan'
     ]);
 
-    // Search functionality
     if (!empty($this->searchTerm)) {
         $query->whereHas('berkasPengajuanMagang.mahasiswa', function ($q) {
             $q->where('nama', 'like', '%' . $this->searchTerm . '%')
@@ -31,12 +27,10 @@ $filteredQuery = computed(function () {
         });
     }
 
-    // Status filter
     if (!empty($this->statusFilter)) {
         $query->where('status', $this->statusFilter);
     }
 
-    // Sorting
     if ($this->sortBy === 'nama') {
         $query->join('berkas_pengajuan_magang', 'form_pengajuan_magang.pengajuan_id', '=', 'berkas_pengajuan_magang.id')
               ->join('mahasiswa', 'berkas_pengajuan_magang.mahasiswa_id', '=', 'mahasiswa.id')
@@ -77,12 +71,10 @@ with(function () {
     ];
 });
 
-// Navigation functions
 $goToSpecificPage = fn(int $page) => $this->setPage($page);
 $goToPrevPage = fn() => $this->previousPage();
 $goToNextPage = fn() => $this->nextPage();
 
-// Filter and search functions
 $resetFilters = function () {
     $this->searchTerm = '';
     $this->statusFilter = '';
@@ -101,17 +93,6 @@ $sortBy = function (string $column) {
     $this->setPage(1);
 };
 
-// Bulk actions
-$bulkApprove = function (array $ids) {
-    FormPengajuanMagang::whereIn('id', $ids)->update(['status' => 'diterima']);
-    session()->flash('success', count($ids) . ' pengajuan berhasil disetujui');
-};
-
-$bulkReject = function (array $ids) {
-    FormPengajuanMagang::whereIn('id', $ids)->update(['status' => 'ditolak']);
-    session()->flash('success', count($ids) . ' pengajuan berhasil ditolak');
-};
-
 ?>
 
 <div class="flex flex-col gap-5">
@@ -124,8 +105,7 @@ $bulkReject = function (array $ids) {
 
     <div class="flex justify-between items-center">
         <h1 class="text-xl font-bold leading-6 text-black">Kelola Data Pengajuan Magang</h1>
-        
-        <!-- Statistics Cards -->
+
         <div class="flex gap-4">
             <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
                 <div class="text-sm text-blue-600">Total</div>
@@ -146,17 +126,16 @@ $bulkReject = function (array $ids) {
         </div>
     </div>
 
-    <!-- Filter and Search Section -->
     <div class="bg-white p-4 rounded-lg shadow-sm">
         <div class="flex flex-wrap gap-3 items-center justify-between">
             <div class="flex gap-3 flex-1">
-                <flux:input 
-                    class="rounded-3xl flex-1 max-w-md" 
-                    placeholder="Cari nama atau NIM mahasiswa..." 
+                <flux:input
+                    class="rounded-3xl flex-1 max-w-md"
+                    placeholder="Cari nama atau NIM mahasiswa..."
                     icon="magnifying-glass"
-                    wire:model.live.debounce.300ms="searchTerm" 
+                    wire:model.live.debounce.300ms="searchTerm"
                 />
-                
+
                 <flux:select class="w-48" wire:model.live="statusFilter" placeholder="Filter Status">
                     <flux:select.option value="">Semua Status</flux:select.option>
                     <flux:select.option value="diproses">Belum Diverifikasi</flux:select.option>
@@ -164,7 +143,7 @@ $bulkReject = function (array $ids) {
                     <flux:select.option value="ditolak">Ditolak</flux:select.option>
                 </flux:select>
             </div>
-            
+
             <div class="flex gap-2">
                 <flux:button variant="ghost" icon="arrow-path" wire:click="resetFilters">
                     Reset
@@ -175,14 +154,6 @@ $bulkReject = function (array $ids) {
         </div>
     </div>
 
-    <!-- Flash Messages -->
-    @if (session()->has('success'))
-        <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <!-- Data Table -->
     <div class="overflow-hidden rounded-lg shadow bg-white">
         <div class="overflow-x-auto">
             <table class="table-auto w-full">
@@ -234,18 +205,18 @@ $bulkReject = function (array $ids) {
                             <td class="px-6 py-4 text-sm text-gray-600">{{ $pengajuan['tanggal_pengajuan'] }}</td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex justify-center gap-1">
-                                    <flux:badge 
-                                        variant="outline" 
+                                    <flux:badge
+                                        variant="outline"
                                         color="{{ $pengajuan['has_documents']['cv'] ? 'green' : 'red' }}"
                                         size="sm"
                                     >CV</flux:badge>
-                                    <flux:badge 
-                                        variant="outline" 
+                                    <flux:badge
+                                        variant="outline"
                                         color="{{ $pengajuan['has_documents']['transkrip'] ? 'green' : 'red' }}"
                                         size="sm"
                                     >T</flux:badge>
-                                    <flux:badge 
-                                        variant="outline" 
+                                    <flux:badge
+                                        variant="outline"
                                         color="{{ $pengajuan['has_documents']['portfolio'] ? 'green' : 'red' }}"
                                         size="sm"
                                     >P</flux:badge>
@@ -253,8 +224,8 @@ $bulkReject = function (array $ids) {
                             </td>
                             <td class="px-6 py-4">
                                 @php
-                                    $status = $pengajuan['status'] == 'diproses' 
-                                        ? 'Belum diverifikasi' 
+                                    $status = $pengajuan['status'] == 'diproses'
+                                        ? 'Belum diverifikasi'
                                         : ucfirst($pengajuan['status']);
 
                                     $badgeColor = match ($status) {
@@ -263,9 +234,9 @@ $bulkReject = function (array $ids) {
                                         'Belum diverifikasi' => 'yellow',
                                     };
                                 @endphp
-                                <flux:badge 
-                                    class="min-w-32 flex justify-center" 
-                                    variant="solid" 
+                                <flux:badge
+                                    class="min-w-32 flex justify-center"
+                                    variant="solid"
                                     color="{{ $badgeColor }}"
                                 >
                                     {{ $status }}
@@ -275,9 +246,9 @@ $bulkReject = function (array $ids) {
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <flux:button 
+                                <flux:button
                                     icon="eye"
-                                    href="{{ route('admin.detail-pengajuan-diperbarui', $pengajuan['id']) }}" 
+                                    href="{{ route('admin.detail-pengajuan-pembaruan-status-magang', $pengajuan['id']) }}"
                                     variant="ghost"
                                     size="sm"
                                 />
@@ -312,11 +283,11 @@ $bulkReject = function (array $ids) {
 
             <div class="flex items-center gap-2">
                 <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage" size="sm" />
-                
+
                 @if ($dataPengajuan->lastPage() <= 7)
                     @for ($i = 1; $i <= $dataPengajuan->lastPage(); $i++)
-                        <flux:button 
-                            variant="{{ $i === $dataPengajuan->currentPage() ? 'primary' : 'ghost' }}" 
+                        <flux:button
+                            variant="{{ $i === $dataPengajuan->currentPage() ? 'primary' : 'ghost' }}"
                             wire:click="goToSpecificPage({{ $i }})"
                             size="sm"
                         >
@@ -328,17 +299,17 @@ $bulkReject = function (array $ids) {
                         <flux:button variant="ghost" wire:click="goToSpecificPage(1)" size="sm">1</flux:button>
                         <span class="text-gray-500">...</span>
                     @endif
-                    
+
                     @for ($i = max(1, $dataPengajuan->currentPage() - 1); $i <= min($dataPengajuan->lastPage(), $dataPengajuan->currentPage() + 1); $i++)
-                        <flux:button 
-                            variant="{{ $i === $dataPengajuan->currentPage() ? 'primary' : 'ghost' }}" 
+                        <flux:button
+                            variant="{{ $i === $dataPengajuan->currentPage() ? 'primary' : 'ghost' }}"
                             wire:click="goToSpecificPage({{ $i }})"
                             size="sm"
                         >
                             {{ $i }}
                         </flux:button>
                     @endfor
-                    
+
                     @if ($dataPengajuan->currentPage() < $dataPengajuan->lastPage() - 2)
                         <span class="text-gray-500">...</span>
                         <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataPengajuan->lastPage() }})" size="sm">
@@ -346,7 +317,7 @@ $bulkReject = function (array $ids) {
                         </flux:button>
                     @endif
                 @endif
-                
+
                 <flux:button icon="chevron-right" variant="ghost" wire:click="goToNextPage" size="sm" />
             </div>
 

@@ -65,7 +65,7 @@ $goToNextPage = fn() => $this->nextPage();
             </thead>
             <tbody class="bg-white text-black">
                 @foreach ($dataPengajuan as $pengajuan)
-                    <tr onclick="window.location.href='{{ route('admin.detail-pengajuan', $pengajuan['id']) }}'"
+                    <tr onclick="window.location.href='{{ route('admin.detail-pengajuan-izin-magang', $pengajuan['id']) }}'"
                         class="border-b">
                         <td class="px-6 py-3 text-center">{{ $loop->iteration }}</td>
                         <td class="px-6 py-3">{{ $pengajuan['nama'] }}</td>
@@ -88,7 +88,7 @@ $goToNextPage = fn() => $this->nextPage();
                         </td>
                         <td class="px-6 py-3 text-center">
                             <flux:button icon="chevron-right"
-                                href="{{ route('admin.detail-pengajuan', $pengajuan['id']) }}" variant="ghost" />
+                                href="{{ route('admin.detail-pengajuan-izin-magang', $pengajuan['id']) }}" variant="ghost" />
                         </td>
                     </tr>
                 @endforeach
