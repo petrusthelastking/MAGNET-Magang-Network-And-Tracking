@@ -71,4 +71,12 @@ class KontrakMagang extends Model
     {
         return $this->hasOne(UlasanMagang::class, 'kontrak_magang_id');
     }
+
+    /**
+     * Relationship dengan Chat
+     */
+    public function chats()
+    {
+        return $this->hasMany(Chat::class, 'kontrak_magang_id');
+    }
 }
