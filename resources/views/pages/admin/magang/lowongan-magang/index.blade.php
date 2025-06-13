@@ -13,13 +13,16 @@ usesPagination();
 
 with(function () {
     return [
-        'dataLowonganMagang' => LowonganMagang::select('id', 'nama', 'perusahaan_id', 'lokasi_magang_id', 'status')
+        'dataLowonganMagang' => LowonganMagang::select('id', 'perusahaan_id', 'lokasi_magang_id', 'pekerjaan_id', 'status')
             ->with([
                 'perusahaan' => function ($query) {
                     $query->select('id', 'nama');
                 },
                 'lokasi_magang' => function ($query) {
                     $query->select('id', 'lokasi');
+                },
+                'pekerjaan' => function ($query) {
+                    $query->select('id', 'nama');
                 }
             ])
             ->withCount(['kontrak_magang as jumlah_pendaftar'])
@@ -65,8 +68,8 @@ $goToNextPage = fn() => $this->nextPage();
             <thead class="bg-white text-black">
                 <tr class="border-b">
                     <th class="text-center px-6 py-3">No</th>
-                    <th class="text-left px-6 py-3">Nama Lowongan</th>
                     <th class="text-left px-6 py-3">Perusahaan</th>
+                    <th class="text-left px-6 py-3">Pekerjaan</th>
                     <th class="text-left px-6 py-3">Lokasi</th>
                     <th class="text-center px-6 py-3">Status</th>
                     <th class="text-center px-6 py-3">Jumlah Pendaftar</th>
@@ -77,9 +80,10 @@ $goToNextPage = fn() => $this->nextPage();
                 @foreach ($dataLowonganMagang as $lowongan)
                     <tr onclick="window.location.href='{{ route('admin.detail-lowongan', $lowongan['id']) }}'"  class="border-b hover:bg-gray-50">
                         <td class="px-6 py-3 text-center">
-                            {{ $loop->iteration + ($dataLowonganMagang->firstItem() - 1) }}</td>
-                        <td class="px-6 py-3">{{ $lowongan['nama'] }}</td>
+                            {{ $loop->iteration + ($dataLowonganMagang->firstItem() - 1) }}
+                        </td>
                         <td class="px-6 py-3">{{ $lowongan['perusahaan']['nama'] }}</td>
+                        <td class="px-6 py-3">{{ $lowongan['pekerjaan']['nama'] }}</td>
                         <td class="px-6 py-3">{{ $lowongan['lokasi_magang']['lokasi'] }}</td>
                         <td class="px-6 py-3">
                             @php

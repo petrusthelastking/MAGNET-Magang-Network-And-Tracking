@@ -4,9 +4,7 @@ use Flux\Flux;
 use function Livewire\Volt\{layout, state, mount};
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\FormPengajuanMagang;
-use App\Models\BerkasPengajuanMagang;
 use App\Models\DosenPembimbing;
-use App\Models\KontrakMagang;
 
 layout('components.layouts.user.main');
 
@@ -63,8 +61,8 @@ $verifyFormRequest = function (string $status) {
     $success = $this->formPengajuanMagang->save();
 
     if ($success) {
-        $task = "Pengajuan magang berhasil disetujui";
-        $message = "Anda telah menyutujui pengajuan magang";
+        $task = "Pengajuan magang berhasil " . $status;
+        $message = "Anda telah " . $status == 'diterima' ? 'menyetujui' : 'menolak'  ." pengajuan magang";
         $this->status_pengajuan = ucfirst($this->formPengajuanMagang->status);
     } else {
         $task = "Pengajuan magang gagal disetujui";
@@ -74,7 +72,7 @@ $verifyFormRequest = function (string $status) {
     session()->flash('task', $task);
     session()->flash('message', $message);
 
-    Flux::modal('plot-dosen-pembimbing')->close();
+    Flux::modal('confirm-accept-form')->close();
     Flux::modal('success-accept-form')->show();
 };
 
@@ -85,7 +83,7 @@ $verifyFormRequest = function (string $status) {
 
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item href="{{ route('admin.data-pengajuan-magang') }}" class="text-black">Kelola data pengajuan
+        <flux:breadcrumbs.item href="{{ route('admin.data-pengajuan-izin-magang') }}" class="text-black">Kelola data pengajuan
             magang
         </flux:breadcrumbs.item>
         <flux:breadcrumbs.item class="text-black">Detail pengajuan magang
@@ -190,7 +188,9 @@ $verifyFormRequest = function (string $status) {
                                 <flux:button variant="primary" class="bg-green-400 hover:bg-green-600">Setujui
                                 </flux:button>
                             </flux:modal.trigger>
-                            <flux:button variant="primary" class="bg-red-400 hover:bg-red-600">Batalkan</flux:button>
+                            <flux:modal.trigger name="confirm-reject-form">
+                                <flux:button variant="primary" class="bg-red-400 hover:bg-red-600">Tolak</flux:button>
+                            </flux:modal.trigger>
                         </div>
                     </div>
 
@@ -210,27 +210,26 @@ $verifyFormRequest = function (string $status) {
                                 </flux:modal.close>
 
                                 <flux:modal.close>
-                                    <flux:modal.trigger name="plot-dosen-pembimbing">
-                                        <flux:button type="submit" variant="primary"
-                                            class="bg-magnet-sky-teal hover:bg-cyan-600">
-                                            Iya</flux:button>
-                                    </flux:modal.trigger>
+                                    <flux:button
+                                        type="submit"
+                                        variant="primary"
+                                        wire:click="verifyFormRequest('diterima')"
+                                        class="bg-magnet-sky-teal hover:bg-cyan-600">
+                                        Iya
+                                    </flux:button>
                                 </flux:modal.close>
                             </div>
                         </div>
                     </flux:modal>
 
 
-                    <flux:modal name="plot-dosen-pembimbing" class="min-w-1/4">
+                    <flux:modal name="confirm-reject-form">
                         <div class="space-y-6">
                             <div class="flex flex-col gap-4">
-                                <flux:heading size="lg">Plot dosen pembimbing</flux:heading>
-
-                                <flux:select class="w-full" wire:model="dosenPembimbingSelected">
-                                    @foreach ($dosenPembimbingList as $dosenID => $dosenNama)
-                                        <flux:select.option value="{{ $dosenID }}">{{ $dosenNama }}</flux:select.option>
-                                    @endforeach
-                                </flux:select>
+                                <flux:heading size="lg">Menolak pengajuan magang</flux:heading>
+                                <flux:text>
+                                    <p>Apakah anda yakin akan menolak pengajuan magang ini?</p>
+                                </flux:text>
                             </div>
                             <div class="flex">
                                 <flux:spacer />
@@ -239,10 +238,15 @@ $verifyFormRequest = function (string $status) {
                                     <flux:button variant="ghost">Batalkan</flux:button>
                                 </flux:modal.close>
 
-                                <flux:button type="submit" variant="primary"
-                                    class="bg-magnet-sky-teal hover:bg-cyan-600"
-                                    wire:click="verifyFormRequest('diterima')">
-                                    Konfirmasi</flux:button>
+                                <flux:modal.close>
+                                    <flux:button
+                                        type="submit"
+                                        variant="primary"
+                                        wire:click="verifyFormRequest('ditolak')"
+                                        class="bg-magnet-sky-teal hover:bg-cyan-600">
+                                        Iya
+                                    </flux:button>
+                                </flux:modal.close>
                             </div>
                         </div>
                     </flux:modal>
