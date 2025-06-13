@@ -31,7 +31,6 @@ class DatabaseSeeder extends Seeder
             BerkasPengajuanMagangSeeder::class,
             FormPengajuanMagangSeeder::class,
             KriteriaPreferensiSeeder::class,
-            MultiMOORASeeder::class
         ]);
     }
 }

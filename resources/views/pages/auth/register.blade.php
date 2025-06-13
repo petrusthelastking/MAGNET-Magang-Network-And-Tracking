@@ -5,21 +5,23 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Models\Mahasiswa;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 layout('components.layouts.guest.with-navbar');
 
 state([
-    'nim' => null,
-    'nama' => null,
-    'email' => null,
+    'nim',
+    'nama',
+    'email',
     'jurusan' => 'Teknologi Informasi',
-    'program_studi' => null,
-    'angkatan' => null,
-    'jenis_kelamin' => null,
-    'tanggal_lahir' => null,
-    'alamat' => null,
-    'password' => null,
-    'password_confirmation' => null,
+    'program_studi',
+    'angkatan',
+    'jenis_kelamin',
+    'tanggal_lahir',
+    'alamat',
+    'password',
+    'password_confirmation'
 ]);
 
 rules([
@@ -53,36 +55,46 @@ rules([
 ]);
 
 $register = function (): void {
-    $this->validate();
+    try {
+        $validated = $this->validate();
 
-    event(
-        new Registered(
-            ($mahasiswa = Mahasiswa::create([
-                'nama' => $this->nama,
-                'nim' => $this->nim,
-                'email' => $this->email,
-                'password' => Hash::make($this->password),
-                'jurusan' => $this->jurusan,
-                'program_studi' => $this->program_studi,
-                'angkatan' => $this->angkatan,
-                'jenis_kelamin' => $this->jenis_kelamin,
-                'tanggal_lahir' => $this->tanggal_lahir,
-                'alamat' => $this->alamat,
-            ])),
-        ),
-    );
+        $mahasiswa = Mahasiswa::create([
+            'nama' => $this->nama,
+            'nim' => $this->nim,
+            'email' => $this->email,
+            'password' => Hash::make($this->password),
+            'jurusan' => $this->jurusan,
+            'program_studi' => $this->program_studi,
+            'angkatan' => $this->angkatan,
+            'jenis_kelamin' => $this->jenis_kelamin,
+            'tanggal_lahir' => $this->tanggal_lahir,
+            'alamat' => $this->alamat,
+        ]);
 
-    Auth::guard('mahasiswa')->login($mahasiswa);
+        event(new Registered($mahasiswa));
 
-    $this->redirectIntended(route('mahasiswa.persiapan-preferensi', absolute: false), navigate: true);
+        Auth::guard('mahasiswa')->login($mahasiswa);
+
+        session()->flash('success', 'Registrasi berhasil! Selamat datang.');
+
+        $this->redirectIntended(route('mahasiswa.persiapan-preferensi', absolute: false), navigate: true);
+    } catch (ValidationException $e) {
+        throw $e;
+    } catch (\Exception $e) {
+        Log::error('Registration failed: ' . $e->getMessage(), [
+            'email' => $this->email,
+            'nim' => $this->nim,
+            'exception' => $e
+        ]);
+
+        session()->flash('error', 'Terjadi kesalahan saat mendaftar. Silakan coba lagi.');
+    }
 };
 
 ?>
 
-<!-- Background with gradient -->
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 sm:py-8 px-4">
+<div class="min-h-screen bg-gradient-to-br sm:py-8 px-4">
     <div class="max-w-4xl mx-auto">
-        <!-- Header Section -->
         <div class="text-center mb-6 sm:mb-8">
             <div
                 class="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-4 shadow-lg">
@@ -93,7 +105,7 @@ $register = function (): void {
                 </svg>
             </div>
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Daftar Akun Mahasiswa</h1>
-            <p class="text-gray-600 text-base sm:text-lg px-4">Bergabunglah dengan platform pembelajaran digital kami
+            <p class="text-gray-600 text-base sm:text-lg px-4">Bergabunglah dengan platform sistem magang kami
             </p>
         </div>
 
@@ -118,7 +130,6 @@ $register = function (): void {
             </div>
         </div>
 
-        <!-- Main Form Card -->
         <div class="bg-white rounded-xl shadow-xl overflow-hidden">
             <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 sm:p-6">
                 <h2 class="text-xl sm:text-2xl font-bold text-white mb-2">Informasi Pribadi</h2>
@@ -126,8 +137,6 @@ $register = function (): void {
             </div>
 
             <div class="p-4 sm:p-6 lg:p-8">
-                <x-auth-session-status class="mb-4" :status="session('status')" />
-
                 <form wire:submit="register" class="space-y-4 sm:space-y-6">
                     <!-- Section 1: Identitas Mahasiswa -->
                     <div class="bg-gray-50 rounded-lg p-3 sm:p-4 lg:p-6">
@@ -197,7 +206,7 @@ $register = function (): void {
                                 <flux:label class="text-sm font-medium text-gray-700 mb-2">
                                     Program Studi <span class="text-red-500">*</span>
                                 </flux:label>
-                                <flux:select wire:model.live="program_studi" >
+                                <flux:select wire:model="program_studi" required>
                                     <flux:select.option value="" default>Pilih program studi
                                     </flux:select.option>
                                     <flux:select.option value="D4 Teknik Informatika" selected>D4 Teknik Informatika
@@ -214,7 +223,7 @@ $register = function (): void {
                                 <flux:label class="text-sm font-medium text-gray-700 mb-2">
                                     Angkatan <span class="text-red-500">*</span>
                                 </flux:label>
-                                <flux:input wire:model="angkatan" type="number" required min="1" max="100"
+                                <flux:input wire:model="angkatan" type="number" required min="1"
                                     placeholder="contoh: 23"
                                     class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base" />
                                 <flux:error name="angkatan" class="text-red-500 text-sm mt-1" />
@@ -254,29 +263,12 @@ $register = function (): void {
                                 <flux:label class="text-sm font-medium text-gray-700 mb-2">
                                     Tanggal Lahir <span class="text-red-500">*</span>
                                 </flux:label>
-                                <!-- Custom Date Input with Fallback -->
                                 <div class="relative">
                                     <flux:input wire:model="tanggal_lahir" type="date" required
                                         max="{{ date('Y-m-d') }}"
                                         class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
                                         style="color-scheme: light;"
                                         onchange="this.setAttribute('data-date', this.value)" data-date="" />
-                                    <!-- Fallback untuk browser yang tidak support date picker -->
-                                    <script>
-                                        // Check if browser supports date input
-                                        if (!Modernizr || !Modernizr.inputtypes.date) {
-                                            // Fallback implementation
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                var dateInputs = document.querySelectorAll('input[type="date"]');
-                                                dateInputs.forEach(function(input) {
-                                                    // Change type to text for unsupported browsers
-                                                    input.type = 'text';
-                                                    input.placeholder = 'DD/MM/YYYY';
-                                                    input.setAttribute('pattern', '\\d{2}/\\d{2}/\\d{4}');
-                                                });
-                                            });
-                                        }
-                                    </script>
                                 </div>
                                 <flux:error name="tanggal_lahir" class="text-red-500 text-sm mt-1" />
                             </flux:field>
@@ -328,7 +320,6 @@ $register = function (): void {
                                 <flux:error name="password" class="text-red-500 text-sm mt-1" />
                             </flux:field>
 
-                            <!-- Konfirmasi Password Field - Sejajar dengan Password -->
                             <flux:field>
                                 <flux:label class="text-sm font-medium text-gray-700 mb-2">
                                     Konfirmasi Password <span class="text-red-500">*</span>
@@ -341,10 +332,9 @@ $register = function (): void {
                         </div>
                     </div>
 
-                    <!-- Submit Button -->
                     <div class="flex flex-col space-y-4 pt-4 sm:pt-6 border-t border-gray-200">
                         <flux:button type="submit"
-                            class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                            class="w-full bg-magnet-sky-teal! hover:bg-magnet-icy-blue! mb-3 border-0 text-white! py-3 text-sm sm:text-base font-semibold rounded-lg shadow-lg transform transition-all duration-200">
                             <span class="flex items-center justify-center">
                                 <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
@@ -357,58 +347,52 @@ $register = function (): void {
 
                         <p class="text-sm text-gray-600 text-center">
                             Sudah punya akun?
-                            <button type="button" onclick="history.back()"
-                                class="text-blue-600 hover:text-blue-800 font-medium cursor-pointer ml-1">
+                            <flux:link class="text-magnet-sky-teal hover:text-blue-800 font-medium hover:underline"
+                                :href="route('login')" wire:navigate>
                                 Masuk di sini
-                            </button>
+                            </flux:link>
                         </p>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Footer Info -->
-        <div class="text-center mt-6 sm:mt-8 text-gray-600 px-4">
+        <footer class="text-center mt-6 sm:mt-8 text-gray-600 px-4">
             <p class="text-xs sm:text-sm">
                 Dengan mendaftar, Anda menyetujui
                 <a href="#" class="text-blue-600 hover:underline">Syarat & Ketentuan</a>
                 dan
                 <a href="#" class="text-blue-600 hover:underline">Kebijakan Privasi</a> kami.
             </p>
-        </div>
+        </footer>
     </div>
+
+    <x-slot:bottomScript>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var testInput = document.createElement('input');
+                testInput.type = 'date';
+
+                if (testInput.type !== 'date') {
+                    var dateInputs = document.querySelectorAll('input[type="date"]');
+                    dateInputs.forEach(function(input) {
+                        input.type = 'text';
+                        input.placeholder = 'DD/MM/YYYY';
+                        input.setAttribute('pattern', '\\d{2}/\\d{2}/\\d{4}');
+                    });
+                } else {
+                    var dateInputs = document.querySelectorAll('input[type="date"]');
+                    dateInputs.forEach(function(input) {
+                        input.addEventListener('click', function() {
+                            this.showPicker && this.showPicker();
+                        });
+
+                        input.addEventListener('touchstart', function() {
+                            this.showPicker && this.showPicker();
+                        });
+                    });
+                }
+            });
+        </script>
+    </x-slot:bottomScript>
 </div>
-
-<!-- Script untuk mengatasi masalah date input di Chrome -->
-<script>
-    // Enhanced date input support
-    document.addEventListener('DOMContentLoaded', function() {
-        // Test if browser supports date input
-        var testInput = document.createElement('input');
-        testInput.type = 'date';
-
-        // If input type doesn't change to date, browser doesn't support it
-        if (testInput.type !== 'date') {
-            var dateInputs = document.querySelectorAll('input[type="date"]');
-            dateInputs.forEach(function(input) {
-                input.type = 'text';
-                input.placeholder = 'DD/MM/YYYY';
-                input.setAttribute('pattern', '\\d{2}/\\d{2}/\\d{4}');
-            });
-        } else {
-            // For supported browsers, ensure proper date picker behavior
-            var dateInputs = document.querySelectorAll('input[type="date"]');
-            dateInputs.forEach(function(input) {
-                // Force show calendar on click for Chrome mobile
-                input.addEventListener('click', function() {
-                    this.showPicker && this.showPicker();
-                });
-
-                // Add touch event for mobile devices
-                input.addEventListener('touchstart', function() {
-                    this.showPicker && this.showPicker();
-                });
-            });
-        }
-    });
-</script>

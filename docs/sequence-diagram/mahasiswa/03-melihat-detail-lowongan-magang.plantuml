@@ -7,9 +7,14 @@ control MagangController #Pink
 entity DataMagang #SkyBlue
 boundary HalamanDetailLowongan #LightGreen
 
+
+Mahasiswa -> HalamanHasilPencarian
 HalamanHasilPencarian -> MagangController : requestToViewInternshipDetails()
+activate MagangController
 MagangController -> DataMagang : getInternshipDetails()
+activate DataMagang
 DataMagang --> MagangController : returnInternshipDetails()
+deactivate DataMagang
 MagangController -> HalamanDetailLowongan : showInternshipDetails()
 
 @enduml
