@@ -12,6 +12,7 @@ state([
     'statusInsertSingleData' => '',
     'storeMahasiswaNama' => null,
     'storeMahasiswaNIM' => null,
+    'storeMahasiswaEmail',
     'storeMahasiswaJenisKelamin' => null,
     'storeMahasiswaTanggalLahir' => null,
     'storeMahasiswaProdi' => null,
@@ -29,8 +30,9 @@ $storeSingleData = function (): void {
     $mahasiswa = Mahasiswa::create([
         'nama' => $this->storeMahasiswaNama,
         'nim' => $this->storeMahasiswaNIM,
+        'email' => $this->storeMahasiswaEmail,
         'jenis_kelamin' => $this->storeMahasiswaJenisKelamin,
-        'umur' => Carbon::parse($this->storeMahasiswaTanggalLahir)->age,
+        'tanggal_lahir' => $this->storeMahasiswaTanggalLahir,
         'program_studi' => $this->storeMahasiswaProdi,
         'angkatan' => $this->storeMahasiswaAngkatan,
         'alamat' => $this->storeMahasiswaAlamat,
@@ -158,6 +160,7 @@ $goToNextPage = fn() => $this->nextPage();
 
             <flux:input label="Nama" placeholder="Nama mahasiswa" wire:model="storeMahasiswaNama" />
             <flux:input label="NIM" placeholder="NIM mahasiswa" wire:model="storeMahasiswaNIM" />
+            <flux:input label="Email" placeholder="Email" wire:model="storeMahasiswaEmail" />
             <flux:field>
                 <flux:label>Jenis Kelamin</flux:label>
                 <flux:select placeholder="Jenis kelamin mahasiswa" wire:model="storeMahasiswaJenisKelamin">
