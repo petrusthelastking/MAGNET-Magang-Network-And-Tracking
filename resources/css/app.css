@@ -155,26 +155,18 @@ button:disabled {
 
 
 /* Styles untuk transisi foto dan label  */
-    .photo-container {
-        position: relative;
-    }
-    
-    .photo-card {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        opacity: 0;
-        transition: opacity 0.8s ease-in-out;
-    }
-    
-    .photo-card.active {
-        opacity: 1;
-    }
-    
+.photo-container {
+    @apply relative;
+}
 
-    
-    .job-title, .job-desc {
-        transition: all 0.3s ease;
-    }
+.photo-card {
+    @apply absolute inset-0 opacity-0 transition-opacity duration-800 ease-in-out;
+}
+
+.photo-card.active {
+    @apply opacity-100;
+}
+
+.job-title, .job-desc {
+    @apply transition-all duration-300 ease-in-out;
+}
