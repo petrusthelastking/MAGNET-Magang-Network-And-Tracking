@@ -337,15 +337,17 @@ $togglePolling = function () {
     <div
         class="fixed top-14 left-0 right-4 lg:left-56 backdrop-blur-md bg-white/80 border-b border-white/20 shadow-lg z-40">
         <div class="flex items-center gap-4 px-6 py-4">
-            <div class="relative">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-0.5">
-                    <flux:avatar size="md" src="{{ asset('img/user/lecturer-man.png') }}"
-                        class="w-full h-full rounded-full border-2 border-white" />
-                </div>
-                <div
-                    class="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-2 border-white shadow-sm">
-                </div>
-            </div>
+<div class="relative w-14 h-14">
+    <div class="w-full h-full rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-0.5 overflow-hidden">
+        <div class="w-full h-full bg-white rounded-full p-0.5 overflow-hidden">
+            <img src="{{ asset('img/user/lecturer-man.png') }}"
+                class="w-full h-full object-cover rounded-full" alt="Avatar">
+        </div>
+    </div>
+    <div class="absolute bottom-0 right-0 w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
+</div>
+
+
             <div class="flex-1 min-w-0">
                 <flux:heading size="sm" class="truncate font-semibold text-gray-800">
                     {{ $dosenPembimbing ? $dosenPembimbing->nama : 'Dosen Pembimbing' }}
