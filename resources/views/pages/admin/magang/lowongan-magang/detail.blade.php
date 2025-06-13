@@ -3,17 +3,16 @@
 use Flux\Flux;
 use function Livewire\Volt\{layout, state, mount};
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Models\{LowonganMagang, Perusahaan, LokasiMagang};
+use App\Models\{LowonganMagang, Perusahaan, LokasiMagang, Pekerjaan};
 
 layout('components.layouts.user.main');
 
 state([
     'lowongan_magang',
-    'nama',
     'deskripsi',
     'persyaratan',
     'kuota',
-    'pekerjaan',
+    'pekerjaan_id',
     'jenis_magang',
     'status',
     'lokasi_id',
@@ -23,6 +22,7 @@ state([
     'sisa_kuota',
 
     'perusahaan_list' => Perusahaan::select('id', 'nama')->get()->toArray(),
+    'pekerjaan_list' => Pekerjaan::select('id', 'nama')->get()->toArray(),
     'lokasi_list' => LokasiMagang::select('id', 'lokasi')->get()->toArray(),
 
     'isEditing' => false,
@@ -33,11 +33,10 @@ state([
 mount(function (int $id) {
     try {
         $this->lowongan_magang = LowonganMagang::findOrFail($id);
-        $this->nama = $this->lowongan_magang->nama;
         $this->deskripsi = $this->lowongan_magang->deskripsi;
         $this->persyaratan = $this->lowongan_magang->persyaratan;
         $this->kuota = $this->lowongan_magang->kuota;
-        $this->pekerjaan = $this->lowongan_magang->pekerjaan->nama;
+        $this->pekerjaan_id = $this->lowongan_magang->pekerjaan_id;
         $this->jenis_magang = $this->lowongan_magang->jenis_magang;
         $this->status = $this->lowongan_magang->status;
         $this->lokasi_id = $this->lowongan_magang->lokasi_magang_id;
@@ -53,11 +52,10 @@ mount(function (int $id) {
 $editData = fn() => ($this->isEditing = !$this->isEditing);
 
 $updateData = function () {
-    $this->lowongan_magang->nama = $this->nama;
     $this->lowongan_magang->deskripsi = $this->deskripsi;
     $this->lowongan_magang->persyaratan = $this->persyaratan;
     $this->lowongan_magang->kuota = $this->kuota;
-    $this->lowongan_magang->pekerjaan->nama = $this->pekerjaan;
+    $this->lowongan_magang->pekerjaan_id = $this->pekerjaan_id;
     $this->lowongan_magang->jenis_magang = $this->jenis_magang;
     $this->lowongan_magang->status = $this->status;
     $this->lowongan_magang->lokasi_magang_id = $this->lokasi_id;
@@ -153,16 +151,6 @@ $deleteData = function () {
 
                         <div class="space-y-4">
                             <flux:field>
-                                <flux:label>Nama</flux:label>
-                                @if ($isEditing)
-                                    <flux:input value="{{ $nama }}" wire:model="nama" />
-                                @else
-                                    <flux:input value="{{ $nama }}" wire:model="nama" readonly
-                                        class="caret-transparent" />
-                                @endif
-                            </flux:field>
-
-                            <flux:field>
                                 <flux:label>Perusahaan</flux:label>
                                 @if ($isEditing)
                                     <flux:select placeholder="Perusahaan" wire:model="perusahaan_id">
@@ -175,6 +163,25 @@ $deleteData = function () {
                                     <flux:select placeholder="Perusahaan" wire:model="perusahaan_id" disabled>
                                         @foreach ($perusahaan_list as $perusahaan)
                                             <flux:select.option value="{{ $perusahaan['id'] }}">{{ $perusahaan['nama'] }}
+                                            </flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                @endif
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label>Pekerjaan</flux:label>
+                                @if ($isEditing)
+                                    <flux:select placeholder="Pekerjaan" wire:model="pekerjaan_id">
+                                        @foreach ($pekerjaan_list as $pekerjaan)
+                                            <flux:select.option value="{{ $pekerjaan['id'] }}">{{ $pekerjaan['nama'] }}
+                                            </flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                @else
+                                    <flux:select placeholder="Pekerjaan" wire:model="pekerjaan_id" disabled>
+                                        @foreach ($pekerjaan_list as $pekerjaan)
+                                            <flux:select.option value="{{ $pekerjaan['id'] }}">{{ $pekerjaan['nama'] }}
                                             </flux:select.option>
                                         @endforeach
                                     </flux:select>
@@ -221,6 +228,15 @@ $deleteData = function () {
                                     <flux:textarea wire:model="deskripsi" />
                                 @else
                                     <flux:textarea wire:model="deskripsi" disabled />
+                                @endif
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label>Persyaratan</flux:label>
+                                @if ($isEditing)
+                                    <flux:textarea wire:model="persyaratan]" />
+                                @else
+                                    <flux:textarea wire:model="persyaratan" disabled />
                                 @endif
                             </flux:field>
 
