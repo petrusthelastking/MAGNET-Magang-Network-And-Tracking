@@ -40,7 +40,7 @@ $komentarDosen = computed(function () {
         });
     }
 
-    // Filter by date
+    // Filter by date - PERBAIKAN DISINI
     switch ($this->filter) {
         case 'this_week':
             $query->whereBetween('tanggal', [now()->startOfWeek(), now()->endOfWeek()]);
@@ -51,6 +51,10 @@ $komentarDosen = computed(function () {
         case 'older':
             $query->where('tanggal', '<', now()->subMonth());
             break;
+        case 'all':
+        default:
+            // Tidak ada filter tambahan untuk 'all' - tampilkan semua data
+            break;
     }
 
     // Sort
@@ -59,8 +63,9 @@ $komentarDosen = computed(function () {
     return $query->get();
 });
 
-$groupedKomentar = computed(function () {
-    return $this->komentarDosen->groupBy(function ($item) {
+$groupedPaginatedKomentar = computed(function () {
+    // Group the paginated comments for display
+    return $this->paginatedKomentar->groupBy(function ($item) {
         $date = \Carbon\Carbon::parse($item->tanggal);
         $now = now();
 
@@ -81,13 +86,12 @@ $groupedKomentar = computed(function () {
 });
 
 $paginatedKomentar = computed(function () {
-    $flattened = collect();
-    foreach ($this->groupedKomentar as $group => $items) {
-        $flattened = $flattened->merge($items);
-    }
+    // Get all comments first (already sorted)
+    $allComments = $this->komentarDosen;
 
+    // Apply pagination directly to the sorted collection
     $offset = ($this->page - 1) * $this->perPage;
-    return $flattened->slice($offset, $this->perPage);
+    return $allComments->slice($offset, $this->perPage);
 });
 
 $totalPages = computed(function () {
@@ -230,7 +234,7 @@ $goToPage = function ($page) {
                         <div class="p-8 text-center">
                             <p class="text-gray-600 mb-6">Silakan daftar magang terlebih dahulu untuk mulai menerima
                                 umpan balik dari dosen pembimbing.</p>
-                            <flux:button variant="primary" size="lg">
+                            <flux:button variant="primary">
                                 <flux:icon.plus class="w-5 h-5 mr-2" />
                                 Daftar Magang
                             </flux:button>
@@ -375,7 +379,8 @@ $goToPage = function ($page) {
                                         </div>
                                         <div class="flex-1">
                                             <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                                                <p class="text-gray-700 leading-relaxed">{{ $komentar->komentar }}</p>
+                                                <p class="text-gray-700 leading-relaxed">{{ $komentar->komentar }}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -427,7 +432,8 @@ $goToPage = function ($page) {
                     <div class="text-center py-16">
                         @if ($this->search)
                             <flux:icon.magnifying-glass class="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Tidak ditemukan hasil pencarian</h3>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Tidak ditemukan hasil pencarian
+                            </h3>
                             <p class="text-gray-500 mb-4">Tidak ada komentar yang sesuai dengan kata kunci
                                 "{{ $this->search }}"</p>
                         @else
@@ -443,7 +449,8 @@ $goToPage = function ($page) {
                                     Belum ada komentar
                                 @endif
                             </h3>
-                            <p class="text-gray-500">Coba ubah filter atau tunggu umpan balik dari dosen pembimbing</p>
+                            <p class="text-gray-500">Coba ubah filter atau tunggu umpan balik dari dosen pembimbing
+                            </p>
                         @endif
                     </div>
                 @endif
