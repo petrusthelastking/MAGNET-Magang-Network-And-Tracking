@@ -85,33 +85,6 @@
     </div>
 </section>
 
-<!-- Styles untuk transisi foto dan label -->
-<style>
-    .photo-container {
-        position: relative;
-    }
-    
-    .photo-card {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        opacity: 0;
-        transition: opacity 0.8s ease-in-out;
-    }
-    
-    .photo-card.active {
-        opacity: 1;
-    }
-    
-
-    
-    .job-title, .job-desc {
-        transition: all 0.3s ease;
-    }
-</style>
-
 <!-- Script untuk transisi foto otomatis -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
