@@ -480,19 +480,19 @@ $showApprovalModal = function () {
                             <flux:error name="dosenPembimbingSelected" />
                         </flux:field>
 
-                        <flux:field>
+                        {{-- <flux:field>
                             <flux:label>Lowongan Magang (Opsional)</flux:label>
                             <flux:select wire:model.live="lowonganMagangSelected" placeholder="Pilih Lowongan Magang">
                                 @foreach($lowonganMagangList as $id => $nama)
                                     <flux:select.option value="{{ $id }}">{{ $nama }}</flux:select.option>
                                 @endforeach
                             </flux:select>
-                        </flux:field>
+                        </flux:field> --}}
 
-                        <flux:field>
+                        {{-- <flux:field>
                             <flux:label>Keterangan</flux:label>
                             <flux:textarea wire:model="keterangan" placeholder="Tambahkan keterangan jika diperlukan..." />
-                        </flux:field>
+                        </flux:field> --}}
                     </div>
 
                     <div class="flex flex-col gap-3 mt-6">
