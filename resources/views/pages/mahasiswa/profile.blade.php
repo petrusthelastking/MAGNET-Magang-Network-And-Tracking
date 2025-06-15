@@ -5,7 +5,6 @@ use function Livewire\Volt\{state, mount};
 use Illuminate\Support\Facades\Hash;
 use App\Models\{Mahasiswa, BidangIndustri, LokasiMagang, Pekerjaan};
 use App\Helpers\DecisionMaking\ROC;
-use App\Enums\DecisionMakingEnum;
 
 state([
     'mahasiswa',
@@ -274,31 +273,31 @@ $saveRanking = function () {
                 case 'pekerjaan':
                     $this->mahasiswa->kriteriaPekerjaan()->update([
                         'rank' => $rank,
-                        'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
+                        'bobot' => ROC::getWeight($rank, config('recommendation-system.roc.total_criteria')),
                     ]);
                     break;
                 case 'bidang_industri':
                     $this->mahasiswa->kriteriaBidangIndustri()->update([
                         'rank' => $rank,
-                        'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
+                        'bobot' => ROC::getWeight($rank, config('recommendation-system.roc.total_criteria')),
                     ]);
                     break;
                 case 'lokasi_magang':
                     $this->mahasiswa->kriteriaLokasiMagang()->update([
                         'rank' => $rank,
-                        'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
+                        'bobot' => ROC::getWeight($rank, config('recommendation-system.roc.total_criteria')),
                     ]);
                     break;
                 case 'jenis_magang':
                     $this->mahasiswa->kriteriaJenisMagang()->update([
                         'rank' => $rank,
-                        'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
+                        'bobot' => ROC::getWeight($rank, config('recommendation-system.roc.total_criteria')),
                     ]);
                     break;
                 case 'open_remote':
                     $this->mahasiswa->kriteriaOpenRemote()->update([
                         'rank' => $rank,
-                        'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
+                        'bobot' => ROC::getWeight($rank, config('recommendation-system.roc.total_criteria')),
                     ]);
                     break;
             }
