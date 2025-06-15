@@ -4,10 +4,8 @@ namespace App\Providers;
 
 use App\Events\LowonganMagangSaved;
 use App\Events\UpdatedMahasiswaPreference;
-use App\Listeners\GenerateNumericValues;
 use App\Listeners\RunEncodingData;
 use App\Listeners\RunMultiMOORA;
-use App\Listeners\TestListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -29,7 +27,7 @@ class EventServiceProvider extends ServiceProvider
             RunMultiMOORA::class
         ],
         LowonganMagangSaved::class => [
-            
+
         ]
     ];
 
