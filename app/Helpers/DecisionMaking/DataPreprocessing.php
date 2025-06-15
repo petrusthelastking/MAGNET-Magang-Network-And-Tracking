@@ -3,58 +3,50 @@
 namespace App\Helpers\DecisionMaking;
 
 use App\Models\EncodedAlternatives;
+use App\Models\LokasiMagang;
+use App\Models\LowonganMagang;
 use App\Models\Mahasiswa;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class DataPreprocessing
 {
-    private array $lokasi_magang;
-
-    private array $alternatives;
-
-    public function __construct(array $alternatives, array $lokasi_magang)
-    {
-        $this->alternatives = $alternatives;
-        $this->lokasi_magang = $lokasi_magang;
-
-        $this->dataCategorization();
-    }
-
     /**
      * Compute data categorization from raw alternatives data
      * @return void
      */
-    public function dataCategorization(): array
+    public static function dataCategorization(LowonganMagang $lowonganMagang): void
     {
-        $locationMap = [];
-        foreach ($this->lokasi_magang as $category => $locations) {
-            foreach ($locations as $location) {
-                $locationMap[$location] = $category;
-            }
-        }
+        $alternative = [
+            'id' => $lowonganMagang->id,
+            'pekerjaan' => $lowonganMagang->pekerjaan->nama,
+            'open_remote' => $lowonganMagang->open_remote,
+            'jenis_magang' => $lowonganMagang->jenis_magang,
+            'bidang_industri' => $lowonganMagang->perusahaan->bidangIndustri->nama,
+            'lokasi_magang' => $lowonganMagang->lokasi_magang->lokasi
+        ];
 
-        foreach ($this->alternatives as &$alt) {
-            $lokasi = $alt['lokasi_magang'];
+        $lokasi_magang_list = LokasiMagang::pluck('kategori_lokasi', 'lokasi')
+            ->toArray();
 
-            if (isset($locationMap[$lokasi])) {
-                $alt['lokasi_magang'] = $locationMap[$lokasi];
-            }
-        }
-
-        $jsonDataCategorized = json_encode($this->alternatives, JSON_PRETTY_PRINT);
+        $lokasi = $alternative['lokasi_magang'];
+        $alternative['lokasi_magang'] = $lokasi_magang_list[$lokasi];
 
         $file_path = 'lowongan_magang/alternatives_categorized.json';
-        Storage::put($file_path, $jsonDataCategorized);
+        $contentFile = Storage::get($file_path);
+        $fileDecoded = json_decode($contentFile, true);
 
-        return $this->alternatives;
+        $fileDecoded[] = $alternative;
+        Storage::put($file_path, json_encode($fileDecoded, JSON_PRETTY_PRINT));
     }
+
+
 
     /**
      * Compute data encoding based from to all alternatives data based on user preference
      * @return array<int, array<string, int>>
      */
-    public static function dataEncoding(Mahasiswa $mahasiswa): array
+    public static function dataEncoding(Mahasiswa $mahasiswa): void
     {
         $preference = [
             'pekerjaan' => $mahasiswa->kriteriaPekerjaan->pekerjaan->nama,
@@ -69,8 +61,8 @@ class DataPreprocessing
 
         $now = now();
 
-        $result = array_map(function (array $item) use ($preference, $mahasiswa, $now): array {
-            return [
+        $result = array_map(
+            fn(array $item): array => [
                 'mahasiswa_id' => $mahasiswa->id,
                 'lowongan_magang_id' => $item['id'],
                 'pekerjaan' => $item['pekerjaan'] == $preference['pekerjaan'] ? 2 : 1,
@@ -79,14 +71,13 @@ class DataPreprocessing
                 'bidang_industri' => $item['bidang_industri'] == $preference['bidang_industri'] ? 2 : 1,
                 'lokasi_magang' => $item['lokasi_magang'] == $preference['lokasi_magang'] ? 2 : 1,
                 'created_at' => $now,
-                'updated_at' => $now
-            ];
-        }, $dataCategorizedDecoded);
+                'updated_at' => $now,
+            ],
+            $dataCategorizedDecoded
+        );
 
         DB::transaction(function () use ($result) {
             EncodedAlternatives::insert($result);
         });
-
-        return $result;
     }
 }

@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use App\Events\LowonganMagangSaved;
-use App\Events\UpdatedMahasiswaPreference;
+use App\Events\LowonganMagangCreatedOrUpdated;
+use App\Events\MahasiswaPreferenceUpdated;
+use App\Listeners\RunDataCategorization;
 use App\Listeners\RunEncodingData;
 use App\Listeners\RunMultiMOORA;
 use Illuminate\Auth\Events\Registered;
@@ -22,12 +23,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        UpdatedMahasiswaPreference::class => [
+        MahasiswaPreferenceUpdated::class => [
             RunEncodingData::class,
             RunMultiMOORA::class
         ],
-        LowonganMagangSaved::class => [
-
+        LowonganMagangCreatedOrUpdated::class => [
+            RunDataCategorization::class
         ]
     ];
 

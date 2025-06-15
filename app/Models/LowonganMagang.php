@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use App\Helpers\DecisionMaking\DataPreprocessing;
-use App\Repositories\LokasiMagangRepository;
-use App\Repositories\LowonganMagangRepository;
+use App\Events\LowonganMagangCreatedOrUpdated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,20 +26,16 @@ class LowonganMagang extends Model
 
     protected static function booted(): void
     {
-        $categorizeDataToPrepareAlternatives = function () {
-            $dataCategorizeLocation = LokasiMagangRepository::getAllCategorizeLocation();
-            $alternativesData = LowonganMagangRepository::getAllAlternatives();
-
-            $dataProcessing = new DataPreprocessing($alternativesData, $dataCategorizeLocation);
-            $dataProcessing->dataCategorization();
+        $categorizeDataToPrepareAlternatives = function (LowonganMagang $lowonganMagang) {
+            event(new LowonganMagangCreatedOrUpdated($lowonganMagang));
         };
 
-        static::created(function () use ($categorizeDataToPrepareAlternatives) {
-            $categorizeDataToPrepareAlternatives();
+        static::created(function (LowonganMagang $lowonganMagang) use ($categorizeDataToPrepareAlternatives) {
+            $categorizeDataToPrepareAlternatives($lowonganMagang);
         });
 
-        static::updated(function ()use($categorizeDataToPrepareAlternatives) {
-            $categorizeDataToPrepareAlternatives();
+        static::updated(function (LowonganMagang $lowonganMagang) use($categorizeDataToPrepareAlternatives) {
+            $categorizeDataToPrepareAlternatives($lowonganMagang);
         });
     }
 
