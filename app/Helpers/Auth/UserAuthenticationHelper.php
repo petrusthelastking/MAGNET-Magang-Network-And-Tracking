@@ -10,7 +10,13 @@ class UserAuthenticationHelper
     {
         foreach (['admin', 'dosen', 'mahasiswa'] as $role) {
             if (Auth::guard($role)->check()) {
-                return Auth::guard($role)->user()->getRoleName();
+
+                /**
+                 * @var \App\Models\UserBase $user
+                 */
+                $user = Auth::guard($role)->user();
+                
+                return $user->getRoleName();
             }
         }
 
