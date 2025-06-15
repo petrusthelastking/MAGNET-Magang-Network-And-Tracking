@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\UpdatedMahasiswaPreference;
+use App\Events\MahasiswaPreferenceUpdated;
 use App\Helpers\DecisionMaking\MultiMOORA;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -20,7 +20,7 @@ class RunMultiMOORA
     /**
      * Handle the event.
      */
-    public function handle(UpdatedMahasiswaPreference $event): void
+    public function handle(MahasiswaPreferenceUpdated $event): void
     {
         (new MultiMOORA($event->mahasiswa))->computeMultiMOORA();
     }

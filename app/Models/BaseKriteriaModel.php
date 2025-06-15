@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Events\UpdatedMahasiswaPreference;
+use App\Events\MahasiswaPreferenceUpdated;
 use App\Models\Mahasiswa;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +15,7 @@ abstract class BaseKriteriaModel extends Model
     {
         static::updated(function (BaseKriteriaModel $model)  {
             $mahasiswa = Mahasiswa::find($model->mahasiswa_id);
-            event(new UpdatedMahasiswaPreference($mahasiswa));
+            event(new MahasiswaPreferenceUpdated($mahasiswa));
         });
     }
 
