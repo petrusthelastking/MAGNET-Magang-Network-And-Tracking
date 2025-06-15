@@ -57,7 +57,9 @@ $goToNextPage = fn() => $this->nextPage();
             </flux:button>
         </div>
         <div class="flex gap-3">
-            <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus">Tambah Magang</flux:button>
+            <flux:modal.trigger name="add-new-data">
+                <flux:button variant="primary" class="bg-magnet-sky-teal" icon="plus">Tambah Magang</flux:button>
+            </flux:modal.trigger>
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="download">Import</flux:button>
             <flux:button variant="primary" class="bg-magnet-sky-teal" icon="upload">Export</flux:button>
         </div>
@@ -133,4 +135,7 @@ $goToNextPage = fn() => $this->nextPage();
             </div>
         </div>
     </div>
+
+    <livewire:components.admin.lowongan-magang.tambah-magang />
+    <livewire:components.general.modal.response-form />
 </div>
