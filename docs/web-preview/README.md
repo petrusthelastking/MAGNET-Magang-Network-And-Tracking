@@ -30,11 +30,14 @@
 # Admin 🔐
 
 ## Dashboard
+![Dashboard admin](img/admin/dashboard.png)
 
 # Student 🧑🏻‍🎓
 
 ## Dashboard 
+![Dashboard student](img/student/dashboard.png)
 
 # Lecturer 🧑🏻‍🏫
 
 ## Dashboard
+![Dashboard lecturer](img/lecturer/dashboard.png)
