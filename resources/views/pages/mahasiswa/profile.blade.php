@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\{Mahasiswa, BidangIndustri, LokasiMagang, Pekerjaan};
 use App\Helpers\DecisionMaking\ROC;
 use App\Enums\DecisionMakingEnum;
+use App\Events\UpdatedMahasiswaPreference;
 
 state([
     'mahasiswa',
@@ -229,6 +230,9 @@ $saveNewPreference = function () {
 
         // Update timestamp mahasiswa
         $this->mahasiswa->touch();
+
+        // Dispatch event after successful update
+        event(new UpdatedMahasiswaPreference($this->mahasiswa));
 
         $this->showModal('success', 'Preferensi Magang Berhasil Diperbarui', 'Preferensi magang Anda telah berhasil diperbarui dan sistem rekomendasi telah dijalankan ulang.');
         $this->isUpdatePreference = false;
