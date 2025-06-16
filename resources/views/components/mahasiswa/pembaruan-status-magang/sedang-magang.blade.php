@@ -17,8 +17,11 @@ state([
     'lokasi_magang' => '',
     'surat_izin_magang' => null,
     'partner_companies' => [],
-    'available_lowongan' => [],
+    'available_lowongan' => collect(),
     'mahasiswa' => null,
+    // DEBUG STATES
+    'debug_info' => [],
+    'show_debug' => false,
 ]);
 
 rules([
@@ -47,12 +50,33 @@ mount(function () {
             session()->flash('info', 'Anda sudah memiliki kontrak magang aktif.');
         }
 
-        // Load partner companies with active job openings
+        // Load partner companies with active job openings - WITH DEBUG
         $this->partner_companies = Perusahaan::where('kategori', 'mitra')
             ->whereHas('lowongan_magang', function ($query) {
                 $query->where('status', 'buka');
             })
             ->get();
+
+        // DEBUG: Log partner companies data
+        $this->debug_info['total_mitra_companies'] = Perusahaan::where('kategori', 'mitra')->count();
+        $this->debug_info['mitra_companies_with_active_jobs'] = $this->partner_companies->count();
+
+        // DEBUG: Get detailed info about each company and their jobs
+        $companyDebug = [];
+        foreach ($this->partner_companies as $company) {
+            $activeJobs = LowonganMagang::where('perusahaan_id', $company->id)->where('status', 'buka')->count();
+            $totalJobs = LowonganMagang::where('perusahaan_id', $company->id)->count();
+
+            $companyDebug[] = [
+                'id' => $company->id,
+                'name' => $company->nama,
+                'active_jobs' => $activeJobs,
+                'total_jobs' => $totalJobs,
+            ];
+        }
+        $this->debug_info['company_details'] = $companyDebug;
+
+        Log::info('Mount function debug info', $this->debug_info);
     } catch (\Exception $e) {
         Log::error('Error in mount function', [
             'mahasiswa_id' => $this->mahasiswa->id ?? null,
@@ -71,28 +95,83 @@ updated([
 
 $loadLowongan = function () {
     try {
+        // Clear previous debug info
+        $this->debug_info['lowongan_debug'] = [];
+
         if (!$this->selected_company_id) {
-            $this->available_lowongan = [];
+            $this->available_lowongan = collect();
             $this->selected_lowongan_id = '';
             return;
         }
 
+        // DEBUG: Get company info
+        $selectedCompany = Perusahaan::find($this->selected_company_id);
+        $this->debug_info['lowongan_debug']['selected_company'] = [
+            'id' => $selectedCompany->id ?? 'NOT_FOUND',
+            'name' => $selectedCompany->nama ?? 'NOT_FOUND',
+            'kategori' => $selectedCompany->kategori ?? 'NOT_FOUND',
+        ];
+
+        // DEBUG: Check all lowongan for this company (regardless of status)
+        $allLowonganForCompany = LowonganMagang::where('perusahaan_id', $this->selected_company_id)->get();
+        $this->debug_info['lowongan_debug']['all_lowongan_count'] = $allLowonganForCompany->count();
+
+        $lowonganDetails = [];
+        foreach ($allLowonganForCompany as $lowongan) {
+            $lowonganDetails[] = [
+                'id' => $lowongan->id,
+                'status' => $lowongan->status,
+                'kuota' => $lowongan->kuota,
+                'pekerjaan_id' => $lowongan->pekerjaan_id,
+                'pekerjaan_name' => $lowongan->pekerjaan->nama ?? 'NO_PEKERJAAN',
+                'lokasi_magang_id' => $lowongan->lokasi_magang_id,
+                'lokasi_name' => $lowongan->lokasi_magang->lokasi ?? 'NO_LOKASI',
+            ];
+        }
+        $this->debug_info['lowongan_debug']['all_lowongan_details'] = $lowonganDetails;
+
         // Load active job openings for selected company
         $this->available_lowongan = LowonganMagang::where('perusahaan_id', $this->selected_company_id)
             ->where('status', 'buka')
-            ->with(['pekerjaan', 'lokasiMagang'])
+            ->with(['pekerjaan', 'lokasi_magang'])
             ->get();
+
+        // DEBUG: Active lowongan info
+        $this->debug_info['lowongan_debug']['active_lowongan_count'] = $this->available_lowongan->count();
+        $this->debug_info['lowongan_debug']['active_lowongan_ids'] = $this->available_lowongan->pluck('id')->toArray();
+
+        // DEBUG: Check if relationships are loaded properly
+        $relationshipDebug = [];
+        foreach ($this->available_lowongan as $lowongan) {
+            $relationshipDebug[] = [
+                'lowongan_id' => $lowongan->id,
+                'has_pekerjaan' => $lowongan->pekerjaan ? true : false,
+                'pekerjaan_name' => $lowongan->pekerjaan->nama ?? 'NULL',
+                'has_lokasi' => $lowongan->lokasi_magang ? true : false,
+                'lokasi_name' => $lowongan->lokasi_magang->lokasi ?? 'NULL',
+            ];
+        }
+        $this->debug_info['lowongan_debug']['relationship_check'] = $relationshipDebug;
 
         // Reset selected lowongan when company changes
         $this->selected_lowongan_id = '';
+
+        // Log debug info
+        Log::info('LoadLowongan debug info', $this->debug_info['lowongan_debug']);
     } catch (\Exception $e) {
         Log::error('Error loading lowongan', [
             'company_id' => $this->selected_company_id,
             'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
         ]);
-        $this->available_lowongan = [];
+        $this->available_lowongan = collect();
         $this->selected_lowongan_id = '';
+        $this->debug_info['lowongan_debug']['error'] = $e->getMessage();
     }
+};
+
+$toggleDebug = function () {
+    $this->show_debug = !$this->show_debug;
 };
 
 $save = function () {
@@ -115,7 +194,7 @@ $save = function () {
 
         if ($this->company_type === 'partner') {
             // Validate selected company and lowongan
-            $selectedLowongan = LowonganMagang::where('id', $this->selected_lowongan_id)->where('perusahaan_id', $this->selected_company_id)->first();
+            $selectedLowongan = LowonganMagang::where('id', $this->selected_lowongan_id)->where('perusahaan_id', $this->selected_company_id)->where('status', 'buka')->first();
 
             if (!$selectedLowongan) {
                 session()->flash('error', 'Lowongan magang tidak ditemukan atau tidak valid.');
@@ -144,14 +223,13 @@ $save = function () {
 
             // Create supporting records
             $pekerjaan = \App\Models\Pekerjaan::firstOrCreate(['nama' => 'Magang Umum']);
-            $lokasiMagang = \App\Models\LokasiMagang::firstOrCreate([
+            $lokasi_magang = \App\Models\lokasi_magang::firstOrCreate([
                 'kategori_lokasi' => 'Onsite',
                 'lokasi' => $this->lokasi_magang,
             ]);
 
             // Create new lowongan
             $magang = LowonganMagang::create([
-                'nama' => "Magang di {$this->company_name}",
                 'kuota' => 1,
                 'pekerjaan_id' => $pekerjaan->id,
                 'deskripsi' => "Program magang di {$this->company_name}",
@@ -159,7 +237,7 @@ $save = function () {
                 'jenis_magang' => 'tidak berbayar',
                 'open_remote' => 'tidak',
                 'perusahaan_id' => $newCompany->id,
-                'lokasi_magang_id' => $lokasiMagang->id,
+                'lokasi_magang_id' => $lokasi_magang->id,
                 'status' => 'buka',
             ]);
 
@@ -227,7 +305,9 @@ $getInternshipInfo = function () {
 };
 
 $resetForm = function () {
-    $this->reset(['company_type', 'selected_company_id', 'selected_lowongan_id', 'company_name', 'company_address', 'bidang_industri', 'lokasi_magang', 'surat_izin_magang', 'available_lowongan']);
+    $this->reset(['company_type', 'selected_company_id', 'selected_lowongan_id', 'company_name', 'company_address', 'bidang_industri', 'lokasi_magang', 'surat_izin_magang']);
+    $this->available_lowongan = collect();
+    $this->debug_info = [];
 };
 
 ?>
@@ -235,6 +315,11 @@ $resetForm = function () {
 <div class="space-y-4 border-t pt-4 mt-4">
     <div class="flex justify-between items-center">
         <h3 class="text-md font-semibold text-gray-700">Informasi Magang</h3>
+        <!-- DEBUG TOGGLE BUTTON -->
+        <button wire:click="toggleDebug"
+            class="px-3 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded-md transition-colors">
+            {{ $show_debug ? 'Hide' : 'Show' }} Debug
+        </button>
     </div>
 
     @if (!$mahasiswa)
@@ -259,6 +344,54 @@ $resetForm = function () {
                 {{ session('info') }}
             </div>
         @endif
+
+        <!-- DEBUG INFORMATION -->
+        {{-- @if ($show_debug)
+            <div class="p-4 mb-4 text-xs text-gray-800 rounded-lg bg-gray-100 border">
+                <strong>🐛 DEBUG INFORMATION:</strong><br>
+
+                <div class="mt-2">
+                    <strong>Mount Debug:</strong><br>
+                    - Total Mitra Companies: {{ $debug_info['total_mitra_companies'] ?? 'N/A' }}<br>
+                    - Mitra with Active Jobs: {{ $debug_info['mitra_companies_with_active_jobs'] ?? 'N/A' }}<br>
+
+                    @if (isset($debug_info['company_details']))
+                        <strong>Company Details:</strong><br>
+                        @foreach ($debug_info['company_details'] as $detail)
+                            &nbsp;&nbsp;- {{ $detail['name'] }} (ID: {{ $detail['id'] }}):
+                            {{ $detail['active_jobs'] }}/{{ $detail['total_jobs'] }} active jobs<br>
+                        @endforeach
+                    @endif
+                </div>
+
+                @if (isset($debug_info['lowongan_debug']))
+                    <div class="mt-2 border-t pt-2">
+                        <strong>Lowongan Debug:</strong><br>
+                        - Selected Company: {{ $debug_info['lowongan_debug']['selected_company']['name'] ?? 'N/A' }}
+                        (ID: {{ $debug_info['lowongan_debug']['selected_company']['id'] ?? 'N/A' }})<br>
+                        - All Lowongan Count: {{ $debug_info['lowongan_debug']['all_lowongan_count'] ?? 'N/A' }}<br>
+                        - Active Lowongan Count:
+                        {{ $debug_info['lowongan_debug']['active_lowongan_count'] ?? 'N/A' }}<br>
+                        - Active IDs:
+                        {{ implode(', ', $debug_info['lowongan_debug']['active_lowongan_ids'] ?? []) }}<br>
+
+                        @if (isset($debug_info['lowongan_debug']['all_lowongan_details']))
+                            <strong>All Lowongan Details:</strong><br>
+                            @foreach ($debug_info['lowongan_debug']['all_lowongan_details'] as $detail)
+                                &nbsp;&nbsp;- ID {{ $detail['id'] }}: Status={{ $detail['status'] }},
+                                Pekerjaan={{ $detail['pekerjaan_name'] }},
+                                Lokasi={{ $detail['lokasi_name'] }}<br>
+                            @endforeach
+                        @endif
+
+                        @if (isset($debug_info['lowongan_debug']['error']))
+                            <strong class="text-red-600">Error:</strong>
+                            {{ $debug_info['lowongan_debug']['error'] }}<br>
+                        @endif
+                    </div>
+                @endif
+            </div>
+        @endif --}}
 
         <!-- Student info with internship location -->
         <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50">
@@ -292,7 +425,7 @@ $resetForm = function () {
                             <option value="">Pilih perusahaan</option>
                             @foreach ($partner_companies as $company)
                                 <option value="{{ $company->id }}">
-                                    {{ $company->nama }} - {{ $company->lokasi }}
+                                    {{ $company->nama }}
                                     @if ($company->bidangIndustri)
                                         ({{ $company->bidangIndustri->nama }})
                                     @endif
@@ -304,7 +437,7 @@ $resetForm = function () {
                 </div>
 
                 <!-- Job Selection for Partner Company -->
-                @if ($selected_company_id && count($available_lowongan) > 0)
+                @if ($selected_company_id && $available_lowongan->count() > 0)
                     <div>
                         <x-flux::field>
                             <x-flux::label>Pilih Lowongan Magang</x-flux::label>
@@ -312,12 +445,13 @@ $resetForm = function () {
                                 <option value="">Pilih lowongan</option>
                                 @foreach ($available_lowongan as $lowongan)
                                     <option value="{{ $lowongan->id }}">
-                                        {{ $lowongan->nama }}
                                         @if ($lowongan->pekerjaan)
-                                            - {{ $lowongan->pekerjaan->nama }}
+                                            {{ $lowongan->pekerjaan->nama }}
+                                        @else
+                                            Lowongan Magang
                                         @endif
-                                        @if ($lowongan->lokasiMagang)
-                                            - {{ $lowongan->lokasiMagang->lokasi }}
+                                        @if ($lowongan->lokasi_magang)
+                                            - {{ $lowongan->lokasi_magang->lokasi }}
                                         @endif
                                     </option>
                                 @endforeach
@@ -334,30 +468,55 @@ $resetForm = function () {
                         @if ($selectedJob)
                             <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50">
                                 <strong>Detail Lowongan:</strong><br>
-                                <strong>Nama:</strong> {{ $selectedJob->nama }}<br>
-                                <strong>Kuota:</strong> {{ $selectedJob->kuota }} orang<br>
+                                <strong>ID Lowongan:</strong> {{ $selectedJob->id }}<br>
                                 @if ($selectedJob->pekerjaan)
                                     <strong>Jenis Pekerjaan:</strong> {{ $selectedJob->pekerjaan->nama }}<br>
+                                @else
+                                    <strong class="text-red-600">⚠️ Pekerjaan:</strong> <span class="text-red-600">Tidak
+                                        ditemukan (ID: {{ $selectedJob->pekerjaan_id }})</span><br>
                                 @endif
+                                <strong>Kuota:</strong> {{ $selectedJob->kuota }} orang<br>
                                 <strong>Jenis Magang:</strong>
                                 {{ ucfirst(str_replace('_', ' ', $selectedJob->jenis_magang)) }}<br>
                                 <strong>Remote:</strong> {{ $selectedJob->open_remote == 'ya' ? 'Ya' : 'Tidak' }}<br>
+                                <strong>Status:</strong> <span
+                                    class="text-green-600 font-semibold">{{ ucfirst($selectedJob->status) }}</span><br>
                                 <strong>Deskripsi:</strong> {{ Str::limit($selectedJob->deskripsi, 200) }}<br>
                                 @if ($selectedJob->persyaratan)
                                     <strong>Persyaratan:</strong> {{ Str::limit($selectedJob->persyaratan, 200) }}
                                 @endif
+                                @if ($selectedJob->lokasi_magang)
+                                    <strong>Lokasi:</strong> {{ $selectedJob->lokasi_magang->kategori_lokasi }} -
+                                    {{ $selectedJob->lokasi_magang->lokasi }}<br>
+                                @else
+                                    <strong class="text-red-600">⚠️ Lokasi:</strong> <span class="text-red-600">Tidak
+                                        ditemukan (ID: {{ $selectedJob->lokasi_magang_id }})</span><br>
+                                @endif
+                            </div>
+                        @else
+                            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50">
+                                <strong>⚠️ Error:</strong> Selected job dengan ID {{ $selected_lowongan_id }} tidak
+                                ditemukan dalam available_lowongan collection.<br>
+                                Available IDs: {{ $available_lowongan->pluck('id')->join(', ') }}
                             </div>
                         @endif
                     @endif
                 @elseif ($selected_company_id)
                     <div class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50">
-                        <strong>Tidak ada lowongan aktif untuk perusahaan ini.</strong><br>
+                        <strong>⚠️ Tidak ada lowongan aktif (status buka) untuk perusahaan ini.</strong><br>
+                        @if ($show_debug)
+                            <small>Company ID: {{ $selected_company_id }} | Available lowongan:
+                                {{ $available_lowongan->count() }}</small><br>
+                        @endif
                         Silakan pilih perusahaan lain atau hubungi administrator.
                     </div>
                 @endif
             @else
                 <div class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50">
-                    <strong>Tidak ada perusahaan mitra dengan lowongan aktif saat ini.</strong><br>
+                    <strong>⚠️ Tidak ada perusahaan mitra dengan lowongan aktif (status buka) saat ini.</strong><br>
+                    @if ($show_debug)
+                        <small>Partner companies loaded: {{ count($partner_companies) }}</small><br>
+                    @endif
                     Silakan pilih "Perusahaan Non-Mitra" untuk mendaftar ke perusahaan lain.
                 </div>
             @endif
