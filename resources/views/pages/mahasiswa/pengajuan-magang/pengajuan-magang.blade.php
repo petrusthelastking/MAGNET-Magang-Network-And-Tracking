@@ -20,8 +20,6 @@ state([
 <div class="text-black flex flex-col gap-6">
     <x-slot:user>mahasiswa</x-slot:user>
 
-    <h2 class="text-base leading-6 font-bold">Pengajuan Magang</h2>
-
     @if ($status == 'belum magang')
         @if (is_null($pengajuanMagang))
             {{-- Belum pernah mengajukan --}}
