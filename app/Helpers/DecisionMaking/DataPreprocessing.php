@@ -32,12 +32,10 @@ class DataPreprocessing
         $lokasi = $alternative['lokasi_magang'];
         $alternative['lokasi_magang'] = $lokasi_magang_list[$lokasi];
 
-        $file_path = 'lowongan_magang/alternatives_categorized.json';
-        $contentFile = Storage::get($file_path);
-        $fileDecoded = json_decode($contentFile, true);
+        $fileContent = Storage::json(config('recommendation-system.preprocessing.alternatives_categorized_path'));
 
-        $fileDecoded[] = $alternative;
-        Storage::put($file_path, json_encode($fileDecoded, JSON_PRETTY_PRINT));
+        $fileContent[] = $alternative;
+        Storage::put(config('recommendation-system.preprocessing.alternatives_categorized_path'), json_encode($fileContent, JSON_PRETTY_PRINT));
     }
 
 
@@ -56,8 +54,7 @@ class DataPreprocessing
             'open_remote' => $mahasiswa->kriteriaOpenRemote->open_remote
         ];
 
-        $dataCategorized = Storage::read('lowongan_magang/alternatives_categorized.json');
-        $dataCategorizedDecoded = json_decode($dataCategorized, true);
+        $dataCategorized = Storage::json(config('recommendation-system.preprocessing.alternatives_categorized_path'));
 
         $now = now();
 
@@ -73,7 +70,7 @@ class DataPreprocessing
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
-            $dataCategorizedDecoded
+            $dataCategorized
         );
 
         DB::transaction(function () use ($result) {
