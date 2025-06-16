@@ -5,7 +5,7 @@ use function Livewire\Volt\{layout, state, on};
 use Illuminate\Support\Facades\DB;
 use App\Models\{BidangIndustri, Pekerjaan, LokasiMagang, KriteriaPekerjaan, KriteriaBidangIndustri, KriteriaJenisMagang, KriteriaLokasiMagang, KriteriaOpenRemote, Mahasiswa};
 use App\Helpers\DecisionMaking\ROC;
-use App\Events\UpdatedMahasiswaPreference;
+use App\Events\MahasiswaPreferenceUpdated;
 
 layout('components.layouts.guest.with-navbar');
 
@@ -98,7 +98,7 @@ $storePreferensiMahasiswa = function () {
 
             $mahasiswa = Mahasiswa::find(auth('mahasiswa')->user()->id);
 
-            event(new UpdatedMahasiswaPreference($mahasiswa));
+            event(new MahasiswaPreferenceUpdated($mahasiswa));
         });
     } catch (Exception $e) {
         $status = 'failed';

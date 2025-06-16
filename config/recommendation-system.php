@@ -17,6 +17,13 @@
 return [
 
     /**
+     * Data preprocessing configuration
+     */
+    'preprocessing' => [
+        'alternatives_categorized_path' => 'lowongan_magang/alternatives_categorized.json'
+    ],
+
+    /**
      * ROC (Rank Order Centroid)
      */
     'roc' => [

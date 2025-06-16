@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Events\UpdatedMahasiswaPreference;
+use App\Events\MahasiswaPreferenceUpdated;
 use App\Helpers\DecisionMaking\ROC;
 use App\Models\BidangIndustri;
 use App\Models\KriteriaBidangIndustri;
@@ -98,7 +98,7 @@ class KriteriaPreferensiSeeder extends Seeder
             ]);
 
             $mahasiswa = Mahasiswa::find($item['mahasiswa_id']);
-            event(new UpdatedMahasiswaPreference($mahasiswa));
+            event(new MahasiswaPreferenceUpdated($mahasiswa));
         }
     }
 }

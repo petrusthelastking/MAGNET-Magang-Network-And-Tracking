@@ -2,12 +2,12 @@
 
 namespace App\Listeners;
 
-use App\Events\MahasiswaPreferenceUpdated;
-use App\Helpers\DecisionMaking\MultiMOORA;
+use App\Events\LowonganMagangCreatedOrUpdated;
+use App\Helpers\DecisionMaking\DataPreprocessing;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class RunMultiMOORA
+class RunDataCategorization
 {
     /**
      * Create the event listener.
@@ -20,8 +20,8 @@ class RunMultiMOORA
     /**
      * Handle the event.
      */
-    public function handle(MahasiswaPreferenceUpdated $event): void
+    public function handle(LowonganMagangCreatedOrUpdated $event): void
     {
-        (new MultiMOORA($event->mahasiswa))->computeMultiMOORA();
+        DataPreprocessing::dataCategorization($event->lowonganMagang);
     }
 }

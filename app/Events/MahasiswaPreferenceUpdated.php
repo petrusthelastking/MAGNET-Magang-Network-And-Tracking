@@ -11,8 +11,8 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UpdatedMahasiswaPreference
-{
+class MahasiswaPreferenceUpdated
+{   
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public Mahasiswa $mahasiswa;
