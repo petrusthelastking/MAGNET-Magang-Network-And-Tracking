@@ -5,6 +5,7 @@ use function Livewire\Volt\{state, mount};
 use Illuminate\Support\Facades\Hash;
 use App\Models\{Mahasiswa, BidangIndustri, LokasiMagang, Pekerjaan};
 use App\Helpers\DecisionMaking\ROC;
+use App\Events\UpdatedMahasiswaPreference;
 
 state([
     'mahasiswa',
@@ -35,13 +36,13 @@ state([
 
     // Options for dropdowns
     'program_studi_options' => Mahasiswa::distinct('program_studi')->pluck('program_studi', 'program_studi')->toArray(),
-    'bidang_industri_options' => BidangIndustri::pluck('nama', 'id')->toArray(),
+    'bidang_industri_options' => BidangIndustri::pluck('nama', 'nama')->toArray(),
     'jenis_magang_options' => [
         'berbayar' => 'Magang Berbayar (Paid Internship)',
         'tidak berbayar' => 'Magang Tidak Berbayar (Unpaid Internship)',
     ],
-    'lokasi_magang_options' => LokasiMagang::pluck('kategori_lokasi', 'id')->toArray(),
-    'pekerjaan_options' => Pekerjaan::select('id', 'nama')->get()->toArray(),
+    'lokasi_magang_options' => LokasiMagang::pluck('kategori_lokasi', 'kategori_lokasi')->toArray(),
+    'pekerjaan_options' => Pekerjaan::pluck('nama', 'nama')->toArray(),
     'open_remote_options' => [
         'ya' => 'Ya',
         'tidak' => 'Tidak',
@@ -82,11 +83,11 @@ mount(function () {
     $this->jenis_kelamin = $this->mahasiswa->jenis_kelamin;
     $this->alamat = $this->mahasiswa->alamat;
 
-    // Load preference data
+    // Load preference data dengan nama, bukan ID
     $this->bidang_industri = $this->mahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
     $this->jenis_magang = $this->mahasiswa->kriteriaJenisMagang->jenis_magang;
     $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi;
-    $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan_id;
+    $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan->nama;
     $this->open_remote = $this->mahasiswa->kriteriaOpenRemote->open_remote;
 
     // Load criteria rankings
@@ -201,32 +202,50 @@ $updatePreference = function () {
 
 $saveNewPreference = function () {
     try {
-        $bidangIndustriId = BidangIndustri::where('nama', $this->bidang_industri)->first()?->id;
-        $lokasiMagangId = LokasiMagang::where('kategori_lokasi', $this->lokasi_magang)->first()?->id;
+        // Cari ID berdasarkan nama untuk bidang industri
+        $bidangIndustri = BidangIndustri::where('nama', $this->bidang_industri)->first();
+        if (!$bidangIndustri) {
+            throw new \Exception('Bidang Industri tidak ditemukan');
+        }
 
-        // Update dengan foreign key yang benar
-        $this->mahasiswa->kriteriaBidangIndustri()->update(['bidang_industri_id' => $bidangIndustriId]);
+        // Cari ID berdasarkan kategori_lokasi untuk lokasi magang
+        $lokasiMagang = LokasiMagang::where('kategori_lokasi', $this->lokasi_magang)->first();
+        if (!$lokasiMagang) {
+            throw new \Exception('Lokasi Magang tidak ditemukan');
+        }
+
+        // Cari ID berdasarkan nama untuk pekerjaan
+        $pekerjaan = Pekerjaan::where('nama', $this->pekerjaan)->first();
+        if (!$pekerjaan) {
+            throw new \Exception('Pekerjaan tidak ditemukan');
+        }
+
+        // Update data dengan ID yang sesuai
+        $this->mahasiswa->kriteriaBidangIndustri()->update(['bidang_industri_id' => $bidangIndustri->id]);
         $this->mahasiswa->kriteriaJenisMagang()->update(['jenis_magang' => $this->jenis_magang]);
-        $this->mahasiswa->kriteriaLokasiMagang()->update(['lokasi_magang_id' => $lokasiMagangId]);
-        $this->mahasiswa->kriteriaPekerjaan()->update(['pekerjaan_id' => $this->pekerjaan]);
+        $this->mahasiswa->kriteriaLokasiMagang()->update(['lokasi_magang_id' => $lokasiMagang->id]);
+        $this->mahasiswa->kriteriaPekerjaan()->update(['pekerjaan_id' => $pekerjaan->id]);
         $this->mahasiswa->kriteriaOpenRemote()->update(['open_remote' => $this->open_remote]);
 
         // Update timestamp mahasiswa
         $this->mahasiswa->touch();
 
+        // Dispatch event after successful update
+        event(new UpdatedMahasiswaPreference($this->mahasiswa));
+
         $this->showModal('success', 'Preferensi Magang Berhasil Diperbarui', 'Preferensi magang Anda telah berhasil diperbarui dan sistem rekomendasi telah dijalankan ulang.');
         $this->isUpdatePreference = false;
     } catch (\Exception $e) {
-        $this->showModal('error', 'Gagal Memperbarui Preferensi', 'Terjadi kesalahan saat memperbarui preferensi magang. Silakan coba lagi.');
+        $this->showModal('error', 'Gagal Memperbarui Preferensi', 'Error: ' . $e->getMessage());
     }
 };
 
 $cancelUpdatePreference = function () {
-    // Reset ke nilai asli
+    // Reset ke nilai asli menggunakan nama
     $this->bidang_industri = $this->mahasiswa->kriteriaBidangIndustri->bidangIndustri->nama;
     $this->jenis_magang = $this->mahasiswa->kriteriaJenisMagang->jenis_magang;
     $this->lokasi_magang = $this->mahasiswa->kriteriaLokasiMagang->lokasi_magang->kategori_lokasi;
-    $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan_id;
+    $this->pekerjaan = $this->mahasiswa->kriteriaPekerjaan->pekerjaan->nama;
     $this->open_remote = $this->mahasiswa->kriteriaOpenRemote->open_remote;
 
     $this->isUpdatePreference = false;
@@ -389,6 +408,7 @@ $showModal = function ($type, $title, $message) {
 };
 
 ?>
+
 <div>
     <!-- Enhanced Header with Navigation -->
     <div class="bg-gradient-to-r from-slate-600 via-gray-600 to-slate-700 text-white rounded-2xl">
@@ -529,235 +549,239 @@ $showModal = function ($type, $title, $message) {
 
             <!-- Preferences Section -->
             <section wire:show="activeSection == 'preferences'" x-transition>
-                <div class="card bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
-                    <div class="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-100">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-slate-100 rounded-lg">
-                                <flux:icon.cog-6-tooth class="w-5 h-5 text-slate-600" />
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-800">Preferensi Magang</h2>
-                                <p class="text-gray-600 text-sm">Atur kriteria magang yang Anda inginkan</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-body p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            @if (!$isUpdatePreference)
-                                <div class="space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Preferences Card (Left) -->
+                    <div class="order-1 flex flex-col h-full">
+                        <div
+                            class="card bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden flex flex-col h-full">
+                            <div class="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 bg-slate-100 rounded-lg">
+                                        <flux:icon.cog-6-tooth class="w-5 h-5 text-slate-600" />
+                                    </div>
                                     <div>
-                                        <flux:label>Pekerjaan</flux:label>
-                                        <flux:select placeholder="Perusahaan" wire:model="pekerjaan" disabled>
-                                            @foreach ($pekerjaan_options as $pekerjaan)
-                                                <flux:select.option value="{{ $pekerjaan['id'] }}">
-                                                    {{ $pekerjaan['nama'] }}
+                                        <h2 class="text-xl font-bold text-gray-800">Preferensi Magang</h2>
+                                        <p class="text-gray-600 text-sm">Atur kriteria magang yang Anda inginkan</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-6 flex-1">
+                                <div class="grid grid-cols-1 gap-4">
+                                    @if (!$isUpdatePreference)
+                                        <div class="space-y-3">
+                                            <div>
+                                                <flux:label>Pekerjaan</flux:label>
+                                                <flux:input readonly value="{{ $pekerjaan }}" type="text"
+                                                    class="bg-gray-50" />
+                                            </div>
+                                            <flux:input readonly value="{{ $bidang_industri }}" type="text"
+                                                label="Bidang Industri" class="bg-gray-50" />
+                                            <flux:input readonly value="{{ $lokasi_magang }}" type="text"
+                                                label="Lokasi Magang" class="bg-gray-50" />
+                                            <flux:input readonly
+                                                value="{{ $jenis_magang == 'berbayar' ? 'Magang Berbayar (Paid)' : 'Magang Tidak Berbayar (Unpaid)' }}"
+                                                type="text" label="Jenis Magang" class="bg-gray-50" />
+                                            <flux:input readonly value="{{ ucfirst($open_remote) }}" type="text"
+                                                label="Remote Work" class="bg-gray-50" />
+                                        </div>
+                                    @else
+                                        <flux:select wire:model="pekerjaan" label="Pekerjaan"
+                                            placeholder="Pilih pekerjaan">
+                                            @foreach ($pekerjaan_options as $value => $label)
+                                                <flux:select.option value="{{ $value }}">{{ $label }}
                                                 </flux:select.option>
                                             @endforeach
                                         </flux:select>
+
+                                        <flux:select wire:model="bidang_industri" label="Bidang Industri"
+                                            placeholder="Pilih bidang industri">
+                                            @foreach ($bidang_industri_options as $value => $label)
+                                                <flux:select.option value="{{ $value }}">{{ $label }}
+                                                </flux:select.option>
+                                            @endforeach
+                                        </flux:select>
+
+                                        <flux:select wire:model="lokasi_magang" label="Lokasi Magang"
+                                            placeholder="Pilih lokasi magang">
+                                            @foreach ($lokasi_magang_options as $value => $label)
+                                                <flux:select.option value="{{ $value }}">{{ $label }}
+                                                </flux:select.option>
+                                            @endforeach
+                                        </flux:select>
+
+                                        <flux:select wire:model="jenis_magang" label="Jenis Magang"
+                                            placeholder="Pilih jenis magang">
+                                            @foreach ($jenis_magang_options as $value => $label)
+                                                <flux:select.option value="{{ $value }}">{{ $label }}
+                                                </flux:select.option>
+                                            @endforeach
+                                        </flux:select>
+
+                                        <flux:select wire:model="open_remote" label="Remote Work"
+                                            placeholder="Pilih opsi remote">
+                                            @foreach ($open_remote_options as $value => $label)
+                                                <flux:select.option value="{{ $value }}">{{ $label }}
+                                                </flux:select.option>
+                                            @endforeach
+                                        </flux:select>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="card-actions flex justify-end p-6 bg-gray-50">
+                                @if (!$isUpdatePreference)
+                                    <flux:button wire:click="updatePreference"
+                                        class="bg-slate-600! text-white! hover:bg-slate-700!" icon="pencil" right>
+                                        Edit Preferensi Magang
+                                    </flux:button>
+                                @else
+                                    <div class="flex gap-2">
+                                        <flux:button wire:click="cancelUpdatePreference"
+                                            class="bg-gray-500! text-white! hover:bg-gray-600!" icon="x">
+                                            Batalkan
+                                        </flux:button>
+                                        <flux:button wire:click="saveNewPreference"
+                                            class="bg-green-600! text-white! hover:bg-green-700!" icon="check">
+                                            Perbarui Preferensi
+                                        </flux:button>
                                     </div>
-                                    <flux:input readonly value="{{ $bidang_industri }}" type="text"
-                                        label="Bidang Industri" class="bg-gray-50" />
-                                </div>
-                                <div class="space-y-3">
-                                    <flux:input readonly value="{{ $lokasi_magang }}" type="text"
-                                        label="Lokasi Magang" class="bg-gray-50" />
-                                    <flux:input readonly
-                                        value="{{ $jenis_magang == 'berbayar' ? 'Magang Berbayar (Paid)' : 'Magang Tidak Berbayar (Unpaid)' }}"
-                                        type="text" label="Jenis Magang" class="bg-gray-50" />
-                                </div>
-                                <div class="md:col-span-2">
-                                    <flux:input readonly value="{{ ucfirst($open_remote) }}" type="text"
-                                        label="Remote Work" class="bg-gray-50" />
-                                </div>
-                            @else
-                                <div>
-                                    <flux:label>Pekerjaan</flux:label>
-                                    <flux:select placeholder="Perusahaan" wire:model="pekerjaan">
-                                        @foreach ($pekerjaan_options as $pekerjaan)
-                                            <flux:select.option value="{{ $pekerjaan['id'] }}">
-                                                {{ $pekerjaan['nama'] }}
-                                            </flux:select.option>
-                                        @endforeach
-                                    </flux:select>
-                                </div>
-
-                                <flux:select wire:model="bidang_industri" label="Bidang Industri"
-                                    placeholder="Pilih bidang industri">
-                                    @foreach ($bidang_industri_options as $value => $label)
-                                        <flux:select.option value="{{ $value }}">{{ $label }}
-                                        </flux:select.option>
-                                    @endforeach
-                                </flux:select>
-
-                                <flux:select wire:model="lokasi_magang" label="Lokasi Magang"
-                                    placeholder="Pilih lokasi magang">
-                                    @foreach ($lokasi_magang_options as $value => $label)
-                                        <flux:select.option value="{{ $value }}">{{ $label }}
-                                        </flux:select.option>
-                                    @endforeach
-                                </flux:select>
-
-                                <flux:select wire:model="jenis_magang" label="Jenis Magang"
-                                    placeholder="Pilih jenis magang">
-                                    @foreach ($jenis_magang_options as $value => $label)
-                                        <flux:select.option value="{{ $value }}">{{ $label }}
-                                        </flux:select.option>
-                                    @endforeach
-                                </flux:select>
-
-                                <div class="md:col-span-2">
-                                    <flux:select wire:model="open_remote" label="Remote Work"
-                                        placeholder="Pilih opsi remote">
-                                        @foreach ($open_remote_options as $value => $label)
-                                            <flux:select.option value="{{ $value }}">{{ $label }}
-                                            </flux:select.option>
-                                        @endforeach
-                                    </flux:select>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="card-actions flex justify-end p-6 bg-gray-50">
-                        <div wire:show="!isUpdatePreference">
-                            <flux:button wire:click="updatePreference"
-                                class="bg-slate-600! text-white! hover:bg-slate-700!" icon="pencil">
-                                Edit Preferensi Magang
-                            </flux:button>
-                        </div>
-                        <div wire:show="isUpdatePreference" class="flex gap-2">
-                            <flux:button wire:click="cancelUpdatePreference"
-                                class="bg-gray-500! text-white! hover:bg-gray-600!" icon="x">
-                                Batalkan
-                            </flux:button>
-                            <flux:button wire:click="saveNewPreference"
-                                class="bg-green-600! text-white! hover:bg-green-700!" icon="check">
-                                Perbarui Preferensi
-                            </flux:button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Criteria Ranking Section -->
-                <div class="card bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
-                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-gray-100">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-amber-100 rounded-lg">
-                                <flux:icon.bars-3 class="w-5 h-5 text-amber-600" />
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-800">Prioritas Kriteria</h2>
-                                <p class="text-gray-600 text-sm">Atur urutan prioritas kriteria yang paling penting
-                                    bagi Anda</p>
+                                @endif
                             </div>
                         </div>
                     </div>
+                    <!-- Criteria Ranking Card (Right) -->
+                    <div class="order-2 flex flex-col h-full">
+                        <div
+                            class="card bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden flex flex-col h-full">
+                            <div
+                                class="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 bg-amber-100 rounded-lg">
+                                        <flux:icon.bars-3 class="w-5 h-5 text-amber-600" />
+                                    </div>
+                                    <div>
+                                        <h2 class="text-xl font-bold text-gray-800">Prioritas Kriteria</h2>
+                                        <p class="text-gray-600 text-sm">Atur urutan prioritas kriteria yang paling
+                                            penting
+                                            bagi Anda</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="card-body p-6">
-                        @if (!$isUpdateRanking)
-                            <div class="space-y-3">
-                                @foreach ($criteria_rankings as $index => $criteria)
-                                    <div
-                                        class="flex items-center gap-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200">
-                                        <div
-                                            class="flex items-center justify-center w-8 h-8 bg-slate-600 text-white font-bold rounded-full text-sm">
-                                            {{ $index + 1 }}
-                                        </div>
-                                        <div class="p-2 bg-white rounded-lg">
-                                            <flux:icon name="{{ $criteria['icon'] }}"
-                                                class="w-5 h-5 text-gray-600" />
-                                        </div>
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold text-gray-800">{{ $criteria['label'] }}</h3>
-                                            <p class="text-sm text-gray-600">{{ $criteria['description'] }}</p>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="text-sm font-medium text-gray-800">
-                                                Bobot: {{ number_format($criteria['bobot'] * 100, 1) }}%
+                            <div class="card-body p-6 flex-1">
+                                @if (!$isUpdateRanking)
+                                    <div class="space-y-3">
+                                        @foreach ($criteria_rankings as $index => $criteria)
+                                            <div
+                                                class="flex items-center gap-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200">
+                                                <div
+                                                    class="flex items-center justify-center w-8 h-8 bg-slate-600 text-white font-bold rounded-full text-sm">
+                                                    {{ $index + 1 }}
+                                                </div>
+                                                <div class="p-2 bg-white rounded-lg">
+                                                    <flux:icon name="{{ $criteria['icon'] }}"
+                                                        class="w-5 h-5 text-gray-600" />
+                                                </div>
+                                                <div class="flex-1">
+                                                    <h3 class="font-semibold text-gray-800">{{ $criteria['label'] }}
+                                                    </h3>
+                                                    <p class="text-sm text-gray-600">{{ $criteria['description'] }}
+                                                    </p>
+                                                </div>
+                                                <div class="text-right">
+                                                    <div class="text-sm font-medium text-gray-800">
+                                                        Bobot: {{ number_format($criteria['bobot'] * 100, 1) }}%
+                                                    </div>
+                                                    <div class="text-xs text-gray-500">Prioritas
+                                                        {{ $criteria['rank'] }}</div>
+                                                </div>
                                             </div>
-                                            <div class="text-xs text-gray-500">Prioritas {{ $criteria['rank'] }}</div>
-                                        </div>
+                                        @endforeach
                                     </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <div class="space-y-3">
-                                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <flux:icon.information-circle class="w-5 h-5 text-slate-600" />
-                                        <p class="text-sm text-slate-800">
-                                            <strong>Cara menggunakan:</strong> Gunakan tombol panah untuk mengatur
-                                            urutan
-                                            prioritas. Urutan teratas adalah yang paling penting bagi Anda.
-                                        </p>
+                                @else
+                                    <div class="space-y-3">
+                                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4">
+                                            <div class="flex items-center gap-2">
+                                                <flux:icon.information-circle class="w-5 h-5 text-slate-600" />
+                                                <p class="text-sm text-slate-800">
+                                                    <strong>Cara menggunakan:</strong> Gunakan tombol panah untuk
+                                                    mengatur
+                                                    urutan
+                                                    prioritas. Urutan teratas adalah yang paling penting bagi Anda.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        @foreach ($temp_rankings as $index => $criteria)
+                                            <div
+                                                class="flex items-center gap-4 p-4 bg-white border-2 border-dashed border-gray-300 rounded-lg hover:border-slate-400 transition-colors">
+                                                <div
+                                                    class="flex items-center justify-center w-8 h-8 bg-slate-600 text-white font-bold rounded-full text-sm">
+                                                    {{ $index + 1 }}
+                                                </div>
+                                                <div class="p-2 bg-gray-100 rounded-lg">
+                                                    <flux:icon name="{{ $criteria['icon'] }}"
+                                                        class="w-5 h-5 text-gray-600" />
+                                                </div>
+                                                <div class="flex-1">
+                                                    <h3 class="font-semibold text-gray-800">{{ $criteria['label'] }}
+                                                    </h3>
+                                                    <p class="text-sm text-gray-600">{{ $criteria['description'] }}
+                                                    </p>
+                                                </div>
+                                                <div class="flex flex-col gap-1">
+                                                    <button wire:click="moveUp({{ $index }})"
+                                                        @if ($index === 0) disabled @endif
+                                                        class="p-1 rounded {{ $index === 0 ? 'bg-gray-200 text-gray-400' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }} transition-colors">
+                                                        <flux:icon.chevron-up class="w-4 h-4" />
+                                                    </button>
+                                                    <button wire:click="moveDown({{ $index }})"
+                                                        @if ($index === count($temp_rankings) - 1) disabled @endif
+                                                        class="p-1 rounded {{ $index === count($temp_rankings) - 1 ? 'bg-gray-200 text-gray-400' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }} transition-colors">
+                                                        <flux:icon.chevron-down class="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <div class="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                                    <div class="flex items-start gap-2">
+                                        <flux:icon.light-bulb class="w-5 h-5 text-amber-600 mt-0.5" />
+                                        <div class="text-sm text-amber-800">
+                                            <p class="font-semibold mb-1">Tips Mengatur Prioritas:</p>
+                                            <ul class="list-disc list-inside space-y-1 text-xs">
+                                                <li>Prioritas 1 memiliki bobot tertinggi dalam sistem rekomendasi</li>
+                                                <li>Sistem akan mencari magang yang paling sesuai dengan kriteria
+                                                    prioritas
+                                                    tinggi</li>
+                                                <li>Bobot akan dihitung otomatis berdasarkan urutan prioritas</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-
-                                @foreach ($temp_rankings as $index => $criteria)
-                                    <div
-                                        class="flex items-center gap-4 p-4 bg-white border-2 border-dashed border-gray-300 rounded-lg hover:border-slate-400 transition-colors">
-                                        <div
-                                            class="flex items-center justify-center w-8 h-8 bg-slate-600 text-white font-bold rounded-full text-sm">
-                                            {{ $index + 1 }}
-                                        </div>
-                                        <div class="p-2 bg-gray-100 rounded-lg">
-                                            <flux:icon name="{{ $criteria['icon'] }}"
-                                                class="w-5 h-5 text-gray-600" />
-                                        </div>
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold text-gray-800">{{ $criteria['label'] }}</h3>
-                                            <p class="text-sm text-gray-600">{{ $criteria['description'] }}</p>
-                                        </div>
-                                        <div class="flex flex-col gap-1">
-                                            <button wire:click="moveUp({{ $index }})"
-                                                @if ($index === 0) disabled @endif
-                                                class="p-1 rounded {{ $index === 0 ? 'bg-gray-200 text-gray-400' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }} transition-colors">
-                                                <flux:icon.chevron-up class="w-4 h-4" />
-                                            </button>
-                                            <button wire:click="moveDown({{ $index }})"
-                                                @if ($index === count($temp_rankings) - 1) disabled @endif
-                                                class="p-1 rounded {{ $index === count($temp_rankings) - 1 ? 'bg-gray-200 text-gray-400' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }} transition-colors">
-                                                <flux:icon.chevron-down class="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                @endforeach
                             </div>
-                        @endif
 
-                        <div class="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                            <div class="flex items-start gap-2">
-                                <flux:icon.light-bulb class="w-5 h-5 text-amber-600 mt-0.5" />
-                                <div class="text-sm text-amber-800">
-                                    <p class="font-semibold mb-1">Tips Mengatur Prioritas:</p>
-                                    <ul class="list-disc list-inside space-y-1 text-xs">
-                                        <li>Prioritas 1 memiliki bobot tertinggi dalam sistem rekomendasi</li>
-                                        <li>Sistem akan mencari magang yang paling sesuai dengan kriteria prioritas
-                                            tinggi</li>
-                                        <li>Bobot akan dihitung otomatis berdasarkan urutan prioritas</li>
-                                    </ul>
+                            <div class="card-actions flex justify-end p-6 bg-gray-50">
+                                <div wire:show="!isUpdateRanking">
+                                    <flux:button wire:click="updateRanking"
+                                        class="bg-amber-600! text-white! hover:bg-amber-700!" icon="bars-3">
+                                        Atur Prioritas Kriteria
+                                    </flux:button>
+                                </div>
+                                <div wire:show="isUpdateRanking" class="flex gap-2">
+                                    <flux:button wire:click="cancelUpdateRanking"
+                                        class="bg-gray-500! text-white! hover:bg-gray-600!" icon="x">
+                                        Batalkan
+                                    </flux:button>
+                                    <flux:button wire:click="saveRanking"
+                                        class="bg-green-600! text-white! hover:bg-green-700!" icon="check">
+                                        Simpan Prioritas
+                                    </flux:button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="card-actions flex justify-end p-6 bg-gray-50">
-                        <div wire:show="!isUpdateRanking">
-                            <flux:button wire:click="updateRanking"
-                                class="bg-amber-600! text-white! hover:bg-amber-700!" icon="bars-3">
-                                Atur Prioritas Kriteria
-                            </flux:button>
-                        </div>
-                        <div wire:show="isUpdateRanking" class="flex gap-2">
-                            <flux:button wire:click="cancelUpdateRanking"
-                                class="bg-gray-500! text-white! hover:bg-gray-600!" icon="x">
-                                Batalkan
-                            </flux:button>
-                            <flux:button wire:click="saveRanking"
-                                class="bg-green-600! text-white! hover:bg-green-700!" icon="check">
-                                Simpan Prioritas
-                            </flux:button>
                         </div>
                     </div>
                 </div>
