@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use App\Enums\DecisionMakingEnum;
 use App\Helpers\DecisionMaking\ROC;
 
 trait BaseKriteriaFactory
@@ -24,8 +23,8 @@ trait BaseKriteriaFactory
     {
         return $this->afterMaking(function ($model) {
             $model->bobot = ROC::getWeight(
-                $model->rank,
-                DecisionMakingEnum::totalCriteria->value
+                rank: $model->rank,
+                totalCriteria: config('recommendation-system.roc.total_criteria')
             );
         });
     }

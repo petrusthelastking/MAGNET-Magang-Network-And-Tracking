@@ -1,0 +1,32 @@
+<?php
+
+
+/**
+ * Configuration for the Recommendation System
+ *
+ * This configuration file is used to set up values for
+ * Multi-Criteria Decision Making (MCDM) methods implemented in the system.
+ *
+ * Included Methods:
+ * - ROC (Rank Order Centroid): Used for assigning weights to criteria.
+ * - MULTIMOORA (Multi-Objective Optimization by Ratio Analysis plus Full Multiplicative Form):
+ *   Used for evaluating and ranking alternatives based on the weighted criteria.
+ *
+ */
+
+return [
+
+    /**
+     * ROC (Rank Order Centroid)
+     */
+    'roc' => [
+        'total_criteria' => 5
+    ],
+
+    /**
+     * MULTIMOORA (Multi-Objective Optimization by Ratio Analysis plus Full Multiplicative Form)
+     */
+    'multimoora' => [
+        // multimoora config here
+    ]
+];

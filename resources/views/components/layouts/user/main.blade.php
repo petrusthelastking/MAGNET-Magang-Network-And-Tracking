@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="bg-magnet-frost-mist">
 
 <head>
     @include('partials.head')
     {{ $topScript ?? '' }}
 </head>
 
-<body class="bg-magnet-frost-mist flex h-screen text-black">
+<body class="flex h-screen text-black">
     @if ($user == 'admin')
         <x-admin.sidebar />
     @elseif ($user == 'dosen')

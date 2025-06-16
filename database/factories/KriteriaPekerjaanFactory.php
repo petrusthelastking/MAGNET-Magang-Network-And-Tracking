@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\DecisionMakingEnum;
 use App\Helpers\DecisionMaking\ROC;
 use App\Models\KriteriaPekerjaan;
 use App\Models\Mahasiswa;
@@ -32,13 +31,13 @@ class KriteriaPekerjaanFactory extends Factory
         $pekerjaanIds ??= Pekerjaan::orderBy('id')->pluck('id')->toArray();
         $mahasiswaIds ??= Mahasiswa::orderBy('id')->pluck('id')->toArray();
 
-        $rank = $this->faker->numberBetween(1, DecisionMakingEnum::totalCriteria->value);
+        $rank = $this->faker->numberBetween(1, config('recommendation-system.roc.total_criteria'));
 
         return [
             'pekerjaan_id' => $this->faker->randomElement($pekerjaanIds),
             'mahasiswa_id' => $this->faker->randomElement($mahasiswaIds),
             'rank' => $rank,
-            'bobot' => ROC::getWeight($rank, DecisionMakingEnum::totalCriteria->value),
+            'bobot' => ROC::getWeight($rank, config('recommendation-system.roc.total_criteria')),
         ];
     }
 
