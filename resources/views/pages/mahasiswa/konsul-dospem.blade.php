@@ -14,8 +14,6 @@ state([
     'kontrakData' => null,
     'dosenPembimbing' => null,
     'isAuthorized' => false,
-    'canSendMessage' => false,
-    'mahasiswaStatus' => null,
     'lastMessageId' => 0,
     'isPolling' => true,
 ]);
@@ -28,7 +26,7 @@ $initializeChat = function () {
     try {
         $currentUserId = Auth::id();
 
-        // Ambil kontrak magang terbaru beserta data dosen dan mahasiswa
+        // Get active kontrak magang for current mahasiswa
         $kontrak = KontrakMagang::with(['dosenPembimbing', 'mahasiswa'])
             ->where('mahasiswa_id', $currentUserId)
             ->latest()
@@ -39,17 +37,10 @@ $initializeChat = function () {
             return;
         }
 
-        // Store mahasiswa status
-        $this->mahasiswaStatus = $kontrak->mahasiswa->status;
-
-        // Allow access to chat regardless of status (for viewing history)
         $this->kontrakMagangId = $kontrak->id;
         $this->kontrakData = $kontrak;
         $this->dosenPembimbing = $kontrak->dosenPembimbing;
         $this->isAuthorized = true;
-
-        // Only allow sending messages if status is 'sedang magang'
-        $this->canSendMessage = $kontrak->mahasiswa->status === 'sedang magang';
 
         if (!$this->dosenPembimbing) {
             session()->flash('error', 'Dosen pembimbing tidak ditemukan.');
@@ -58,28 +49,12 @@ $initializeChat = function () {
 
         // Load initial messages
         $this->loadMessages();
-
-        // Show appropriate status message
-        $this->showStatusMessage();
     } catch (\Exception $e) {
         \Log::error('Error initializing chat', [
             'mahasiswa_id' => Auth::id(),
             'error' => $e->getMessage(),
         ]);
         session()->flash('error', 'Terjadi kesalahan saat memuat chat.');
-    }
-};
-
-$showStatusMessage = function () {
-    if (!$this->canSendMessage) {
-        $statusMessage = match ($this->mahasiswaStatus) {
-            'selesai magang' => 'Anda dapat melihat riwayat chat, namun tidak dapat mengirim pesan karena sudah menyelesaikan magang.',
-            'menunggu' => 'Anda dapat melihat riwayat chat, namun tidak dapat mengirim pesan karena status magang masih menunggu.',
-            'ditolak' => 'Anda dapat melihat riwayat chat, namun tidak dapat mengirim pesan karena magang ditolak.',
-            default => 'Anda dapat melihat riwayat chat, namun tidak dapat mengirim pesan saat ini.',
-        };
-
-        session()->flash('info', $statusMessage);
     }
 };
 
@@ -188,28 +163,14 @@ $checkNewMessages = function () {
 };
 
 $sendMessage = function () {
-    // Double check authorization first
-    if (!$this->isAuthorized) {
-        session()->flash('error', 'Anda tidak memiliki akses untuk mengirim pesan.');
-        return;
-    }
-
-    // Check if user can send messages based on status
-    if (!$this->canSendMessage) {
-        $errorMessage = match ($this->mahasiswaStatus) {
-            'selesai magang' => 'Anda tidak dapat mengirim pesan karena sudah menyelesaikan magang.',
-            'menunggu' => 'Anda tidak dapat mengirim pesan karena status magang masih menunggu persetujuan.',
-            'ditolak' => 'Anda tidak dapat mengirim pesan karena magang ditolak.',
-            default => 'Anda tidak dapat mengirim pesan pada status saat ini.',
-        };
-
-        session()->flash('error', $errorMessage);
-        return;
-    }
-
     // Validate input
     if (empty(trim($this->messageText))) {
         session()->flash('error', 'Pesan tidak boleh kosong.');
+        return;
+    }
+
+    if (!$this->isAuthorized) {
+        session()->flash('error', 'Anda tidak memiliki akses untuk mengirim pesan.');
         return;
     }
 
@@ -222,21 +183,19 @@ $sendMessage = function () {
         $mahasiswaId = Auth::id();
         $dosenId = $this->dosenPembimbing->id;
 
-        // Periksa ulang status mahasiswa dari database untuk memastikan konsistensi
-        $kontrak = KontrakMagang::with('mahasiswa')->find($this->kontrakMagangId);
-        if (!$kontrak || $kontrak->mahasiswa->status !== 'sedang magang') {
-            $this->canSendMessage = false;
-            $this->mahasiswaStatus = $kontrak ? $kontrak->mahasiswa->status : null;
-            session()->flash('error', 'Status magang Anda telah berubah. Anda tidak dapat mengirim pesan.');
-            return;
-        }
-
         $chatData = [
             'kontrak_magang_id' => $this->kontrakMagangId,
             'sender_id' => $mahasiswaId,
             'receiver_id' => $dosenId,
             'message' => trim($this->messageText),
         ];
+
+        // Periksa apakah kontrak magang benar-benar ada
+        $kontrakExists = KontrakMagang::find($this->kontrakMagangId);
+        if (!$kontrakExists) {
+            session()->flash('error', 'Kontrak magang tidak ditemukan di database.');
+            return;
+        }
 
         // Create message
         $chat = Chat::create($chatData);
@@ -277,27 +236,6 @@ $sendMessage = function () {
     }
 };
 
-$refreshStatus = function () {
-    try {
-        $kontrak = KontrakMagang::with('mahasiswa')->find($this->kontrakMagangId);
-        if ($kontrak) {
-            $oldStatus = $this->mahasiswaStatus;
-            $this->mahasiswaStatus = $kontrak->mahasiswa->status;
-            $this->canSendMessage = $kontrak->mahasiswa->status === 'sedang magang';
-
-            // Show message if status changed
-            if ($oldStatus !== $this->mahasiswaStatus) {
-                $this->showStatusMessage();
-            }
-        }
-    } catch (\Exception $e) {
-        \Log::error('Error refreshing status', [
-            'error' => $e->getMessage(),
-            'kontrak_magang_id' => $this->kontrakMagangId,
-        ]);
-    }
-};
-
 $togglePolling = function () {
     $this->isPolling = !$this->isPolling;
 };
@@ -308,11 +246,9 @@ $togglePolling = function () {
 <div x-data="{
     isVisible: true,
     pollingInterval: null,
-    statusCheckInterval: null,
 
     init() {
         this.startPolling();
-        this.startStatusCheck();
         this.handleVisibilityChange();
 
         // Listen for new message events
@@ -339,21 +275,10 @@ $togglePolling = function () {
         }, 2000); // Check every 2 seconds
     },
 
-    startStatusCheck() {
-        // Check status every 30 seconds to ensure consistency
-        this.statusCheckInterval = setInterval(() => {
-            $wire.refreshStatus();
-        }, 30000);
-    },
-
     stopPolling() {
         if (this.pollingInterval) {
             clearInterval(this.pollingInterval);
             this.pollingInterval = null;
-        }
-        if (this.statusCheckInterval) {
-            clearInterval(this.statusCheckInterval);
-            this.statusCheckInterval = null;
         }
     },
 
@@ -361,9 +286,8 @@ $togglePolling = function () {
         document.addEventListener('visibilitychange', () => {
             this.isVisible = !document.hidden;
             if (this.isVisible) {
-                // Check for new messages and refresh status when tab becomes visible
+                // Check for new messages immediately when tab becomes visible
                 $wire.checkNewMessages();
-                $wire.refreshStatus();
             }
         });
     },
@@ -371,9 +295,7 @@ $togglePolling = function () {
     handleKeydown(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
-            if ($wire.canSendMessage) {
-                $wire.sendMessage();
-            }
+            $wire.sendMessage();
         }
     },
 
@@ -388,7 +310,7 @@ $togglePolling = function () {
 
     focusInput() {
         const messageInput = document.getElementById('message-input');
-        if (messageInput && $wire.canSendMessage) {
+        if (messageInput) {
             messageInput.focus();
         }
     },
@@ -435,29 +357,16 @@ $togglePolling = function () {
                     </flux:subheading>
                 </div>
             </div>
-            {{-- Status and Polling Indicator --}}
-            <div class="flex items-center gap-3">
-                {{-- Status Badge --}}
-                @if ($mahasiswaStatus)
-                    <div class="flex items-center gap-1">
-                        <flux:badge :variant="$mahasiswaStatus === 'sedang magang' ? 'solid' : 'outline'"
-                            class="{{ $mahasiswaStatus === 'sedang magang' ? 'bg-green-500 text-white' : 'bg-yellow-100 text-yellow-700 border-yellow-300' }}">
-                            {{ ucfirst(str_replace('_', ' ', $mahasiswaStatus)) }}
-                        </flux:badge>
-                    </div>
-                @endif
-
-                {{-- Polling Status --}}
-                <div class="flex items-center gap-2">
-                    <div class="flex items-center gap-1" x-show="$wire.isPolling" x-transition>
-                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span class="text-xs text-green-600 font-medium">Online</span>
-                    </div>
-                    <button @click="requestNotificationPermission()"
-                        class="p-1 text-gray-400 hover:text-gray-600 transition-colors" title="Aktifkan notifikasi">
-                        <flux:icon.bell class="w-4 h-4" />
-                    </button>
+            {{-- Polling Status Indicator --}}
+            <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1" x-show="$wire.isPolling" x-transition>
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-xs text-green-600 font-medium">Online</span>
                 </div>
+                <button @click="requestNotificationPermission()"
+                    class="p-1 text-gray-400 hover:text-gray-600 transition-colors" title="Aktifkan notifikasi">
+                    <flux:icon.bell class="w-4 h-4" />
+                </button>
             </div>
         </div>
     </div>
@@ -487,11 +396,7 @@ $togglePolling = function () {
                     </div>
                     <flux:heading class="text-gray-600 mb-2">Belum ada percakapan</flux:heading>
                     <flux:subheading class="text-gray-500">
-                        @if ($canSendMessage)
-                            Mulai percakapan dengan dosen pembimbing Anda
-                        @else
-                            Belum ada riwayat percakapan dengan dosen pembimbing
-                        @endif
+                        Mulai percakapan dengan dosen pembimbing Anda
                     </flux:subheading>
                 </div>
             @else
@@ -555,43 +460,25 @@ $togglePolling = function () {
     @if ($isAuthorized)
         <div
             class="fixed bottom-0 left-0 right-4 lg:left-56 backdrop-blur-md bg-white/90 border-t border-white/20 shadow-md z-40">
-            @if ($canSendMessage)
-                {{-- Active Input Area --}}
-                <div class="flex items-end gap-3 px-6 py-4">
-                    {{-- Message Input --}}
-                    <div class="flex-1 relative">
-                        <flux:textarea wire:model="messageText" @keydown="handleKeydown($event)"
-                            placeholder="Ketik pesan Anda..." rows="1"
-                            class="w-full resize-none min-h-[48px] max-h-32 rounded-2xl border-0 bg-white/80 backdrop-blur-sm shadow-inner focus:bg-white/90 focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 px-4 py-3 text-sm placeholder-gray-500"
-                            id="message-input" x-ref="messageInput" x-init="$el.addEventListener('input', function() {
-                                this.style.height = 'auto';
-                                this.style.height = Math.min(this.scrollHeight, 128) + 'px';
-                            });" />
-                    </div>
+            <div class="flex items-end gap-3 px-6 py-4">
+                {{-- Message Input --}}
+                <div class="flex-1 relative">
+                    <flux:textarea wire:model="messageText" @keydown="handleKeydown($event)"
+                        placeholder="Ketik pesan Anda..." rows="1"
+                        class="w-full resize-none min-h-[48px] max-h-32 rounded-2xl border-0 bg-white/80 backdrop-blur-sm shadow-inner focus:bg-white/90 focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 px-4 py-3 text-sm placeholder-gray-500"
+                        id="message-input" x-ref="messageInput" x-init="$el.addEventListener('input', function() {
+                            this.style.height = 'auto';
+                            this.style.height = Math.min(this.scrollHeight, 128) + 'px';
+                        });" />
+                </div>
 
-                    {{-- Send Button --}}
-                    <div class="flex-shrink-0">
-                        <flux:button wire:click="sendMessage" variant="primary" icon="paper-airplane"
-                            wire:loading.attr="disabled"
-                            class="w-12 h-12 rounded-full !bg-gradient-to-r !from-blue-500 !to-blue-600 hover:!from-blue-600 hover:!to-blue-700 !text-white !shadow-md hover:!shadow-md !transition-all !duration-200" />
-                    </div>
+                {{-- Send Button --}}
+                <div class="flex-shrink-0">
+                    <flux:button wire:click="sendMessage" variant="primary" icon="paper-airplane"
+                        wire:loading.attr="disabled"
+                        class="w-12 h-12 rounded-full !bg-gradient-to-r !from-blue-500 !to-blue-600 hover:!from-blue-600 hover:!to-blue-700 !text-white !shadow-md hover:!shadow-md !transition-all !duration-200" />
                 </div>
-            @else
-                {{-- Disabled Input Area --}}
-                <div class="flex items-center gap-3 px-6 py-4 bg-gray-50/90">
-                    <div class="flex-1 relative">
-                        <div
-                            class="w-full min-h-[48px] rounded-2xl border border-gray-200 bg-gray-100 px-4 py-3 text-sm text-gray-500 flex items-center">
-                            <flux:icon.lock-closed class="w-4 h-4 mr-2" />
-                            <span>Pengiriman pesan dinonaktifkan - Status: Selesai Magang</span>
-                        </div>
-                    </div>
-                    <div class="flex-shrink-0">
-                        <flux:button disabled variant="outline" icon="paper-airplane"
-                            class="w-12 h-12 rounded-full !bg-gray-200 !text-gray-400 !cursor-not-allowed" />
-                    </div>
-                </div>
-            @endif
+            </div>
         </div>
     @endif
 
@@ -602,19 +489,6 @@ $togglePolling = function () {
             <span class="text-sm">Mengirim...</span>
         </div>
     </div>
-
-    {{-- Info Message --}}
-    @if (session('info'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 8000)"
-            x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed top-20 right-4 z-50 bg-blue-500 text-white px-4 py-3 rounded-md shadow-md max-w-sm">
-            <div class="flex items-start gap-2">
-                <flux:icon.information-circle class="w-5 h-5 mt-0.5 flex-shrink-0" />
-                <span class="text-sm">{{ session('info') }}</span>
-            </div>
-        </div>
-    @endif
 
     {{-- Success Message --}}
     @if (session('success'))
