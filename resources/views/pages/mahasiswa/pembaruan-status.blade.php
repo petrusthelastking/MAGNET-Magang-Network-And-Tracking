@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Auth;
 use function Livewire\Volt\{layout, state, mount};
+use App\Models\{FormPengajuanMagang, KontrakMagang};
 
 state([
     'status' => '',
@@ -38,7 +39,7 @@ $checkApprovedApplication = function () {
     }
 
     // Check if there's an approved form pengajuan for this student
-    $approvedApplication = \App\Models\FormPengajuanMagang::whereHas('berkasPengajuanMagang', function ($query) {
+    $approvedApplication = FormPengajuanMagang::whereHas('berkasPengajuanMagang', function ($query) {
         $query->where('mahasiswa_id', $this->mahasiswa->id);
     })
         ->where('status', 'diterima')
@@ -54,7 +55,7 @@ $checkPendingContract = function () {
     }
 
     // Check if there's a pending contract for this student
-    $pendingContract = \App\Models\KontrakMagang::where('mahasiswa_id', $this->mahasiswa->id)
+    $pendingContract = KontrakMagang::where('mahasiswa_id', $this->mahasiswa->id)
         ->where('status', 'menunggu_persetujuan')
         ->with(['lowonganMagang.perusahaan', 'dosenPembimbing']) // Load related data through lowonganMagang
         ->first();

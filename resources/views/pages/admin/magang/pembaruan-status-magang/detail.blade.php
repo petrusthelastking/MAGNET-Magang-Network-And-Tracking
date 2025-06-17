@@ -453,7 +453,7 @@ $showRejectionModal = function () {
                             <flux:label>Dosen Pembimbing</flux:label>
                             <flux:select wire:model.live="dosen_selected" placeholder="Pilih Dosen Pembimbing">
                                 @php
-                                    $dosenList = \App\Models\DosenPembimbing::select('id', 'nama', 'nidn')
+                                    $dosenList = DosenPembimbing::select('id', 'nama', 'nidn')
                                         ->whereNotNull('nama')
                                         ->orderBy('nama', 'asc')
                                         ->get();
@@ -525,7 +525,7 @@ $showRejectionModal = function () {
             <p>Apakah Anda yakin ingin menyetujui kontrak magang ini?</p>
             @if ($dosen_selected && $kontrakMagang)
                 @php
-                    $selectedDosen = \App\Models\DosenPembimbing::find($dosen_selected);
+                    $selectedDosen = DosenPembimbing::find($dosen_selected);
                 @endphp
                 <div class="bg-blue-50 p-4 rounded-lg">
                     <p class="text-sm"><strong>Dosen Pembimbing:</strong> {{ $selectedDosen?->nama ?? 'N/A' }}</p>

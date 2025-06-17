@@ -1,9 +1,8 @@
 <?php
 
 use function Livewire\Volt\{layout, state, computed, mount, with, uses};
+use App\Models\{LokasiMagang, LowonganMagang, Perusahaan};
 use Livewire\WithPagination;
-use App\Models\LowonganMagang;
-use App\Models\Perusahaan;
 
 layout('components.layouts.user.main');
 uses([WithPagination::class]);
@@ -125,7 +124,7 @@ $getJobStats = computed(function () {
 $getFilterOptions = computed(function () {
     return [
         'types' => LowonganMagang::select('jenis_magang')->distinct()->whereNotNull('jenis_magang')->pluck('jenis_magang')->toArray(),
-        'locations' => \App\Models\LokasiMagang::select('kategori_lokasi')->distinct()->whereNotNull('kategori_lokasi')->pluck('kategori_lokasi')->toArray(),
+        'locations' => LokasiMagang::select('kategori_lokasi')->distinct()->whereNotNull('kategori_lokasi')->pluck('kategori_lokasi')->toArray(),
     ];
 });
 
