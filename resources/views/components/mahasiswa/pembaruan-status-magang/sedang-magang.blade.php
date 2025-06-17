@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\{Perusahaan, KontrakMagang, LowonganMagang};
+use App\Models\{Perusahaan, KontrakMagang, LowonganMagang, BidangIndustri, Pekerjaan, LokasiMagang};
 use Illuminate\Support\Facades\{Auth, Log, Storage};
 use Livewire\WithFileUploads;
 use function Livewire\Volt\{state, mount, rules, uses, computed, updated};
@@ -142,7 +142,7 @@ $save = function () {
             }
 
             // Create or get bidang industri
-            $bidangIndustri = \App\Models\BidangIndustri::firstOrCreate(['nama' => $this->bidang_industri]);
+            $bidangIndustri = BidangIndustri::firstOrCreate(['nama' => $this->bidang_industri]);
 
             // Create new company
             $newCompany = Perusahaan::create([
@@ -154,8 +154,8 @@ $save = function () {
             ]);
 
             // Create pekerjaan and lokasi_magang
-            $pekerjaan = \App\Models\Pekerjaan::firstOrCreate(['nama' => 'Magang Umum']);
-            $lokasi_magang = \App\Models\LokasiMagang::firstOrCreate([
+            $pekerjaan = Pekerjaan::firstOrCreate(['nama' => 'Magang Umum']);
+            $lokasi_magang = LokasiMagang::firstOrCreate([
                 'kategori_lokasi' => 'Onsite',
                 'lokasi' => $this->lokasi_magang,
             ]);
@@ -646,7 +646,7 @@ $getStatusBadgeClass = function ($status) {
                                     <x-flux::select wire:model="bidang_industri" placeholder="Pilih bidang industri"
                                         class="mt-1">
                                         <option value="">Pilih bidang industri</option>
-                                        @foreach (\App\Models\BidangIndustri::orderBy('nama')->get() as $bidang)
+                                        @foreach (BidangIndustri::orderBy('nama')->get() as $bidang)
                                             <option value="{{ $bidang->nama }}">{{ $bidang->nama }}</option>
                                         @endforeach
                                     </x-flux::select>
