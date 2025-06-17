@@ -49,7 +49,8 @@ mount(function () {
             ->first();
 
         // Determine if student can register for new internship
-        $this->can_register = !$this->existing_contract || $this->mahasiswa->status_magang === 'belum magang' || $this->mahasiswa->status_magang === 'selesai magang';
+        // Allow registration if no contract exists, or previous contract was rejected/completed
+        $this->can_register = !$this->existing_contract || in_array($this->existing_contract->status, ['ditolak', 'selesai']) || $this->mahasiswa->status_magang === 'belum magang' || $this->mahasiswa->status_magang === 'selesai magang';
 
         if ($this->can_register) {
             $this->partner_companies = Perusahaan::where('kategori', 'mitra')
@@ -106,16 +107,19 @@ $save = function () {
         }
 
         if (!$this->can_register) {
-            session()->flash('error', 'Anda sudah memiliki kontrak magang aktif.');
+            session()->flash('error', 'Anda sudah memiliki pendaftaran magang yang sedang diproses atau aktif.');
             return;
         }
 
         $this->validate();
 
-        // Double check for existing contract
-        $existingContract = KontrakMagang::where('mahasiswa_id', $this->mahasiswa->id)->exists();
-        if ($existingContract && $this->mahasiswa->status_magang === 'sedang magang') {
-            session()->flash('error', 'Anda sudah memiliki kontrak magang aktif.');
+        // Double check for existing pending/active contract
+        $existingContract = KontrakMagang::where('mahasiswa_id', $this->mahasiswa->id)
+            ->whereIn('status', ['menunggu_persetujuan', 'disetujui'])
+            ->exists();
+
+        if ($existingContract) {
+            session()->flash('error', 'Anda sudah memiliki pendaftaran magang yang sedang diproses atau aktif.');
             return;
         }
 
@@ -131,13 +135,16 @@ $save = function () {
 
             $lowongan_magang_id = $selectedLowongan->id;
         } else {
+            // Handle file upload for non-partner companies
             $suratPath = null;
             if ($this->surat_izin_magang) {
                 $suratPath = $this->surat_izin_magang->store('surat-izin-magang', 'public');
             }
 
+            // Create or get bidang industri
             $bidangIndustri = \App\Models\BidangIndustri::firstOrCreate(['nama' => $this->bidang_industri]);
 
+            // Create new company
             $newCompany = Perusahaan::create([
                 'nama' => $this->company_name,
                 'bidang_industri_id' => $bidangIndustri->id,
@@ -146,12 +153,14 @@ $save = function () {
                 'rating' => 0,
             ]);
 
+            // Create pekerjaan and lokasi_magang
             $pekerjaan = \App\Models\Pekerjaan::firstOrCreate(['nama' => 'Magang Umum']);
-            $lokasi_magang = \App\Models\lokasi_magang::firstOrCreate([
+            $lokasi_magang = \App\Models\LokasiMagang::firstOrCreate([
                 'kategori_lokasi' => 'Onsite',
                 'lokasi' => $this->lokasi_magang,
             ]);
 
+            // Create lowongan magang
             $magang = LowonganMagang::create([
                 'kuota' => 1,
                 'pekerjaan_id' => $pekerjaan->id,
@@ -162,35 +171,34 @@ $save = function () {
                 'perusahaan_id' => $newCompany->id,
                 'lokasi_magang_id' => $lokasi_magang->id,
                 'status' => 'buka',
+                'surat_izin_path' => $suratPath, // Store file path if needed
             ]);
 
             $lowongan_magang_id = $magang->id;
         }
 
-        $dosen = \App\Models\DosenPembimbing::inRandomOrder()->first();
-        if (!$dosen) {
-            session()->flash('error', 'Tidak ada dosen pembimbing yang tersedia.');
-            return;
-        }
-
+        // Create contract with pending status (without dosen assignment)
         $kontrak = KontrakMagang::create([
             'mahasiswa_id' => $this->mahasiswa->id,
-            'dosen_id' => $dosen->id,
+            'dosen_id' => null, // Will be assigned by admin
             'lowongan_magang_id' => $lowongan_magang_id,
             'waktu_awal' => now(),
             'waktu_akhir' => now()->addMonths(3),
+            'status' => 'menunggu_persetujuan', // Pending admin approval
+            'tanggal_daftar' => now(),
         ]);
 
-        $this->mahasiswa->update(['status_magang' => 'sedang magang']);
+        // Do NOT change mahasiswa status automatically
+        // Status will be changed by admin after approval
 
         $internshipInfo = $this->getInternshipInfo();
 
-        session()->flash('success', "Data magang berhasil disimpan! Anda sedang magang di: {$internshipInfo}");
+        session()->flash('success', "Pendaftaran magang berhasil dikirim! Menunggu persetujuan admin untuk: {$internshipInfo}");
         $this->resetForm();
 
         // Refresh the component state
         $this->can_register = false;
-        $this->existing_contract = $kontrak->load(['lowonganMagang.perusahaan', 'dosenPembimbing']);
+        $this->existing_contract = $kontrak->load(['lowonganMagang.perusahaan']);
     } catch (\Illuminate\Validation\ValidationException $e) {
         throw $e;
     } catch (\Exception $e) {
@@ -198,6 +206,7 @@ $save = function () {
             'mahasiswa_id' => $this->mahasiswa->id ?? null,
             'company_type' => $this->company_type,
             'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
         ]);
 
         session()->flash('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
@@ -234,19 +243,24 @@ $resetForm = function () {
 
 $getStatusBadgeClass = function ($status) {
     switch ($status) {
+        case 'menunggu_persetujuan':
+            return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        case 'disetujui':
         case 'sedang magang':
             return 'bg-green-100 text-green-800 border-green-200';
         case 'belum magang':
-            return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+            return 'bg-gray-100 text-gray-800 border-gray-200';
         case 'selesai magang':
+        case 'selesai':
             return 'bg-blue-100 text-blue-800 border-blue-200';
+        case 'ditolak':
+            return 'bg-red-100 text-red-800 border-red-200';
         default:
             return 'bg-gray-100 text-gray-800 border-gray-200';
     }
 };
 
 ?>
-
 <div class="max-w-4xl mx-auto">
     <!-- Header Section -->
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
@@ -632,20 +646,9 @@ $getStatusBadgeClass = function ($status) {
                                     <x-flux::select wire:model="bidang_industri" placeholder="Pilih bidang industri"
                                         class="mt-1">
                                         <option value="">Pilih bidang industri</option>
-                                        <option value="Teknologi">Teknologi</option>
-                                        <option value="Perbankan">Perbankan</option>
-                                        <option value="Kesehatan">Kesehatan</option>
-                                        <option value="Pendidikan">Pendidikan</option>
-                                        <option value="E-Commerce">E-Commerce</option>
-                                        <option value="Telekomunikasi">Telekomunikasi</option>
-                                        <option value="Transportasi">Transportasi</option>
-                                        <option value="Pemerintahan">Pemerintahan</option>
-                                        <option value="Manufaktur">Manufaktur</option>
-                                        <option value="Energi">Energi</option>
-                                        <option value="Media">Media</option>
-                                        <option value="Agrikultur">Agrikultur</option>
-                                        <option value="Pariwisata">Pariwisata</option>
-                                        <option value="Keamanan">Keamanan</option>
+                                        @foreach (\App\Models\BidangIndustri::orderBy('nama')->get() as $bidang)
+                                            <option value="{{ $bidang->nama }}">{{ $bidang->nama }}</option>
+                                        @endforeach
                                     </x-flux::select>
                                     <x-flux::error for="bidang_industri" />
                                 </x-flux::field>
@@ -780,7 +783,6 @@ $getStatusBadgeClass = function ($status) {
                         <ul class="space-y-1 list-disc list-inside">
                             <li>Perusahaan pilihan sendiri yang belum bermitra</li>
                             <li>Perlu mengisi data perusahaan secara lengkap</li>
-                            <li>Memerlukan surat izin magang dari perusahaan</li>
                         </ul>
                     </div>
                 </div>

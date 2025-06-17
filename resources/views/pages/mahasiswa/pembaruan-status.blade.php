@@ -8,6 +8,9 @@ state([
     'isStatusLocked' => false,
     'availableStatuses' => [],
     'statusMessage' => '',
+    'hasApprovedApplication' => false, // Track approved applications
+    'hasPendingContract' => false, // New state to track pending contract
+    'pendingContractInfo' => null, // Store pending contract information
 ]);
 
 layout('components.layouts.user.main');
@@ -17,9 +20,60 @@ mount(function () {
 
     if ($this->mahasiswa) {
         $currentStatus = $this->mahasiswa->status_magang;
+
+        // Check if mahasiswa has approved application for "Sedang Magang" transition
+        $this->checkApprovedApplication();
+
+        // Check if mahasiswa has pending contract
+        $this->checkPendingContract();
+
         $this->setCurrentStatusAndOptions($currentStatus);
     }
 });
+
+// Check for approved applications
+$checkApprovedApplication = function () {
+    if (!$this->mahasiswa) {
+        return;
+    }
+
+    // Check if there's an approved form pengajuan for this student
+    $approvedApplication = \App\Models\FormPengajuanMagang::whereHas('berkasPengajuanMagang', function ($query) {
+        $query->where('mahasiswa_id', $this->mahasiswa->id);
+    })
+        ->where('status', 'diterima')
+        ->exists();
+
+    $this->hasApprovedApplication = $approvedApplication;
+};
+
+// New method to check for pending contract
+$checkPendingContract = function () {
+    if (!$this->mahasiswa) {
+        return;
+    }
+
+    // Check if there's a pending contract for this student
+    $pendingContract = \App\Models\KontrakMagang::where('mahasiswa_id', $this->mahasiswa->id)
+        ->where('status', 'menunggu_persetujuan')
+        ->with(['lowonganMagang.perusahaan', 'dosenPembimbing']) // Load related data through lowonganMagang
+        ->first();
+
+    if ($pendingContract) {
+        $this->hasPendingContract = true;
+        $this->pendingContractInfo = [
+            'id' => $pendingContract->id,
+            'perusahaan_nama' => $pendingContract->perusahaan->nama ?? 'Tidak tersedia',
+            'pembimbing_nama' => $pendingContract->pembimbingLapangan->nama ?? 'Tidak tersedia',
+            'tanggal_mulai' => $pendingContract->tanggal_mulai,
+            'tanggal_selesai' => $pendingContract->tanggal_selesai,
+            'created_at' => $pendingContract->created_at,
+        ];
+    } else {
+        $this->hasPendingContract = false;
+        $this->pendingContractInfo = null;
+    }
+};
 
 $setCurrentStatusAndOptions = function ($currentStatus) {
     switch ($currentStatus) {
@@ -27,11 +81,27 @@ $setCurrentStatusAndOptions = function ($currentStatus) {
         case 'belum magang':
             $this->status = 'Belum Magang';
             $this->isStatusLocked = false;
-            $this->availableStatuses = [
-                'Belum Magang' => 'Belum Magang',
-                'Sedang Magang' => 'Sedang Magang',
-            ];
-            $this->statusMessage = 'Anda dapat memperbarui status ke "Sedang Magang" jika telah diterima di perusahaan.';
+
+            // Check if there's a pending contract
+            if ($this->hasPendingContract) {
+                // If there's a pending contract, don't allow status change
+                $this->availableStatuses = [
+                    'Belum Magang' => 'Belum Magang',
+                ];
+                $this->statusMessage = 'Anda memiliki kontrak magang yang sedang menunggu persetujuan. Status tidak dapat diubah hingga kontrak disetujui atau ditolak.';
+            } elseif ($this->hasApprovedApplication) {
+                // Only allow transition to "Sedang Magang" if application is approved and no pending contract
+                $this->availableStatuses = [
+                    'Belum Magang' => 'Belum Magang',
+                    'Sedang Magang' => 'Sedang Magang',
+                ];
+                $this->statusMessage = 'Pengajuan magang Anda telah disetujui. Anda dapat memperbarui status ke "Sedang Magang".';
+            } else {
+                $this->availableStatuses = [
+                    'Belum Magang' => 'Belum Magang',
+                ];
+                $this->statusMessage = 'Anda perlu mengajukan dan mendapat persetujuan admin terlebih dahulu sebelum dapat mengubah status ke "Sedang Magang".';
+            }
             break;
 
         case 'sedang_magang':
@@ -61,9 +131,8 @@ $setCurrentStatusAndOptions = function ($currentStatus) {
             $this->isStatusLocked = false;
             $this->availableStatuses = [
                 'Belum Magang' => 'Belum Magang',
-                'Sedang Magang' => 'Sedang Magang',
             ];
-            $this->statusMessage = 'Silakan pilih status magang yang sesuai.';
+            $this->statusMessage = 'Silakan ajukan permohonan magang terlebih dahulu.';
     }
 };
 
@@ -80,6 +149,33 @@ $updateStatus = function () {
     if (!$this->isValidStatusTransition($currentDbStatus, $newStatus)) {
         session()->flash('error', 'Perubahan status tidak diizinkan. Silakan ikuti alur status yang benar.');
         return;
+    }
+
+    // Additional validation for "Sedang Magang" transition
+    if ($newStatus === 'sedang_magang') {
+        if (!$this->hasApprovedApplication) {
+            session()->flash('error', 'Anda harus mendapat persetujuan admin terlebih dahulu sebelum dapat mengubah status ke "Sedang Magang".');
+            return;
+        }
+
+        if ($this->hasPendingContract) {
+            session()->flash('error', 'Tidak dapat mengubah status ke "Sedang Magang" karena masih ada kontrak yang menunggu persetujuan.');
+            return;
+        }
+    }
+
+    // Update the status
+    try {
+        $this->mahasiswa->update(['status_magang' => $newStatus]);
+        $this->mahasiswa->refresh();
+
+        // Refresh the options after status change
+        $this->setCurrentStatusAndOptions($newStatus);
+
+        session()->flash('success', 'Status magang berhasil diperbarui ke: ' . $this->status);
+    } catch (\Exception $e) {
+        session()->flash('error', 'Terjadi kesalahan saat memperbarui status. Silakan coba lagi.');
+        \Log::error('Error updating mahasiswa status: ' . $e->getMessage());
     }
 };
 
@@ -114,6 +210,8 @@ $isValidStatusTransition = function ($currentStatus, $newStatus) {
 $refreshParent = function () {
     if ($this->mahasiswa) {
         $this->mahasiswa->refresh();
+        $this->checkApprovedApplication(); // Refresh approval status
+        $this->checkPendingContract(); // Refresh contract status
         $currentStatus = $this->mahasiswa->status_magang;
         $this->setCurrentStatusAndOptions($currentStatus);
     }
@@ -121,9 +219,8 @@ $refreshParent = function () {
 
 // Method to check if user can access certain features
 $canAccessCompanyFeatures = function () {
-    return $this->mahasiswa && in_array($this->mahasiswa->status_magang, ['belum_magang', 'belum magang']);
+    return $this->mahasiswa && in_array($this->mahasiswa->status_magang, ['belum_magang', 'belum magang']) && !$this->hasPendingContract;
 };
-
 ?>
 
 <div>
@@ -194,23 +291,93 @@ $canAccessCompanyFeatures = function () {
                 </div>
             @endif
 
+            <!-- Pending Contract Information Card -->
+            @if ($hasPendingContract && $pendingContractInfo)
+                <div class="p-4 mb-6 text-sm text-orange-800 rounded-lg bg-orange-50 border border-orange-200">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 mr-2 mt-0.5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <div class="flex-1">
+                            <div class="font-medium mb-2 text-orange-900">
+                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                Kontrak Magang Menunggu Persetujuan
+                            </div>
+                            <div class="space-y-2">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <div class="font-medium text-orange-900">Perusahaan:</div>
+                                        <div class="text-orange-800">{{ $pendingContractInfo['perusahaan_nama'] }}</div>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-orange-900">Pembimbing Lapangan:</div>
+                                        <div class="text-orange-800">{{ $pendingContractInfo['pembimbing_nama'] }}</div>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-orange-900">Periode Magang:</div>
+                                        <div class="text-orange-800">
+                                            {{ \Carbon\Carbon::parse($pendingContractInfo['tanggal_mulai'])->format('d M Y') }}
+                                            -
+                                            {{ \Carbon\Carbon::parse($pendingContractInfo['tanggal_selesai'])->format('d M Y') }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-orange-900">Tanggal Pengajuan:</div>
+                                        <div class="text-orange-800">
+                                            {{ \Carbon\Carbon::parse($pendingContractInfo['created_at'])->format('d M Y H:i') }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3 p-3 bg-orange-100 rounded-md">
+                                    <div class="text-orange-900 font-medium text-sm">
+                                        <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        Pemberitahuan:
+                                    </div>
+                                    <div class="text-orange-800 text-sm mt-1">
+                                        Kontrak magang Anda sedang dalam proses review oleh admin. Status magang tidak
+                                        dapat diubah hingga kontrak disetujui atau ditolak. Silakan tunggu konfirmasi
+                                        lebih lanjut.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <!-- Status Information Card -->
             <div
                 class="p-4 mb-6 rounded-lg border-l-4
-                @if ($status == 'Belum Magang') bg-yellow-50 border-yellow-400
-                @elseif($status == 'Sedang Magang')
-                    bg-blue-50 border-blue-400
-                @else
-                    bg-green-50 border-green-400 @endif
+                @if ($status == 'Belum Magang') @if ($hasPendingContract)
+                        bg-orange-50 border-orange-400
+                    @else
+                        bg-yellow-50 border-yellow-400 @endif
+@elseif($status == 'Sedang Magang')
+bg-blue-50 border-blue-400
+@else
+bg-green-50 border-green-400 @endif
             ">
                 <div class="flex items-center mb-2">
                     <div
                         class="w-3 h-3 rounded-full mr-2
-                        @if ($status == 'Belum Magang') bg-yellow-400
-                        @elseif($status == 'Sedang Magang')
-                            bg-blue-400
-                        @else
-                            bg-green-400 @endif
+                        @if ($status == 'Belum Magang') @if ($hasPendingContract)
+                                bg-orange-400
+                            @else
+                                bg-yellow-400 @endif
+@elseif($status == 'Sedang Magang')
+bg-blue-400
+@else
+bg-green-400 @endif
                     ">
                     </div>
                     <h4 class="font-medium text-gray-800">Status Progress</h4>
@@ -225,7 +392,7 @@ $canAccessCompanyFeatures = function () {
                     </flux:label>
 
                     <flux:select wire:model.live="status" placeholder="Pilih status magang..."
-                        :disabled="$isStatusLocked" class="mt-1">
+                        :disabled="$isStatusLocked || $hasPendingContract" class="mt-1">
                         @foreach ($availableStatuses as $value => $label)
                             <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
                         @endforeach
@@ -240,6 +407,17 @@ $canAccessCompanyFeatures = function () {
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 Status tidak dapat diubah karena magang telah selesai.
+                            </div>
+                        </flux:description>
+                    @elseif($hasPendingContract)
+                        <flux:description class="text-orange-600 text-sm mt-2">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                Status tidak dapat diubah karena ada kontrak magang yang menunggu persetujuan.
                             </div>
                         </flux:description>
                     @elseif($status == 'Sedang Magang')
@@ -274,7 +452,7 @@ $canAccessCompanyFeatures = function () {
                 <div class="mt-6">
                     <livewire:components.mahasiswa.pembaruan-status-magang.selesai-magang />
                 </div>
-            @elseif ($status == 'Belum Magang')
+            @elseif ($status == 'Belum Magang' && !$hasPendingContract)
                 <div class="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
                     <h5 class="font-medium text-green-800 mb-2">Siap Memulai Magang</h5>
                     <p class="text-sm text-green-700">
