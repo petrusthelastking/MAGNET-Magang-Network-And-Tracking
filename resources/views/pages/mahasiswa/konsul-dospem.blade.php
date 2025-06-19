@@ -335,26 +335,24 @@ $togglePolling = function () {
 }" x-init="init()" x-on:beforeunload="stopPolling()">
     {{-- Header --}}
     <div
-        class="fixed top-14 left-0 right-4 lg:left-56 backdrop-blur-md bg-white/80 border-b border-white/20 shadow-lg z-40">
+        class="fixed top-14 left-0 right-4 lg:left-56 backdrop-blur-md bg-white/80 border-b border-white/20 shadow-md z-40">
         <div class="flex items-center gap-4 px-6 py-4">
-<div class="relative w-14 h-14">
-    <div class="w-full h-full rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-0.5 overflow-hidden">
-        <div class="w-full h-full bg-white rounded-full p-0.5 overflow-hidden">
-            <img src="{{ asset('img/user/lecturer-man.png') }}"
-                class="w-full h-full object-cover rounded-full" alt="Avatar">
-        </div>
-    </div>
-    <div class="absolute bottom-0 right-0 w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
-</div>
-
-
+            <div class="relative">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-0.5">
+                    <flux:avatar src="{{ asset('img/user/lecturer-man.png') }}"
+                        class="w-full h-full rounded-full border-2 border-white" />
+                </div>
+                <div
+                    class="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-2 border-white shadow-sm">
+                </div>
+            </div>
             <div class="flex-1 min-w-0">
-                <flux:heading size="sm" class="truncate font-semibold text-gray-800">
+                <flux:heading class="truncate font-semibold text-gray-800">
                     {{ $dosenPembimbing ? $dosenPembimbing->nama : 'Dosen Pembimbing' }}
                 </flux:heading>
                 <div class="flex items-center gap-2">
                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <flux:subheading size="sm" class="text-green-600 font-medium">
+                    <flux:subheading class="text-green-600 font-medium">
                         Dosen Pembimbing
                     </flux:subheading>
                 </div>
@@ -384,8 +382,8 @@ $togglePolling = function () {
                         class="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mb-4">
                         <flux:icon.exclamation-triangle class="w-8 h-8 text-red-500" />
                     </div>
-                    <flux:heading size="sm" class="text-red-600 mb-2">Akses Ditolak</flux:heading>
-                    <flux:subheading size="sm" class="text-red-500">
+                    <flux:heading class="text-red-600 mb-2">Akses Ditolak</flux:heading>
+                    <flux:subheading class="text-red-500">
                         Anda tidak memiliki akses ke chat ini
                     </flux:subheading>
                 </div>
@@ -396,8 +394,8 @@ $togglePolling = function () {
                         class="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mb-4">
                         <flux:icon.chat-bubble-left-right class="w-8 h-8 text-blue-500" />
                     </div>
-                    <flux:heading size="sm" class="text-gray-600 mb-2">Belum ada percakapan</flux:heading>
-                    <flux:subheading size="sm" class="text-gray-500">
+                    <flux:heading class="text-gray-600 mb-2">Belum ada percakapan</flux:heading>
+                    <flux:subheading class="text-gray-500">
                         Mulai percakapan dengan dosen pembimbing Anda
                     </flux:subheading>
                 </div>
@@ -409,7 +407,7 @@ $togglePolling = function () {
                         @php $currentDate = $message['created_date']; @endphp
                         <div class="flex justify-center my-8">
                             <flux:badge variant="outline"
-                                class="bg-white/90 backdrop-blur-sm border-white/20 shadow-lg px-4 py-2 font-medium text-gray-700">
+                                class="bg-white/90 backdrop-blur-sm border-white/20 shadow-md px-4 py-2 font-medium text-gray-700">
                                 {{ \Carbon\Carbon::parse($message['created_date'])->format('d M Y') }}
                             </flux:badge>
                         </div>
@@ -425,7 +423,7 @@ $togglePolling = function () {
                             {{-- Outgoing Message (Mahasiswa) --}}
                             <div class="flex justify-end group">
                                 <div class="max-w-[75%] sm:max-w-[65%]">
-                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-3xl rounded-tr-lg p-4 shadow-lg"
+                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-3xl rounded-tr-md p-4 shadow-md"
                                         :class="{ 'animate-pulse': isNew }">
                                         <p class="text-sm leading-relaxed">{{ $message['message'] }}</p>
                                     </div>
@@ -439,7 +437,7 @@ $togglePolling = function () {
                             {{-- Incoming Message (Dosen) --}}
                             <div class="flex justify-start group">
                                 <div class="max-w-[75%] sm:max-w-[65%]">
-                                    <div class="bg-white/90 backdrop-blur-sm border border-white/20 rounded-3xl rounded-tl-lg p-4 shadow-lg"
+                                    <div class="bg-white/90 backdrop-blur-sm border border-white/20 rounded-3xl rounded-tl-md p-4 shadow-md"
                                         :class="{ 'ring-2 ring-blue-400 ring-opacity-75': isNew }">
                                         <p class="text-sm text-gray-800 leading-relaxed">{{ $message['message'] }}</p>
                                     </div>
@@ -461,7 +459,7 @@ $togglePolling = function () {
     {{-- Input Area --}}
     @if ($isAuthorized)
         <div
-            class="fixed bottom-0 left-0 right-4 lg:left-56 backdrop-blur-md bg-white/90 border-t border-white/20 shadow-lg z-40">
+            class="fixed bottom-0 left-0 right-4 lg:left-56 backdrop-blur-md bg-white/90 border-t border-white/20 shadow-md z-40">
             <div class="flex items-end gap-3 px-6 py-4">
                 {{-- Message Input --}}
                 <div class="flex-1 relative">
@@ -476,9 +474,9 @@ $togglePolling = function () {
 
                 {{-- Send Button --}}
                 <div class="flex-shrink-0">
-                    <flux:button wire:click="sendMessage" variant="primary" size="sm" icon="paper-airplane"
+                    <flux:button wire:click="sendMessage" variant="primary" icon="paper-airplane"
                         wire:loading.attr="disabled"
-                        class="w-12 h-12 rounded-full !bg-gradient-to-r !from-blue-500 !to-blue-600 hover:!from-blue-600 hover:!to-blue-700 !text-white !shadow-lg hover:!shadow-xl !transition-all !duration-200" />
+                        class="w-12 h-12 rounded-full !bg-gradient-to-r !from-blue-500 !to-blue-600 hover:!from-blue-600 hover:!to-blue-700 !text-white !shadow-md hover:!shadow-md !transition-all !duration-200" />
                 </div>
             </div>
         </div>
@@ -486,7 +484,7 @@ $togglePolling = function () {
 
     {{-- Loading Indicator --}}
     <div wire:loading wire:target="sendMessage" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-50">
-        <div class="bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
+        <div class="bg-blue-500 text-white px-4 py-2 rounded-full shadow-md flex items-center gap-2">
             <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
             <span class="text-sm">Mengirim...</span>
         </div>
@@ -497,7 +495,7 @@ $togglePolling = function () {
         <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
             x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed top-20 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg">
+            class="fixed top-20 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-md shadow-md">
             {{ session('success') }}
         </div>
     @endif
@@ -507,7 +505,7 @@ $togglePolling = function () {
         <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
             x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed top-20 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">
+            class="fixed top-20 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded-md shadow-md">
             {{ session('error') }}
         </div>
     @endif

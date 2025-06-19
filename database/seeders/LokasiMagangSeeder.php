@@ -8,12 +8,10 @@ use App\Models\LokasiMagang;
 
 class LokasiMagangSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $locations = [
+            'Semua' => ['Semua lokasi'], // Tambahkan opsi "semua"
             'Area Malang Raya' => [
                 'Lowokwaru, Kota Malang, Jawa Timur',
                 'Singosari, Kabupaten Malang, Jawa Timur',
@@ -44,10 +42,10 @@ class LokasiMagangSeeder extends Seeder
             ]
         ];
 
-        foreach ($locations as $key => $locs) {
+        foreach ($locations as $kategori => $locs) {
             foreach ($locs as $loc) {
                 LokasiMagang::create([
-                    'kategori_lokasi' => $key,
+                    'kategori_lokasi' => $kategori,
                     'lokasi' => $loc
                 ]);
             }

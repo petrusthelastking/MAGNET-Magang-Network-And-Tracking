@@ -12,10 +12,10 @@ state([
     'totalKontrakMagangTahunIni' => KontrakMagang::whereYear('created_at', Carbon::now()->year)->count(),
 
     'bidangIndustriTerpopuler' => BidangIndustri::withCount([
-            'perusahaan as total_mahasiswa' => function ($query) {
-                $query->join('lowongan_magang', 'perusahaan.id', '=', 'lowongan_magang.perusahaan_id')->join('kontrak_magang', 'lowongan_magang.id', '=', 'kontrak_magang.lowongan_magang_id');
-            },
-        ])
+        'perusahaan as total_mahasiswa' => function ($query) {
+            $query->join('lowongan_magang', 'perusahaan.id', '=', 'lowongan_magang.perusahaan_id')->join('kontrak_magang', 'lowongan_magang.id', '=', 'kontrak_magang.lowongan_magang_id');
+        },
+    ])
         ->orderByDesc('total_mahasiswa')
         ->take(5)
         ->get()
@@ -89,15 +89,16 @@ state([
                 </div>
                 <div class="p-4 space-y-1">
                     @foreach ($bidangIndustriTerpopuler as $bidangIndustri)
-                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
-                        <div class="flex items-center">
-                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                                <span class="text-sm font-semibold text-blue-600">{{ $loop->iteration }}</span>
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm font-semibold text-blue-600">{{ $loop->iteration }}</span>
+                                </div>
+                                <p class="font-medium text-gray-900">{{ $bidangIndustri['nama'] }}</p>
                             </div>
-                            <p class="font-medium text-gray-900">{{ $bidangIndustri['nama'] }}</p>
+                            <span class="text-sm font-semibold text-gray-900">{{ $bidangIndustri['total_mahasiswa'] }}
+                                mahasiswa magang</span>
                         </div>
-                        <span class="text-sm font-semibold text-gray-900">{{ $bidangIndustri['total_mahasiswa'] }} mahasiswa magang</span>
-                    </div>
                     @endforeach
                 </div>
             </div>

@@ -25,7 +25,6 @@ $mahasiswaBimbingan = computed(function () {
         ->whereHas('kontrakMagang', function ($query) use ($dosenId) {
             $query->where('dosen_id', $dosenId);
         })
-        ->where('status_magang', '!=', 'belum magang')
         ->orderBy('nama');
 
     // Apply search filter
@@ -113,17 +112,6 @@ $updateSearch = function () {
                                 <flux:icon name="building-office" class="w-3 h-3 inline mr-1" />
                                 {{ $mahasiswa['perusahaan_nama'] }}
                             </div>
-                        </div>
-
-                        <div class="hidden md:block">
-                            @if ($mahasiswa['status_magang'] === 'sedang magang')
-                                <flux:badge color="blue" size="sm">Sedang Magang</flux:badge>
-                            @elseif($mahasiswa['status_magang'] === 'selesai magang')
-                                <flux:badge color="green" size="sm">Selesai Magang</flux:badge>
-                            @else
-                                <flux:badge color="gray" size="sm">
-                                    {{ ucwords(str_replace('_', ' ', $mahasiswa['status_magang'])) }}</flux:badge>
-                            @endif
                         </div>
                     </div>
 

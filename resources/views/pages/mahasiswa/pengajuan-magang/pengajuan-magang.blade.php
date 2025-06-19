@@ -20,18 +20,16 @@ state([
 <div class="text-black flex flex-col gap-6">
     <x-slot:user>mahasiswa</x-slot:user>
 
-    <h2 class="text-base leading-6 font-bold">Pengajuan Magang</h2>
-
     @if ($status == 'belum magang')
         @if (is_null($pengajuanMagang))
             {{-- Belum pernah mengajukan --}}
             <x-mahasiswa.pengajuan-magang.belum-diajukan />
-        @elseif ($pengajuanMagang == 'diproses' || $pengajuanMagang == 'diterima')
+        @elseif ($pengajuanMagang == 'diproses')
             {{-- Sedang diproses --}}
             <x-mahasiswa.pengajuan-magang.sedang-diproses />
         @elseif ($pengajuanMagang == 'diterima')
             {{-- Sudah diterima --}}
-            <x-mahasiswa.pengajuan-magang.pengajuan-diterima /> {{-- Sudah mengajukan, tunggu proses selanjutnya --}}
+            <livewire:components.mahasiswa.pengajuan-magang.pengajuan-diterima /> {{-- Sudah mengajukan, tunggu proses selanjutnya --}}
         @elseif ($pengajuanMagang == 'ditolak')
             {{-- Ditolak, tampilkan alasan dan form ulang --}} <div class="bg-red-100 p-4 rounded shadow">
                 <p class="text-red-600 font-semibold">Pengajuan Anda ditolak.</p>

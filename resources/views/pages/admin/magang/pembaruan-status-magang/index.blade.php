@@ -1,7 +1,7 @@
 <?php
 
 use function Livewire\Volt\{layout, state, usesPagination, with, computed};
-use App\Models\FormPengajuanMagang;
+use App\Models\KontrakMagang;
 
 layout('components.layouts.user.main');
 
@@ -16,14 +16,19 @@ state([
 usesPagination();
 
 $filteredQuery = computed(function () {
-    $query = FormPengajuanMagang::with([
-        'berkasPengajuanMagang.mahasiswa:id,nama,nim,program_studi,angkatan'
-    ]);
+    $query = KontrakMagang::with(['mahasiswa:id,nama,nim,program_studi,angkatan', 'dosenPembimbing:id,nama,nidn', 'lowonganMagang:id,pekerjaan_id,perusahaan_id', 'lowonganMagang.pekerjaan:id,nama', 'lowonganMagang.perusahaan:id,nama']);
 
     if (!empty($this->searchTerm)) {
-        $query->whereHas('berkasPengajuanMagang.mahasiswa', function ($q) {
-            $q->where('nama', 'like', '%' . $this->searchTerm . '%')
-              ->orWhere('nim', 'like', '%' . $this->searchTerm . '%');
+        $query->where(function ($q) {
+            $q->whereHas('mahasiswa', function ($subQuery) {
+                $subQuery->where('nama', 'like', '%' . $this->searchTerm . '%')->orWhere('nim', 'like', '%' . $this->searchTerm . '%');
+            })
+                ->orWhereHas('lowonganMagang.pekerjaan', function ($subQuery) {
+                    $subQuery->where('nama', 'like', '%' . $this->searchTerm . '%');
+                })
+                ->orWhereHas('lowonganMagang.perusahaan', function ($subQuery) {
+                    $subQuery->where('nama', 'like', '%' . $this->searchTerm . '%');
+                });
         });
     }
 
@@ -32,10 +37,9 @@ $filteredQuery = computed(function () {
     }
 
     if ($this->sortBy === 'nama') {
-        $query->join('berkas_pengajuan_magang', 'form_pengajuan_magang.pengajuan_id', '=', 'berkas_pengajuan_magang.id')
-              ->join('mahasiswa', 'berkas_pengajuan_magang.mahasiswa_id', '=', 'mahasiswa.id')
-              ->orderBy('mahasiswa.nama', $this->sortDirection)
-              ->select('form_pengajuan_magang.*');
+        $query->join('mahasiswa', 'kontrak_magang.mahasiswa_id', '=', 'mahasiswa.id')->orderBy('mahasiswa.nama', $this->sortDirection)->select('kontrak_magang.*');
+    } elseif ($this->sortBy === 'perusahaan') {
+        $query->join('lowongan_magang', 'kontrak_magang.lowongan_magang_id', '=', 'lowongan_magang.id')->join('perusahaan', 'lowongan_magang.perusahaan_id', '=', 'perusahaan.id')->orderBy('perusahaan.nama', $this->sortDirection)->select('kontrak_magang.*');
     } else {
         $query->orderBy($this->sortBy, $this->sortDirection);
     }
@@ -45,28 +49,28 @@ $filteredQuery = computed(function () {
 
 with(function () {
     return [
-        'dataPengajuan' => $this->filteredQuery->paginate($this->totalRowsPerPage)->through(
-            fn($form) => [
-                'id' => $form->id,
-                'nama' => $form->berkasPengajuanMagang->mahasiswa->nama ?? 'N/A',
-                'nim' => $form->berkasPengajuanMagang->mahasiswa->nim ?? 'N/A',
-                'program_studi' => $form->berkasPengajuanMagang->mahasiswa->program_studi ?? 'N/A',
-                'angkatan' => $form->berkasPengajuanMagang->mahasiswa->angkatan ?? 'N/A',
-                'tanggal_pengajuan' => $form->created_at->format('d M Y H:i'),
-                'status' => $form->status,
-                'keterangan' => $form->keterangan,
-                'has_documents' => [
-                    'cv' => !empty($form->berkasPengajuanMagang->cv),
-                    'transkrip' => !empty($form->berkasPengajuanMagang->transkrip_nilai),
-                    'portfolio' => !empty($form->berkasPengajuanMagang->portfolio),
-                ],
+        'dataKontrak' => $this->filteredQuery->paginate($this->totalRowsPerPage)->through(
+            fn($kontrak) => [
+                'id' => $kontrak->id,
+                'mahasiswa_id' => $kontrak->mahasiswa->id ?? null, // Added mahasiswa_id
+                'nama' => $kontrak->mahasiswa->nama ?? 'N/A',
+                'nim' => $kontrak->mahasiswa->nim ?? 'N/A',
+                'program_studi' => $kontrak->mahasiswa->program_studi ?? 'N/A',
+                'angkatan' => $kontrak->mahasiswa->angkatan ?? 'N/A',
+                'dosen_pembimbing' => $kontrak->dosenPembimbing->nama ?? 'N/A',
+                'lowongan_judul' => $kontrak->lowonganMagang->pekerjaan->nama ?? 'N/A',
+                'perusahaan' => $kontrak->lowonganMagang->perusahaan->nama ?? 'N/A',
+                'waktu_awal' => $kontrak->waktu_awal ? $kontrak->waktu_awal->format('d M Y') : 'N/A',
+                'waktu_akhir' => $kontrak->waktu_akhir ? $kontrak->waktu_akhir->format('d M Y') : 'N/A',
+                'periode_magang' => $kontrak->waktu_awal && $kontrak->waktu_akhir ? $kontrak->waktu_awal->format('d M Y') . ' - ' . $kontrak->waktu_akhir->format('d M Y') : 'N/A',
+                'tanggal_kontrak' => $kontrak->created_at->format('d M Y H:i'),
+                'status' => $kontrak->status,
             ],
         ),
         'statusCounts' => [
-            'total' => FormPengajuanMagang::count(),
-            'diproses' => FormPengajuanMagang::where('status', 'diproses')->count(),
-            'diterima' => FormPengajuanMagang::where('status', 'diterima')->count(),
-            'ditolak' => FormPengajuanMagang::where('status', 'ditolak')->count(),
+            'total' => KontrakMagang::count(),
+            'menunggu_persetujuan' => KontrakMagang::where('status', 'menunggu_persetujuan')->count(),
+            'disetujui' => KontrakMagang::where('status', 'disetujui')->count(),
         ],
     ];
 });
@@ -100,11 +104,11 @@ $sortBy = function (string $column) {
 
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item class="text-black">Kelola Data Pengajuan Magang</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item class="text-black">Kelola Data Kontrak Magang</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
     <div class="flex justify-between items-center">
-        <h1 class="text-xl font-bold leading-6 text-black">Kelola Data Pengajuan Magang</h1>
+        <h1 class="text-xl font-bold leading-6 text-black">Kelola Data Kontrak Magang</h1>
 
         <div class="flex gap-4">
             <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
@@ -112,16 +116,12 @@ $sortBy = function (string $column) {
                 <div class="text-lg font-semibold text-blue-800">{{ $statusCounts['total'] }}</div>
             </div>
             <div class="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2">
-                <div class="text-sm text-yellow-600">Diproses</div>
-                <div class="text-lg font-semibold text-yellow-800">{{ $statusCounts['diproses'] }}</div>
+                <div class="text-sm text-yellow-600">Menunggu Persetujuan</div>
+                <div class="text-lg font-semibold text-yellow-800">{{ $statusCounts['menunggu_persetujuan'] }}</div>
             </div>
             <div class="bg-green-50 border border-green-200 rounded-lg px-4 py-2">
-                <div class="text-sm text-green-600">Diterima</div>
-                <div class="text-lg font-semibold text-green-800">{{ $statusCounts['diterima'] }}</div>
-            </div>
-            <div class="bg-red-50 border border-red-200 rounded-lg px-4 py-2">
-                <div class="text-sm text-red-600">Ditolak</div>
-                <div class="text-lg font-semibold text-red-800">{{ $statusCounts['ditolak'] }}</div>
+                <div class="text-sm text-green-600">Disetujui</div>
+                <div class="text-lg font-semibold text-green-800">{{ $statusCounts['disetujui'] }}</div>
             </div>
         </div>
     </div>
@@ -129,18 +129,14 @@ $sortBy = function (string $column) {
     <div class="bg-white p-4 rounded-lg shadow-sm">
         <div class="flex flex-wrap gap-3 items-center justify-between">
             <div class="flex gap-3 flex-1">
-                <flux:input
-                    class="rounded-3xl flex-1 max-w-md"
-                    placeholder="Cari nama atau NIM mahasiswa..."
-                    icon="magnifying-glass"
-                    wire:model.live.debounce.300ms="searchTerm"
-                />
+                <flux:input class="rounded-3xl flex-1 max-w-md"
+                    placeholder="Cari nama mahasiswa, NIM, pekerjaan, atau perusahaan..." icon="magnifying-glass"
+                    wire:model.live.debounce.300ms="searchTerm" />
 
                 <flux:select class="w-48" wire:model.live="statusFilter" placeholder="Filter Status">
                     <flux:select.option value="">Semua Status</flux:select.option>
-                    <flux:select.option value="diproses">Belum Diverifikasi</flux:select.option>
-                    <flux:select.option value="diterima">Diterima</flux:select.option>
-                    <flux:select.option value="ditolak">Ditolak</flux:select.option>
+                    <flux:select.option value="menunggu_persetujuan">Menunggu Persetujuan</flux:select.option>
+                    <flux:select.option value="disetujui">Disetujui</flux:select.option>
                 </flux:select>
             </div>
 
@@ -163,104 +159,103 @@ $sortBy = function (string $column) {
                             <flux:checkbox />
                         </th>
                         <th class="text-center px-6 py-4 w-16">No</th>
-                        <th class="text-left px-6 py-4 w-1/4">
+                        <th class="text-left px-6 py-4 w-1/5">
                             <button class="flex items-center gap-1 hover:text-blue-600" wire:click="sortBy('nama')">
                                 Mahasiswa
-                                @if($sortBy === 'nama')
-                                    <flux:icon.chevron-up class="w-4 h-4 {{ $sortDirection === 'asc' ? '' : 'rotate-180' }}" />
+                                @if ($sortBy === 'nama')
+                                    <flux:icon.chevron-up
+                                        class="w-4 h-4 {{ $sortDirection === 'asc' ? '' : 'rotate-180' }}" />
                                 @endif
                             </button>
                         </th>
-                        <th class="text-left px-6 py-4 w-1/6">Program Studi</th>
                         <th class="text-left px-6 py-4 w-1/6">
-                            <button class="flex items-center gap-1 hover:text-blue-600" wire:click="sortBy('created_at')">
-                                Waktu Pengajuan
-                                @if($sortBy === 'created_at')
-                                    <flux:icon.chevron-up class="w-4 h-4 {{ $sortDirection === 'asc' ? '' : 'rotate-180' }}" />
+                            <button class="flex items-center gap-1 hover:text-blue-600"
+                                wire:click="sortBy('perusahaan')">
+                                Perusahaan
+                                @if ($sortBy === 'perusahaan')
+                                    <flux:icon.chevron-up
+                                        class="w-4 h-4 {{ $sortDirection === 'asc' ? '' : 'rotate-180' }}" />
                                 @endif
                             </button>
                         </th>
-                        <th class="text-center px-6 py-4 w-1/6">Dokumen</th>
+                        <th class="text-left px-6 py-4 w-1/6">Dosen Pembimbing</th>
+                        <th class="text-left px-6 py-4 w-1/6">Periode Magang</th>
+                        <th class="text-left px-6 py-4 w-1/6">
+                            <button class="flex items-center gap-1 hover:text-blue-600"
+                                wire:click="sortBy('created_at')">
+                                Tanggal Kontrak
+                                @if ($sortBy === 'created_at')
+                                    <flux:icon.chevron-up
+                                        class="w-4 h-4 {{ $sortDirection === 'asc' ? '' : 'rotate-180' }}" />
+                                @endif
+                            </button>
+                        </th>
                         <th class="text-left px-6 py-4 w-1/6">Status</th>
                         <th class="text-center px-6 py-4 w-20">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white text-gray-900 divide-y divide-gray-200">
-                    @forelse ($dataPengajuan as $pengajuan)
+                    @forelse ($dataKontrak as $kontrak)
                         <tr class="hover:bg-gray-50 transition-colors duration-150">
                             <td class="px-6 py-4 text-center">
-                                <flux:checkbox value="{{ $pengajuan['id'] }}" />
+                                <flux:checkbox value="{{ $kontrak['id'] }}" />
                             </td>
                             <td class="px-6 py-4 text-center text-sm text-gray-500">
-                                {{ ($dataPengajuan->currentPage() - 1) * $dataPengajuan->perPage() + $loop->iteration }}
+                                {{ ($dataKontrak->currentPage() - 1) * $dataKontrak->perPage() + $loop->iteration }}
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
-                                    <div class="font-medium text-gray-900">{{ $pengajuan['nama'] }}</div>
-                                    <div class="text-sm text-gray-500">{{ $pengajuan['nim'] }}</div>
-                                    <div class="text-xs text-gray-400">Angkatan {{ $pengajuan['angkatan'] }}</div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm">{{ $pengajuan['program_studi'] }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ $pengajuan['tanggal_pengajuan'] }}</td>
-                            <td class="px-6 py-4 text-center">
-                                <div class="flex justify-center gap-1">
-                                    <flux:badge
-                                        variant="outline"
-                                        color="{{ $pengajuan['has_documents']['cv'] ? 'green' : 'red' }}"
-                                        size="sm"
-                                    >CV</flux:badge>
-                                    <flux:badge
-                                        variant="outline"
-                                        color="{{ $pengajuan['has_documents']['transkrip'] ? 'green' : 'red' }}"
-                                        size="sm"
-                                    >T</flux:badge>
-                                    <flux:badge
-                                        variant="outline"
-                                        color="{{ $pengajuan['has_documents']['portfolio'] ? 'green' : 'red' }}"
-                                        size="sm"
-                                    >P</flux:badge>
+                                    <div class="font-medium text-gray-900">{{ $kontrak['nama'] }}</div>
+                                    <div class="text-sm text-gray-500">{{ $kontrak['nim'] }}</div>
+                                    <div class="text-xs text-gray-400">{{ $kontrak['program_studi'] }} -
+                                        {{ $kontrak['angkatan'] }}</div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
+                                <div class="flex flex-col">
+                                    <div class="font-medium text-gray-900">{{ $kontrak['perusahaan'] }}</div>
+                                    <div class="text-sm text-gray-500">{{ $kontrak['lowongan_judul'] }}</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm">{{ $kontrak['dosen_pembimbing'] }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600">{{ $kontrak['periode_magang'] }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600">{{ $kontrak['tanggal_kontrak'] }}</td>
+                            <td class="px-6 py-4">
                                 @php
-                                    $status = $pengajuan['status'] == 'diproses'
-                                        ? 'Belum diverifikasi'
-                                        : ucfirst($pengajuan['status']);
+                                    $status =
+                                        $kontrak['status'] == 'menunggu_persetujuan'
+                                            ? 'Menunggu Persetujuan'
+                                            : 'Disetujui';
 
-                                    $badgeColor = match ($status) {
-                                        'Diterima' => 'green',
-                                        'Ditolak' => 'red',
-                                        'Belum diverifikasi' => 'yellow',
+                                    $badgeColor = match ($kontrak['status']) {
+                                        'disetujui' => 'green',
+                                        'menunggu_persetujuan' => 'yellow',
+                                        default => 'gray',
                                     };
                                 @endphp
-                                <flux:badge
-                                    class="min-w-32 flex justify-center"
-                                    variant="solid"
-                                    color="{{ $badgeColor }}"
-                                >
+                                <flux:badge class="min-w-32 flex justify-center" variant="solid"
+                                    color="{{ $badgeColor }}">
                                     {{ $status }}
                                 </flux:badge>
-                                @if($pengajuan['keterangan'])
-                                    <div class="text-xs text-gray-500 mt-1">{{ $pengajuan['keterangan'] }}</div>
-                                @endif
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <flux:button
-                                    icon="eye"
-                                    href="{{ route('admin.detail-pengajuan-pembaruan-status-magang', $pengajuan['id']) }}"
-                                    variant="ghost"
-                                    size="sm"
-                                />
+                                @if ($kontrak['mahasiswa_id'])
+                                    <div onclick="window.location='{{ route('admin.detail-pengajuan-pembaruan-status-magang', ['id' => $kontrak['mahasiswa_id']]) }}'"
+                                        class="cursor-pointer">
+                                        <flux:button icon="eye" variant="ghost" size="sm" />
+                                    </div>
+                                @else
+                                    <flux:button icon="eye" variant="ghost" size="sm" disabled />
+                                @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="9" class="px-6 py-12 text-center text-gray-500">
                                 <div class="flex flex-col items-center gap-2">
                                     <flux:icon.document-text class="w-12 h-12 text-gray-300" />
-                                    <div>Tidak ada data pengajuan ditemukan</div>
-                                    @if($searchTerm || $statusFilter)
+                                    <div>Tidak ada data kontrak magang ditemukan</div>
+                                    @if ($searchTerm || $statusFilter)
                                         <flux:button variant="ghost" wire:click="resetFilters" size="sm">
                                             Hapus Filter
                                         </flux:button>
@@ -277,43 +272,38 @@ $sortBy = function (string $column) {
         <div class="flex items-center justify-between w-full px-6 py-4 bg-gray-50 border-t">
             <div class="flex items-center gap-4">
                 <p class="text-sm text-gray-600">
-                    Menampilkan {{ $dataPengajuan->count() }} dari {{ $dataPengajuan->total() }} data
+                    Menampilkan {{ $dataKontrak->count() }} dari {{ $dataKontrak->total() }} data
                 </p>
             </div>
 
             <div class="flex items-center gap-2">
                 <flux:button icon="chevron-left" variant="ghost" wire:click="goToPrevPage" size="sm" />
 
-                @if ($dataPengajuan->lastPage() <= 7)
-                    @for ($i = 1; $i <= $dataPengajuan->lastPage(); $i++)
-                        <flux:button
-                            variant="{{ $i === $dataPengajuan->currentPage() ? 'primary' : 'ghost' }}"
-                            wire:click="goToSpecificPage({{ $i }})"
-                            size="sm"
-                        >
+                @if ($dataKontrak->lastPage() <= 7)
+                    @for ($i = 1; $i <= $dataKontrak->lastPage(); $i++)
+                        <flux:button variant="{{ $i === $dataKontrak->currentPage() ? 'primary' : 'ghost' }}"
+                            wire:click="goToSpecificPage({{ $i }})" size="sm">
                             {{ $i }}
                         </flux:button>
                     @endfor
                 @else
-                    @if ($dataPengajuan->currentPage() > 3)
+                    @if ($dataKontrak->currentPage() > 3)
                         <flux:button variant="ghost" wire:click="goToSpecificPage(1)" size="sm">1</flux:button>
                         <span class="text-gray-500">...</span>
                     @endif
 
-                    @for ($i = max(1, $dataPengajuan->currentPage() - 1); $i <= min($dataPengajuan->lastPage(), $dataPengajuan->currentPage() + 1); $i++)
-                        <flux:button
-                            variant="{{ $i === $dataPengajuan->currentPage() ? 'primary' : 'ghost' }}"
-                            wire:click="goToSpecificPage({{ $i }})"
-                            size="sm"
-                        >
+                    @for ($i = max(1, $dataKontrak->currentPage() - 1); $i <= min($dataKontrak->lastPage(), $dataKontrak->currentPage() + 1); $i++)
+                        <flux:button variant="{{ $i === $dataKontrak->currentPage() ? 'primary' : 'ghost' }}"
+                            wire:click="goToSpecificPage({{ $i }})" size="sm">
                             {{ $i }}
                         </flux:button>
                     @endfor
 
-                    @if ($dataPengajuan->currentPage() < $dataPengajuan->lastPage() - 2)
+                    @if ($dataKontrak->currentPage() < $dataKontrak->lastPage() - 2)
                         <span class="text-gray-500">...</span>
-                        <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataPengajuan->lastPage() }})" size="sm">
-                            {{ $dataPengajuan->lastPage() }}
+                        <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataKontrak->lastPage() }})"
+                            size="sm">
+                            {{ $dataKontrak->lastPage() }}
                         </flux:button>
                     @endif
                 @endif
