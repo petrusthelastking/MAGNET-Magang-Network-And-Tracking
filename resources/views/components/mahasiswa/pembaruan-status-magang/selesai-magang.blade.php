@@ -50,11 +50,27 @@ mount(function () {
 $showReviewForm = function () {
     $this->show_review_form = true;
     $this->resetErrorBag();
+    // Pre-fill with existing review data if available
+    if ($this->existing_review) {
+        $this->review_rating = $this->existing_review->rating;
+        $this->review_komentar = $this->existing_review->komentar;
+    }
 };
 
 $hideReviewForm = function () {
     $this->show_review_form = false;
     $this->resetErrorBag();
+    // Reset form data
+    $this->reset(['review_rating', 'review_komentar', 'bukti_surat_selesai_magang']);
+};
+
+$validateStep = function ($step) {
+    if ($step === 'review') {
+        $this->validateOnly('review_rating');
+        $this->validateOnly('review_komentar');
+    } elseif ($step === 'file') {
+        $this->validateOnly('bukti_surat_selesai_magang');
+    }
 };
 
 $completeInternship = function () {
@@ -264,106 +280,284 @@ $hasCompletedInternship = function () {
                 </div>
 
                 @if (!$show_review_form)
-                    <!-- Show button to start completion process -->
-                    <div class="text-center py-6">
-                        <p class="text-gray-600 mb-4">Untuk menyelesaikan magang, Anda perlu mengisi ulasan perusahaan
-                            dan mengunggah surat selesai magang.</p>
-                        <flux:button wire:click="showReviewForm" variant="filled">
-                            Mulai Proses Penyelesaian Magang
-                        </flux:button>
+                    <!-- Enhanced Call-to-Action -->
+                    <div
+                        class="text-center py-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                        <div class="max-w-md mx-auto">
+                            <div class="mb-4">
+                                <svg class="w-12 h-12 mx-auto text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Siap Menyelesaikan Magang?</h3>
+                            <p class="text-gray-600 mb-6 text-sm leading-relaxed">
+                                Untuk menyelesaikan magang Anda, kami membutuhkan:
+                            </p>
+                            <div class="space-y-2 mb-6 text-left">
+                                <div class="flex items-center text-sm text-gray-700">
+                                    <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    Ulasan pengalaman magang Anda
+                                </div>
+                                <div class="flex items-center text-sm text-gray-700">
+                                    <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    Laporan akhir magang (PDF)
+                                </div>
+                            </div>
+                            <flux:button wire:click="showReviewForm" variant="filled" class="px-8">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                    </path>
+                                </svg>
+                                Mulai Penyelesaian Magang
+                            </flux:button>
+                        </div>
                     </div>
                 @else
-                    <!-- Complete form with review and file upload -->
-                    <form wire:submit.prevent="completeInternship" class="space-y-6">
-                        <!-- Review Section -->
-                        <div class="border rounded-lg p-4 bg-gray-50">
-                            <h4 class="text-lg font-semibold text-gray-700 mb-4">Ulasan Perusahaan</h4>
-                            <p class="text-sm text-gray-600 mb-4">Berikan ulasan untuk perusahaan
-                                {{ $this->getInternshipInfo() }}</p>
-
-                            <div class="space-y-4">
-                                <!-- Rating -->
-                                <flux:field>
-                                    <flux:label>Rating Perusahaan</flux:label>
-                                    <select wire:model="review_rating"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                        <option value="">Pilih rating (1-5)</option>
-                                        <option value="1">1 - Sangat Buruk</option>
-                                        <option value="2">2 - Buruk</option>
-                                        <option value="3">3 - Cukup</option>
-                                        <option value="4">4 - Baik</option>
-                                        <option value="5">5 - Sangat Baik</option>
-                                    </select>
-                                    <flux:description>
-                                        Berikan rating untuk perusahaan berdasarkan pengalaman magang Anda
-                                    </flux:description>
-                                    <flux:error for="review_rating" />
-                                </flux:field>
-
-                                <!-- Comment -->
-                                <flux:field>
-                                    <flux:label>Komentar</flux:label>
-                                    <textarea wire:model="review_komentar" rows="4"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                        placeholder="Ceritakan pengalaman magang Anda di perusahaan ini...">
-                                    </textarea>
-                                    <flux:description>
-                                        Tulis ulasan tentang pengalaman magang Anda (minimal 10 karakter, maksimal 500
-                                        karakter)
-                                        <span class="text-sm text-gray-500">
-                                            @if ($review_komentar)
-                                                ({{ strlen($review_komentar) }}/500 karakter)
-                                            @endif
-                                        </span>
-                                    </flux:description>
-                                    <flux:error for="review_komentar" />
-                                </flux:field>
+                    <!-- Improved Multi-Step Form -->
+                    <div class="max-w-4xl mx-auto">
+                        <!-- Progress Indicator -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-center space-x-4">
+                                <div class="flex items-center">
+                                    <div
+                                        class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-semibold">
+                                        1
+                                    </div>
+                                    <span class="ml-2 text-sm font-medium text-blue-600">Ulasan</span>
+                                </div>
+                                <div class="flex-1 h-px bg-gray-300"></div>
+                                <div class="flex items-center">
+                                    <div
+                                        class="flex items-center justify-center w-8 h-8 rounded-full {{ $review_rating && $review_komentar ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-500' }} text-sm font-semibold">
+                                        2
+                                    </div>
+                                    <span
+                                        class="ml-2 text-sm font-medium {{ $review_rating && $review_komentar ? 'text-blue-600' : 'text-gray-500' }}">Dokumen</span>
+                                </div>
+                                <div class="flex-1 h-px bg-gray-300"></div>
+                                <div class="flex items-center">
+                                    <div
+                                        class="flex items-center justify-center w-8 h-8 rounded-full {{ $bukti_surat_selesai_magang && $review_rating && $review_komentar ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-500' }} text-sm font-semibold">
+                                        3
+                                    </div>
+                                    <span
+                                        class="ml-2 text-sm font-medium {{ $bukti_surat_selesai_magang && $review_rating && $review_komentar ? 'text-blue-600' : 'text-gray-500' }}">Selesai</span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- File Upload Section -->
-                        <div class="border rounded-lg p-4 bg-gray-50">
-                            <h4 class="text-lg font-semibold text-gray-700 mb-4">Dokumen Selesai Magang</h4>
-
-                            <flux:field>
-                                <flux:label>Laporan Akhir Magang (PDF)</flux:label>
-                                <flux:input type="file" wire:model="bukti_surat_selesai_magang" accept=".pdf" />
-                                <flux:description>
-                                    Upload Laporan Akhir Magang dalam format PDF (maksimal 2MB)
-                                </flux:description>
-
-                                @if ($bukti_surat_selesai_magang && !$errors->has('bukti_surat_selesai_magang'))
-                                    <div class="mt-2 text-sm text-green-600">
-                                        File terpilih: {{ $bukti_surat_selesai_magang->getClientOriginalName() }}
+                        <form wire:submit.prevent="completeInternship" class="space-y-8">
+                            <!-- Step 1: Review Section -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                                <div class="flex items-center mb-6">
+                                    <div
+                                        class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 mr-4">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                                            </path>
+                                        </svg>
                                     </div>
-                                @endif
-
-                                <div wire:loading wire:target="bukti_surat_selesai_magang"
-                                    class="text-sm text-blue-600 mt-2">
-                                    Mengunggah file...
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Bagikan Pengalaman Anda</h3>
+                                        <p class="text-sm text-gray-600">Berikan ulasan untuk
+                                            {{ $this->getInternshipInfo() }}</p>
+                                    </div>
                                 </div>
 
-                                <flux:error for="bukti_surat_selesai_magang" />
-                            </flux:field>
-                        </div>
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <!-- Enhanced Rating -->
+                                    <flux:field>
+                                        <flux:label class="text-base font-medium">Bagaimana pengalaman magang Anda?
+                                        </flux:label>
+                                        <div class="mt-3">
+                                            <div class="flex items-center space-x-1 mb-3">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <button type="button"
+                                                        wire:click="$set('review_rating', {{ $i }})"
+                                                        class="focus:outline-none transition-colors duration-200">
+                                                        <svg class="w-8 h-8 {{ $review_rating && $review_rating >= $i ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-300' }}"
+                                                            fill="currentColor" viewBox="0 0 20 20">
+                                                            <path
+                                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                        </svg>
+                                                    </button>
+                                                @endfor
+                                            </div>
+                                            @if ($review_rating)
+                                                <div class="text-sm text-gray-600">
+                                                    @switch($review_rating)
+                                                        @case(1)
+                                                            <span class="text-red-600">Sangat Buruk</span>
+                                                        @break
 
-                        <!-- Form Actions -->
-                        <div class="flex justify-between pt-4">
-                            <flux:button wire:click="hideReviewForm" variant="ghost">
-                                Batal
-                            </flux:button>
+                                                        @case(2)
+                                                            <span class="text-orange-600">Buruk</span>
+                                                        @break
 
-                            <flux:button type="submit" wire:loading.attr="disabled"
-                                :disabled="!$bukti_surat_selesai_magang || !$review_rating || !$review_komentar">
-                                <span wire:loading.remove wire:target="completeInternship">
-                                    Selesaikan Magang
-                                </span>
-                                <span wire:loading wire:target="completeInternship">
-                                    Memproses...
-                                </span>
-                            </flux:button>
-                        </div>
-                    </form>
+                                                        @case(3)
+                                                            <span class="text-yellow-600">Cukup</span>
+                                                        @break
+
+                                                        @case(4)
+                                                            <span class="text-green-600">Baik</span>
+                                                        @break
+
+                                                        @case(5)
+                                                            <span class="text-blue-600">Sangat Baik</span>
+                                                        @break
+                                                    @endswitch
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <flux:error for="review_rating" />
+                                    </flux:field>
+
+                                    <!-- Enhanced Comment -->
+                                    <flux:field>
+                                        <flux:label class="text-base font-medium">Ceritakan pengalaman Anda</flux:label>
+                                        <div class="relative mt-2">
+                                            <textarea wire:model.live="review_komentar" rows="5"
+                                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm resize-none"
+                                                placeholder="Bagikan detail pengalaman magang Anda di perusahaan ini. Apa yang Anda pelajari? Bagaimana lingkungan kerjanya? Apa saran untuk mahasiswa lain?"></textarea>
+                                            <div class="absolute bottom-2 right-2 text-xs text-gray-400">
+                                                {{ strlen($review_komentar ?? '') }}/500
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 flex items-center text-xs text-gray-500">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                                </path>
+                                            </svg>
+                                            Ulasan Anda akan membantu mahasiswa lain dalam memilih perusahaan
+                                        </div>
+                                        <flux:error for="review_komentar" />
+                                    </flux:field>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: File Upload Section -->
+                            <div
+                                class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm {{ !$review_rating || !$review_komentar ? 'opacity-60' : '' }}">
+                                <div class="flex items-center mb-6">
+                                    <div
+                                        class="flex items-center justify-center w-10 h-10 rounded-full {{ $review_rating && $review_komentar ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400' }} mr-4">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Upload Dokumen</h3>
+                                        <p class="text-sm text-gray-600">Upload laporan akhir magang Anda</p>
+                                    </div>
+                                </div>
+
+                                <flux:field>
+                                    <flux:input type="file" wire:model="bukti_surat_selesai_magang"
+                                        label="Laporan Akhir Magang" accept=".pdf"
+                                        placeholder="Pilih file PDF (maksimal 2MB)" />
+
+                                    @if ($bukti_surat_selesai_magang && !$errors->has('bukti_surat_selesai_magang'))
+                                        <div class="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                            <div class="flex items-center">
+                                                <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor"
+                                                    viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd"
+                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                        clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span class="text-sm text-green-700 font-medium">
+                                                    {{ $bukti_surat_selesai_magang->getClientOriginalName() }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <div wire:loading wire:target="bukti_surat_selesai_magang" class="mt-2">
+                                        <div class="flex items-center text-sm text-blue-600">
+                                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                    stroke="currentColor" stroke-width="4">
+                                                </circle>
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                </path>
+                                            </svg>
+                                            Mengunggah file...
+                                        </div>
+                                    </div>
+
+                                    <flux:error for="bukti_surat_selesai_magang" />
+                                </flux:field>
+                            </div>
+
+                            <!-- Enhanced Form Actions -->
+                            <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                                <flux:button wire:click="hideReviewForm" variant="outline"
+                                    class="flex items-center px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors duration-150"
+                                    type="button">
+                                    <span>Batal & Kembali</span>
+                                </flux:button>
+
+                                <div class="flex items-center space-x-4">
+                                    @if ($bukti_surat_selesai_magang && $review_rating && $review_komentar)
+                                        <div class="flex items-center text-sm text-green-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd"></path>
+                                            </svg>
+                                            Siap untuk diselesaikan
+                                        </div>
+                                    @endif
+
+                                    <flux:button type="submit" wire:loading.attr="disabled"
+                                        :disabled="!$bukti_surat_selesai_magang || !$review_rating || !$review_komentar"
+                                        class="px-8 bg-blue-600 hover:bg-blue-700 text-white border-blue-600">
+                                        <span wire:loading.remove wire:target="completeInternship"
+                                            class="flex items-center">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                            Selesaikan Magang
+                                        </span>
+                                        <span wire:loading wire:target="completeInternship" class="flex items-center">
+                                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                    stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                </path>
+                                            </svg>
+                                            Memproses...
+                                        </span>
+                                    </flux:button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 @endif
             @else
                 <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50">
