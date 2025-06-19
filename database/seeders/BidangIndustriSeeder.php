@@ -14,6 +14,7 @@ class BidangIndustriSeeder extends Seeder
     public function run(): void
     {
         $sectors = [
+            'Semua',
             'Perbankan',
             'Kesehatan',
             'Pendidikan',

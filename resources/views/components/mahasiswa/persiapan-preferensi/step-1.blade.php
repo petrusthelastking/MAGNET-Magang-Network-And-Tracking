@@ -139,6 +139,7 @@ $nextStep = function () {
                     </div>
                 </div>
                 <flux:select placeholder="Pilih jenis magang" wire:model.live="jenis_magang">
+                    <flux:select.option value="semua">Semua</flux:select.option>
                     <flux:select.option value="tidak berbayar">Tidak Berbayar (Unpaid)</flux:select.option>
                     <flux:select.option value="berbayar">Berbayar (Paid)</flux:select.option>
                 </flux:select>
@@ -159,6 +160,7 @@ $nextStep = function () {
                     </div>
                 </div>
                 <flux:select placeholder="Pilih kesediaan remote" wire:model.live="open_remote">
+                    <flux:select.option value="semua">Semua</flux:select.option>
                     <flux:select.option value="ya">Ya, bersedia</flux:select.option>
                     <flux:select.option value="tidak">Tidak, hanya on-site</flux:select.option>
                 </flux:select>

@@ -38,12 +38,14 @@ state([
     'program_studi_options' => Mahasiswa::distinct('program_studi')->pluck('program_studi', 'program_studi')->toArray(),
     'bidang_industri_options' => BidangIndustri::pluck('nama', 'nama')->toArray(),
     'jenis_magang_options' => [
+        'Semua' => 'Semua',
         'berbayar' => 'Magang Berbayar (Paid Internship)',
         'tidak berbayar' => 'Magang Tidak Berbayar (Unpaid Internship)',
     ],
     'lokasi_magang_options' => LokasiMagang::pluck('kategori_lokasi', 'kategori_lokasi')->toArray(),
     'pekerjaan_options' => Pekerjaan::pluck('nama', 'nama')->toArray(),
     'open_remote_options' => [
+        'Semua' => 'Semua',
         'ya' => 'Ya',
         'tidak' => 'Tidak',
     ],
@@ -231,7 +233,7 @@ $saveNewPreference = function () {
         $this->mahasiswa->touch();
 
         // Dispatch event after successful update
-        event(new UpdatedMahasiswaPreference($this->mahasiswa));
+        // event(new UpdatedMahasiswaPreference($this->mahasiswa));
 
         $this->showModal('success', 'Preferensi Magang Berhasil Diperbarui', 'Preferensi magang Anda telah berhasil diperbarui dan sistem rekomendasi telah dijalankan ulang.');
         $this->isUpdatePreference = false;
