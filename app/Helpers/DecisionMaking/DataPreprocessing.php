@@ -62,11 +62,26 @@ class DataPreprocessing
             fn(array $item): array => [
                 'mahasiswa_id' => $mahasiswa->id,
                 'lowongan_magang_id' => $item['id'],
-                'pekerjaan' => $item['pekerjaan'] == $preference['pekerjaan'] ? 2 : 1,
-                'open_remote' => $item['open_remote'] == $preference['open_remote'] ? 2 : 1,
-                'jenis_magang' => $item['jenis_magang'] == $preference['jenis_magang'] ? 2 : 1,
-                'bidang_industri' => $item['bidang_industri'] == $preference['bidang_industri'] ? 2 : 1,
-                'lokasi_magang' => $item['lokasi_magang'] == $preference['lokasi_magang'] ? 2 : 1,
+                'pekerjaan' => match ($preference['pekerjaan']) {
+                    'Semua', $item['pekerjaan'] => 2,
+                    default => 1
+                },
+                'open_remote' => match ($preference['open_remote']) {
+                    'Semua', $item['open_remote'] => 2,
+                    default => 1
+                },
+                'jenis_magang' => match ($preference['jenis_magang']) {
+                    'Semua', $item['jenis_magang'] => 2,
+                    default => 1
+                },
+                'bidang_industri' => match ($preference['bidang_industri']) {
+                    'Semua', $item['bidang_industri'] => 2,
+                    default => 1
+                },
+                'lokasi_magang' => match ($preference['lokasi_magang']) {
+                    'Semua', $item['lokasi_magang'] => 2,
+                    default => 1
+                },
                 'created_at' => $now,
                 'updated_at' => $now,
             ],

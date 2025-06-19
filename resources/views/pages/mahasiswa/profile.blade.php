@@ -5,7 +5,7 @@ use function Livewire\Volt\{state, mount};
 use Illuminate\Support\Facades\Hash;
 use App\Models\{Mahasiswa, BidangIndustri, LokasiMagang, Pekerjaan};
 use App\Helpers\DecisionMaking\ROC;
-use App\Events\UpdatedMahasiswaPreference;
+use App\Events\MahasiswaPreferenceUpdated;
 
 state([
     'mahasiswa',
@@ -229,11 +229,9 @@ $saveNewPreference = function () {
         $this->mahasiswa->kriteriaPekerjaan()->update(['pekerjaan_id' => $pekerjaan->id]);
         $this->mahasiswa->kriteriaOpenRemote()->update(['open_remote' => $this->open_remote]);
 
-        // Update timestamp mahasiswa
         $this->mahasiswa->touch();
 
-        // Dispatch event after successful update
-        // event(new UpdatedMahasiswaPreference($this->mahasiswa));
+        event(new MahasiswaPreferenceUpdated($this->mahasiswa));
 
         $this->showModal('success', 'Preferensi Magang Berhasil Diperbarui', 'Preferensi magang Anda telah berhasil diperbarui dan sistem rekomendasi telah dijalankan ulang.');
         $this->isUpdatePreference = false;

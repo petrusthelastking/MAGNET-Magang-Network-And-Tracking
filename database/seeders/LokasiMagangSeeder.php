@@ -11,7 +11,7 @@ class LokasiMagangSeeder extends Seeder
     public function run(): void
     {
         $locations = [
-            'Semua' => ['Semua lokasi'], // Tambahkan opsi "semua"
+            'Semua' => ['Semua lokasi'], 
             'Area Malang Raya' => [
                 'Lowokwaru, Kota Malang, Jawa Timur',
                 'Singosari, Kabupaten Malang, Jawa Timur',
