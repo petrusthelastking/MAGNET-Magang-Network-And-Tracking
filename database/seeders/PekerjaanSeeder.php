@@ -14,6 +14,7 @@ class PekerjaanSeeder extends Seeder
     public function run(): void
     {
         $jobs = [
+            'Semua',
             'Software Engineer',
             'Data Engineer',
             'Backend Developer',
