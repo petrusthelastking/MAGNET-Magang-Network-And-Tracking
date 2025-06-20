@@ -40,6 +40,8 @@ Route::name('admin.')
 
                 Volt::route('data-perusahaan', 'pages.admin.kelola-data-master.data-perusahaan')->name('data-perusahaan');
                 Volt::route('detail-perusahaan/{id}', 'pages.admin.kelola-data-master.detail-perusahaan')->name('detail-perusahaan');
+
+                Volt::route('data-pekerjaan', 'pages.admin.kelola-data-master.data-pekerjaan')->name('data-pekerjaan');
             });
 
 
