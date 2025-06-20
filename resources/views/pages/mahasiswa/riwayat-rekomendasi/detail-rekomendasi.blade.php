@@ -404,9 +404,8 @@ $getUniqueByLowonganId = function ($collection) {
                                 <thead class="bg-white text-black">
                                     <tr class="border-b bg-green-400">
                                         <th class="text-left px-6 py-3">ID Lowongan</th>
-                                        <th class="text-left px-6 py-3">Nama</th>
-                                        <th class="text-left px-6 py-3">Lokasi</th>
                                         <th class="text-left px-6 py-3">Perusahaan</th>
+                                        <th class="text-left px-6 py-3">Lokasi</th>
                                         <th class="text-left px-6 py-3">Open remote</th>
                                         <th class="text-left px-6 py-3">Jenis magang</th>
                                         <th class="text-left px-6 py-3">Bidang industri</th>
@@ -417,10 +416,9 @@ $getUniqueByLowonganId = function ($collection) {
                                     @foreach ($alternatifLowongan->sortBy('id') as $lowongan)
                                         <tr>
                                             <td class="px-6 py-3">{{ $lowongan->id ?? '-' }}</td>
-                                            <td class="px-6 py-3">{{ $lowongan->pekerjaan->nama ?? '-' }}</td>
+                                            <td class="px-6 py-3">{{ $lowongan->perusahaan->nama ?? '-' }}</td>
                                             <td class="px-6 py-3">
                                                 {{ $lowongan->lokasi_magang->kategori_lokasi ?? '-' }}</td>
-                                            <td class="px-6 py-3">{{ $lowongan->perusahaan->nama ?? '-' }}</td>
                                             <td class="px-6 py-3">
                                                 {{ ucfirst($lowongan->open_remote) ? 'Ya' : 'Tidak' }}</td>
                                             <td class="px-6 py-3">{{ ucfirst($lowongan->jenis_magang) }}</td>
