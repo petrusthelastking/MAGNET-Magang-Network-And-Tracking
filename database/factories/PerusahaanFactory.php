@@ -21,7 +21,10 @@ class PerusahaanFactory extends Factory
     public function definition(): array
     {
         static $bidangIndustriIds = null;
-        $bidangIndustriIds ??= BidangIndustri::orderBy('id')->pluck('id')->toArray();
+        $bidangIndustriIds ??= BidangIndustri::where('nama', '!=', 'Semua')
+                ->orderBy('id')
+                ->pluck('id')
+                ->toArray();
 
         return [
             'nama' => $this->faker->company(),

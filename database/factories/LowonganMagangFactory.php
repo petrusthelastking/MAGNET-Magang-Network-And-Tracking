@@ -26,8 +26,12 @@ class LowonganMagangFactory extends Factory
         static $lokasiIds = null;
         static $perusahaanIds = null;
 
-        $pekerjaanIds ??= Pekerjaan::pluck('id')->toArray();
-        $lokasiIds ??= LokasiMagang::pluck('id')->toArray();
+        $pekerjaanIds ??= Pekerjaan::where('nama', '!=', 'Semua')
+            ->pluck('id')
+            ->toArray();
+        $lokasiIds ??= LokasiMagang::where('kategori_lokasi', '!=', 'Semua')
+            ->pluck('id')
+            ->toArray();
         $perusahaanIds ??= Perusahaan::pluck('id')->toArray();
 
         return [
