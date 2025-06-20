@@ -753,7 +753,7 @@ $calculateStandardDeviation = function ($array) {
         <div class="p-4 bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-lg">
             <div class="space-y-2">
                 @foreach (collect($recommendations)->take(10) as $index => $item)
-                    <div onclick="window.location='{{ route('mahasiswa.detail-perusahaan', ['id' => $item['lowongan_id']]) }}'"
+                    <div onclick="window.location='{{ route('mahasiswa.detail-lowongan-magang',  $item['lowongan_id']) }}'"
                         role="button"
                         class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 transition-all duration-200 hover:cursor-pointer hover:shadow-md">
                         <div class="flex items-center space-x-4">

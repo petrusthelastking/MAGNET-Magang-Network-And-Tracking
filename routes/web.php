@@ -77,17 +77,16 @@ Route::name('mahasiswa.')
 
         Volt::route('pembaruan-status', 'pages.mahasiswa.pembaruan-status')->name('pembaruan-status');
         Volt::route('log-mahasiswa', 'pages.mahasiswa.log-mahasiswa')->name('log-mahasiswa');
-        Volt::route('search', 'pages.mahasiswa.search')->name('search');
-        Route::view('detail-perusahaan', 'pages.mahasiswa.detail-perusahaan')->name('detail-perusahaan');
+
         Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
-        Route::view('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
+
         Volt::route('detail-log', 'pages.mahasiswa.detail-log')->name('detail-log');
         Volt::route('log-magang', 'pages.mahasiswa.log-magang')->name('log-magang');
         Volt::route('tambah-log', 'pages.mahasiswa.tambah-log')->name('tambah-log');
 
-        Volt::route('pencarian', 'pages.mahasiswa.hasil-pencarian')->name('hasil-pencarian');
-        Volt::route('detail-perusahaan', 'pages.mahasiswa.detail-perusahaan')->name('detail-perusahaan');
-        Volt::route('profil-perusahaan', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
+        Volt::route('search', 'pages.mahasiswa.hasil-pencarian')->name('hasil-pencarian');
+        Volt::route('detail-lowongan-magang/{id}', 'pages.mahasiswa.detail-lowongan-magang')->name('detail-lowongan-magang');
+        Volt::route('profil-perusahaan/{id}', 'pages.mahasiswa.profil-perusahaan')->name('profil-perusahaan');
 
         Route::view('notifikasi', 'pages.mahasiswa.notifikasi')->name('notifikasi');
         Volt::route('riwayat-rekomendasi', 'pages.mahasiswa.riwayat-rekomendasi.index')->name('riwayat-rekomendasi');
