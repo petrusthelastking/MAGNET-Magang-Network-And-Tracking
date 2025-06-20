@@ -4,7 +4,17 @@ use function Livewire\Volt\{state, mount, computed};
 use App\Models\FinalRankRecommendation;
 use Illuminate\Support\Facades\DB;
 
-state(['ranking_results', 'recommendations', 'debug_data', 'preferences_data', 'multimoora_results', 'processing_steps', 'all_alternatives']);
+state([
+    'ranking_results',
+    'recommendations',
+    'debug_data',
+    'preferences_data',
+    'multimoora_results',
+    'processing_steps',
+    'all_alternatives',
+
+    'top_internship_recommendation'
+]);
 
 mount(function () {
     $userId = auth('mahasiswa')->user()->id;
@@ -145,6 +155,19 @@ mount(function () {
         'total_alternatives' => count($this->all_alternatives),
         'displayed_alternatives' => count($this->recommendations),
     ];
+
+
+
+    //
+    //
+    //
+    //
+    // THIS IS NEW QUERY
+    $this->top_internship_recommendation = FinalRankRecommendation::where('mahasiswa_id', '=', $userId)
+        ->orderBy('updated_at', 'desc')
+        ->orderBy('rank', 'asc')
+        ->take(10)
+        ->get();
 });
 
 // Load user preferences from database
@@ -794,8 +817,54 @@ $calculateStandardDeviation = function ($array) {
                 @endforeach
             </div>
         </div>
+
+        {{-- THIS IS JUST FOR EXAMPLE! --}}
+        <div>
+            <h1 class="text-2xl my-5">DATA BARU!!!</h1>
+        </div>
+        <div class="bg-orange-50">
+            @foreach ($top_internship_recommendation as $internship)
+                <div onclick="window.location='{{ route('mahasiswa.detail-lowongan-magang',  $internship->lowonganMagang->id) }}'"
+                        role="button"
+                        class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 transition-all duration-200 hover:cursor-pointer hover:shadow-md">
+                        <div class="flex items-center space-x-4">
+                            <span
+                                class="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full text-sm font-bold shadow-sm">
+                                {{ $loop->iteration }}
+                            </span>
+                            <div>
+                                <p class="font-semibold text-gray-800 text-lg">
+                                    {{ $internship->lowonganMagang->pekerjaan->nama }}
+                                </p>
+                                <p class="text-gray-600 font-medium">
+                                    {{ $item['lowongan_magang']['perusahaan']['nama'] ?? 'Company Name' }}
+                                </p>
+                                <div class="flex flex-wrap gap-2 text-xs mt-2">
+                                    <span
+                                        class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full border border-blue-200">
+                                        {{ $internship->lowonganMagang->perusahaan->nama }}
+                                    </span>
+                                    <span
+                                        class="bg-green-100 text-green-700 px-3 py-1 rounded-full border border-green-200">
+                                        {{ $internship->lowonganMagang->perusahaan->bidangIndustri->nama }}
+                                    </span>
+                                    <span
+                                        class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full border border-yellow-200">
+                                        {{ $internship->lowonganMagang->lokasi_magang->kategori_lokasi }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div
+                                class="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 px-3 py-2 rounded-lg border border-blue-200 font-medium">
+                                Rank #{{ $item['rank'] ?? $index + 1 }}
+                            </div>
+                        </div>
+                    </div>
+            @endforeach
+        </div>
     @else
-        <!-- No Recommendations Section -->
         <div class="mb-8 space-y-4">
             <div class="p-6 bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-300 rounded-lg">
                 <h3 class="font-bold text-gray-700 mb-4 flex items-center">

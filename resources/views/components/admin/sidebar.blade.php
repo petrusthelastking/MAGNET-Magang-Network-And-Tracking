@@ -34,6 +34,12 @@
                 Data Dosen
             </flux:navlist.item>
             <flux:navlist.item
+                icon="briefcase"
+                :current="request()->fullUrlIs(route('admin.data-pekerjaan'))"
+                href="{{ route('admin.data-pekerjaan') }}" class="text-magnet-deep-ocean-blue!">
+                Data Pekerjaan
+            </flux:navlist.item>
+            <flux:navlist.item
                 icon="building-2"
                 href="{{ route('admin.data-perusahaan') }}"
                 :current="request()->fullUrlIs(route('admin.data-perusahaan'))"
