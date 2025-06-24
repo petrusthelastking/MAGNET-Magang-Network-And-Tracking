@@ -49,46 +49,8 @@ $mahasiswa = Auth::user()->mahasiswa;
                 <p class="text-green-800 text-sm font-medium mb-1">
                     Pengajuan magang Anda telah disetujui!
                 </p>
-                <flux:text class="text-green-700 text-sm leading-relaxed">
-                    Anda bisa berkonsultasi terkait proses magang pada dosen pembimbing Anda.
-                </flux:text>
             </div>
         </div>
-    </div>
-
-    <!-- Action Section -->
-    <div class="bg-blue-50 rounded-lg p-4 mb-4">
-        <div class="flex items-start gap-3">
-            <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-                </path>
-            </svg>
-            <div>
-                <p class="text-blue-800 text-sm font-medium mb-1">Langkah Selanjutnya:</p>
-                <p class="text-blue-700 text-sm">
-                    Fitur konsultasi bisa diakses pada bagian
-                    <flux:link href="{{ route('mahasiswa.konsul-dospem') }}"
-                        class="font-semibold text-blue-600 hover:text-blue-800 underline underline-offset-2 hover:underline-offset-4 transition-all">
-                        Konsultasi
-                    </flux:link>
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Action -->
-    <div class="flex gap-3">
-        <flux:button variant="primary" href="{{ route('mahasiswa.konsul-dospem') }}"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 text-sm">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-                </path>
-            </svg>
-            Mulai Konsultasi
-        </flux:button>
     </div>
 
     <!-- Progress Timeline -->
