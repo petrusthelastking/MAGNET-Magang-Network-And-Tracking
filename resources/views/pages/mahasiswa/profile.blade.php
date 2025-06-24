@@ -580,7 +580,7 @@ $showModal = function ($type, $title, $message) {
                                             <flux:input readonly value="{{ $lokasi_magang }}" type="text"
                                                 label="Lokasi Magang" class="bg-gray-50" />
                                             <flux:input readonly
-                                                value="{{ $jenis_magang == 'berbayar' ? 'Magang Berbayar (Paid)' : 'Magang Tidak Berbayar (Unpaid)' }}"
+                                                value="{{ $jenis_magang == 'berbayar' ? 'Magang Berbayar (Paid)' : ($jenis_magang == 'tidak berbayar' ? 'Magang Tidak Berbayar (Unpaid)' : 'Semua') }}"
                                                 type="text" label="Jenis Magang" class="bg-gray-50" />
                                             <flux:input readonly value="{{ ucfirst($open_remote) }}" type="text"
                                                 label="Remote Work" class="bg-gray-50" />
