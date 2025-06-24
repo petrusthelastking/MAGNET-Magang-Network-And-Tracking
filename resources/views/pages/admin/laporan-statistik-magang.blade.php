@@ -1,3 +1,6 @@
+<script src="
+https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js
+"></script>
 <?php
 
 use function Livewire\Volt\{state, computed, mount, layout};
@@ -102,10 +105,10 @@ $pertumbuhanMahasiswaMagang = computed(function () {
         </flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <div>
-        <div class="max-w-7xl mx-auto">
+    <div class="w-full">
+        <div class=" w-full">
             <div
-                class="flex justify-start items-center py-4 bg-white shadow-sm border-b border-gray-200 px-4 rounded-md">
+                class="flex justify-start items-center py-4 bg-white shadow-sm border-b border-gray-200 px-4 rounded-md w-full  ">
                 <h1 class="text-2xl font-bold text-gray-900">Monitoring dan analisis data magang mahasiswa</h1>
             </div>
         </div>

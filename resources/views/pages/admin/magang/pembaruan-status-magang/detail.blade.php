@@ -527,7 +527,7 @@ $showRejectionModal = function () {
                 @php
                     $selectedDosen = DosenPembimbing::find($dosen_selected);
                 @endphp
-                <div class="bg-blue-50 p-4 rounded-lg">
+                <div class="bg-blue-50 p-4 rounded-lg text-black">
                     <p class="text-sm"><strong>Dosen Pembimbing:</strong> {{ $selectedDosen?->nama ?? 'N/A' }}</p>
                     <p class="text-sm"><strong>Perusahaan:</strong>
                         {{ $kontrakMagang->lowonganMagang->perusahaan->nama ?? 'N/A' }}</p>
@@ -577,7 +577,7 @@ $showRejectionModal = function () {
 
     <!-- Success Modal -->
     <flux:modal name="success-modal" title="Berhasil">
-        <div class="text-center py-4">
+        <div class="text-center py-4 text-black!">
             <flux:icon.check-circle class="w-16 h-16 text-green-500 mx-auto mb-4" />
             <p class="text-lg">Kontrak berhasil diproses!</p>
         </div>
