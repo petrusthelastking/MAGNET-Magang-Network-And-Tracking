@@ -24,11 +24,11 @@
                         <i class="fas fa-sync-alt mr-2"></i>
                         Refresh Data
                     </button>
-                    <button
+                    {{-- <button
                         class="inline-flex items-center px-4 py-2 bg-cyan-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500">
                         <i class="fas fa-cog mr-2"></i>
                         Konfigurasi
-                    </button>
+                    </button> --}}
                 </div>
             </div>
         </div>

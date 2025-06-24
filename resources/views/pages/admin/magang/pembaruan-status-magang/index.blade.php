@@ -104,11 +104,11 @@ $sortBy = function (string $column) {
 
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" icon:variant="outline" />
-        <flux:breadcrumbs.item class="text-black">Kelola Data Kontrak Magang</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item class="text-black">Kelola Data Pembaruan Status</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
     <div class="flex justify-between items-center">
-        <h1 class="text-xl font-bold leading-6 text-black">Kelola Data Kontrak Magang</h1>
+        <h1 class="text-xl font-bold leading-6 text-black">Kelola Data Pembaruan Status</h1>
 
         <div class="flex gap-4">
             <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
@@ -208,7 +208,8 @@ $sortBy = function (string $column) {
                                     <div class="font-medium text-gray-900">{{ $kontrak['nama'] }}</div>
                                     <div class="text-sm text-gray-500">{{ $kontrak['nim'] }}</div>
                                     <div class="text-xs text-gray-400">{{ $kontrak['program_studi'] }} -
-                                        {{ $kontrak['angkatan'] }}</div>
+                                        {{ $kontrak['angkatan'] }}
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
@@ -217,15 +218,28 @@ $sortBy = function (string $column) {
                                     <div class="text-sm text-gray-500">{{ $kontrak['lowongan_judul'] }}</div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-sm">{{ $kontrak['dosen_pembimbing'] }}</td>
+                            <td class="px-6 py-4 text-sm">
+                                @php
+                                    $status = $kontrak['status'] == 'menunggu_persetujuan'
+                                        ? 'Menunggu Persetujuan'
+                                        : 'Disetujui';
+
+                                    $dosenPembimbing = $kontrak['status'] == 'menunggu_persetujuan'
+                                        ? '-'
+                                        : $kontrak['dosen_pembimbing'];
+                                @endphp
+
+                                {{ $dosenPembimbing }}
+                            </td>
+
                             <td class="px-6 py-4 text-sm text-gray-600">{{ $kontrak['periode_magang'] }}</td>
                             <td class="px-6 py-4 text-sm text-gray-600">{{ $kontrak['tanggal_kontrak'] }}</td>
                             <td class="px-6 py-4">
                                 @php
                                     $status =
                                         $kontrak['status'] == 'menunggu_persetujuan'
-                                            ? 'Menunggu Persetujuan'
-                                            : 'Disetujui';
+                                        ? 'Menunggu Persetujuan'
+                                        : 'Disetujui';
 
                                     $badgeColor = match ($kontrak['status']) {
                                         'disetujui' => 'green',
@@ -233,8 +247,7 @@ $sortBy = function (string $column) {
                                         default => 'gray',
                                     };
                                 @endphp
-                                <flux:badge class="min-w-32 flex justify-center" variant="solid"
-                                    color="{{ $badgeColor }}">
+                                <flux:badge class="min-w-32 flex justify-center" variant="solid" color="{{ $badgeColor }}">
                                     {{ $status }}
                                 </flux:badge>
                             </td>
@@ -301,8 +314,7 @@ $sortBy = function (string $column) {
 
                     @if ($dataKontrak->currentPage() < $dataKontrak->lastPage() - 2)
                         <span class="text-gray-500">...</span>
-                        <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataKontrak->lastPage() }})"
-                            size="sm">
+                        <flux:button variant="ghost" wire:click="goToSpecificPage({{ $dataKontrak->lastPage() }})" size="sm">
                             {{ $dataKontrak->lastPage() }}
                         </flux:button>
                     @endif
