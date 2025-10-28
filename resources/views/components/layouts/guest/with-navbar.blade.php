@@ -11,6 +11,7 @@
     {{ $slot }}
 
     {{ $bottomScript ?? '' }}
+    @livewireScripts
     @fluxScripts
 </body>
 

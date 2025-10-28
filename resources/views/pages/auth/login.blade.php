@@ -136,10 +136,13 @@ $throttleKey = protect(function (): string {
                                         <flux:label class="text-black! text-sm font-medium">
                                             NIM/NIP/NIDN <span class="text-red-500">*</span>
                                         </flux:label>
-                                        <flux:input wire:model="userID"
+                                        <flux:input 
+                                            wire:model="userID"
                                             class="border-2 border-magnet-def-grey-400! rounded-lg text-black! text-sm"
-                                            class:input="text-black!" type="text"
-                                            placeholder="Masukkan NIM/NIP/NIDN anda" required />
+                                            type="text"
+                                            placeholder="Masukkan NIM/NIP/NIDN anda" 
+                                            required 
+                                            autofocus />
                                         <flux:error name="userID" />
                                         <p class="text-xs text-magnet-def-grey-500 mt-2">
                                             Masukkan NIM, NIP, atau NIDN sesuai dengan jenis pengguna anda
@@ -164,11 +167,14 @@ $throttleKey = protect(function (): string {
                                         <flux:label class="text-black! text-sm font-medium">
                                             Password <span class="text-red-500">*</span>
                                         </flux:label>
-                                        <flux:input wire:model="password"
-                                            class="border-2 border-magnet-def-grey-400! rounded-lg text-sm"
-                                            class:input="text-black!" type="password"
-                                            placeholder="Masukkan password anda" required
-                                            autocomplete="current-password" viewable />
+                                        <flux:input 
+                                            wire:model="password"
+                                            class="border-2 border-magnet-def-grey-400! rounded-lg text-sm text-black!"
+                                            type="password"
+                                            placeholder="Masukkan password anda" 
+                                            required
+                                            autocomplete="current-password" 
+                                            viewable />
                                         <flux:error name="password" />
                                     </flux:field>
 

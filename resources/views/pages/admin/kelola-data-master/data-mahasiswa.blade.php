@@ -27,15 +27,41 @@ with(function () {
 });
 
 $storeSingleData = function (): void {
+    // Validasi input
+    $this->validate([
+        'storeMahasiswaNama' => 'required|string|max:255',
+        'storeMahasiswaNIM' => 'required|string|max:11|unique:mahasiswa,nim',
+        'storeMahasiswaEmail' => 'required|email|unique:mahasiswa,email',
+        'storeMahasiswaJenisKelamin' => 'required|in:L,P',
+        'storeMahasiswaTanggalLahir' => 'required|date',
+        'storeMahasiswaProdi' => 'required|in:D4 Teknik Informatika,D4 Sistem Informasi Bisnis,D2 Pengembangan Piranti Lunak Situs',
+        'storeMahasiswaAngkatan' => 'required|integer|min:1|max:99',
+        'storeMahasiswaAlamat' => 'required|string',
+    ], [
+        'storeMahasiswaNama.required' => 'Nama harus diisi',
+        'storeMahasiswaNIM.required' => 'NIM harus diisi',
+        'storeMahasiswaNIM.unique' => 'NIM sudah terdaftar',
+        'storeMahasiswaEmail.required' => 'Email harus diisi',
+        'storeMahasiswaEmail.email' => 'Format email tidak valid',
+        'storeMahasiswaEmail.unique' => 'Email sudah terdaftar',
+        'storeMahasiswaJenisKelamin.required' => 'Jenis kelamin harus dipilih',
+        'storeMahasiswaTanggalLahir.required' => 'Tanggal lahir harus diisi',
+        'storeMahasiswaProdi.required' => 'Program studi harus dipilih',
+        'storeMahasiswaAngkatan.required' => 'Angkatan harus diisi',
+        'storeMahasiswaAlamat.required' => 'Alamat harus diisi',
+    ]);
+
     $mahasiswa = Mahasiswa::create([
         'nama' => $this->storeMahasiswaNama,
         'nim' => $this->storeMahasiswaNIM,
         'email' => $this->storeMahasiswaEmail,
         'jenis_kelamin' => $this->storeMahasiswaJenisKelamin,
         'tanggal_lahir' => $this->storeMahasiswaTanggalLahir,
+        'jurusan' => 'Teknologi Informasi', // Set default jurusan
         'program_studi' => $this->storeMahasiswaProdi,
         'angkatan' => $this->storeMahasiswaAngkatan,
         'alamat' => $this->storeMahasiswaAlamat,
+        'password' => bcrypt('mahasiswa123'), // Set default password
     ]);
 
     $this->statusInsertSingleData = $mahasiswa ? 'success' : 'failed';
@@ -159,18 +185,28 @@ $goToNextPage = fn() => $this->nextPage();
             </div>
 
             <flux:input label="Nama" placeholder="Nama mahasiswa" wire:model="storeMahasiswaNama" />
+            <flux:error name="storeMahasiswaNama" />
+            
             <flux:input label="NIM" placeholder="NIM mahasiswa" wire:model="storeMahasiswaNIM" />
+            <flux:error name="storeMahasiswaNIM" />
+            
             <flux:input label="Email" placeholder="Email" wire:model="storeMahasiswaEmail" />
+            <flux:error name="storeMahasiswaEmail" />
+            
             <flux:field>
                 <flux:label>Jenis Kelamin</flux:label>
                 <flux:select placeholder="Jenis kelamin mahasiswa" wire:model="storeMahasiswaJenisKelamin">
                     <flux:select.option value="L">Laki-laki</flux:select.option>
                     <flux:select.option value="P">Perempuan</flux:select.option>
                 </flux:select>
-                <flux:error name="jenis_kelamin" />
+                <flux:error name="storeMahasiswaJenisKelamin" />
             </flux:field>
+            
             <flux:input label="Tanggal lahir" type="date" max="2999-12-31" wire:model="storeMahasiswaTanggalLahir" />
+            <flux:error name="storeMahasiswaTanggalLahir" />
+            
             <flux:input label="Angkatan" placeholder="Tahun angkatan mahasiswa" wire:model="storeMahasiswaAngkatan" />
+            <flux:error name="storeMahasiswaAngkatan" />
             <flux:field>
                 <flux:label>Program Studi</flux:label>
                 <flux:select placeholder="Program studi mahasiswa" wire:model="storeMahasiswaProdi">
@@ -180,9 +216,11 @@ $goToNextPage = fn() => $this->nextPage();
                     <flux:select.option value="D2 Pengembangan Piranti Lunak Situs">D2 Pengembangan Piranti Lunak Situs
                     </flux:select.option>
                 </flux:select>
-                <flux:error name="program_studi" />
+                <flux:error name="storeMahasiswaProdi" />
             </flux:field>
+            
             <flux:input label="Alamat" placeholder="Alamat mahasiswa" wire:model="storeMahasiswaAlamat" />
+            <flux:error name="storeMahasiswaAlamat" />
 
             <div class="flex">
                 <flux:spacer />
