@@ -18,3 +18,10 @@ yarn-error.log
 
 /venv
 /scripts/*.csv
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+tests/e2e/screenshots/
+tests/e2e/videos/

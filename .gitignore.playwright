@@ -1,0 +1,10 @@
+# Playwright test results
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Playwright screenshots on failure
+tests/e2e/screenshots/
+
+# Playwright videos
+tests/e2e/videos/

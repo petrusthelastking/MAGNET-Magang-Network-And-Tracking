@@ -18,7 +18,13 @@ Whether you're a student looking for a relevant experience or an institution aim
 
 ---
 
-## [Check out the full website preview here 👁️](docs/web-preview/)
+## 📚 Documentation
+
+- **[Project Structure](PROJECT_STRUCTURE.md)** - Detailed folder and file organization
+- **[Quick Reference](QUICK_REFERENCE.md)** - Common commands cheat sheet
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
+- **[Testing Guide](docs/testing/README.md)** - Complete testing documentation
+- **[Website Preview](docs/web-preview/)** - Full website screenshots and UI preview
 
 ---
 
@@ -132,4 +138,39 @@ Whether you're a student looking for a relevant experience or an institution aim
 </table>
 
 ---
+
+## 🧪 Testing
+
+MAGNET menggunakan **Playwright** untuk End-to-End (E2E) testing.
+
+### Quick Start Testing:
+
+```bash
+# Install dependencies (jika belum)
+npm install
+
+# Run test
+npx playwright test
+
+# Run test dengan browser visible
+npx playwright test --headed
+
+# Lihat report
+npx playwright show-report
+```
+
+### 📚 Dokumentasi Testing Lengkap:
+
+- **[Testing Guide](docs/testing/README.md)** - Panduan lengkap menjalankan test
+- **[Playwright Documentation](docs/testing/PLAYWRIGHT_TESTING.md)** - Setup dan konfigurasi
+- **Test Scripts:** Lihat folder `scripts/testing/` untuk helper scripts
+
+### ✅ Test Status:
+
+- **Mahasiswa Login:** ✅ 4/4 tests passed
+- **Coverage:** Dashboard, Authentication, Navigation
+
 ---
+
+---
+
