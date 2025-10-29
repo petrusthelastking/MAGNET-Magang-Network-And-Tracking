@@ -99,15 +99,15 @@ test.describe('Admin - Login Flow', () => {
     // Should stay on login page or show error
     const currentUrl = page.url();
     const isStillOnLogin = currentUrl.includes('/login');
-    
+
     if (isStillOnLogin) {
       console.log('✓ Stayed on login page (invalid credentials)');
-      
+
       // Look for error message
       const errorMessage = page.locator('.alert-danger, .error, [class*="error"]').or(
         page.getByText(/Invalid|Salah|Gagal|credentials|password salah/i)
       ).first();
-      
+
       // Error message might be visible
       const hasError = await errorMessage.isVisible().catch(() => false);
       if (hasError) {
