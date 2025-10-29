@@ -1,10 +1,10 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-import { loginAsMahasiswa, logout } from './helpers.js';
+import { loginAsMahasiswa, logout } from '../shared/helpers.js';
 
 /**
  * Test Suite: Mahasiswa - Pengajuan Magang
- * 
+ *
  * Flow yang ditest:
  * 1. Login sebagai mahasiswa
  * 2. Navigate ke menu Pengajuan Magang
@@ -30,7 +30,7 @@ test.describe('Mahasiswa - Pengajuan Magang Flow', () => {
 
     // Navigate ke halaman pengajuan magang
     await page.goto('/pengajuan-magang');
-    
+
     // Tunggu halaman load dengan timeout lebih lama
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(2000); // Extra wait untuk Livewire/Volt components
@@ -169,7 +169,7 @@ test.describe('Mahasiswa - Pengajuan Magang Flow', () => {
     // Verify semua field yang dibutuhkan ada
     const cvUpload = page.locator('input[type="file"][name="cv"]');
     const transkripUpload = page.locator('input[type="file"][name="transkrip_nilai"]');
-    
+
     await expect(cvUpload).toBeAttached({ timeout: 10000 });
     await expect(transkripUpload).toBeAttached({ timeout: 10000 });
     console.log('✓ All required upload fields are present');
@@ -268,7 +268,7 @@ test.describe('Mahasiswa - Pengajuan Magang Flow', () => {
     // Verify modal buttons (Flux modal.close wraps buttons)
     const cancelButton = page.locator('button').filter({ hasText: 'Batal' });
     const confirmButton = page.locator('button[type="submit"][form="pengajuan-form"]');
-    
+
     await expect(cancelButton).toBeVisible({ timeout: 5000 });
     await expect(confirmButton).toBeVisible({ timeout: 5000 });
     console.log('✓ Modal buttons are visible');
