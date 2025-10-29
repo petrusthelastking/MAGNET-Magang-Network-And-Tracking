@@ -8,14 +8,27 @@ import { expect } from '@playwright/test';
  */
 export async function login(page, identifier, password) {
   await page.goto('/login');
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForTimeout(1000);
   
-  // Try to find input by different selectors
+  // Fill identifier (NIM/NIDN/NIP)
   const identifierInput = page.locator('input[type="email"], input[name="email"], input[name="nip"], input[name="nim"], input[type="text"]').first();
+  await identifierInput.waitFor({ state: 'visible', timeout: 10000 });
   await identifierInput.fill(identifier);
   
-  await page.fill('input[type="password"], input[name="password"]', password);
-  await page.locator('button[type="submit"]').click();
-  await page.waitForLoadState('networkidle');
+  // Fill password
+  const passwordInput = page.locator('input[type="password"], input[name="password"]').first();
+  await passwordInput.waitFor({ state: 'visible', timeout: 10000 });
+  await passwordInput.fill(password);
+  
+  // Click submit button and wait for navigation
+  const submitButton = page.locator('button[type="submit"]').filter({ hasText: 'Masuk' });
+  await submitButton.waitFor({ state: 'visible', timeout: 10000 });
+  await submitButton.click();
+  
+  // Wait for navigation to complete
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForTimeout(2000);
 }
 
 /**
@@ -29,7 +42,7 @@ export async function loginAsAdmin(page) {
  * Login sebagai mahasiswa
  */
 export async function loginAsMahasiswa(page) {
-  await login(page, 'TEST123456', 'password');
+  await login(page, '9743195802', 'testing123');
 }
 
 /**
@@ -43,10 +56,30 @@ export async function loginAsPerusahaan(page) {
  * Logout helper
  */
 export async function logout(page) {
-  const logoutButton = page.locator('button:has-text("Logout"), a:has-text("Logout"), form[action*="logout"] button');
-  if (await logoutButton.count() > 0) {
-    await logoutButton.first().click();
-    await page.waitForTimeout(1000);
+  try {
+    // Simply go to logout route if it exists
+    await page.goto('/logout', { waitUntil: 'domcontentloaded', timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(500);
+    
+    // Or look for user menu/dropdown button (avatar or name button)
+    const userMenuButton = page.locator('[data-flux-dropdown-toggle], button[aria-haspopup="true"], button[aria-label*="menu" i], button:has(img[alt*="avatar" i])').first();
+    
+    // If dropdown exists and visible, click to open it first
+    if (await userMenuButton.count() > 0 && await userMenuButton.isVisible().catch(() => false)) {
+      await userMenuButton.click({ timeout: 3000 }).catch(() => {});
+      await page.waitForTimeout(500); // Wait for dropdown animation
+      
+      // Now look for logout button (should be visible after dropdown opened)
+      const logoutButton = page.locator('button:has-text("Logout"), a:has-text("Logout"), form[action*="logout"] button, button:has-text("Keluar")').first();
+      
+      if (await logoutButton.count() > 0 && await logoutButton.isVisible().catch(() => false)) {
+        await logoutButton.click({ timeout: 3000 }).catch(() => {});
+        await page.waitForTimeout(1000);
+      }
+    }
+  } catch (error) {
+    // Ignore logout errors - not critical for tests
+    console.log('Logout skipped or failed (non-critical)');
   }
 }
 
