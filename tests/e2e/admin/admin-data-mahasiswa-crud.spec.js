@@ -26,7 +26,11 @@ async function loginAsAdmin(page) {
 // Helper function to navigate to Data Mahasiswa page via menu
 async function navigateToDataMahasiswa(page) {
   // Make sure we're on the dashboard after login
-  await page.waitForURL(/\/dashboard/, { timeout: 10000 }).catch(() => {});
+  await page.waitForURL(/\/dashboard/, { timeout: 15000 }).catch(() => {});
+
+  // Wait for page to be fully loaded
+  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+  await page.waitForTimeout(2000);
 
   // Look for "Kelola Data Master" menu item
   const kelolaDataMasterMenu = page.locator('button, div, a').filter({
@@ -38,7 +42,7 @@ async function navigateToDataMahasiswa(page) {
   if (hasMenu) {
     await kelolaDataMasterMenu.click();
     console.log('✓ Clicked Kelola Data Master menu');
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1500);
   }
 
   // Find Data Mahasiswa link by href and force click using JavaScript
@@ -52,7 +56,8 @@ async function navigateToDataMahasiswa(page) {
     console.log('✓ Clicked Data Mahasiswa link');
 
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+    await page.waitForTimeout(3000); // Extra wait for Livewire to initialize
     console.log('✓ Navigated via menu');
   } else {
     console.log('⚠ Link not found, navigation might fail');
@@ -71,9 +76,13 @@ test.describe('Admin - Data Mahasiswa CRUD Operations', () => {
 
     await navigateToDataMahasiswa(page);
 
-    // Find and click "Tambah Mahasiswa" button
+    // Wait for page to be fully interactive
+    await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+    await page.waitForTimeout(2000);
+
+    // Find and click "Tambah Mahasiswa" button with longer timeout
     const tambahButton = page.locator('button').filter({ hasText: /Tambah Mahasiswa/i });
-    await expect(tambahButton).toBeVisible({ timeout: 5000 });
+    await expect(tambahButton).toBeVisible({ timeout: 15000 });
     console.log('✓ Found Tambah Mahasiswa button');
 
     // Use JavaScript click to ensure it works

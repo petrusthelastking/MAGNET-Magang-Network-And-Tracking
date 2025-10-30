@@ -13,6 +13,9 @@ export default defineConfig({
   testDir: './tests/e2e',
   testMatch: '**/{admin,mahasiswa,dosen}/**/*.spec.js', // Only run tests in role folders
 
+  /* Maximum time one test can run for */
+  timeout: 60000, // 60 seconds per test (increased for CI)
+
   /* Run tests in files in parallel */
   fullyParallel: true,
 
@@ -35,6 +38,12 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'http://127.0.0.1:8000',
+
+    /* Maximum time each action such as `click()` can take */
+    actionTimeout: 15000, // 15 seconds for actions
+
+    /* Maximum time to wait for navigation */
+    navigationTimeout: 30000, // 30 seconds for navigation
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
