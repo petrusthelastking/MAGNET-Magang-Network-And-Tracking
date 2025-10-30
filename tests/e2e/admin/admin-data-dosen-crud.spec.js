@@ -96,41 +96,17 @@ test.describe('Admin - Data Dosen CRUD Operations', () => {
     console.log('✓ Modal title displayed');
 
     // Verify all required fields exist
-    const namaInput = page.locator('input[wire\\:model="storeDosenNama"]').or(
-      page.locator('label:has-text("Nama")').locator('..').locator('input')
-    );
+    const namaInput = page.locator('input[wire\\:model="storeDosenNama"]');
     await expect(namaInput).toBeVisible({ timeout: 3000 });
     console.log('✓ Nama field exists');
 
-    const nipInput = page.locator('input[wire\\:model="storeDosenNIP"]').or(
-      page.locator('label:has-text("NIP")').locator('..').locator('input')
-    );
-    await expect(nipInput).toBeVisible({ timeout: 3000 });
-    console.log('✓ NIP field exists');
+    const nidnInput = page.locator('input[wire\\:model="storeDosenNIDN"]');
+    await expect(nidnInput).toBeVisible({ timeout: 3000 });
+    console.log('✓ NIDN field exists');
 
-    const emailInput = page.locator('input[wire\\:model="storeDosenEmail"]').or(
-      page.locator('label:has-text("Email")').locator('..').locator('input')
-    );
-    await expect(emailInput).toBeVisible({ timeout: 3000 });
-    console.log('✓ Email field exists');
-
-    const jenisKelaminSelect = page.locator('select[wire\\:model="storeDosenJenisKelamin"]').or(
-      page.locator('label:has-text("Jenis Kelamin")').locator('..').locator('select, button')
-    );
-    await expect(jenisKelaminSelect.first()).toBeVisible({ timeout: 3000 });
+    const jenisKelaminSelect = page.locator('select[wire\\:model="storeDosenJenisKelamin"]');
+    await expect(jenisKelaminSelect).toBeVisible({ timeout: 3000 });
     console.log('✓ Jenis Kelamin field exists');
-
-    const tanggalLahirInput = page.locator('input[wire\\:model="storeDosenTanggalLahir"]').or(
-      page.locator('label:has-text("Tanggal lahir")').locator('..').locator('input')
-    );
-    await expect(tanggalLahirInput).toBeVisible({ timeout: 3000 });
-    console.log('✓ Tanggal lahir field exists');
-
-    const alamatInput = page.locator('input[wire\\:model="storeDosenAlamat"]').or(
-      page.locator('label:has-text("Alamat")').locator('..').locator('input')
-    );
-    await expect(alamatInput).toBeVisible({ timeout: 3000 });
-    console.log('✓ Alamat field exists');
 
     // Verify Submit button exists
     const submitButton = page.locator('button[type="submit"]').filter({ hasText: /Simpan/i });

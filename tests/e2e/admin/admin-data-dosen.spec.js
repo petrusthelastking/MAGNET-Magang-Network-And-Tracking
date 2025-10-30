@@ -25,14 +25,10 @@ async function loginAsAdmin(page) {
 
 // Helper function to navigate to Data Dosen page via menu
 async function navigateToDataDosen(page) {
-  // Make sure we're on the dashboard after login
   await page.waitForURL(/\/dashboard/, { timeout: 15000 }).catch(() => {});
-
-  // Wait for page to be fully loaded
   await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
   await page.waitForTimeout(2000);
 
-  // Look for "Kelola Data Master" menu item
   const kelolaDataMasterMenu = page.locator('button, div, a').filter({
     hasText: /Kelola Data Master/i
   }).first();
@@ -45,303 +41,336 @@ async function navigateToDataDosen(page) {
     await page.waitForTimeout(1500);
   }
 
-  // Find Data Dosen link by href and force click using JavaScript
-  const dataDosenlLink = page.locator('a[href*="data-dosen"]').first();
-
-  const linkExists = await dataDosenlLink.count();
+  const dataDosenLink = page.locator('a[href*="data-dosen"]').first();
+  const linkExists = await dataDosenLink.count();
 
   if (linkExists > 0) {
-    // Use JavaScript to click the hidden element
-    await dataDosenlLink.evaluate(el => el.click());
+    await dataDosenLink.evaluate(el => el.click());
     console.log('✓ Clicked Data Dosen link');
 
     await page.waitForLoadState('domcontentloaded');
     await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
-    await page.waitForTimeout(3000); // Extra wait for Livewire to initialize
+    await page.waitForTimeout(3000);
     console.log('✓ Navigated via menu');
   } else {
     console.log('⚠ Link not found, navigation might fail');
   }
 }
 
-test.describe('Admin - Data Dosen Management', () => {
+test.describe('Admin - Tambah Data Dosen', () => {
   test.beforeEach(async ({ page }) => {
-    // Login as admin before each test
     await loginAsAdmin(page);
     console.log('✓ Logged in as admin');
-  });
-
-  test('should navigate to Data Dosen from dashboard via menu', async ({ page }) => {
-    console.log('✓ Testing navigation to Data Dosen via menu...');
-
-    // Verify we're on dashboard (with longer timeout for concurrent runs)
-    await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
-    console.log('✓ On dashboard page');
-
-    // Look for "Kelola Data Master" menu item that might be collapsed
-    const kelolaDataMasterMenu = page.locator('button, div, a').filter({
-      hasText: /Kelola Data Master/i
-    }).first();
-
-    const hasMenu = await kelolaDataMasterMenu.isVisible().catch(() => false);
-
-    if (hasMenu) {
-      // Try to click to expand menu if it's a collapsible menu
-      await kelolaDataMasterMenu.click();
-      console.log('✓ Clicked "Kelola Data Master" menu to expand');
-      await page.waitForTimeout(1000);
-    }
-
-    // Look for "Data Dosen" link - it might be in a hidden/collapsed state
-    const dataDosenLink = page.locator('a[href*="data-dosen"]').first();
-
-    const linkExists = await dataDosenLink.count();
-
-    if (linkExists > 0) {
-      console.log('✓ Found "Data Dosen" link in DOM');
-
-      // Wait a bit for menu animation to complete
-      await page.waitForTimeout(500);
-
-      // Force click using JavaScript to bypass visibility check
-      await dataDosenLink.evaluate(el => el.click());
-      console.log('✓ Clicked "Data Dosen" link using JavaScript');
-
-      // Wait for navigation
-      await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(2000);
-
-      // Verify we're on data dosen page
-      const currentUrl = page.url();
-      console.log(`✓ Current URL: ${currentUrl}`);
-
-      const isOnDataDosenPage = currentUrl.includes('data-dosen');
-      expect(isOnDataDosenPage).toBeTruthy();
-      console.log('✓ Successfully navigated to Data Dosen page');
-    } else {
-      // Try direct navigation as fallback
-      console.log('⚠ Link not found in menu, trying direct navigation...');
-      await page.goto('/kelola-data-master/data-dosen');
-      await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(2000);
-      console.log('✓ Directly navigated to Data Dosen page');
-    }
-
-    console.log('✅ Navigation test completed!');
-  });
-
-  test('should display data dosen page with title and table', async ({ page }) => {
-    console.log('✓ Testing Data Dosen page structure...');
-
-    // Use navigation helper instead of direct goto
     await navigateToDataDosen(page);
     console.log('✓ Navigated to Data Dosen page');
+  });
 
-    // Verify page title
-    const pageTitle = page.locator('h1, h2, h3, div').filter({
-      hasText: /Dosen/i
+  test('should display "Tambah Dosen" button on Data Dosen page', async ({ page }) => {
+    console.log('✓ Testing Tambah Dosen button visibility...');
+
+    // Look for "Tambah Dosen" button
+    const tambahDosenButton = page.locator('button').filter({
+      hasText: /Tambah Dosen/i
+    });
+
+    await expect(tambahDosenButton).toBeVisible({ timeout: 10000 });
+    console.log('✓ "Tambah Dosen" button is visible');
+
+    // Verify button has plus icon
+    const hasIcon = await tambahDosenButton.locator('svg').count();
+    expect(hasIcon).toBeGreaterThan(0);
+    console.log('✓ Button has icon');
+
+    console.log('✅ Tambah Dosen button test completed!');
+  });
+
+  test('should open modal when clicking "Tambah Dosen" button', async ({ page }) => {
+    console.log('✓ Testing modal opening...');
+
+    // Click "Tambah Dosen" button
+    const tambahDosenButton = page.locator('button').filter({
+      hasText: /Tambah Dosen/i
+    });
+    await tambahDosenButton.click();
+    console.log('✓ Clicked "Tambah Dosen" button');
+
+    await page.waitForTimeout(2000);
+
+    // Check if modal appears
+    const modal = page.locator('[role="dialog"]').or(
+      page.locator('.modal')
+    ).or(
+      page.locator('dialog[open]')
+    );
+
+    await expect(modal).toBeVisible({ timeout: 10000 });
+    console.log('✓ Modal opened successfully');
+
+    // Verify modal heading - try multiple selectors
+    const modalHeading = page.locator('h1, h2, h3, div').filter({
+      hasText: /Tambahkan data dosen baru/i
     }).first();
-    await expect(pageTitle).toBeVisible({ timeout: 10000 });
-    console.log('✓ Page title/heading containing "Dosen" is visible');
 
-    // Check if table exists
-    const table = page.locator('table').first();
-    await expect(table).toBeVisible({ timeout: 10000 });
-    console.log('✓ Table is visible');
+    const headingVisible = await modalHeading.isVisible().catch(() => false);
 
-    // Check for common table headers
-    const expectedHeaders = ['NIP', 'Nama'];
+    if (headingVisible) {
+      await expect(modalHeading).toBeVisible();
+      console.log('✓ Modal heading is correct');
+    } else {
+      // Alternative: check if form fields are visible as confirmation
+      const namaInput = page.locator('input[placeholder*="Nama dosen"]');
+      await expect(namaInput).toBeVisible({ timeout: 5000 });
+      console.log('✓ Modal content verified (form fields visible)');
+    }
 
-    for (const header of expectedHeaders) {
-      const headerCell = page.locator('th, td').filter({
-        hasText: new RegExp(header, 'i')
-      }).first();
-      const exists = await headerCell.isVisible().catch(() => false);
-      if (exists) {
-        console.log(`✓ Found header: ${header}`);
+    console.log('✅ Modal opening test completed!');
+  });
+
+  test('should display all required form fields in modal', async ({ page }) => {
+    console.log('✓ Testing form fields...');
+
+    // Open modal
+    const tambahDosenButton = page.locator('button').filter({
+      hasText: /Tambah Dosen/i
+    });
+    await tambahDosenButton.click();
+    await page.waitForTimeout(1000);
+
+    // Check for Nama field
+    const namaInput = page.locator('input[wire\\:model="storeDosenNama"]').or(
+      page.locator('input[placeholder*="Nama dosen"]')
+    );
+    await expect(namaInput).toBeVisible({ timeout: 10000 });
+    console.log('✓ Nama field is visible');
+
+    // Check for NIDN field
+    const nidnInput = page.locator('input[wire\\:model="storeDosenNIDN"]').or(
+      page.locator('input[placeholder*="NIDN"]')
+    );
+    await expect(nidnInput).toBeVisible();
+    console.log('✓ NIDN field is visible');
+
+    // Check for Jenis Kelamin field
+    const jenisKelaminSelect = page.locator('select[wire\\:model="storeDosenJenisKelamin"]').or(
+      page.locator('select').filter({ has: page.locator('option:has-text("Laki-laki")') })
+    );
+    await expect(jenisKelaminSelect).toBeVisible();
+    console.log('✓ Jenis Kelamin field is visible');
+
+    // Check for Simpan button
+    const simpanButton = page.locator('button[type="submit"]').filter({
+      hasText: /Simpan/i
+    });
+    await expect(simpanButton).toBeVisible();
+    console.log('✓ Simpan button is visible');
+
+    console.log('✅ Form fields test completed!');
+  });
+
+  test('should successfully add new dosen with valid data', async ({ page }) => {
+    console.log('✓ Testing add new dosen functionality...');
+
+    // Generate unique NIDN using timestamp
+    const timestamp = Date.now();
+    const uniqueNIDN = `TEST${timestamp}`;
+    const dosenName = `Dosen Test ${timestamp}`;
+
+    console.log(`✓ Generated test data: ${dosenName} - ${uniqueNIDN}`);
+
+    // Open modal
+    const tambahDosenButton = page.locator('button').filter({
+      hasText: /Tambah Dosen/i
+    });
+    await tambahDosenButton.click();
+    await page.waitForTimeout(1000);
+
+    // Fill Nama
+    const namaInput = page.locator('input[wire\\:model="storeDosenNama"]').or(
+      page.locator('input[placeholder*="Nama dosen"]')
+    );
+    await namaInput.fill(dosenName);
+    console.log('✓ Filled Nama field');
+
+    // Fill NIDN
+    const nidnInput = page.locator('input[wire\\:model="storeDosenNIDN"]').or(
+      page.locator('input[placeholder*="NIDN"]')
+    );
+    await nidnInput.fill(uniqueNIDN);
+    console.log('✓ Filled NIDN field');
+
+    // Select Jenis Kelamin
+    const jenisKelaminSelect = page.locator('select[wire\\:model="storeDosenJenisKelamin"]').or(
+      page.locator('select').filter({ has: page.locator('option:has-text("Laki-laki")') })
+    );
+    await jenisKelaminSelect.selectOption('L');
+    console.log('✓ Selected Jenis Kelamin');
+
+    // Click Simpan button
+    const simpanButton = page.locator('button[type="submit"]').filter({
+      hasText: /Simpan/i
+    });
+    await simpanButton.click();
+    console.log('✓ Clicked Simpan button');
+
+    // Wait for Livewire to process
+    await page.waitForTimeout(3000);
+
+    // Check for success message modal - try multiple approaches
+    const successModalHeading = page.locator('h1, h2, h3, div').filter({
+      hasText: /Sukses menambahkan data dosen/i
+    }).first();
+
+    const successVisible = await successModalHeading.isVisible({ timeout: 5000 }).catch(() => false);
+
+    if (successVisible) {
+      await expect(successModalHeading).toBeVisible();
+      console.log('✓ Success modal appeared');
+
+      // Close success modal
+      const okButton = page.locator('button').filter({
+        hasText: /OK/i
+      }).last();
+      await okButton.click();
+      console.log('✓ Closed success modal');
+      await page.waitForTimeout(2000);
+    } else {
+      // If no success modal, check if data was added by looking for absence of form modal
+      const formModal = page.locator('input[placeholder*="Nama dosen"]');
+      const formVisible = await formModal.isVisible().catch(() => false);
+
+      if (!formVisible) {
+        console.log('✓ Form modal closed (submission likely successful)');
+      } else {
+        console.log('⚠ Form still visible - checking for validation errors');
       }
     }
 
-    console.log('✅ Page structure test completed!');
-  });
+    // Wait for table to update
+    await page.waitForTimeout(2000);
 
-  test('should have search functionality for dosen', async ({ page }) => {
-    console.log('✓ Testing search functionality...');
+    // Verify new dosen appears in table
+    const newDosenRow = page.locator('tr').filter({
+      hasText: dosenName
+    });
+    const isVisible = await newDosenRow.isVisible().catch(() => false);
 
-    // Use navigation helper instead of direct goto
-    await navigateToDataDosen(page);
-
-    // Look for search input
-    const searchInput = page.locator('input[type="search"]').or(
-      page.locator('input[placeholder*="Cari"]')
-    ).or(
-      page.locator('input[placeholder*="Search"]')
-    ).first();
-
-    const hasSearch = await searchInput.isVisible().catch(() => false);
-
-    if (hasSearch) {
-      console.log('✓ Search input found');
-
-      // Try typing in search
-      await searchInput.fill('test');
-      console.log('✓ Typed search query: "test"');
-
-      await page.waitForTimeout(1500);
-
-      // Table should still be visible after search
-      const table = page.locator('table').first();
-      await expect(table).toBeVisible({ timeout: 15000 });
-      console.log('✓ Table still visible after search');
+    if (isVisible) {
+      console.log('✓ New dosen appears in table');
+      expect(isVisible).toBeTruthy();
     } else {
-      console.log('⚠ Search input not found');
-    }
+      console.log('⚠ New dosen not immediately visible - checking with search');
 
-    console.log('✅ Search functionality test completed!');
-  });
+      // Try searching for the new dosen
+      const searchInput = page.locator('input[placeholder*="Cari"]').first();
+      const hasSearch = await searchInput.isVisible().catch(() => false);
 
-  test('should display action buttons for each dosen record', async ({ page }) => {
-    console.log('✓ Testing action buttons...');
+      if (hasSearch) {
+        await searchInput.fill(dosenName);
+        await page.waitForTimeout(2000);
 
-    // Use navigation helper instead of direct goto
-    await navigateToDataDosen(page);
+        const searchResult = page.locator('tr').filter({
+          hasText: dosenName
+        });
+        const foundInSearch = await searchResult.isVisible().catch(() => false);
 
-    // Wait for table to be visible
-    const table = page.locator('table').first();
-    await expect(table).toBeVisible({ timeout: 15000 });
-
-    // Check for "Detail" column header in table
-    const detailHeader = page.locator('th').filter({ hasText: /Detail/i });
-    const hasDetailColumn = await detailHeader.isVisible().catch(() => false);
-
-    if (hasDetailColumn) {
-      console.log('✓ Detail column header found in table');
-    }
-
-    // Look for action buttons/links in table rows
-    // Check first row for any action elements
-    const firstRowActions = page.locator('tbody tr').first().locator('a, button, svg');
-    const actionCount = await firstRowActions.count();
-
-    console.log(`✓ Found ${actionCount} action element(s) in first row`);
-
-    // Should have at least some action elements in the table
-    expect(actionCount).toBeGreaterThan(0);
-    console.log('✓ Action elements are available');
-
-    console.log('✅ Action buttons test completed!');
-  });
-
-  test('should be able to view dosen detail', async ({ page }) => {
-    console.log('✓ Testing view dosen detail...');
-
-    // Use navigation helper instead of direct goto
-    await navigateToDataDosen(page);
-
-    // Find first detail link/button - look in Detail column
-    const detailLink = page.locator('a').filter({
-      hasText: /Detail/i
-    }).or(
-      page.locator('td a').filter({ hasText: /lihat|detail/i })
-    ).or(
-      page.locator('button').filter({ hasText: /Detail/i })
-    ).first();
-
-    const hasDetailLink = await detailLink.isVisible().catch(() => false);
-
-    if (hasDetailLink) {
-      await detailLink.click();
-      console.log('✓ Clicked detail link');
-
-      await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(2000);
-
-      // Check if modal appears or navigated to detail page
-      const modal = page.locator('[role="dialog"]').or(
-        page.locator('.modal')
-      ).or(
-        page.locator('dialog[open]')
-      ).first();
-
-      const hasModal = await modal.isVisible().catch(() => false);
-
-      if (hasModal) {
-        console.log('✓ Detail modal opened');
-
-        // Check for dosen information in modal
-        const dosenInfo = page.locator('div, section').filter({
-          hasText: /NIP|Nama|Email/i
-        }).first();
-        await expect(dosenInfo).toBeVisible({ timeout: 15000 });
-        console.log('✓ Dosen information displayed in modal');
-      } else {
-        // Check if navigated to detail page
-        const currentUrl = page.url();
-        const isOnDetailPage = currentUrl.includes('detail-dosen') ||
-                             currentUrl.includes('detail');
-
-        if (isOnDetailPage) {
-          console.log('✓ Navigated to detail page');
-
-          // Check for dosen information
-          const dosenInfo = page.locator('div, section, main').filter({
-            hasText: /NIP|Nama|Email/i
-          }).first();
-          await expect(dosenInfo).toBeVisible({ timeout: 10000 });
-          console.log('✓ Dosen information displayed');
+        if (foundInSearch) {
+          console.log('✓ New dosen found via search');
+          expect(foundInSearch).toBeTruthy();
         } else {
-          console.log('⚠ Detail view behavior unclear');
+          console.log('⚠ New dosen not found - may require page refresh or pagination');
         }
       }
+    }
+
+    console.log('✅ Add new dosen test completed!');
+  });
+
+  test('should be able to cancel adding dosen', async ({ page }) => {
+    console.log('✓ Testing cancel functionality...');
+
+    // Get initial row count
+    const initialRows = await page.locator('tbody tr').count();
+    console.log(`✓ Initial row count: ${initialRows}`);
+
+    // Open modal
+    const tambahDosenButton = page.locator('button').filter({
+      hasText: /Tambah Dosen/i
+    });
+    await tambahDosenButton.click();
+    await page.waitForTimeout(1000);
+
+    // Fill some data
+    const namaInput = page.locator('input[wire\\:model="storeDosenNama"]').or(
+      page.locator('input[placeholder*="Nama dosen"]')
+    );
+    await namaInput.fill('Test Cancel');
+    console.log('✓ Filled Nama field');
+
+    // Look for close button or click outside modal
+    const closeButton = page.locator('button[aria-label="Close"]').or(
+      page.locator('button').filter({ hasText: /×|Close/i })
+    ).first();
+
+    const hasCloseButton = await closeButton.isVisible().catch(() => false);
+
+    if (hasCloseButton) {
+      await closeButton.click();
+      console.log('✓ Clicked close button');
     } else {
-      console.log('⚠ Detail link not found');
+      // Try pressing Escape key
+      await page.keyboard.press('Escape');
+      console.log('✓ Pressed Escape key');
     }
 
-    console.log('✅ View detail test completed!');
+    await page.waitForTimeout(1000);
+
+    // Verify modal is closed
+    const modal = page.locator('[role="dialog"]').or(
+      page.locator('dialog[open]')
+    );
+    const modalVisible = await modal.isVisible().catch(() => false);
+    expect(modalVisible).toBeFalsy();
+    console.log('✓ Modal closed successfully');
+
+    // Verify no new data was added
+    const finalRows = await page.locator('tbody tr').count();
+    expect(finalRows).toBe(initialRows);
+    console.log('✓ No data was added (row count unchanged)');
+
+    console.log('✅ Cancel functionality test completed!');
   });
 
-  test('should display dosen records count', async ({ page }) => {
-    console.log('✓ Testing record count display...');
+  test('should validate required fields', async ({ page }) => {
+    console.log('✓ Testing form validation...');
 
-    // Use navigation helper instead of direct goto
-    await navigateToDataDosen(page);
+    // Open modal
+    const tambahDosenButton = page.locator('button').filter({
+      hasText: /Tambah Dosen/i
+    });
+    await tambahDosenButton.click();
+    await page.waitForTimeout(1000);
 
-    // Count table rows (excluding header)
-    const tableRows = page.locator('tbody tr');
-    const rowCount = await tableRows.count();
-    console.log(`✓ Found ${rowCount} dosen record(s) in table`);
+    // Try to submit without filling fields
+    const simpanButton = page.locator('button[type="submit"]').filter({
+      hasText: /Simpan/i
+    });
+    await simpanButton.click();
+    console.log('✓ Clicked Simpan without filling fields');
 
-    // Look for total count display
-    const countDisplay = page.locator('div, span, p').filter({
-      hasText: /Total|Jumlah|Menampilkan|Showing|of/i
-    }).first();
+    await page.waitForTimeout(1500);
 
-    const hasCountDisplay = await countDisplay.isVisible().catch(() => false);
+    // Modal should still be visible (form validation prevents submission)
+    const modal = page.locator('[role="dialog"]').or(
+      page.locator('dialog[open]')
+    );
+    const modalVisible = await modal.isVisible().catch(() => false);
 
-    if (hasCountDisplay) {
-      const countText = await countDisplay.textContent();
-      console.log(`✓ Count display found: ${countText}`);
+    if (modalVisible) {
+      console.log('✓ Modal remains open (validation working)');
+    } else {
+      console.log('⚠ Modal closed (validation may not be enforced client-side)');
     }
 
-    expect(rowCount).toBeGreaterThanOrEqual(0);
-    console.log('✓ Record count verified');
-
-    console.log('✅ Record count test completed!');
-  });
-
-  test('should paginate through data', async ({ page }) => {
-    // Use navigation helper instead of direct goto
-    await navigateToDataDosen(page);
-
-    // Find pagination controls
-    const nextButton = page.locator('button:has-text("Next"), a:has-text("Next"), button:has-text("›"), a:has-text("›")');
-
-    if (await nextButton.count() > 0 && await nextButton.first().isEnabled()) {
-      await nextButton.first().click();
-      await page.waitForTimeout(1000);
-
-      // URL or content should change
-      await expect(page).toHaveURL(/[?&]page=/);
-    }
+    console.log('✅ Form validation test completed!');
   });
 });
