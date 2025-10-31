@@ -59,7 +59,7 @@ export async function loginAsAdmin(page) {
  * Login sebagai mahasiswa
  */
 export async function loginAsMahasiswa(page) {
-  await login(page, '9743195802', 'testing123');
+  await login(page, '6705300038', 'mahasiswa123');
 }
 
 /**
